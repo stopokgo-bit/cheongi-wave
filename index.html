@@ -1,0 +1,4407 @@
+<!DOCTYPE html>
+<html lang="ko">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
+    integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4"
+    crossorigin="anonymous"></script>
+  <title>천기 웨이브 — 동양 3대 역학 통합 명리 플랫폼</title>
+  <meta name="description" content="정통 자미두수, 기문둔갑, 매화역수 기반 프리미엄 명리 플랫폼">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --em: #50C878;
+      --gold: #FFD700;
+      --bg: #0f0f3a;
+      --bg2: rgba(255, 255, 255, 0.05);
+      --bd: rgba(255, 255, 255, 0.1);
+      --t: #e8e8f4;
+      --t2: #9999cc;
+      --t3: #ccccee;
+    }
+
+    html,
+    body {
+      background: var(--bg);
+      color: var(--t);
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      min-height: 100vh;
+    }
+
+    .app {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding-bottom: 3rem;
+    }
+
+    .nav {
+      background: rgba(15, 15, 58, 0.97);
+      border-bottom: 1px solid var(--bd);
+      padding: 0 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      height: 64px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      backdrop-filter: blur(10px);
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      cursor: pointer;
+      text-decoration: none;
+    }
+
+    .logo-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .logo-text {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .logo-sub {
+      font-size: 10px;
+      letter-spacing: .15em;
+      color: var(--t2);
+      margin-top: 1px;
+    }
+
+    .nav-btns {
+      display: flex;
+      gap: 8px;
+    }
+
+    .nbtn {
+      padding: 7px 16px;
+      border-radius: 8px;
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      border: 1px solid var(--bd);
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--t);
+      transition: all .2s;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .nbtn.on {
+      background: var(--em);
+      border-color: var(--em);
+      color: #fff;
+    }
+
+    .nbtn.gon {
+      background: var(--gold);
+      border-color: var(--gold);
+      color: #0f0f3a;
+    }
+
+    .pg {
+      display: none;
+      padding: 1.5rem;
+    }
+
+    .pg.on {
+      display: block;
+    }
+
+    @keyframes fu {
+      from {
+        opacity: 0;
+        transform: translateY(14px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .fu {
+      animation: fu .4s ease both;
+    }
+
+    .fu2 {
+      animation: fu .4s .08s ease both;
+    }
+
+    .fu3 {
+      animation: fu .4s .16s ease both;
+    }
+
+    .fu4 {
+      animation: fu .4s .24s ease both;
+    }
+
+    /* INPUT HERO */
+    .hero {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--bd);
+      border-radius: 16px;
+      padding: 1.5rem 1.75rem;
+      margin-bottom: 1.25rem;
+    }
+
+    .hero-title {
+      font-size: 20px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 1.25rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .irow {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr auto;
+      gap: 12px;
+      align-items: end;
+    }
+
+    @media(max-width:600px) {
+      .irow {
+        grid-template-columns: 1fr 1fr;
+      }
+
+      .scan-btn {
+        grid-column: span 2;
+      }
+    }
+
+    .ig label {
+      font-size: 11px;
+      color: var(--t2);
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .ig input,
+    .ig select {
+      width: 100%;
+      padding: 9px 12px;
+      background: rgba(255, 255, 255, 0.07);
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .2s;
+    }
+
+    .ig input:focus,
+    .ig select:focus {
+      border-color: var(--em);
+    }
+
+    .ig input::placeholder {
+      color: var(--t2);
+    }
+
+    .ig select option {
+      background: #1a1a5a;
+    }
+
+    .scan-btn {
+      padding: 10px 20px;
+      background: var(--gold);
+      border: none;
+      border-radius: 8px;
+      color: #0f0f3a;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all .2s;
+    }
+
+    .scan-btn:hover {
+      background: #ffe033;
+      transform: translateY(-1px);
+    }
+
+    .unk {
+      margin-top: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--t2);
+    }
+
+    .unk input {
+      accent-color: var(--em);
+    }
+
+    .form-row {
+      display: grid;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .form-row.r2 {
+      grid-template-columns: 1fr 1.2fr;
+    }
+
+    .form-row.r3 {
+      grid-template-columns: 1fr 1fr 1fr;
+    }
+
+    @media(max-width:580px) {
+      .form-row.r3 {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    .gender-btn {
+      flex: 1;
+      padding: 9px 0;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--t2);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .18s;
+    }
+
+    .gender-btn.on {
+      background: rgba(80, 200, 120, 0.15);
+      border-color: var(--em);
+      color: var(--em);
+    }
+
+    .cal-btn {
+      flex: 1;
+      padding: 9px 0;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: rgba(255, 255, 255, 0.05);
+      color: var(--t2);
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .18s;
+    }
+
+    .cal-btn.on {
+      background: rgba(255, 215, 0, 0.12);
+      border-color: var(--gold);
+      color: var(--gold);
+    }
+
+    .method-banner {
+      margin-top: 12px;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: .8rem 1rem;
+      display: grid;
+      grid-template-columns: 1fr 1px 1fr 1px 1fr;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .method-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 4px;
+      padding: .2rem 0;
+    }
+
+    .method-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .method-role {
+      font-size: 10px;
+      color: var(--em);
+      font-weight: 600;
+    }
+
+    .method-desc {
+      font-size: 10px;
+      color: var(--t2);
+      text-align: center;
+      line-height: 1.45;
+    }
+
+    .method-sep {
+      background: rgba(255, 255, 255, 0.08);
+      width: 1px;
+      height: 100%;
+    }
+
+    .scan-full-btn {
+      width: 100%;
+      margin-top: 12px;
+      padding: 14px;
+      background: var(--gold);
+      border: none;
+      border-radius: 10px;
+      color: #0f0f3a;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all .2s;
+    }
+
+    .scan-full-btn:hover {
+      background: #ffe033;
+      transform: translateY(-1px);
+    }
+
+    .scan-full-btn:active {
+      transform: scale(.98);
+    }
+
+    /* WAVE + COMPASS */
+    .two-col {
+      display: grid;
+      grid-template-columns: 1fr 300px;
+      gap: 1.25rem;
+      margin-bottom: 1.25rem;
+    }
+
+    @media(max-width:640px) {
+      .two-col {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .wcard {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--bd);
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+    }
+
+    .ct {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 3px;
+    }
+
+    .cs {
+      font-size: 12px;
+      color: var(--t2);
+      margin-bottom: .75rem;
+    }
+
+    .sbdg {
+      display: flex;
+      gap: 16px;
+      margin-bottom: .6rem;
+    }
+
+    .sb {
+      font-size: 12px;
+      color: var(--t2);
+    }
+
+    .sb span {
+      font-size: 20px;
+      font-weight: 700;
+      display: block;
+      margin-top: 2px;
+    }
+
+    .sb span.e {
+      color: var(--em);
+    }
+
+    .sb span.g {
+      color: var(--gold);
+    }
+
+    .sb span.p {
+      color: #cc88bb;
+    }
+
+    .wcta {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      margin-top: .75rem;
+      padding: 9px 18px;
+      background: var(--gold);
+      border: none;
+      border-radius: 8px;
+      color: #0f0f3a;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .2s;
+    }
+
+    .wcta:hover {
+      background: #ffe033;
+    }
+
+    .cmpc {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--bd);
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .cdir {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      text-align: center;
+      margin-top: .5rem;
+    }
+
+    .cdir span {
+      color: var(--gold);
+    }
+
+    .cdesc {
+      font-size: 11px;
+      color: var(--t2);
+      text-align: center;
+      margin-top: .35rem;
+      line-height: 1.55;
+    }
+
+    /* BIOMETRIC */
+    .bio {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--bd);
+      border-radius: 16px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.25rem;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 1.25rem;
+    }
+
+    @media(max-width:600px) {
+      .bio {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cambox {
+      background: #000;
+      border-radius: 12px;
+      height: 190px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      cursor: pointer;
+      transition: border-color .2s;
+    }
+
+    .cambox:hover {
+      border-color: rgba(80, 200, 120, 0.4);
+    }
+
+    .camring {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      border: 2px dashed rgba(80, 200, 120, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .camring svg {
+      width: 22px;
+      height: 22px;
+      stroke: var(--em);
+    }
+
+    .sbtns {
+      display: flex;
+      gap: 8px;
+      margin-top: 4px;
+    }
+
+    .sbtn {
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all .2s;
+    }
+
+    .sbtn.em {
+      background: var(--em);
+      border: none;
+      color: #fff;
+    }
+
+    .sbtn.em:hover {
+      background: #3db866;
+    }
+
+    .sbtn.out {
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: var(--t);
+    }
+
+    .sbtn.out:hover {
+      border-color: var(--em);
+      color: var(--em);
+    }
+
+    .ail {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+    }
+
+    .ait {
+      display: flex;
+      gap: 9px;
+      align-items: flex-start;
+    }
+
+    .aid {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: var(--em);
+      flex-shrink: 0;
+      margin-top: 5px;
+    }
+
+    .aitx {
+      font-size: 12px;
+      color: var(--t2);
+      line-height: 1.6;
+    }
+
+    .aitx strong {
+      color: var(--t3);
+    }
+
+    .aitp {
+      padding: 9px 11px;
+      background: rgba(80, 200, 120, 0.08);
+      border: 1px solid rgba(80, 200, 120, 0.2);
+      border-radius: 8px;
+      font-size: 11px;
+      color: var(--em);
+      margin-top: .85rem;
+    }
+
+    /* EXPERTS */
+    .exsec {
+      margin-bottom: 1.25rem;
+    }
+
+    .exhdr {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: .75rem;
+    }
+
+    .exhdr h2 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .exhdr a {
+      font-size: 12px;
+      color: var(--em);
+      text-decoration: none;
+    }
+
+    .exgrid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+    }
+
+    @media(max-width:600px) {
+      .exgrid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .ecard {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--bd);
+      border-radius: 14px;
+      padding: 1rem;
+      transition: all .2s;
+      cursor: pointer;
+    }
+
+    .ecard:hover {
+      border-color: rgba(255, 255, 255, 0.22);
+      transform: translateY(-2px);
+    }
+
+    .ecard.top {
+      border-color: var(--gold);
+    }
+
+    .echdr {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: .75rem;
+    }
+
+    .eav {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(100, 80, 160, 0.5);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      flex-shrink: 0;
+    }
+
+    .eav svg {
+      width: 20px;
+      height: 20px;
+      stroke: rgba(200, 180, 255, 0.8);
+    }
+
+    .edot {
+      position: absolute;
+      bottom: 1px;
+      right: 1px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      border: 2px solid var(--bg);
+      background: var(--em);
+    }
+
+    .pulse::after {
+      content: '';
+      position: absolute;
+      inset: -3px;
+      border-radius: 50%;
+      border: 2px solid var(--em);
+      animation: pulse 1.6s infinite;
+      opacity: .5;
+    }
+
+    @keyframes pulse {
+      0% {
+        transform: scale(1);
+        opacity: .5;
+      }
+
+      100% {
+        transform: scale(1.9);
+        opacity: 0;
+      }
+    }
+
+    .enm {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .esp {
+      font-size: 11px;
+      color: var(--t2);
+      margin-top: 2px;
+    }
+
+    .ert {
+      font-size: 12px;
+      color: var(--gold);
+    }
+
+    .tbdg {
+      font-size: 9px;
+      padding: 1px 6px;
+      background: var(--gold);
+      color: #0f0f3a;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .etgs {
+      display: flex;
+      gap: 5px;
+      flex-wrap: wrap;
+      margin-bottom: .75rem;
+    }
+
+    .etg {
+      font-size: 11px;
+      padding: 3px 8px;
+      border-radius: 12px;
+      background: rgba(80, 200, 120, 0.1);
+      color: var(--em);
+      border: 1px solid rgba(80, 200, 120, 0.2);
+    }
+
+    .ebs {
+      display: flex;
+      gap: 6px;
+    }
+
+    .eb {
+      flex: 1;
+      padding: 7px 0;
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all .2s;
+      text-align: center;
+      border: none;
+    }
+
+    .eb.m {
+      background: var(--em);
+      color: #fff;
+    }
+
+    .eb.m:hover {
+      background: #3db866;
+    }
+
+    .eb.s {
+      background: none;
+      border: 1px solid rgba(255, 255, 255, 0.18);
+      color: var(--t);
+    }
+
+    .eb.s:hover {
+      border-color: var(--em);
+      color: var(--em);
+    }
+
+    /* BOTTOM CARDS */
+    .bgrid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 10px;
+      margin-bottom: 1.25rem;
+    }
+
+    @media(max-width:640px) {
+      .bgrid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .bc {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 14px;
+      padding: 1.25rem;
+      border: 1px solid var(--bd);
+      transition: all .2s;
+      cursor: pointer;
+    }
+
+    .bc:hover {
+      border-color: rgba(255, 255, 255, 0.2);
+      transform: translateY(-2px);
+    }
+
+    .bci {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: .75rem;
+    }
+
+    .bci svg {
+      width: 15px;
+      height: 15px;
+    }
+
+    .bct {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: .35rem;
+      line-height: 1.3;
+    }
+
+    .bcd {
+      font-size: 12px;
+      color: var(--t2);
+      line-height: 1.6;
+      margin-bottom: .75rem;
+    }
+
+    .bcb {
+      width: 100%;
+      padding: 9px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-family: inherit;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all .2s;
+      border: none;
+    }
+
+    .bcb.gold {
+      background: var(--gold);
+      color: #0f0f3a;
+    }
+
+    .bcb.gold:hover {
+      background: #ffe033;
+    }
+
+    .bcb.red {
+      background: #e74c3c;
+      color: #fff;
+    }
+
+    .bcb.red:hover {
+      background: #c0392b;
+    }
+
+    .bcb.em {
+      background: var(--em);
+      color: #fff;
+    }
+
+    .bcb.em:hover {
+      background: #3db866;
+    }
+
+    .mth {
+      background: #1a0505;
+      border-radius: 8px;
+      padding: .65rem .75rem;
+      margin-bottom: .65rem;
+      border: 1px solid rgba(231, 76, 60, 0.2);
+      display: flex;
+      align-items: center;
+      gap: 9px;
+    }
+
+    .plc {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: #e74c3c;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .plc svg {
+      width: 11px;
+      height: 11px;
+      fill: #fff;
+      margin-left: 2px;
+    }
+
+    /* SOUND PAGE */
+    .rx-hero {
+      background: rgba(80, 200, 120, 0.07);
+      border: 1px solid rgba(80, 200, 120, 0.2);
+      border-radius: 12px;
+      padding: 1.1rem 1.25rem;
+      margin-bottom: 1rem;
+    }
+
+    .rx-hl {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: .3rem;
+    }
+
+    .rx-hl span {
+      color: var(--em);
+    }
+
+    .spills {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+      margin-top: .55rem;
+    }
+
+    .spill {
+      padding: 3px 10px;
+      border-radius: 20px;
+      font-size: 11px;
+      font-weight: 700;
+      border: 1px solid;
+    }
+
+    .spill.e {
+      background: rgba(80, 200, 120, 0.15);
+      color: var(--em);
+      border-color: rgba(80, 200, 120, 0.3);
+    }
+
+    .spill.g {
+      background: rgba(255, 215, 0, 0.12);
+      color: var(--gold);
+      border-color: rgba(255, 215, 0, 0.25);
+    }
+
+    .spill.p {
+      background: rgba(204, 136, 187, 0.15);
+      color: #cc88bb;
+      border-color: rgba(204, 136, 187, 0.3);
+    }
+
+    .ch-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 1rem;
+    }
+
+    @media(max-width:520px) {
+      .ch-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .chc {
+      background: var(--bg2);
+      border: 1px solid var(--bd);
+      border-radius: 12px;
+      padding: .85rem;
+      cursor: pointer;
+      transition: all .18s;
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .chc:hover {
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .chc.sel {
+      border-width: 1.5px;
+    }
+
+    .chico {
+      width: 38px;
+      height: 38px;
+      border-radius: 9px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .chico svg {
+      width: 17px;
+      height: 17px;
+    }
+
+    .chnm {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: 2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .chhdl {
+      font-size: 10px;
+      color: var(--t2);
+      margin-bottom: 3px;
+    }
+
+    .chmood {
+      font-size: 10px;
+      color: var(--t2);
+      line-height: 1.4;
+      margin-bottom: 5px;
+    }
+
+    .chtag {
+      display: inline-block;
+      font-size: 9px;
+      padding: 1px 7px;
+      border-radius: 7px;
+      font-weight: 700;
+    }
+
+    .ch-coming {
+      font-size: 9px;
+      padding: 1px 5px;
+      border-radius: 5px;
+      background: rgba(255, 255, 255, 0.1);
+      color: var(--t2);
+      font-weight: 600;
+    }
+
+    .ytbtn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      width: 100%;
+      padding: 13px;
+      border-radius: 10px;
+      font-size: 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .2s;
+      color: #fff;
+      text-decoration: none;
+      border: none;
+      margin-bottom: .65rem;
+    }
+
+    .ytbtn:hover {
+      opacity: .88;
+      transform: translateY(-1px);
+    }
+
+    .ytbtn svg {
+      width: 18px;
+      height: 18px;
+      fill: #fff;
+      flex-shrink: 0;
+    }
+
+    .why-card {
+      border-radius: 10px;
+      padding: .85rem 1rem;
+      border: 1px solid;
+      margin-top: .85rem;
+    }
+
+    .why-title {
+      font-size: 12px;
+      font-weight: 700;
+      margin-bottom: .4rem;
+    }
+
+    .why-body {
+      font-size: 12px;
+      color: var(--t2);
+      line-height: 1.75;
+    }
+
+    .why-body em {
+      color: var(--em);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .why-body b {
+      font-weight: 600;
+      color: var(--gold);
+    }
+
+    .time-rx {
+      margin-top: 1rem;
+      background: rgba(255, 255, 255, 0.03);
+      border: 1px solid var(--bd);
+      border-radius: 10px;
+      padding: .8rem .95rem;
+    }
+
+    .time-rx-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: .55rem;
+    }
+
+    .trow {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      margin-bottom: 7px;
+    }
+
+    .trow:last-child {
+      margin-bottom: 0;
+    }
+
+    .ttag {
+      font-size: 10px;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 6px;
+      flex-shrink: 0;
+      min-width: 68px;
+      text-align: center;
+      margin-top: 1px;
+    }
+
+    .tdesc {
+      font-size: 11px;
+      color: var(--t2);
+      line-height: 1.5;
+    }
+
+    /* SCAN PAGE */
+    .cam-stage {
+      position: relative;
+      background: #000;
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
+
+    .cam-stage canvas {
+      display: block;
+      width: 100%;
+      border-radius: 16px;
+    }
+
+    .fb-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      padding: .75rem 1rem;
+      background: rgba(0, 0, 0, 0.6);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .fb-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .fb-dot.ok {
+      background: var(--em);
+    }
+
+    .fb-dot.warn {
+      background: var(--gold);
+    }
+
+    .fb-dot.sc {
+      background: var(--em);
+      animation: blink .7s infinite;
+    }
+
+    @keyframes blink {
+
+      0%,
+      100% {
+        opacity: 1;
+      }
+
+      50% {
+        opacity: .2;
+      }
+    }
+
+    .fb-txt {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+    }
+
+    .fb-sub {
+      font-size: 11px;
+      color: var(--t2);
+      margin-left: auto;
+    }
+
+    .ctrl-row {
+      display: grid;
+      grid-template-columns: 1fr auto 1fr;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1rem;
+    }
+
+    .shutter {
+      width: 64px;
+      height: 64px;
+      border-radius: 50%;
+      background: none;
+      border: 3px solid #fff;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all .18s;
+      margin: 0 auto;
+    }
+
+    .shutter:hover,
+    .shutter.cap {
+      border-color: var(--em);
+    }
+
+    .shutter.cap .si {
+      background: var(--em);
+    }
+
+    .si {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: #fff;
+      transition: all .18s;
+    }
+
+    .shutter:hover .si {
+      background: var(--em);
+    }
+
+    .side-ctrl {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .ctrl-btn {
+      padding: 7px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+      border: 1px solid var(--bd);
+      background: var(--bg2);
+      color: var(--t);
+      transition: all .18s;
+      text-align: center;
+    }
+
+    .ctrl-btn:hover,
+    .ctrl-btn.active {
+      border-color: var(--em);
+      color: var(--em);
+    }
+
+    .ctrl-btn.active {
+      background: rgba(80, 200, 120, 0.1);
+    }
+
+    .tips-row {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 1rem;
+    }
+
+    @media(max-width:480px) {
+      .tips-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .tip-card {
+      background: var(--bg2);
+      border: 1px solid var(--bd);
+      border-radius: 10px;
+      padding: .6rem .75rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .tip-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .tip-icon svg {
+      width: 13px;
+      height: 13px;
+    }
+
+    .tip-text {
+      font-size: 11px;
+      color: var(--t2);
+      line-height: 1.4;
+    }
+
+    .prog-sec {
+      background: var(--bg2);
+      border: 1px solid var(--bd);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: 1rem;
+      display: none;
+    }
+
+    .prog-sec.show {
+      display: block;
+    }
+
+    .prog-steps {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .prog-step {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .sico {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .sico.done {
+      background: var(--em);
+      color: #fff;
+    }
+
+    .sico.act {
+      background: rgba(80, 200, 120, 0.2);
+      border: 1px solid var(--em);
+    }
+
+    .sico.act svg {
+      width: 12px;
+      height: 12px;
+      stroke: var(--em);
+      animation: spin .8s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .sico.wait {
+      background: rgba(255, 255, 255, 0.07);
+      color: var(--t2);
+    }
+
+    .slbl {
+      font-size: 12px;
+      color: var(--t3);
+      flex: 1;
+    }
+
+    .slbl.act {
+      color: var(--em);
+      font-weight: 600;
+    }
+
+    .slbl.done {
+      color: var(--t2);
+    }
+
+    .spct {
+      font-size: 11px;
+      color: var(--t2);
+    }
+
+    .result-sec {
+      display: none;
+    }
+
+    .result-sec.show {
+      display: block;
+      animation: fu .4s ease both;
+    }
+
+    .res-hero {
+      background: rgba(80, 200, 120, 0.07);
+      border: 1px solid rgba(80, 200, 120, 0.2);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: .75rem;
+      display: flex;
+      gap: 14px;
+      align-items: center;
+    }
+
+    .face-thumb {
+      width: 64px;
+      height: 80px;
+      border-radius: 10px;
+      background: #111;
+      border: 1px solid var(--bd);
+      overflow: hidden;
+      flex-shrink: 0;
+      position: relative;
+    }
+
+    .face-tag {
+      position: absolute;
+      bottom: 3px;
+      left: 0;
+      right: 0;
+      text-align: center;
+      font-size: 9px;
+      font-weight: 700;
+      color: var(--em);
+      background: rgba(0, 0, 0, 0.7);
+      padding: 2px 0;
+    }
+
+    .match-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      border-radius: 12px;
+      background: rgba(80, 200, 120, 0.15);
+      border: 1px solid rgba(80, 200, 120, 0.3);
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--em);
+    }
+
+    .feat-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-bottom: .75rem;
+    }
+
+    .feat-card {
+      background: var(--bg2);
+      border: 1px solid var(--bd);
+      border-radius: 10px;
+      padding: .8rem;
+    }
+
+    .feat-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: .5rem;
+    }
+
+    .feat-name {
+      font-size: 12px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .feat-bar {
+      height: 4px;
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+      overflow: hidden;
+      margin-bottom: .4rem;
+    }
+
+    .feat-fill {
+      height: 100%;
+      border-radius: 2px;
+      transition: width 1.2s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .feat-desc {
+      font-size: 11px;
+      color: var(--t2);
+      line-height: 1.55;
+    }
+
+    .feat-tag {
+      display: inline-block;
+      font-size: 9px;
+      padding: 1px 6px;
+      border-radius: 6px;
+      margin-top: 4px;
+      font-weight: 700;
+    }
+
+    .pm-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .pm-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .pm-palace {
+      font-size: 12px;
+      color: var(--t2);
+      width: 70px;
+      flex-shrink: 0;
+    }
+
+    .pm-bar-wrap {
+      flex: 1;
+      height: 6px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 3px;
+      overflow: hidden;
+    }
+
+    .pm-fill {
+      height: 100%;
+      border-radius: 3px;
+      transition: width 1.3s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    .pm-pct {
+      font-size: 11px;
+      font-weight: 700;
+      color: #fff;
+      width: 30px;
+      text-align: right;
+      flex-shrink: 0;
+    }
+
+    .ib {
+      background: rgba(255, 215, 0, 0.05);
+      border: 1px solid rgba(255, 215, 0, 0.18);
+      border-radius: 10px;
+      padding: .85rem 1rem;
+      margin-bottom: .75rem;
+    }
+
+    .ib-title {
+      font-size: 12px;
+      font-weight: 700;
+      color: var(--gold);
+      margin-bottom: .4rem;
+    }
+
+    .ib-body {
+      font-size: 12px;
+      color: var(--t2);
+      line-height: 1.75;
+    }
+
+    .ib-body em {
+      color: var(--em);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .ib-body b {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    /* CMS */
+    .promo {
+      background: rgba(80, 200, 120, 0.1);
+      border: 1px solid rgba(80, 200, 120, 0.2);
+      border-radius: 16px 16px 0 0;
+      padding: 1rem 1.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 1rem;
+      flex-wrap: wrap;
+    }
+
+    .promo-btn {
+      padding: 8px 18px;
+      background: var(--em);
+      border: none;
+      border-radius: 8px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+      font-family: inherit;
+    }
+
+    .promo-btn:hover {
+      background: #3db866;
+    }
+
+    .cms-body {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid var(--bd);
+      border-top: none;
+      border-radius: 0 0 16px 16px;
+      padding: 1.25rem 1.5rem;
+      display: grid;
+      grid-template-columns: 1fr 250px;
+      gap: 1.5rem;
+    }
+
+    @media(max-width:640px) {
+      .cms-body {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .cms-mt {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: .75rem;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .cms-mt svg {
+      width: 15px;
+      height: 15px;
+      stroke: var(--em);
+    }
+
+    .mcds {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      margin-bottom: .9rem;
+    }
+
+    .mc {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: .7rem;
+    }
+
+    .mcl {
+      font-size: 11px;
+      color: var(--t2);
+      margin-bottom: .25rem;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .mcl svg {
+      width: 11px;
+      height: 11px;
+      stroke: var(--t2);
+    }
+
+    .mcv {
+      font-size: 19px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .mcd {
+      font-size: 11px;
+      color: var(--em);
+      margin-top: 2px;
+    }
+
+    .mcd.gold {
+      color: var(--gold);
+    }
+
+    .stit {
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      margin-bottom: .6rem;
+    }
+
+    .stbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      table-layout: fixed;
+    }
+
+    .stbl th {
+      color: var(--t2);
+      font-weight: 500;
+      padding: 6px;
+      text-align: left;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .stbl td {
+      padding: 7px 6px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+      color: var(--t3);
+    }
+
+    .stbl td.neg {
+      color: #e74c3c;
+    }
+
+    .stbl td.pos {
+      color: var(--em);
+    }
+
+    .kwt {
+      font-size: 14px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: .65rem;
+    }
+
+    .kwc {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-bottom: .85rem;
+    }
+
+    .kw {
+      padding: 4px 11px;
+      border-radius: 20px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      font-size: 12px;
+      color: var(--t);
+      cursor: pointer;
+      transition: all .2s;
+    }
+
+    .kw:hover {
+      border-color: var(--em);
+      color: var(--em);
+    }
+
+    .kw .n {
+      color: var(--em);
+      font-weight: 600;
+      margin-left: 3px;
+    }
+
+    .rvc {
+      background: rgba(255, 255, 255, 0.04);
+      border-radius: 10px;
+      padding: .75rem;
+      border: 1px solid var(--bd);
+    }
+
+    .rvt {
+      font-size: 12px;
+      color: var(--t2);
+      line-height: 1.6;
+      font-style: italic;
+      margin-bottom: .45rem;
+    }
+
+    .rvs {
+      color: var(--gold);
+      font-size: 13px;
+    }
+
+    /* SHARED */
+    .cta-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-gold {
+      flex: 1;
+      min-width: 120px;
+      padding: 12px;
+      background: var(--gold);
+      border: none;
+      border-radius: 10px;
+      color: #0f0f3a;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .2s;
+    }
+
+    .btn-gold:hover {
+      background: #ffe033;
+    }
+
+    .btn-em {
+      flex: 1;
+      min-width: 120px;
+      padding: 12px;
+      background: var(--em);
+      border: none;
+      border-radius: 10px;
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .2s;
+    }
+
+    .btn-em:hover {
+      background: #3db866;
+    }
+
+    .btn-out {
+      flex: 1;
+      min-width: 120px;
+      padding: 12px;
+      background: none;
+      border: 1px solid var(--bd);
+      border-radius: 10px;
+      color: var(--t);
+      font-size: 13px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .2s;
+    }
+
+    .btn-out:hover {
+      border-color: var(--em);
+      color: var(--em);
+    }
+
+    .back-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      background: var(--bg2);
+      border: 1px solid var(--bd);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: border-color .15s;
+    }
+
+    .back-btn:hover {
+      border-color: var(--em);
+    }
+
+    .pgtop {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 1.25rem;
+    }
+
+    .pgtop h1 {
+      font-size: 16px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .mode-toggle {
+      margin-left: auto;
+      display: flex;
+      gap: 6px;
+    }
+
+    .mtbtn {
+      padding: 5px 14px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      border: 1px solid var(--bd);
+      background: none;
+      color: var(--t2);
+      transition: all .18s;
+    }
+
+    .mtbtn.on {
+      background: var(--em);
+      border-color: var(--em);
+      color: #fff;
+    }
+
+    .footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.07);
+      padding: 1.5rem;
+      text-align: center;
+      font-size: 12px;
+      color: var(--t2);
+      line-height: 1.8;
+    }
+
+    /* SAJU RESULT */
+    .saju-score-card {
+      background: rgba(255, 255, 255, 0.05);
+      border-radius: 10px;
+      padding: .7rem .6rem;
+      text-align: center;
+    }
+
+    .saju-score-label {
+      font-size: 10px;
+      color: var(--t2);
+      margin-bottom: 4px;
+    }
+
+    .saju-score-val {
+      font-size: 22px;
+      font-weight: 700;
+    }
+
+    .saju-score-trend {
+      font-size: 10px;
+      margin-top: 2px;
+    }
+
+    .saju-section {
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 12px;
+      padding: 1rem 1.1rem;
+    }
+
+    .saju-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: .6rem;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+
+    .saju-section-title svg {
+      width: 14px;
+      height: 14px;
+    }
+
+    .saju-section-body {
+      font-size: 12px;
+      color: var(--t2);
+      line-height: 1.85;
+    }
+
+    .saju-section-body em {
+      color: var(--em);
+      font-style: normal;
+      font-weight: 600;
+    }
+
+    .saju-section-body b {
+      color: var(--gold);
+      font-weight: 600;
+    }
+
+    .saju-section-body strong {
+      color: #fff;
+      font-weight: 600;
+    }
+
+    .saju-tag {
+      display: inline-block;
+      font-size: 10px;
+      padding: 2px 8px;
+      border-radius: 6px;
+      margin-right: 4px;
+      margin-bottom: 4px;
+      font-weight: 600;
+    }
+
+    .saju-streaming {
+      border-left: 2px solid rgba(80, 200, 120, 0.4);
+      padding-left: .75rem;
+    }
+
+    .typing-cursor {
+      display: inline-block;
+      width: 2px;
+      height: 12px;
+      background: var(--em);
+      margin-left: 2px;
+      animation: blink .7s infinite;
+      vertical-align: middle;
+    }
+
+    .shutter-flash {
+      position: absolute;
+      inset: 0;
+      background: #fff;
+      opacity: 0;
+      border-radius: 12px;
+      pointer-events: none;
+      transition: opacity .05s;
+      z-index: 10;
+    }
+
+    .shutter-flash.on {
+      opacity: 0.85;
+    }
+
+    .cam-guide-msg {
+      position: absolute;
+      bottom: 50px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0, 0, 0, 0.65);
+      color: #fff;
+      font-size: 12px;
+      font-weight: 600;
+      padding: 6px 16px;
+      border-radius: 20px;
+      white-space: nowrap;
+      pointer-events: none;
+      z-index: 5;
+    }
+
+    /* AUTH MODAL */
+    .auth-overlay {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.65);
+      z-index: 999;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+    }
+
+    .auth-overlay.show {
+      display: flex;
+    }
+
+    .auth-modal {
+      background: #13134a;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      border-radius: 20px;
+      width: 100%;
+      max-width: 380px;
+      overflow: hidden;
+      animation: modalIn .22s cubic-bezier(.4, 0, .2, 1);
+    }
+
+    @keyframes modalIn {
+      from {
+        opacity: 0;
+        transform: scale(.94) translateY(12px);
+      }
+
+      to {
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    .auth-head {
+      padding: 1.5rem 1.5rem 0;
+      text-align: center;
+    }
+
+    .auth-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-bottom: 1.25rem;
+    }
+
+    .auth-logo-ico {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: var(--gold);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-logo-txt {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .auth-tabs {
+      display: flex;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      margin: 0 -1.5rem;
+    }
+
+    .auth-tab {
+      flex: 1;
+      padding: .7rem;
+      font-size: 13px;
+      cursor: pointer;
+      border: none;
+      background: none;
+      color: var(--t2);
+      font-family: inherit;
+      transition: all .15s;
+      border-bottom: 2px solid transparent;
+      margin-bottom: -1px;
+    }
+
+    .auth-tab.on {
+      color: var(--em);
+      border-bottom-color: var(--em);
+      font-weight: 600;
+    }
+
+    .auth-body {
+      padding: 1.25rem 1.5rem 1.5rem;
+    }
+
+    .auth-sec {
+      font-size: 11px;
+      color: var(--t2);
+      margin-bottom: .55rem;
+      margin-top: 1rem;
+    }
+
+    .auth-sec:first-child {
+      margin-top: 0;
+    }
+
+    .soc-btns {
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+    }
+
+    .soc-btn {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      width: 100%;
+      padding: 10px 13px;
+      border-radius: 10px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background: rgba(255, 255, 255, 0.04);
+      cursor: pointer;
+      font-family: inherit;
+      font-size: 13px;
+      font-weight: 600;
+      transition: all .18s;
+      color: #fff;
+    }
+
+    .soc-btn:hover {
+      background: rgba(255, 255, 255, 0.09);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .soc-btn:active {
+      transform: scale(0.98);
+    }
+
+    .soc-ico {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 11px;
+      font-weight: 700;
+    }
+
+    .soc-lbl {
+      flex: 1;
+      text-align: left;
+    }
+
+    .soc-arr {
+      opacity: .4;
+    }
+
+    .auth-div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin: 1rem 0;
+    }
+
+    .auth-div-line {
+      flex: 1;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.08);
+    }
+
+    .auth-div-txt {
+      font-size: 11px;
+      color: var(--t2);
+    }
+
+    .auth-inp-grp {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: .9rem;
+    }
+
+    .auth-inp-row {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .auth-inp-lbl {
+      font-size: 11px;
+      color: var(--t2);
+    }
+
+    .auth-inp {
+      width: 100%;
+      padding: 9px 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 8px;
+      color: #fff;
+      font-size: 13px;
+      font-family: inherit;
+      outline: none;
+      transition: border-color .15s;
+    }
+
+    .auth-inp:focus {
+      border-color: var(--em);
+    }
+
+    .auth-inp::placeholder {
+      color: rgba(255, 255, 255, 0.3);
+    }
+
+    .auth-submit {
+      width: 100%;
+      padding: 11px;
+      border-radius: 10px;
+      border: none;
+      background: var(--em);
+      color: #fff;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all .2s;
+      margin-bottom: .75rem;
+    }
+
+    .auth-submit:hover {
+      background: #3db866;
+    }
+
+    .auth-submit:active {
+      transform: scale(.98);
+    }
+
+    .auth-terms {
+      font-size: 11px;
+      color: var(--t2);
+      text-align: center;
+      line-height: 1.6;
+    }
+
+    .auth-terms a {
+      color: var(--em);
+    }
+
+    .auth-links {
+      display: flex;
+      justify-content: center;
+      gap: 14px;
+      margin-top: .55rem;
+    }
+
+    .auth-link {
+      font-size: 11px;
+      color: var(--t2);
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+      transition: color .15s;
+    }
+
+    .auth-link:hover {
+      color: #fff;
+    }
+
+    .auth-close {
+      position: absolute;
+      top: 1rem;
+      right: 1rem;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.08);
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .auth-close:hover {
+      background: rgba(255, 255, 255, 0.15);
+    }
+
+    .auth-close svg {
+      width: 13px;
+      height: 13px;
+      stroke: #fff;
+      stroke-width: 2.5;
+    }
+
+    .auth-modal-wrap {
+      position: relative;
+    }
+
+    /* NAV login button */
+    .nav-login-btn {
+      padding: 6px 14px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      border: 1px solid var(--em);
+      background: none;
+      color: var(--em);
+      transition: all .18s;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .nav-login-btn:hover {
+      background: rgba(80, 200, 120, 0.12);
+    }
+
+    .nav-user-pill {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      padding: 5px 12px 5px 6px;
+      border-radius: 20px;
+      background: rgba(80, 200, 120, 0.12);
+      border: 1px solid rgba(80, 200, 120, 0.25);
+    }
+
+    .nav-user-avatar {
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      background: var(--em);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: #fff;
+      flex-shrink: 0;
+    }
+
+    .nav-user-name {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--em);
+    }
+
+    .nav-logout {
+      font-size: 11px;
+      color: var(--t2);
+      cursor: pointer;
+      background: none;
+      border: none;
+      font-family: inherit;
+      padding: 0;
+      margin-left: 2px;
+    }
+
+    .nav-logout:hover {
+      color: #fff;
+    }
+
+    .kakao-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      background: #FEE500;
+      color: #3C1E1E;
+      font-weight: 700;
+      margin-left: auto;
+    }
+  </style>
+</head>
+
+<body>
+  <div class="app">
+    <nav class="nav">
+      <a class="logo" onclick="showPg('main')">
+        <div class="logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
+              fill="#0f0f3a" />
+          </svg></div>
+        <div>
+          <div class="logo-text">천기 웨이브</div>
+          <div class="logo-sub">CHEON-GI WAVE</div>
+        </div>
+      </a>
+      <div class="nav-btns">
+        <button class="nbtn on" id="bn-user" onclick="showPg('main',this,'user')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="7" r="4" />
+            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+          </svg>서비스 앱
+        </button>
+        <button class="nbtn" id="bn-cms" onclick="showPg('main',this,'cms')">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="3" width="7" height="7" rx="1" />
+            <rect x="14" y="3" width="7" height="7" rx="1" />
+            <rect x="3" y="14" width="7" height="7" rx="1" />
+            <rect x="14" y="14" width="7" height="7" rx="1" />
+          </svg>전문가 CMS
+        </button>
+        <div id="nav-auth-area">
+          <button class="nav-login-btn" onclick="openAuth('login')">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <circle cx="12" cy="7" r="4" />
+              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+            </svg>로그인
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- USER -->
+    <div id="pg-main-user" class="pg on">
+      <div class="hero fu">
+        <div class="hero-title"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFD700"
+            stroke-width="1.5">
+            <polygon
+              points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+          </svg>당신의 천기(天機)를 스캔하세요</div>
+
+        <div class="form-row r2">
+          <div class="ig"><label>이름</label><input type="text" placeholder="이름 입력" id="inp-name"></div>
+          <div class="ig">
+            <label>성별</label>
+            <div style="display:flex;gap:6px;">
+              <button type="button" class="gender-btn on" id="gbtn-m" onclick="setGender('남')"
+                style="pointer-events:auto;">남성</button>
+              <button type="button" class="gender-btn" id="gbtn-f" onclick="setGender('여')"
+                style="pointer-events:auto;">여성</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="ig" style="margin-bottom:10px;">
+          <label>생년월일</label>
+          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
+            <input type="number" id="inp-year" placeholder="년도" min="1900" max="2025"
+              style="width:88px;padding:10px 9px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:15px;font-weight:600;font-family:inherit;outline:none;-moz-appearance:textfield;"
+              oninput="this.value=this.value.slice(0,4);if(this.value.length>=4)document.getElementById('inp-month').focus()">
+            <span style="color:var(--t2);font-size:13px;margin:0 1px;">년</span>
+            <input type="number" id="inp-month" placeholder="월" min="1" max="12"
+              style="width:56px;padding:10px 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:15px;font-weight:600;font-family:inherit;outline:none;-moz-appearance:textfield;"
+              oninput="this.value=this.value.slice(0,2);if(this.value.length>=2)document.getElementById('inp-day').focus()">
+            <span style="color:var(--t2);font-size:13px;margin:0 1px;">월</span>
+            <input type="number" id="inp-day" placeholder="일" min="1" max="31"
+              style="width:56px;padding:10px 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:15px;font-weight:600;font-family:inherit;outline:none;-moz-appearance:textfield;"
+              oninput="this.value=this.value.slice(0,2)">
+            <span style="color:var(--t2);font-size:13px;margin:0 1px;">일</span>
+            <div style="display:flex;gap:4px;margin-left:4px;">
+              <button type="button" class="cal-btn on" id="cbtn-solar" onclick="setCal('양력')"
+                style="padding:5px 9px;font-size:11px;">양력</button>
+              <button type="button" class="cal-btn" id="cbtn-lunar" onclick="setCal('음력')"
+                style="padding:5px 9px;font-size:11px;">음력</button>
+              <button type="button" class="cal-btn" id="cbtn-leap" onclick="setCal('음력윤달')"
+                style="padding:5px 9px;font-size:11px;">윤달</button>
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row r2">
+          <div class="ig">
+            <label>태어난 시간 (생시) <span style="color:var(--em);font-size:10px;"
+                title="시간을 모르면 성격 위주 분석으로 진행됩니다">ⓘ</span></label>
+            <select id="inp-time">
+              <option value="">시간 선택</option>
+              <option value="자시">자시 (23:30~01:29)</option>
+              <option value="축시">축시 (01:30~03:29)</option>
+              <option value="인시">인시 (03:30~05:29)</option>
+              <option value="묘시">묘시 (05:30~07:29)</option>
+              <option value="진시">진시 (07:30~09:29)</option>
+              <option value="사시">사시 (09:30~11:29)</option>
+              <option value="오시">오시 (11:30~13:29)</option>
+              <option value="미시">미시 (13:30~15:29)</option>
+              <option value="신시">신시 (15:30~17:29)</option>
+              <option value="유시">유시 (17:30~19:29)</option>
+              <option value="술시">술시 (19:30~21:29)</option>
+              <option value="해시">해시 (21:30~23:29)</option>
+            </select>
+          </div>
+          <div class="ig" style="display:flex;align-items:flex-end;padding-bottom:2px;">
+            <label
+              style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t2);cursor:pointer;line-height:1.5;">
+              <input type="checkbox" id="unk" style="accent-color:var(--em);width:15px;height:15px;flex-shrink:0;">
+              시간 모름<br><span style="color:rgba(153,153,204,0.7);">시간 미입력 시 성격/기질 위주 분석</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="method-banner">
+          <div class="method-item">
+            <div class="method-name">인생 지도</div>
+            <div class="method-role">평생의 그릇 분석</div>
+            <div class="method-desc">타고난 격국과<br>평생 대운 흐름</div>
+          </div>
+          <div class="method-sep"></div>
+          <div class="method-item">
+            <div class="method-name">오늘의 기회</div>
+            <div class="method-role" style="color:var(--gold);">오늘의 행운 점수</div>
+            <div class="method-desc">실시간 길흉 점수<br>오늘 투자·계약 판단</div>
+          </div>
+          <div class="method-sep"></div>
+          <div class="method-item">
+            <div class="method-name">성공 치트키</div>
+            <div class="method-role" style="color:#8aacf0;">나침반·전략</div>
+            <div class="method-desc">행운 방위<br>귀인 방향·이동 타이밍</div>
+          </div>
+        </div>
+
+        <button class="scan-full-btn" onclick="doSajuScan()">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <circle cx="11" cy="11" r="8" />
+            <line x1="21" y1="21" x2="16.65" y2="16.65" />
+          </svg>
+          3대 정밀 역학 통합 분석 시작 🌊
+        </button>
+      </div>
+      <div class="two-col fu2">
+        <div class="wcard">
+          <div class="ct">생애 길흉 파동 (Destiny Wave)</div>
+          <div class="cs">자미두수 생애 주기에 따른 웰빙 지수 분석</div>
+          <div class="sbdg">
+            <div class="sb">재물운<span class="e">85점</span></div>
+            <div class="sb">명예운<span class="g">92점</span></div>
+            <div class="sb">애정운<span class="p">68점</span></div>
+          </div>
+          <div style="position:relative;">
+            <canvas id="wc" height="170" style="width:100%;cursor:crosshair;border-radius:6px;"></canvas>
+            <div id="wtt"
+              style="position:absolute;background:rgba(10,10,40,0.95);border:1px solid rgba(80,200,120,0.3);border-radius:8px;padding:7px 11px;font-size:11px;color:#fff;pointer-events:none;opacity:0;transition:opacity .15s;z-index:5;white-space:nowrap;top:8px;left:8px;">
+            </div>
+          </div>
+          <button class="wcta" onclick="showPg('report')">50P 리포트에서 상세 타임라인 보기 <svg width="13" height="13"
+              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <polyline points="9,18 15,12 9,6" />
+            </svg></button>
+        </div>
+        <div class="cmpc">
+          <div class="ct">기문둔갑 전략 나침반</div>
+          <div class="cs" style="text-align:center;margin-bottom:.5rem;">현재 위치 기준 실시간 길방(吉方)</div>
+          <canvas id="cc" width="150" height="150"
+            style="width:150px;height:150px;display:block;margin:0 auto;"></canvas>
+          <div class="cdir" style="margin-top:.6rem;">추천 길방: <span>북동(NE)</span></div>
+          <div class="cdesc">지금 이 방향으로 이동하면<br>계약과 귀인의 도움을 얻기 좋습니다.</div>
+        </div>
+      </div>
+      <div class="bio fu3">
+        <div>
+          <div class="cambox" onclick="showPg('scan')">
+            <div class="camring"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
+                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+                <circle cx="12" cy="13" r="4" />
+              </svg></div>
+            <div style="font-size:14px;font-weight:600;color:#fff;">Biometric Scan</div>
+            <div style="font-size:11px;color:var(--t2);text-align:center;padding:0 1rem;line-height:1.5;">자미두수 12궁
+              알고리즘과<br>실시간 관상 스캔</div>
+            <div class="sbtns">
+              <button class="sbtn em" onclick="event.stopPropagation();showPg('scan')">관상 스캔 가동</button>
+              <button class="sbtn out" onclick="event.stopPropagation();showPg('scan')">손금 스캔 가동</button>
+            </div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:.75rem;">AI 스캐너 메커니즘</div>
+          <div class="ail">
+            <div class="ait">
+              <div class="aid"></div>
+              <div class="aitx"><strong>3D 랜드마크 추출:</strong> 안면 골격 구조 및 손금 깊이 데이터 추출</div>
+            </div>
+            <div class="ait">
+              <div class="aid"></div>
+              <div class="aitx"><strong>궁위(Palace) 동기화:</strong> 명반 12궁과의 수치적 일치도 계산</div>
+            </div>
+            <div class="ait">
+              <div class="aid"></div>
+              <div class="aitx"><strong>실시간 보정:</strong> 주변 환경 데이터를 통한 기하학적 정규화</div>
+            </div>
+          </div>
+          <div class="aitp">* 카메라를 눈높이에 맞추고 고정해 주세요.</div>
+        </div>
+      </div>
+      <div class="exsec fu4">
+        <div class="exhdr">
+          <h2>실시간 매칭 전문가</h2><a href="#">전체 보기 &gt;</a>
+        </div>
+        <div class="exgrid" id="eg"></div>
+      </div>
+      <div class="bgrid fu4">
+        <div class="bc" onclick="showPg('report')">
+          <div class="bci" style="background:rgba(255,215,0,0.15);"><svg viewBox="0 0 24 24" fill="none"
+              stroke="#FFD700" stroke-width="2">
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+              <polyline points="14 2 14 8 20 8" />
+            </svg></div>
+          <div class="bct">50P '인생 지침서' 리포트</div>
+          <div class="bcd">20세부터 80세까지 재물, 커리어, 사랑의 파동을 5,000개 이상의 정교한 텍스트로 분석합니다.</div>
+          <button class="bcb gold">샘플 리포트 확인하기</button>
+        </div>
+        <div class="bc" onclick="showPg('sound')">
+          <div class="bci" style="background:rgba(231,76,60,0.15);"><svg viewBox="0 0 24 24" fill="none"
+              stroke="#e74c3c" stroke-width="2">
+              <path d="M9 18V5l12-2v13" />
+              <circle cx="6" cy="18" r="3" />
+              <circle cx="18" cy="16" r="3" />
+            </svg></div>
+          <div class="bct">천기 음파 처방 (Sound Remedy)</div>
+          <div class="bcd">오늘 직업운 <span style="color:var(--em);font-weight:600;">88점</span> — 강한 돌파의 날.</div>
+          <div class="mth">
+            <div class="plc"><svg viewBox="0 0 10 10">
+                <polygon points="2,1 9,5 2,9" />
+              </svg></div>
+            <div>
+              <div style="font-size:12px;font-weight:600;color:#fff;">UrbanPulseMix</div>
+              <div style="font-size:10px;color:var(--t2);">오늘의 처방</div>
+            </div>
+          </div>
+          <button class="bcb red">음악 처방 받으러 가기</button>
+        </div>
+        <div class="bc">
+          <div class="bci" style="background:rgba(80,200,120,0.15);"><svg viewBox="0 0 24 24" fill="none"
+              stroke="#50C878" stroke-width="2">
+              <rect x="3" y="4" width="18" height="18" rx="2" />
+              <line x1="16" y1="2" x2="16" y2="6" />
+              <line x1="8" y1="2" x2="8" y2="6" />
+              <line x1="3" y1="10" x2="21" y2="10" />
+            </svg></div>
+          <div class="bct">이달의 길일 캘린더</div>
+          <div class="bcd">이동, 계약, 소개팅에 가장 좋은 날짜를 개인별 맞춤 데이터로 추출합니다.</div>
+          <button class="bcb em">나의 길일 확인하기</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- CMS -->
+    <div id="pg-main-cms" class="pg">
+      <div class="fu" style="border:1px solid var(--bd);border-radius:16px;overflow:hidden;margin-bottom:1.25rem;">
+        <div class="promo">
+          <div>
+            <div style="font-size:14px;font-weight:700;color:#fff;">신규 전문가 '샛별' 프로모션 적용 중</div>
+            <div style="font-size:12px;color:var(--t2);margin-top:2px;">90일간 최고 등급 수수료 혜택이 적용됩니다.</div>
+          </div>
+          <button class="promo-btn">상세 혜택 보기</button>
+        </div>
+        <div class="cms-body">
+          <div>
+            <div class="cms-mt"><svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
+              </svg>실시간 성과 지표</div>
+            <div class="mcds">
+              <div class="mc">
+                <div class="mcl"><svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                    <circle cx="12" cy="7" r="4" />
+                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
+                  </svg>총 상담 인원</div>
+                <div class="mcv" id="c1">0</div>
+                <div class="mcd">+12%</div>
+              </div>
+              <div class="mc">
+                <div class="mcl"><svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                    <polygon
+                      points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+                  </svg>평균 평점</div>
+                <div class="mcv" id="c2">0.0</div>
+                <div class="mcd gold">Top 1%</div>
+              </div>
+              <div class="mc">
+                <div class="mcl"><svg viewBox="0 0 24 24" fill="none" stroke-width="2">
+                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
+                  </svg>누적 수익</div>
+                <div class="mcv" id="c3">₩0</div>
+                <div class="mcd">+₩340,000</div>
+              </div>
+            </div>
+            <div class="stit">정산 캘린더</div>
+            <table class="stbl">
+              <thead>
+                <tr>
+                  <th>날짜</th>
+                  <th>상담액</th>
+                  <th>수수료</th>
+                  <th>정산액</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>2026.04.21</td>
+                  <td>₩120,000</td>
+                  <td class="neg">-₩6,000</td>
+                  <td class="pos">₩114,000</td>
+                </tr>
+                <tr>
+                  <td>2026.04.20</td>
+                  <td>₩250,000</td>
+                  <td class="neg">-₩12,500</td>
+                  <td class="pos">₩237,500</td>
+                </tr>
+                <tr>
+                  <td>2026.04.19</td>
+                  <td>₩80,000</td>
+                  <td class="neg">-₩4,000</td>
+                  <td class="pos">₩76,000</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div>
+            <div class="kwt">리뷰 키워드 지도</div>
+            <div class="kwc"><span class="kw">#전문성<span class="n">450</span></span><span class="kw">#치유<span
+                  class="n">320</span></span><span class="kw">#정확한예측<span class="n">280</span></span><span
+                class="kw">#진절함<span class="n">190</span></span><span class="kw">#통찰력<span class="n">150</span></span>
+            </div>
+            <div class="rvc">
+              <div class="rvt">"자미두수 분석이 정말 소름 돋게 정확해요!"</div>
+              <div class="rvs">★★★★★</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- SCAN -->
+    <div id="pg-scan" class="pg">
+      <div class="pgtop">
+        <div class="back-btn" onclick="showPg('main')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="var(--t)" stroke-width="2.5">
+            <polyline points="15,18 9,12 15,6" />
+          </svg></div>
+        <h1>AI 관상 스캔</h1>
+        <div class="mode-toggle"><button class="mtbtn on" id="mf" onclick="setMode('face',this)">관상</button><button
+            class="mtbtn" id="mp" onclick="setMode('palm_left',this)">왼손<span
+              style="font-size:9px;display:block;color:rgba(255,255,255,0.5);">선천운</span></button><button class="mtbtn"
+            id="mp2" onclick="setMode('palm_right',this)">오른손<span
+              style="font-size:9px;display:block;color:rgba(255,255,255,0.5);">후천운</span></button></div>
+      </div>
+      <div id="scan-saju-badge"
+        style="display:none;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);border-radius:10px;padding:.6rem 1rem;margin-bottom:.75rem;font-size:12px;color:var(--t2);display:flex;align-items:center;gap:8px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2">
+          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+        </svg>
+        <span id="scan-saju-info">사주 정보 연동 중...</span>
+        <span style="margin-left:auto;color:var(--em);font-weight:700;font-size:11px;">3대 역학 통합 분석</span>
+      </div>
+      <div class="cam-stage" style="position:relative;background:#000;border-radius:12px;overflow:hidden;">
+        <div class="shutter-flash" id="shutterFlash"></div>
+        <div class="cam-guide-msg" id="camGuideMsg">얼굴을 타원 안에 가득 채워주세요</div>
+        <video id="camVideo" autoplay playsinline muted
+          style="width:100%;height:100%;object-fit:cover;display:none;transform:scaleX(-1);transform:scaleX(-1);border-radius:12px;"></video>
+        <canvas id="sc" width="640" height="400"
+          style="position:absolute;top:0;left:0;width:100%;height:100%;pointer-events:none;transform:scaleX(-1)"></canvas>
+        <div id="cam-error"
+          style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:#0a0a20;border-radius:12px;">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,80,80,0.7)" stroke-width="1.5">
+            <path d="M23 7l-7 5 7 5V7z" />
+            <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
+            <line x1="1" y1="1" x2="23" y2="23" stroke="rgba(255,80,80,0.7)" />
+          </svg>
+          <div style="font-size:13px;color:var(--t2);text-align:center;padding:0 1rem;">카메라 접근이 거부됐습니다<br>브라우저 설정에서 카메라
+            권한을 허용해주세요</div>
+          <button onclick="startCamera()"
+            style="padding:8px 20px;background:var(--em);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">다시
+            시도</button>
+        </div>
+        <div id="cam-flash"
+          style="position:absolute;inset:0;background:white;opacity:0;pointer-events:none;border-radius:12px;transition:opacity 0.1s;z-index:5;">
+        </div>
+        <div id="cam-guide-msg"
+          style="position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:#fff;font-size:12px;font-weight:600;padding:6px 16px;border-radius:20px;white-space:nowrap;z-index:4;">
+          얼굴을 원 안에 가득 채워주세요</div>
+        <button id="cam-flip-btn" onclick="flipCamera()"
+          style="position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.3);cursor:pointer;z-index:4;display:flex;align-items:center;justify-content:center;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
+            <path d="M1 4v6h6" />
+            <path d="M23 20v-6h-6" />
+            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" />
+          </svg>
+        </button>
+        <div class="fb-bar">
+          <div class="fb-dot warn" id="fd"></div>
+          <div class="fb-txt" id="ft">카메라를 눈높이에 맞춰 주세요</div>
+          <div class="fb-sub" id="fs">얼굴을 가이드 안에 맞춰주세요</div>
+        </div>
+      </div>
+      <div class="ctrl-row">
+        <div class="side-ctrl">
+          <div class="ctrl-btn" id="bg" onclick="tGrid()">격자 가이드</div>
+          <div class="ctrl-btn" id="bl" onclick="tLight()">밝기 보정</div>
+        </div>
+        <button class="shutter" id="sh" onclick="doCapture()">
+          <div class="si"></div>
+        </button>
+        <div class="side-ctrl">
+          <div class="ctrl-btn" onclick="resetScan()">다시 찍기</div>
+          <div class="ctrl-btn" onclick="setMode('palm_left',document.getElementById('mp'))">왼손 전환</div>
+        </div>
+      </div>
+      <div class="tips-row">
+        <div class="tip-card">
+          <div class="tip-icon" style="background:rgba(80,200,120,0.15);"><svg viewBox="0 0 24 24" fill="none"
+              stroke="#50C878" stroke-width="2">
+              <circle cx="12" cy="12" r="10" />
+              <line x1="12" y1="8" x2="12" y2="12" />
+              <line x1="12" y1="16" x2="12.01" y2="16" />
+            </svg></div>
+          <div class="tip-text">정면을 바라보고 표정을 편안하게</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon" style="background:rgba(255,215,0,0.15);"><svg viewBox="0 0 24 24" fill="none"
+              stroke="#FFD700" stroke-width="2">
+              <circle cx="12" cy="12" r="5" />
+              <line x1="12" y1="1" x2="12" y2="3" />
+              <line x1="12" y1="21" x2="12" y2="23" />
+              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+            </svg></div>
+          <div class="tip-text">밝은 자연광 또는 정면 조명 권장</div>
+        </div>
+        <div class="tip-card">
+          <div class="tip-icon" style="background:rgba(96,130,220,0.15);"><svg viewBox="0 0 24 24" fill="none"
+              stroke="#8aacf0" stroke-width="2">
+              <rect x="2" y="3" width="20" height="14" rx="2" />
+              <line x1="8" y1="21" x2="16" y2="21" />
+              <line x1="12" y1="17" x2="12" y2="21" />
+            </svg></div>
+          <div class="tip-text">카메라와 40~60cm 거리 유지</div>
+        </div>
+      </div>
+      <div class="prog-sec" id="ps">
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.75rem;">분석 진행 중...</div>
+        <div class="prog-steps" id="psteps"></div>
+      </div>
+      <div class="result-sec" id="rs">
+        <div class="res-hero">
+          <div class="face-thumb"><canvas id="tc" width="64" height="80" style="width:64px;height:80px;"></canvas>
+            <div class="face-tag">스캔 완료</div>
+          </div>
+          <div>
+            <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:3px;">홍길동 · 인시생</div>
+            <div style="font-size:11px;color:var(--t2);margin-bottom:.5rem;">관상 분석 완료 · 자미두수 12궁 동기화</div>
+            <div class="match-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2.5">
+                <polyline points="20,6 9,17 4,12" />
+              </svg>명반 일치도 87%</div>
+          </div>
+        </div>
+        <div class="feat-grid" id="fg"></div>
+        <div
+          style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:.85rem;margin-bottom:.75rem;">
+          <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.6rem;">12궁 관상 동기화 결과</div>
+          <div class="pm-list" id="pl"></div>
+        </div>
+        <div class="ib">
+          <div class="ib-title">관상·명반 통합 해석</div>
+          <div class="ib-body">이마(관록궁)가 <em>넓고 둥글게 발달</em>하여 명반의 천동성 화록과 완벽하게 일치합니다. 눈빛의 <em>예리함(천기성 명궁)</em>과 인중의 길이가
+            <b>이동운 91점</b>을 뒷받침합니다.</div>
+        </div>
+        <div class="cta-row">
+          <button class="btn-gold" onclick="showPg('report')">✦ 관상 포함 50P 리포트</button>
+          <button class="btn-em" onclick="setMode('palm',document.getElementById('mp'));resetScan()">손금 스캔 이어서</button>
+          <button class="btn-out" onclick="showPg('main')">메인으로</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- SOUND -->
+    <div id="pg-sound" class="pg">
+      <div class="pgtop">
+        <div class="back-btn" onclick="showPg('main')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="var(--t)" stroke-width="2.5">
+            <polyline points="15,18 9,12 15,6" />
+          </svg></div>
+        <h1>천기 사운드 레미디</h1>
+        <div style="font-size:11px;color:var(--t2);margin-left:auto;">실시간 처방</div>
+      </div>
+      <div class="rx-hero fu">
+        <div style="font-size:11px;color:var(--t2);margin-bottom:.4rem;">관록궁 삼합일 · 오늘의 처방</div>
+        <div class="rx-hl">오늘은 <span>돌파의 에너지</span>가 흐릅니다</div>
+        <div style="font-size:12px;color:var(--t2);">직업운 88 · 이동운 91 · UrbanPulseMix 처방</div>
+        <div class="spills"><span class="spill e">직업운 88</span><span class="spill e">이동운 91</span><span
+            class="spill g">재물운 74</span><span class="spill p">애정운 65</span></div>
+      </div>
+      <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:.55rem;">채널 선택</div>
+      <div class="ch-grid" id="chg"></div>
+      <a id="ytl" href="#" class="ytbtn" target="_blank" rel="noopener noreferrer">
+        <svg viewBox="0 0 24 24">
+          <path
+            d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.96a8.28 8.28 0 004.83 1.54V8.06a4.85 4.85 0 01-1.06-.3z" />
+        </svg>
+        <span id="ytlt">유튜브에서 UrbanPulseMix 열기 →</span>
+      </a>
+      <div style="font-size:11px;color:var(--t2);text-align:center;margin-bottom:.85rem;" id="ytnote"><span
+          style="color:var(--em);">↑ 클릭하면 유튜브로 이동합니다</span></div>
+      <div class="why-card" id="wc2">
+        <div class="why-title" id="wt2"></div>
+        <div class="why-body" id="wb2"></div>
+      </div>
+      <div class="time-rx">
+        <div class="time-rx-title">오늘 시간대별 처방 플로우</div>
+        <div class="trow">
+          <div class="ttag" style="background:rgba(255,215,0,0.15);color:var(--gold);">오전 9~12시</div>
+          <div class="tdesc">UrbanPulseMix — 도시 에너지로 업무·미팅 집중</div>
+        </div>
+        <div class="trow">
+          <div class="ttag" style="background:rgba(255,165,0,0.15);color:#FFA500;">오후 1~5시</div>
+          <div class="tdesc">행운곱하기 · 행운증폭 · 행운배수 — 긍정 흐름 유지</div>
+        </div>
+        <div class="trow">
+          <div class="ttag" style="background:rgba(160,110,200,0.15);color:#c088e0;">저녁 5~8시</div>
+          <div class="tdesc">딱적당 — 오늘 만난 사람의 심리 읽기, 인간관계 정리</div>
+        </div>
+        <div class="trow">
+          <div class="ttag" style="background:rgba(80,200,120,0.15);color:var(--em);">저녁 8~10시</div>
+          <div class="tdesc">YeoniWave — 감정 회복·마음 정리</div>
+        </div>
+        <div class="trow">
+          <div class="ttag" style="background:rgba(96,130,220,0.15);color:#8aacf0;">취침 전</div>
+          <div class="tdesc">Deep Rest Mode — 앰비언트·블랙스크린으로 깊은 수면</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- REPORT -->
+    <div id="pg-report" class="pg">
+      <div class="pgtop">
+        <div class="back-btn" onclick="showPg('main')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="var(--t)" stroke-width="2.5">
+            <polyline points="15,18 9,12 15,6" />
+          </svg></div>
+        <h1>라이프 컴퍼스 50P 리포트</h1>
+      </div>
+      <div
+        style="background:rgba(80,200,120,0.1);border:1px solid rgba(80,200,120,0.2);border-radius:12px;padding:1rem;margin-bottom:1rem;display:flex;align-items:center;gap:10px;"
+        class="fu">
+        <div
+          style="width:32px;height:32px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
+            <polyline points="20,6 9,17 4,12" />
+          </svg></div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:#fff;">결제 완료 — 즉시 열람 가능</div>
+          <div style="font-size:11px;color:var(--t2);">₩89,000 · 에스크로 보호 완료</div>
+        </div>
+      </div>
+      <div class="ib fu">
+        <div class="ib-title">천기성 명주 핵심 해석</div>
+        <div class="ib-body"><em>천기성(天機星)</em>은 계략과 지혜의 별입니다. 두뇌와 빠른 상황 판단력으로 기획·전략·컨설팅 분야에서 탁월한 성과를
+          냅니다.<br><br><b>40~49세 천동성 대운(92점)</b>이 인생 최대의 황금기입니다. <b>2027년 5월</b> 관록궁 화록 발동 — 승진·계약 확정.</div>
+      </div>
+      <div class="cta-row fu">
+        <button class="btn-gold" onclick="showPg('scan')">AI 관상 스캔 추가</button>
+        <button class="btn-em" onclick="showPg('sound')">음악 처방 받기</button>
+        <button class="btn-out" onclick="showPg('main')">메인으로</button>
+      </div>
+    </div>
+
+    <!-- SAJU RESULT PAGE -->
+    <div id="pg-saju" class="pg">
+      <div class="pgtop">
+        <div class="back-btn" onclick="showPg('main')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
+            stroke="var(--t)" stroke-width="2.5">
+            <polyline points="15,18 9,12 15,6" />
+          </svg></div>
+        <h1 id="saju-page-title">천기 분석 결과</h1>
+        <div style="font-size:11px;color:var(--t2);margin-left:auto;" id="saju-date-tag"></div>
+      </div>
+
+      <div id="saju-profile-card"
+        style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.2);border-radius:14px;padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;gap:14px;">
+        <div
+          style="width:44px;height:44px;border-radius:50%;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5">
+            <polygon
+              points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
+          </svg>
+        </div>
+        <div>
+          <div id="saju-profile-name" style="font-size:16px;font-weight:700;color:#fff;margin-bottom:3px;"></div>
+          <div id="saju-profile-info" style="font-size:11px;color:var(--t2);"></div>
+        </div>
+      </div>
+
+      <div id="saju-score-row" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem;">
+      </div>
+
+      <div id="saju-result-body" style="display:flex;flex-direction:column;gap:.85rem;"></div>
+
+      <div style="margin-top:1rem;" class="cta-row">
+        <button class="btn-gold" onclick="showPg('sound')">오늘의 음악 처방 받기</button>
+        <button class="btn-em" onclick="showPg('scan')">AI 관상 스캔 추가</button>
+        <button class="btn-out" onclick="showPg('main')">다시 입력</button>
+      </div>
+    </div>
+
+    <div class="footer">© 2026 천기 웨이브 (Cheon-gi Wave). All rights reserved.<br>정통 자미두수, 기문둔갑, 매화역수 기반 프리미엄 명리 플랫폼</div>
+  </div>
+
+  <!-- LOADING OVERLAY -->
+  <div id="sajuLoading"
+    style="display:none;position:fixed;inset:0;background:rgba(10,10,40,0.88);z-index:998;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;">
+    <div
+      style="width:64px;height:64px;border-radius:50%;border:3px solid rgba(80,200,120,0.2);border-top-color:#50C878;animation:spin 1s linear infinite;">
+    </div>
+    <div style="text-align:center;">
+      <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:.4rem;" id="loading-msg">천기(天機)를 읽는 중...</div>
+      <div style="font-size:12px;color:var(--t2);" id="loading-sub">자미두수 12궁 배치 연산 중</div>
+    </div>
+  </div>
+
+  <!-- AUTH MODAL -->
+  <div class="auth-overlay" id="authOverlay" onclick="overlayClose(event)">
+    <div class="auth-modal-wrap">
+      <div class="auth-modal" id="authModal">
+        <div class="auth-head">
+          <div class="auth-logo">
+            <div class="auth-logo-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                <polygon
+                  points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
+                  fill="#0f0f3a" />
+              </svg></div>
+            <div class="auth-logo-txt">천기 웨이브</div>
+          </div>
+          <div class="auth-tabs">
+            <button class="auth-tab on" id="atab-login" onclick="switchAuthTab('login')">로그인</button>
+            <button class="auth-tab" id="atab-join" onclick="switchAuthTab('join')">회원가입</button>
+          </div>
+        </div>
+
+        <!-- LOGIN BODY -->
+        <div class="auth-body" id="abody-login">
+          <div class="auth-sec">간편 로그인</div>
+          <div class="soc-btns">
+            <button class="soc-btn" id="kakao-login-btn" onclick="doKakaoLogin()">
+              <div class="soc-ico" style="background:#FEE500;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 3C6.48 3 2 6.48 2 10.8c0 2.72 1.6 5.12 4 6.56L5 21l4.28-2.56A12 12 0 0 0 12 18.6c5.52 0 10-3.48 10-7.8S17.52 3 12 3z"
+                    fill="#3C1E1E" />
+                </svg>
+              </div>
+              <span class="soc-lbl">카카오톡으로 로그인</span>
+              <span class="kakao-badge">추천</span>
+            </button>
+            <button class="soc-btn" onclick="alertOauth('토스')">
+              <div class="soc-ico" style="background:#0064FF;color:#fff;font-size:11px;font-weight:700;">T</div>
+              <span class="soc-lbl">토스로 로그인</span>
+              <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <polyline points="9,18 15,12 9,6" />
+              </svg>
+            </button>
+            <button class="soc-btn" onclick="alertOauth('PASS')">
+              <div class="soc-ico" style="background:#E8002D;color:#fff;font-size:9px;font-weight:700;">PASS</div>
+              <span class="soc-lbl">PASS로 로그인</span>
+              <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <polyline points="9,18 15,12 9,6" />
+              </svg>
+            </button>
+            <button class="soc-btn" onclick="alertOauth('네이버')">
+              <div class="soc-ico" style="background:#03C75A;color:#fff;font-size:12px;font-weight:700;">N</div>
+              <span class="soc-lbl">네이버로 로그인</span>
+              <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <polyline points="9,18 15,12 9,6" />
+              </svg>
+            </button>
+          </div>
+          <div class="auth-div">
+            <div class="auth-div-line"></div>
+            <div class="auth-div-txt">또는 이메일로</div>
+            <div class="auth-div-line"></div>
+          </div>
+          <div class="auth-inp-grp">
+            <div class="auth-inp-row">
+              <div class="auth-inp-lbl">이메일</div><input class="auth-inp" type="email" placeholder="example@email.com"
+                id="li-email">
+            </div>
+            <div class="auth-inp-row">
+              <div class="auth-inp-lbl">비밀번호</div><input class="auth-inp" type="password" placeholder="비밀번호 입력"
+                id="li-pw">
+            </div>
+          </div>
+          <button class="auth-submit" onclick="doEmailLogin()">로그인</button>
+          <div class="auth-links">
+            <button class="auth-link">아이디 찾기</button>
+            <button class="auth-link">비밀번호 찾기</button>
+            <button class="auth-link" onclick="switchAuthTab('join')">회원가입</button>
+          </div>
+        </div>
+
+        <!-- JOIN BODY -->
+        <div class="auth-body" id="abody-join" style="display:none;">
+          <div class="auth-sec">간편 회원가입 — 3초 완료</div>
+          <div class="soc-btns">
+            <button class="soc-btn" onclick="doKakaoLogin()">
+              <div class="soc-ico" style="background:#FEE500;">
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
+                  <path
+                    d="M12 3C6.48 3 2 6.48 2 10.8c0 2.72 1.6 5.12 4 6.56L5 21l4.28-2.56A12 12 0 0 0 12 18.6c5.52 0 10-3.48 10-7.8S17.52 3 12 3z"
+                    fill="#3C1E1E" />
+                </svg>
+              </div>
+              <span class="soc-lbl">카카오톡으로 시작하기</span>
+              <span class="kakao-badge">추천</span>
+            </button>
+            <button class="soc-btn" onclick="alertOauth('토스')">
+              <div class="soc-ico" style="background:#0064FF;color:#fff;font-size:11px;font-weight:700;">T</div>
+              <span class="soc-lbl">토스로 시작하기</span>
+              <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <polyline points="9,18 15,12 9,6" />
+              </svg>
+            </button>
+            <button class="soc-btn" onclick="alertOauth('PASS')">
+              <div class="soc-ico" style="background:#E8002D;color:#fff;font-size:9px;font-weight:700;">PASS</div>
+              <span class="soc-lbl">PASS로 시작하기</span>
+              <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <polyline points="9,18 15,12 9,6" />
+              </svg>
+            </button>
+            <button class="soc-btn" onclick="alertOauth('네이버')">
+              <div class="soc-ico" style="background:#03C75A;color:#fff;font-size:12px;font-weight:700;">N</div>
+              <span class="soc-lbl">네이버로 시작하기</span>
+              <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2">
+                <polyline points="9,18 15,12 9,6" />
+              </svg>
+            </button>
+          </div>
+          <div class="auth-div">
+            <div class="auth-div-line"></div>
+            <div class="auth-div-txt">또는 이메일로</div>
+            <div class="auth-div-line"></div>
+          </div>
+          <div class="auth-inp-grp">
+            <div class="auth-inp-row">
+              <div class="auth-inp-lbl">이름</div><input class="auth-inp" type="text" placeholder="홍길동" id="ji-name">
+            </div>
+            <div class="auth-inp-row">
+              <div class="auth-inp-lbl">이메일</div><input class="auth-inp" type="email" placeholder="example@email.com"
+                id="ji-email">
+            </div>
+            <div class="auth-inp-row">
+              <div class="auth-inp-lbl">비밀번호</div><input class="auth-inp" type="password" placeholder="8자 이상"
+                id="ji-pw">
+            </div>
+          </div>
+          <button class="auth-submit" onclick="doEmailJoin()">가입하고 천기 스캔 시작</button>
+          <div class="auth-terms">가입 시 <a href="#">이용약관</a> 및 <a href="#">개인정보처리방침</a>에 동의합니다.</div>
+        </div>
+
+        <button class="auth-close" onclick="closeAuth()">
+          <svg viewBox="0 0 24 24">
+            <line x1="18" y1="6" x2="6" y2="18" />
+            <line x1="6" y1="6" x2="18" y2="18" />
+          </svg>
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /* Cheon-gi Wave - Saju AI Engine / Claude API */
+
+    const SAJU_LOADING_MSGS = [
+      ['천기(天機)를 읽는 중...', '생년월일 간지(干支) 변환 중'],
+      ['자미두수 12궁 배치 중...', '명궁·재백궁·관록궁 계산 중'],
+      ['주성(主星) 좌정 중...', '자미성·천기성·태양성 배치 중'],
+      ['대운·소운 흐름 분석 중...', '10년 대운 주기 연산 중'],
+      ['AI 해석 생성 중...', '개인화 사주 리포트 작성 중'],
+    ];
+
+    let selectedGender = '남';
+    let selectedCal = '양력';
+
+    function setGender(g) {
+      selectedGender = g;
+      const bm = document.getElementById('gbtn-m');
+      const bf = document.getElementById('gbtn-f');
+      if (bm) { bm.classList.toggle('on', g === '남'); }
+      if (bf) { bf.classList.toggle('on', g === '여'); }
+      console.log('성별 선택:', g);
+    }
+    function setCal(c) {
+      selectedCal = c;
+      ['solar', 'lunar', 'leap'].forEach(id => document.getElementById('cbtn-' + id).classList.remove('on'));
+      const map = { '양력': 'solar', '음력': 'lunar', '음력윤달': 'leap' };
+      if (map[c]) document.getElementById('cbtn-' + map[c]).classList.add('on');
+    }
+
+    let _cachedSajuKey = null;
+    let _cachedSajuResult = null;
+
+    async function doSajuScan() {
+      const name = document.getElementById('inp-name').value.trim();
+      const yearVal = document.getElementById('inp-year').value;
+      const monthVal = document.getElementById('inp-month').value;
+      const dayVal = document.getElementById('inp-day').value;
+      const unknownTime = document.getElementById('unk').checked;
+      const gender = selectedGender;
+      const cal = selectedCal;
+      const timeEl = document.getElementById('inp-time');
+      const time = timeEl ? timeEl.value : '';
+
+      if (!name) { alert('이름을 입력해 주세요.'); return; }
+      if (!yearVal || !monthVal || !dayVal) { alert('생년월일을 입력해 주세요.'); return; }
+      if (!time && !unknownTime) { alert('태어난 시간을 선택하거나\n"시간을 모릅니다"에 체크해 주세요.'); return; }
+
+      // 캐시 확인 - 동일 입력이면 저장된 결과 즉시 표시
+      const cacheKey = `${name}_${yearVal}_${monthVal}_${dayVal}_${gender}_${cal}_${time || 'unknown'}`;
+      if (_resultCache[cacheKey]) {
+        const cached = _resultCache[cacheKey];
+        renderSajuResult(name, yearVal, monthVal, dayVal, cached.timeStr, cached.age, cached.result);
+        return;
+      }
+
+      showLoading(true);
+      let msgIdx = 0;
+      const msgTimer = setInterval(() => {
+        msgIdx = Math.min(msgIdx + 1, SAJU_LOADING_MSGS.length - 1);
+        document.getElementById('loading-msg').textContent = SAJU_LOADING_MSGS[msgIdx][0];
+        document.getElementById('loading-sub').textContent = SAJU_LOADING_MSGS[msgIdx][1];
+      }, 1800);
+
+      const birthDate = new Date(birth);
+      const year = birthDate.getFullYear();
+      const month = birthDate.getMonth() + 1;
+      const day = birthDate.getDate();
+      const timeStr = unknownTime ? '미상 (삼주 분석)' : time;
+      const today = new Date();
+      const age = today.getFullYear() - year;
+
+      // 주성 기본 점수 미리 계산 (AI가 숫자를 만들지 못하게 고정)
+      const analysisTime = formatAnalysisTime();
+      const baseScoreHint = getBaseScore('');  // 주성 확정 전 기본값
+
+      const prompt = `당신은 '천기 웨이브'의 수석 명리학 AI 분석가입니다.
+반드시 아래 [엄격한 분석 규칙]을 준수하여 일관성 있는 결과를 도출하세요.
+
+[엄격한 분석 규칙]
+1. 점수 산출: 자미두수 명궁 주성에 따라 기본점을 정하고, 매화역수 괘로 가감하세요.
+   - 자미/천부/무곡/태양: 기본 90점 내외
+   - 천기/태음/탐랑/거문: 기본 85점 내외
+   - 천상/천량/칠살/파군: 기본 80점 내외
+   - 매화역수 생체(生體)괘: +3~5점, 극체(剋體)괘: -3~5점
+2. 데이터 비중: 자미두수(인생항로) 70% + 매화역수(오늘기회) 20% + 기문둔갑(성공치트키) 10%
+3. 용어: 자미두수→'인생 지도', 매화역수→'오늘의 기회', 기문둔갑→'성공 치트키'
+4. 문체: 3인칭, 단호하고 신뢰감 있는 전문가 어조 (~입니다, ~하십시오)
+5. 점수는 한 번 산출되면 같은 사주에서 변하지 않도록 논리적 근거를 갖출 것
+
+[의뢰인 정보]
+- 성명: ${name} (${gender}성)
+- 생년월일: ${year}년 ${month}월 ${day}일 (${cal})
+- 태어난 시간: ${timeStr}
+- 현재 나이: ${age}세
+- 분석 시각: ${analysisTime}
+
+[3대 역학 통합 분석 지침]
+1. 자미두수: 명궁 주성 파악 - 격국/대운 방향(남성 양년생 순행/음년생 역행, 여성 반대) - 현재 대운 분석
+2. 매화역수: 오늘 날짜+시간으로 체괘/용괘 산출 - 오늘의 길흉 점수 도출
+3. 기문둔갑: 오늘 시반 기준 팔문/팔신 배치 - 길방/흉방/귀인 방위 산출
+4. 세 역학 결과를 하이브리드 메시지로 통합
+
+반드시 아래 JSON 형식으로만 응답하세요. 다른 텍스트 없이 JSON만 출력하세요.
+
+{
+  "star": "명궁 주성명",
+  "palace_desc": "명궁 주성 핵심 특성 (2줄 이내)",
+  "daewoon": "현재 대운 (몇 세~몇 세, 어떤 대운)",
+  "base_score": 숫자(주성 기본점수),
+  "scores": {
+    "재물운": 숫자,
+    "직업운": 숫자,
+    "애정운": 숫자,
+    "건강운": 숫자
+  },
+  "score_trends": {
+    "재물운": "상승중 또는 하락중 또는 안정",
+    "직업운": "상승중 또는 하락중 또는 안정",
+    "애정운": "상승중 또는 하락중 또는 안정",
+    "건강운": "상승중 또는 하락중 또는 안정"
+  },
+  "score_sources": {
+    "재물운": "자미두수 기준",
+    "직업운": "자미두수 기준",
+    "애정운": "매화역수 기준",
+    "건강운": "자미두수 기준"
+  },
+  "ziwei": "인생 지도 분석 (인생 항로/격국/대운, 3-4문장)",
+  "meihua": "오늘의 기회 분석 (체괘/용괘/길흉, 3-4문장)",
+  "qimen": "성공 치트키 분석 (오늘 길방/귀인 방위/전략, 3-4문장)",
+  "hybrid_msg": "3대 역학 통합 메시지 (5-6문장, ~입니다 어조)",
+  "career": "직업/커리어 분석 (3-4문장)",
+  "wealth": "재물/금전 분석 (3-4문장)",
+  "love": "애정/인간관계 분석 (3-4문장)",
+  "luck_period": "대운 흐름 향후 3년 (3-4문장)",
+  "caution": "주의사항 및 개운법 (2-3문장)",
+  "lucky_direction": "기문둔갑 오늘의 길방",
+  "lucky_items": ["길한 색상 또는 방위", "길한 숫자", "길한 요일"],
+  "summary": "전체 요약 한 줄 (30자 이내)"
+}`;
+
+      try {
+        // CORS 우회: 로컬에서는 프록시 없이 직접 호출 시도
+        // 배포 후에는 Vercel Edge Function 사용
+        const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+          ? 'https://api.anthropic.com/v1/messages'
+          : '/api/saju';
+
+        let response;
+        try {
+          response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'anthropic-dangerous-direct-browser-access': 'true',
+              'x-api-key': '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',
+              'anthropic-version': '2023-06-01'
+            },
+            body: JSON.stringify({
+              model: 'claude-haiku-4-5-20251001',
+              max_tokens: 4000,
+              messages: [{ role: 'user', content: prompt }]
+            })
+          });
+        } catch (fetchErr) {
+          throw new Error('Failed to fetch');
+        }
+
+        clearInterval(msgTimer);
+
+        if (!response.ok) {
+          throw new Error('API 응답 오류: ' + response.status);
+        }
+
+        const data = await response.json();
+        const text = data.content?.map(c => c.text || '').join('') || '';
+        let clean = text.replace(/```json|```/g, '').trim();
+        // JSON이 잘린 경우 복구 시도
+        if (!clean.endsWith('}')) {
+          const lastBrace = clean.lastIndexOf('}');
+          if (lastBrace > 0) clean = clean.substring(0, lastBrace + 1);
+          // 중괄호 닫기 보완
+          let opens = (clean.match(/{/g) || []).length;
+          let closes = (clean.match(/}/g) || []).length;
+          while (closes < opens) { clean += '}'; closes++; }
+        }
+        const result = JSON.parse(clean);
+
+        showLoading(false);
+        // 캐시 저장
+        // 캐시는 _resultCache에 저장됨
+        _cachedSajuResult = result;
+        renderSajuResult(name, yearVal || year, monthVal || month, dayVal || day, timeStr, age, result);
+
+      } catch (e) {
+        clearInterval(msgTimer);
+        showLoading(false);
+        alert('분석 중 오류가 발생했습니다.\n\n' + e.message + '\n\n잠시 후 다시 시도해 주세요.');
+      }
+    }
+
+    function showLoading(show) {
+      const el = document.getElementById('sajuLoading');
+      el.style.display = show ? 'flex' : 'none';
+      if (show) {
+        document.getElementById('loading-msg').textContent = SAJU_LOADING_MSGS[0][0];
+        document.getElementById('loading-sub').textContent = SAJU_LOADING_MSGS[0][1];
+      }
+    }
+
+    function renderSajuResult(name, year, month, day, timeStr, age, r) {
+      // 전역에 사주 데이터 저장 (관상/손금 스캔 연동용)
+      _sajuData = { name, year, month, day, timeStr, age, gender: selectedGender, cal: selectedCal, star: r.star, daewoon: r.daewoon, summary: r.summary, scores: r.scores, lucky_direction: r.lucky_direction };
+      document.getElementById('saju-page-title').textContent = name + '님의 천기 분석';
+      document.getElementById('saju-date-tag').textContent = formatAnalysisTime();
+
+      // 기문둔갑 나침반 방위 동기화
+      if (r.lucky_direction) setCompassDirection(r.lucky_direction);
+
+      // 생애파동 AI 결과 반영
+      setTimeout(() => { updateWaveFromAI(r.scores, r.base_score); }, 100);
+
+      // 생애 파동 점수 동기화 (AI 결과 반영)
+      if (r.scores) {
+        const waveEl = document.querySelector('.sb.e');
+        const waveEl2 = document.querySelector('.sb.g');
+        const waveEl3 = document.querySelector('.sb.p');
+        if (waveEl) waveEl.textContent = Math.round(r.scores['재물운'] || 85) + '점';
+        if (waveEl2) waveEl2.textContent = Math.round(r.scores['직업운'] || 92) + '점';
+        if (waveEl3) waveEl3.textContent = Math.round(r.scores['애정운'] || 68) + '점';
+      }
+
+      document.getElementById('saju-profile-name').textContent =
+        name + ' · ' + r.star + ' 명주';
+      document.getElementById('saju-profile-info').innerHTML =
+        year + '년 ' + month + '월 ' + day + '일 · ' + timeStr +
+        ' · ' + age + '세 · <em style="color:var(--em);">' + r.summary + '</em>';
+
+      const scoreColors = { '재물운': '#FFD700', '직업운': '#50C878', '애정운': '#cc88bb', '건강운': '#8aacf0' };
+      const trendIcon = { '상승중': '↑', '하락중': '↓', '안정': '->' };
+      const trendColor = { '상승중': '#50C878', '하락중': '#e74c3c', '안정': '#9999cc' };
+
+      const scoreRow = document.getElementById('saju-score-row');
+      scoreRow.innerHTML = '';
+      Object.entries(r.scores).forEach(([k, v]) => {
+        const trend = r.score_trends?.[k] || '안정';
+        const src = r.score_sources?.[k] || '';
+        scoreRow.innerHTML += `
+      <div class="saju-score-card">
+        <div class="saju-score-label">${k}</div>
+        <div class="saju-score-val" style="color:${scoreColors[k]}">${Math.round(v)}</div>
+        <div class="saju-score-trend" style="color:${trendColor[trend]}">${trendIcon[trend]} ${trend}</div>
+        ${src ? `<div style="font-size:9px;color:rgba(153,153,204,0.7);margin-top:3px;line-height:1.3;">${src}</div>` : ''}
+      </div>`;
+      });
+
+      if (r.lucky_direction) {
+        const dirCard = document.createElement('div');
+        dirCard.style.cssText = 'background:rgba(96,130,220,0.08);border:1px solid rgba(96,130,220,0.2);border-radius:10px;padding:.7rem 1rem;display:flex;align-items:center;gap:12px;margin-bottom:.85rem;';
+        dirCard.innerHTML = `
+      <div style="width:40px;height:40px;border-radius:50%;background:rgba(96,130,220,0.15);border:1px solid rgba(96,130,220,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8aacf0" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24,7.76 11.29,11.29 7.76,16.24 12.71,12.71"/></svg>
+      </div>
+      <div>
+        <div style="font-size:11px;color:#8aacf0;font-weight:700;margin-bottom:2px;">기문둔갑 오늘의 길방</div>
+        <div style="font-size:15px;font-weight:700;color:#fff;">${r.lucky_direction}</div>
+      </div>`;
+        document.getElementById('saju-result-body').prepend(dirCard);
+      }
+
+      // 무료 공개 섹션
+      const freeSections = [
+        { icon: '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>', color: '#FFD700', title: '3대 역학 통합 인생 메시지', body: r.hybrid_msg },
+        { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#50C878', title: '오늘의 기회 - 매화역수 분석', body: r.meihua },
+        { icon: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', color: '#EF9F27', title: '성공 치트키 - 오늘의 개운법', body: r.caution },
+      ];
+      // 유료 섹션
+      const paidSections = [
+        { icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>', color: '#FFD700', title: '자미두수 - 명궁: ' + r.star, body: r.ziwei },
+        { icon: '<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', color: '#FFD700', title: '재물/금전운 상세', body: r.wealth },
+        { icon: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/>', color: '#50C878', title: '직업/커리어운 상세', body: r.career },
+        { icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>', color: '#cc88bb', title: '애정/인간관계 상세', body: r.love },
+        { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#8aacf0', title: '대운 흐름 · 향후 3년', body: r.luck_period },
+        { icon: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>', color: '#8aacf0', title: '기문둔갑 - 길방/전략', body: r.qimen },
+      ];
+      const sections = freeSections;
+
+      const body = document.getElementById('saju-result-body');
+      body.innerHTML = '';
+      sections.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'saju-section';
+        div.innerHTML = `
+      <div class="saju-section-title" style="color:${s.color}">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${s.color}" stroke-width="2">${s.icon}</svg>
+        ${s.title}
+      </div>
+      <div class="saju-section-body saju-streaming">${s.body}</div>`;
+        body.appendChild(div);
+      });
+
+      // 유료 섹션 블러 처리
+      const paidWrap = document.createElement('div');
+      paidWrap.style.cssText = 'position:relative;margin-top:.5rem;';
+      const paidInner = document.createElement('div');
+      paidInner.style.cssText = 'filter:blur(4px);pointer-events:none;display:flex;flex-direction:column;gap:.85rem;';
+      paidSections.forEach(s => {
+        const div = document.createElement('div');
+        div.className = 'saju-section';
+        div.innerHTML = `<div class="saju-section-title" style="color:${s.color}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${s.color}" stroke-width="2">${s.icon}</svg>${s.title}</div><div class="saju-section-body">${s.body}</div>`;
+        paidInner.appendChild(div);
+      });
+      const paidOverlay = document.createElement('div');
+      paidOverlay.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(10,10,40,0.7);border-radius:12px;z-index:2;';
+      paidOverlay.innerHTML = `
+    <div style="font-size:22px;">🔒</div>
+    <div style="font-size:14px;font-weight:700;color:#fff;text-align:center;">50P 프리미엄 리포트</div>
+    <div style="font-size:12px;color:var(--t2);text-align:center;line-height:1.6;">자미두수 명궁 분석 · 대운 3년 흐름<br>재물/직업/애정 상세 분석 포함</div>
+    <button onclick="showPg('report')" style="padding:10px 24px;background:var(--gold);border:none;border-radius:8px;color:#0f0f3a;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">✦ 전체 리포트 보기</button>`;
+      paidWrap.appendChild(paidInner);
+      paidWrap.appendChild(paidOverlay);
+      body.appendChild(paidWrap);
+
+      if (r.lucky_items?.length) {
+        const luckDiv = document.createElement('div');
+        luckDiv.className = 'saju-section';
+        luckDiv.innerHTML = `
+      <div class="saju-section-title" style="color:var(--gold)">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        오늘의 길한 아이템
+      </div>
+      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:.2rem;">
+        ${r.lucky_items.map(i => `<span class="saju-tag" style="background:rgba(255,215,0,0.12);color:var(--gold);border:1px solid rgba(255,215,0,0.25);">✦ ${i}</span>`).join('')}
+      </div>`;
+        body.appendChild(luckDiv);
+      }
+
+      showPg('saju');
+      window.scrollTo(0, 0);
+    }
+  </script>
+  <script>
+    /* =====================================================
+       천기 웨이브 — 점수 룰북 (데이터 일관성 보장)
+       AI는 이 숫자를 읽어서 해설만 합니다
+       ===================================================== */
+    const STAR_BASE_SCORES = {
+      // 갑급 주성 (90점대)
+      '자미성': 92, '천부성': 91, '태양성': 90, '무곡성': 89,
+      // 을급 주성 (85점대)
+      '천기성': 86, '태음성': 85, '탐랑성': 84, '거문성': 83,
+      // 병급 주성 (78점대)
+      '천상성': 81, '천량성': 80, '칠살성': 79, '파군성': 78,
+      // 기본값
+      'default': 80
+    };
+    const SCORE_WEIGHTS = { ziwei: 0.7, meihua: 0.2, qimen: 0.1 };
+
+    function getBaseScore(starName) {
+      for (const [k, v] of Object.entries(STAR_BASE_SCORES)) {
+        if (starName && starName.includes(k.replace('성', ''))) return v;
+      }
+      return STAR_BASE_SCORES['default'];
+    }
+
+    function formatAnalysisTime() {
+      const now = new Date();
+      return now.getFullYear() + '년 ' + (now.getMonth() + 1) + '월 ' + now.getDate() + '일 ' +
+        String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ' 분석 기준';
+    }
+
+    /* 결과 캐싱 - 동일 사주 입력 시 저장된 결과 재사용 */
+    const _resultCache = {};
+    function getCacheKey(name, year, month, day, gender, cal, time) {
+      return `${name}_${year}_${month}_${day}_${gender}_${cal}_${time}`;
+    }
+
+    /* 전역 사주 데이터 - 관상/손금 분석에 활용 */
+    let _sajuData = null;
+
+    /* Kakao JS Key */
+    const KAKAO_JS_KEY = 'c67fa5fbeff62e7471a00b20a4eccae7';
+
+    let currentUser = null;
+
+    function initKakao() {
+      try {
+        if (window.Kakao) {
+          if (!window.Kakao.isInitialized()) {
+            window.Kakao.init(KAKAO_JS_KEY);
+            console.log('Kakao SDK initialized:', window.Kakao.isInitialized());
+          }
+        }
+      } catch (e) { console.error('Kakao init error:', e); }
+    }
+
+    function openAuth(tab) {
+      initKakao();
+      document.getElementById('authOverlay').classList.add('show');
+      switchAuthTab(tab || 'login');
+      document.body.style.overflow = 'hidden';
+    }
+    function closeAuth() {
+      document.getElementById('authOverlay').classList.remove('show');
+      document.body.style.overflow = '';
+    }
+    function overlayClose(e) {
+      if (e.target === document.getElementById('authOverlay')) closeAuth();
+    }
+    function switchAuthTab(t) {
+      document.getElementById('atab-login').classList.toggle('on', t === 'login');
+      document.getElementById('atab-join').classList.toggle('on', t === 'join');
+      document.getElementById('abody-login').style.display = t === 'login' ? 'block' : 'none';
+      document.getElementById('abody-join').style.display = t === 'join' ? 'block' : 'none';
+    }
+
+    function doKakaoLogin() {
+      if (KAKAO_JS_KEY === 'YOUR_KAKAO_JS_KEY') {
+        alert('카카오 JavaScript 키를 설정해 주세요.');
+        return;
+      }
+      try {
+        initKakao();
+        window.Kakao.Auth.authorize({
+          redirectUri: window.location.origin,
+        });
+      } catch (e) {
+        console.error('카카오 SDK 오류', e);
+        alert('카카오 SDK 오류: ' + e.message);
+      }
+    }
+    function doEmailLogin() {
+      const email = document.getElementById('li-email').value.trim();
+      const pw = document.getElementById('li-pw').value;
+      if (!email || !email.includes('@')) { alert('올바른 이메일을 입력해 주세요.'); return; }
+      if (!pw) { alert('비밀번호를 입력해 주세요.'); return; }
+      const name = email.split('@')[0];
+      loginSuccess({ name: name, avatar: null, provider: 'email' });
+    }
+    function doEmailJoin() {
+      const name = document.getElementById('ji-name').value.trim();
+      const email = document.getElementById('ji-email').value.trim();
+      const pw = document.getElementById('ji-pw').value;
+      if (!name) { alert('이름을 입력해 주세요.'); return; }
+      if (!email || !email.includes('@')) { alert('올바른 이메일을 입력해 주세요.'); return; }
+      if (!pw || pw.length < 8) { alert('비밀번호를 8자 이상 입력해 주세요.'); return; }
+      loginSuccess({ name: name, avatar: null, provider: 'email' });
+    }
+
+    function alertOauth(p) {
+      alert(p + ' 로그인은 해당 플랫폼의\n파트너/개발자 계약 후 연동 가능합니다.\n\n현재는 카카오 로그인과 이메일 로그인을\n사용해 주세요.');
+    }
+
+    function loginSuccess(user) {
+      currentUser = user;
+      closeAuth();
+      const area = document.getElementById('nav-auth-area');
+      const initials = user.name.slice(0, 1).toUpperCase();
+      area.innerHTML = `
+    <div class="nav-user-pill">
+      <div class="nav-user-avatar">${initials}</div>
+      <span class="nav-user-name">${user.name}</span>
+      <button class="nav-logout" onclick="doLogout()">로그아웃</button>
+    </div>`;
+    }
+    function doLogout() {
+      if (currentUser?.provider === 'kakao') {
+        try { window.Kakao.Auth.logout(); } catch (e) { }
+      }
+      currentUser = null;
+      document.getElementById('nav-auth-area').innerHTML = `
+    <button class="nav-login-btn" onclick="openAuth('login')">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>로그인
+    </button>`;
+    }
+    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAuth(); });
+  </script>
+  <script>
+    const EX = [
+      { name: '천명 도사', spec: '자미두수·기문둔갑', rat: '4.9', tags: ['#비즈니스', '#승진운'], top: false },
+      { name: '연화 선생', spec: '매화역수·심리상담', rat: '4.8', tags: ['#연애', '#재회부적'], top: false },
+      { name: '자미 광인', spec: '정통 자미두수', rat: '5.0', tags: ['#평생총운', '#50p리포트'], top: true },
+    ];
+
+    const CH = [
+      { id: 'urban', name: 'UrbanPulseMix', handle: '@urbanpulsemix', url: 'https://youtube.com/@urbanpulsemix?si=QdYFCZR-weLTTQe0', mood: '팝/팝트랩/힙합팝 - 트렌디 여성 보컬', tag: '오늘 추천', tBg: 'rgba(255,215,0,0.18)', tC: '#FFD700', iBg: 'rgba(255,215,0,0.15)', iC: '#FFD700', btn: '#e74c3c', sb: '#FFD700', icon: '<polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>', coming: false, why: { bg: 'rgba(255,215,0,0.05)', bd: 'rgba(255,215,0,0.2)', tc: '#FFD700', title: 'UrbanPulseMix - 오전/활동 처방', body: '직업운 <em>88점</em>, 이동운 <em>91점</em> - 오늘은 활동과 추진의 날. 도시적 팝·힙합팝이 <b>관록궁 삼합 기운</b>을 극대화합니다.' } },
+      { id: 'yeoni', name: 'YeoniWave', handle: '@YeoniWave', url: 'https://youtube.com/@yeoniwave?si=5sJ_CeJywBoLV193', mood: '재즈/올드팝 - 허스키 여성 보컬 - 따뜻한 감정선', tag: '저녁 처방', tBg: 'rgba(80,200,120,0.15)', tC: '#50C878', iBg: 'rgba(80,200,120,0.15)', iC: '#50C878', btn: '#1e6e40', sb: '#50C878', icon: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>', coming: false, why: { bg: 'rgba(80,200,120,0.05)', bd: 'rgba(80,200,120,0.2)', tc: '#50C878', title: 'YeoniWave - 저녁 감정 회복 처방', body: '지친 마음에 부드럽게 닿는 <em>따뜻한 음악의 파도</em>. 재즈와 올드팝 기반 허스키 보컬이 내면 풍요를 자극합니다.' } },
+      { id: 'luck1', name: '행운곱하기', handle: '@luckmultipy', url: 'https://youtube.com/@luckmultipy?si=9lmI5iyq7YXDBHNO', mood: '미스터리 앰비언트 - 반복 청취형 - 정서적 의식감', tag: '긍정 흐름', tBg: 'rgba(255,165,0,0.15)', tC: '#FFA500', iBg: 'rgba(255,165,0,0.15)', iC: '#FFA500', btn: '#7a4800', sb: '#FFA500', icon: '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>', coming: false, why: { bg: 'rgba(255,165,0,0.05)', bd: 'rgba(255,165,0,0.2)', tc: '#FFA500', title: '행운곱하기 - 마인드셋 정렬', body: '좋은 기운을 <em>믿고 머무르게 하는</em> 몰입형 사운드. 오후 마인드셋을 <b>풍요로운 방향</b>으로 정렬할 때 활용하십시오.' } },
+      { id: 'luck2', name: '행운증폭', handle: '@luckamplify', url: 'https://youtube.com/@luckamplify?si=N9zLq4MaAtxGSipB', mood: '상징적 키워드 반복 - 밝고 몰입감 있는 분위기', tag: '기분 상승', tBg: 'rgba(255,200,0,0.12)', tC: '#ccaa00', iBg: 'rgba(255,200,0,0.12)', iC: '#ccaa00', btn: '#5a4a00', sb: '#ccaa00', icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', coming: true, why: { bg: 'rgba(255,200,0,0.04)', bd: 'rgba(255,200,0,0.18)', tc: '#ccaa00', title: '행운증폭 - 셀프 암시/기분 환기', body: '상징적 키워드의 반복 노출로 <em>긍정 인식을 강화</em>합니다. 채널 준비 중, 곧 콘텐츠가 업로드됩니다.' } },
+      { id: 'luck3', name: '행운배수', handle: '@luckamplify', url: 'https://youtube.com/@luckamplify?si=3Bz7_XjNs55vpKpt', mood: '강한 확장감 - 동기 부여 - 긍정 루프 강화', tag: '동기 부여', tBg: 'rgba(255,100,50,0.13)', tC: '#e07050', iBg: 'rgba(255,100,50,0.13)', iC: '#e07050', btn: '#6a2510', sb: '#e07050', icon: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>', coming: true, why: { bg: 'rgba(255,100,50,0.04)', bd: 'rgba(255,100,50,0.18)', tc: '#e07050', title: '행운배수 - 확장/가속 에너지', body: '좋은 흐름을 <em>더 크게, 더 멀리</em> 이어가게 하는 채널. 채널 준비 중, 곧 콘텐츠가 업로드됩니다.' } },
+      { id: 'ddak', name: '딱적당', handle: '@ddakjeokdang', url: 'https://youtube.com/@ddakjeokdang?si=rwTGbsOpjuytSOo6', mood: 'MBTI - 사람 심리 - 쉽고 재미있는 설명', tag: '인간관계', tBg: 'rgba(160,110,200,0.18)', tC: '#c088e0', iBg: 'rgba(160,110,200,0.15)', iC: '#c088e0', btn: '#5a3080', sb: '#c088e0', icon: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>', coming: false, why: { bg: 'rgba(160,110,200,0.05)', bd: 'rgba(160,110,200,0.2)', tc: '#c088e0', title: '딱적당 - 인간관계/심리 처방', body: '오늘 만난 사람의 마음을 <em>쉽게 읽고 이해</em>하는 시간. MBTI와 사람 심리를 재미있게 풀어주는 콘텐츠로 <b>인간관계 피로</b>를 녹입니다.' } },
+      { id: 'deep', name: 'Deep Rest Mode', handle: '@cloud9modeon', url: 'https://youtube.com/@cloud9modeon?si=E1VgoSb-A9gVUJxh', mood: '앰비언트 - 블랙스크린 - 저자극 - 느린 호흡 음장', tag: '취침 전', tBg: 'rgba(96,130,220,0.15)', tC: '#8aacf0', iBg: 'rgba(96,130,220,0.15)', iC: '#8aacf0', btn: '#253070', sb: '#6082dc', icon: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>', coming: false, why: { bg: 'rgba(96,130,220,0.05)', bd: 'rgba(96,130,220,0.2)', tc: '#8aacf0', title: 'Deep Rest Mode - 수면/뇌 완전 휴식', body: '블랙 스크린 기반 앰비언트로 <em>완전히 내려놓는</em> 밤의 공간. <b>뇌를 알파-세타-델타</b>로 자연 전환합니다.' } },
+    ];
+
+    const FEATS = [
+      { name: '이마 (관록궁)', score: 88, color: '#50C878', desc: '넓고 둥근 형태. 직업운 강함.', tag: '명반 일치', tBg: 'rgba(80,200,120,0.18)', tC: '#3db866' },
+      { name: '눈빛 (명궁)', score: 92, color: '#50C878', desc: '예리하고 깊은 눈빛. 천기성 직관력.', tag: '강력 일치', tBg: 'rgba(80,200,120,0.18)', tC: '#3db866' },
+      { name: '코 (재백궁)', score: 79, color: '#FFD700', desc: '우뚝하고 안정적. 태음 화권 일치.', tag: '일치', tBg: 'rgba(255,215,0,0.15)', tC: '#B8860B' },
+      { name: '인중 (천이궁)', score: 85, color: '#50C878', desc: '인중이 길고 선명. 이동운 91점 상응.', tag: '명반 일치', tBg: 'rgba(80,200,120,0.18)', tC: '#3db866' },
+      { name: '입술 (부처궁)', score: 62, color: '#cc88bb', desc: '부드러운 곡선. 애정운 주의.', tag: '보통', tBg: 'rgba(204,136,187,0.15)', tC: '#8a4870' },
+      { name: '턱선 (전택궁)', score: 70, color: '#EF9F27', desc: '안정적 턱선. 40대 이후 부동산.', tag: '일치', tBg: 'rgba(255,215,0,0.15)', tC: '#B8860B' },
+    ];
+    const PALACES = [
+      { name: '명궁', pct: 92, color: '#50C878', c: '강력 확인' }, { name: '관록궁', pct: 88, color: '#50C878', c: '확인' },
+      { name: '천이궁', pct: 85, color: '#50C878', c: '확인' }, { name: '재백궁', pct: 79, color: '#FFD700', c: '확인' },
+      { name: '전택궁', pct: 70, color: '#EF9F27', c: '일치' }, { name: '부처궁', pct: 62, color: '#cc88bb', c: '보통' },
+    ];
+    const STEPS = [
+      { label: '얼굴 감지 및 정렬 확인', dur: 600 }, { label: '3D 랜드마크 68점 추출', dur: 900 },
+      { label: '골격 구조 분석', dur: 700 }, { label: '12궁 명반 좌표 동기화', dur: 1000 },
+      { label: '관상·사주 통합 해석 생성', dur: 800 },
+    ];
+    let WD = [{ age: '20대', w: 72, c: 80, l: 65 }, { age: '30대', w: 65, c: 85, l: 70 }, { age: '45세', w: 88, c: 92, l: 75, ev: '황금기' }, { age: '50대', w: 78, c: 80, l: 68 }, { age: '60대', w: 55, c: 60, l: 74 }, { age: '70대', w: 70, c: 75, l: 80 }];
+
+    function updateWaveFromAI(scores, baseScore) {
+      if (!scores) return;
+      const w = Math.round(scores['재물운'] || 75);
+      const c = Math.round(scores['직업운'] || 80);
+      const l = Math.round(scores['애정운'] || 70);
+      const bs = baseScore || 80;
+      // 선천점수(60%)를 기반으로 생애 파동 생성
+      const age = _sajuData ? _sajuData.age : 40;
+      WD = [
+        { age: '20대', w: Math.round(bs * 0.6 + 55 * 0.4), c: Math.round(bs * 0.6 + 60 * 0.4), l: Math.round(bs * 0.6 + 50 * 0.4) },
+        { age: '30대', w: Math.round(bs * 0.6 + w * 0.3), c: Math.round(bs * 0.6 + c * 0.3), l: Math.round(bs * 0.6 + l * 0.3) },
+        { age: '현재', w: w, c: c, l: l, ev: '현재' },
+        { age: '50대', w: Math.round(w * 0.85 + bs * 0.15), c: Math.round(c * 0.9 + bs * 0.1), l: Math.round(l * 0.9 + bs * 0.1) },
+        { age: '60대', w: Math.round(bs * 0.6 + 45 * 0.4), c: Math.round(bs * 0.6 + 55 * 0.4), l: Math.round(bs * 0.6 + 65 * 0.4) },
+        { age: '70대', w: Math.round(bs * 0.6 + 60 * 0.4), c: Math.round(bs * 0.6 + 65 * 0.4), l: Math.round(bs * 0.6 + 70 * 0.4) },
+      ];
+      drawWave();
+    }
+
+    let selCh = 'urban', sMode = 'face', gOn = false, lOn = false, sState = 'idle', aFr = null, sLY = 0, sLD = 1, chBuilt = false;
+
+    function showPg(pg, btn, sub) {
+      document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
+      const id = pg === 'main' ? 'pg-main-' + (sub || 'user') : 'pg-' + pg;
+      const el = document.getElementById(id); if (el) el.classList.add('on');
+      if (pg === 'main') {
+        document.querySelectorAll('.nbtn').forEach(b => b.classList.remove('on', 'gon'));
+        if (sub === 'cms') { document.getElementById('bn-cms').classList.add('gon'); animCMS(); }
+        else { document.getElementById('bn-user').classList.add('on'); setTimeout(() => { drawWave(); drawCompass(); }, 80); }
+      }
+      if (pg === 'scan') {
+        setTimeout(() => {
+          // 스캔 페이지 제목 업데이트
+          const h1 = document.querySelector('#pg-scan h1');
+          if (h1) h1.textContent = sMode === 'face' ? 'AI 기색(氣色) 관상 스캔' : (sMode === 'palm_left' ? 'AI 왼손 선천운 스캔' : 'AI 오른손 후천운 스캔');
+          startCamera(); drawScan();
+          setTimeout(() => { setFB('aligning'); setTimeout(() => setFB('ready'), 1500); }, 800);
+          // 사주 배지 업데이트
+          const badge = document.getElementById('scan-saju-badge');
+          const info = document.getElementById('scan-saju-info');
+          if (badge && info) {
+            if (_sajuData) {
+              badge.style.display = 'flex';
+              info.textContent = _sajuData.name + ' · ' + _sajuData.star + ' 명주 · ' + _sajuData.year + '년생 · 자미두수+매화역수+기문둔갑 연동됨';
+            } else {
+              badge.style.display = 'flex';
+              info.textContent = '사주 입력 없이 관상/손금만 분석합니다. 메인에서 사주를 먼저 입력하면 3대 역학 통합 분석이 가능합니다.';
+              badge.style.borderColor = 'rgba(255,255,255,0.1)';
+            }
+          }
+        }, 80);
+      } else { stopCamera(); }
+      if (pg === 'sound' && !chBuilt) { buildChannels(); chBuilt = true; }
+      if (pg === 'saju') { setTimeout(() => { drawWave(); }, 80); }
+      window.scrollTo(0, 0);
+    }
+
+    function buildExperts() {
+      const g = document.getElementById('eg'); if (!g) return;
+      EX.forEach(e => {
+        const d = document.createElement('div'); d.className = 'ecard' + (e.top ? ' top' : '');
+        d.innerHTML = `<div class="echdr"><div class="eav"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><div class="edot pulse"></div></div><div style="flex:1;"><div class="enm">${e.name}${e.top ? '<span class="tbdg">TOP</span>' : ''}</div><div class="esp">${e.spec}</div><div class="ert">${'★'.repeat(Math.floor(parseFloat(e.rat)))} ${e.rat}</div></div></div><div class="etgs">${e.tags.map(t => `<span class="etg">${t}</span>`).join('')}</div><div class="ebs"><button class="eb m">상담 신청</button><button class="eb s">프로필</button></div>`;
+        g.appendChild(d);
+      });
+    }
+
+    function animCMS() {
+      function ac(id, to, dur, fmt) { const el = document.getElementById(id); if (!el) return; const s = performance.now(); (function step(now) { const t = Math.min((now - s) / dur, 1), e = 1 - Math.pow(1 - t, 3); el.textContent = fmt(to * e); if (t < 1) requestAnimationFrame(step); })(performance.now()); }
+      ac('c1', 1240, 1200, v => Math.round(v).toLocaleString());
+      ac('c2', 4.9, 1300, v => v.toFixed(1));
+      ac('c3', 21450000, 1400, v => '₩' + Math.round(v).toLocaleString());
+    }
+
+    function drawWave() {
+      // AI 결과 점수가 있으면 파동에 반영
+      if (_sajuData && _sajuData.scores) {
+        const sc = _sajuData.scores;
+        const wEls = document.querySelectorAll('.sb');
+        if (wEls[0]) wEls[0].innerHTML = Math.round(sc['재물운'] || 85) + '<span style="font-size:14px;">점</span>';
+        if (wEls[1]) wEls[1].innerHTML = Math.round(sc['직업운'] || 92) + '<span style="font-size:14px;">점</span>';
+        if (wEls[2]) wEls[2].innerHTML = Math.round(sc['애정운'] || 68) + '<span style="font-size:14px;">점</span>';
+      }
+      // 생애파동 점수 표시 업데이트 (AI 결과 반영)
+      if (_sajuData && _sajuData.scores) {
+        const s = _sajuData.scores;
+        const eEl = document.querySelector('.sb.e');
+        const gEl = document.querySelector('.sb.g');
+        const pEl = document.querySelector('.sb.p');
+        if (eEl) eEl.textContent = Math.round(s['재물운'] || 85) + '점';
+        if (gEl) gEl.textContent = Math.round(s['직업운'] || 92) + '점';
+        if (pEl) pEl.textContent = Math.round(s['애정운'] || 68) + '점';
+      }
+      const cv = document.getElementById('wc'); if (!cv) return;
+      const W = cv.offsetWidth || 580; cv.width = W * 2; cv.height = 340; cv.style.height = '170px';
+      const ctx = cv.getContext('2d'), H = 340, pad = { t: 24, b: 36, l: 18, r: 18 };
+      const gW = W * 2 - pad.l - pad.r, gH = H - pad.t - pad.b;
+      function xy(i, v) { return { x: pad.l + (i / (WD.length - 1)) * gW, y: pad.t + gH - (v / 100) * gH }; }
+      let pr = 0;
+      function frame() {
+        ctx.clearRect(0, 0, W * 2, H);
+        [40, 60, 85].forEach(y => { const gy = pad.t + gH - (y / 100) * gH; ctx.strokeStyle = 'rgba(255,255,255,0.07)'; ctx.lineWidth = 1; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.moveTo(pad.l, gy); ctx.lineTo(W * 2 - pad.r, gy); ctx.stroke(); ctx.setLineDash([]); });
+        function line(key, col) {
+          ctx.beginPath(); ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.lineJoin = 'round';
+          const mi = Math.min(Math.floor(pr), WD.length - 1);
+          for (let i = 0; i <= mi; i++) { const { x, y } = xy(i, WD[i][key]); i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
+          if (pr < WD.length - 1) { const f = pr - Math.floor(pr), i0 = Math.floor(pr), i1 = Math.min(i0 + 1, WD.length - 1); const p0 = xy(i0, WD[i0][key]), p1 = xy(i1, WD[i1][key]); ctx.lineTo(p0.x + (p1.x - p0.x) * f, p0.y + (p1.y - p0.y) * f); }
+          ctx.stroke();
+          for (let i = 0; i < Math.min(Math.floor(pr + 1), WD.length); i++) { const { x, y } = xy(i, WD[i][key]); ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill(); }
+        }
+        line('w', '#50C878'); line('c', '#FFD700'); line('l', '#cc88bb');
+        WD.forEach((d, i) => { const { x } = xy(i, 50); ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.font = '18px system-ui'; ctx.textAlign = 'center'; ctx.fillText(d.age, x, H - 4); });
+        pr += 0.045; if (pr < WD.length - 1) requestAnimationFrame(frame);
+      }
+      frame();
+      cv.onmousemove = function (e) { const r = cv.getBoundingClientRect(), mx = (e.clientX - r.left) * (W * 2 / r.width); let ci = 0, md = Infinity; WD.forEach((d, i) => { const { x } = xy(i, 50); const dd = Math.abs(mx - x); if (dd < md) { md = dd; ci = i; } }); const d = WD[ci], { x } = xy(ci, 50); const tt = document.getElementById('wtt'); if (!tt) return; tt.style.left = Math.min(x / 2 + 8, W - 160) + 'px'; tt.style.top = '8px'; tt.style.opacity = '1'; tt.innerHTML = `<strong style="color:#50C878;display:block;margin-bottom:2px;">${d.age}</strong>재물 ${d.w} · 직업 ${d.c} · 애정 ${d.l}`; };
+      cv.onmouseleave = () => { const tt = document.getElementById('wtt'); if (tt) tt.style.opacity = '0'; };
+    }
+
+    const DIR_ANGLES = {
+      '북(N)': 0, '북동(NE)': 45, '동(E)': 90, '남동(SE)': 135,
+      '남(S)': 180, '남서(SW)': 225, '서(W)': 270, '북서(NW)': 315,
+      '북방': 0, '동북방': 45, '동방': 90, '동남방': 135,
+      '남방': 180, '서남방': 225, '서방': 270, '서북방': 315
+    };
+    let compassTargetAngle = 45;
+
+    function setCompassDirection(dirStr) {
+      if (!dirStr) return;
+      for (const [k, v] of Object.entries(DIR_ANGLES)) {
+        if (dirStr.includes(k.replace('(N)', '').replace('(NE)', '').replace('(E)', '').replace('(SE)', '').replace('(S)', '').replace('(SW)', '').replace('(W)', '').replace('(NW)', ''))) {
+          compassTargetAngle = v;
+          // 메인 나침반 텍스트도 업데이트
+          const cdirEl = document.querySelector('.cdir span');
+          if (cdirEl) cdirEl.textContent = dirStr;
+          break;
+        }
+      }
+    }
+
+    function drawCompass() {
+      const cv = document.getElementById('cc'); if (!cv) return;
+      const ctx = cv.getContext('2d'), cx = 75, cy = 75, r = 62;
+      let currentAngle = compassTargetAngle;
+      (function frame() {
+        // 부드럽게 목표 각도로 이동
+        const diff = compassTargetAngle - currentAngle;
+        currentAngle += diff * 0.05;
+        const displayAngle = currentAngle + Math.sin(Date.now() / 600) * 1.5;
+        ctx.clearRect(0, 0, 150, 150);
+        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 2; ctx.stroke();
+        [['북(N)', 0], ['동(E)', 90], ['남(S)', 180], ['서(W)', 270]].forEach(([l, deg]) => { const rad = (deg - 90) * Math.PI / 180; ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '11px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(l, cx + Math.cos(rad) * (r - 12), cy + Math.sin(rad) * (r - 12)); });
+        ctx.save(); ctx.translate(cx, cy); ctx.rotate(displayAngle * Math.PI / 180); ctx.beginPath(); ctx.moveTo(0, -50); ctx.lineTo(7, 0); ctx.lineTo(0, 50); ctx.lineTo(-7, 0); ctx.closePath(); ctx.fillStyle = '#FFD700'; ctx.fill(); ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fill(); ctx.restore();
+        requestAnimationFrame(frame);
+      })();
+    }
+
+    let camStream = null;
+
+    let currentFacing = 'user'; // 현재 카메라 방향
+
+    async function startCamera(facing) {
+      const video = document.getElementById('camVideo');
+      const errBox = document.getElementById('cam-error');
+      if (!video) return;
+
+      // 기본 방향: 관상=전면(user), 손금=후면(environment)
+      if (facing === undefined) {
+        facing = sMode === 'face' ? 'user' : 'environment';
+      }
+      currentFacing = facing;
+
+      // 미러 반전: 전면(셀피)만 적용
+      video.style.transform = facing === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
+      const canvas = document.getElementById('sc');
+      if (canvas) canvas.style.transform = facing === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
+
+      // 가이드 메시지 업데이트
+      const guideMsg = document.getElementById('cam-guide-msg');
+      if (guideMsg) {
+        guideMsg.textContent = facing === 'user'
+          ? '얼굴을 원 안에 가득 채워주세요'
+          : '손바닥을 화면 중앙에 펼쳐주세요';
+      }
+
+      // Stop existing stream
+      if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+
+      try {
+        const constraints = {
+          video: {
+            facingMode: facing,
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          }
+        };
+        camStream = await navigator.mediaDevices.getUserMedia(constraints);
+        video.srcObject = camStream;
+        video.style.display = 'block';
+        if (errBox) errBox.style.display = 'none';
+      } catch (e) {
+        console.error('카메라 오류:', e);
+        // 후면 카메라 없는 경우(PC) 전면으로 대체
+        if (facing === 'environment') {
+          try {
+            const fallback = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } } });
+            camStream = fallback;
+            video.srcObject = fallback;
+            video.style.display = 'block';
+            video.style.transform = 'scaleX(-1)';
+            if (guideMsg) guideMsg.textContent = '후면 카메라 없음 - 전면 카메라로 대체';
+            if (errBox) errBox.style.display = 'none';
+            return;
+          } catch (e2) { }
+        }
+        video.style.display = 'none';
+        if (errBox) errBox.style.display = 'flex';
+      }
+    }
+
+    function flipCamera() {
+      const newFacing = currentFacing === 'user' ? 'environment' : 'user';
+      startCamera(newFacing);
+    }
+
+    function stopCamera() {
+      if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
+      const video = document.getElementById('camVideo');
+      if (video) { video.srcObject = null; }
+    }
+
+    function drawScan() {
+      const cv = document.getElementById('sc'); if (!cv) return;
+      const W = cv.offsetWidth || 640; cv.width = W * 2; cv.height = Math.round(W * 0.625) * 2; cv.style.height = Math.round(W * 0.625) + 'px';
+      const ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
+      // Canvas is overlay on top of video - transparent background
+      ctx.clearRect(0, 0, w, h);
+      if (!camStream) { ctx.fillStyle = '#0a0a20'; ctx.fillRect(0, 0, w, h); }
+      if (lOn) { ctx.fillStyle = 'rgba(255,255,200,0.04)'; ctx.fillRect(0, 0, w, h); }
+      if (sMode === 'face') {
+        const cx = w / 2, cy = h / 2, rx = w * 0.22, ry = h * 0.38;
+        ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(80,200,120,0.55)'; ctx.lineWidth = 2; ctx.setLineDash([8, 6]); ctx.stroke(); ctx.setLineDash([]);
+        [{ x: cx, y: cy - ry * 0.55, l: '이마' }, { x: cx - rx * 0.55, y: cy - ry * 0.15, l: '눈(좌)' }, { x: cx + rx * 0.55, y: cy - ry * 0.15, l: '눈(우)' }, { x: cx, y: cy + ry * 0.05, l: '코' }, { x: cx, y: cy + ry * 0.35, l: '입' }, { x: cx, y: cy + ry * 0.62, l: '턱' }].forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = 'rgba(80,200,120,0.7)'; ctx.fill(); ctx.fillStyle = 'rgba(80,200,120,0.9)'; ctx.font = '20px system-ui'; ctx.textAlign = 'center'; ctx.fillText(p.l, p.x, p.y + (p.y < cy ? -14 : 18)); });
+      } else if (sMode === 'palm_left' || sMode === 'palm_right') {
+        const px = w * 0.2, py = h * 0.12, pw = w * 0.6, ph = h * 0.76;
+        ctx.beginPath(); ctx.moveTo(px + pw * 0.5, py); ctx.lineTo(px + pw, py + ph * 0.15); ctx.lineTo(px + pw, py + ph * 0.8); ctx.lineTo(px + pw * 0.5, py + ph); ctx.lineTo(px, py + ph * 0.8); ctx.lineTo(px, py + ph * 0.15); ctx.closePath(); ctx.strokeStyle = 'rgba(80,200,120,0.55)'; ctx.lineWidth = 2; ctx.setLineDash([8, 6]); ctx.stroke(); ctx.setLineDash([]);
+        [{ x1: px + pw * 0.15, y1: py + ph * 0.25, x2: px + pw * 0.85, y2: py + ph * 0.35, l: '감정선' }, { x1: px + pw * 0.2, y1: py + ph * 0.45, x2: px + pw * 0.75, y2: py + ph * 0.55, l: '두뇌선' }, { x1: px + pw * 0.35, y1: py + ph * 0.2, x2: px + pw * 0.4, y2: py + ph * 0.85, l: '생명선' }, { x1: px + pw * 0.55, y1: py + ph * 0.18, x2: px + pw * 0.58, y2: py + ph * 0.75, l: '운명선' }].forEach(l => { ctx.beginPath(); ctx.moveTo(l.x1, l.y1); ctx.lineTo(l.x2, l.y2); ctx.strokeStyle = 'rgba(80,200,120,0.5)'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = 'rgba(255,215,0,0.85)'; ctx.font = '18px system-ui'; ctx.textAlign = 'left'; ctx.fillText(l.l, (l.x1 + l.x2) / 2 + 10, (l.y1 + l.y2) / 2); });
+      }
+      if (gOn) { ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1; for (let x = 0; x < w; x += w / 6) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); } for (let y = 0; y < h; y += h / 4) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); } }
+      // AR 오버레이: 자미두수 12궁 (관상모드) / 기문둔갑 팔문 (손금모드)
+      const arAlpha = 0.18 + Math.sin(Date.now() / 1200) * 0.06;
+      if (sMode === 'face') {
+        // 12궁 AR 링 - 얼굴 주변 원형 배치
+        const palaces = ['명궁', '재백', '형제', '전택', '남녀', '노복', '처첩', '질액', '이동', '관록', '복덕', '부모'];
+        const arR = Math.min(w, h) * 0.42;
+        const arCx = w / 2, arCy = h / 2;
+        palaces.forEach((p, i) => {
+          const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
+          const px = arCx + arR * Math.cos(angle);
+          const py = arCy + arR * Math.sin(angle);
+          ctx.beginPath(); ctx.arc(px, py, 18, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(255,215,0,${arAlpha})`; ctx.fill();
+          ctx.strokeStyle = `rgba(255,215,0,${arAlpha * 2})`; ctx.lineWidth = 1; ctx.stroke();
+          ctx.fillStyle = `rgba(255,215,0,${arAlpha * 4})`; ctx.font = '14px system-ui'; ctx.textAlign = 'center'; ctx.fillText(p, px, py + 4);
+        });
+        // 중앙 연결선
+        ctx.strokeStyle = `rgba(255,215,0,${arAlpha * 0.5})`; ctx.lineWidth = 0.5; ctx.setLineDash([4, 8]);
+        ctx.beginPath(); ctx.arc(arCx, arCy, arR, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
+      } else if (sMode === 'palm_left' || sMode === 'palm_right') {
+        // 팔문 AR - 손금 위에 팔괘 배치
+        const gates = ['휴문', '생문', '상문', '두문', '경문', '사문', '경문', '개문'];
+        const colors = ['#50C878', '#FFD700', '#cc88bb', '#8aacf0', '#50C878', '#EF9F27', '#8aacf0', '#FFD700'];
+        const gR = Math.min(w, h) * 0.35;
+        const gCx = w / 2, gCy = h / 2;
+        gates.forEach((g, i) => {
+          const angle = (i / 8) * Math.PI * 2 - Math.PI / 2;
+          const gx = gCx + gR * Math.cos(angle);
+          const gy = gCy + gR * Math.sin(angle);
+          ctx.beginPath(); ctx.arc(gx, gy, 20, 0, Math.PI * 2);
+          ctx.fillStyle = `rgba(${colors[i].replace('#', '').match(/.{2}/g).map(h => parseInt(h, 16)).join(',')},${arAlpha})`; ctx.fill();
+          ctx.fillStyle = colors[i]; ctx.globalAlpha = arAlpha * 3; ctx.font = 'bold 13px system-ui'; ctx.textAlign = 'center'; ctx.fillText(g, gx, gy + 4); ctx.globalAlpha = 1;
+        });
+      }
+
+      // 스캐닝 라인
+      if (sState === 'scanning') {
+        sLY += 3 * sLD; if (sLY > h || sLY < 0) sLD *= -1;
+        ctx.beginPath(); ctx.moveTo(0, sLY); ctx.lineTo(w, sLY); ctx.strokeStyle = 'rgba(80,200,120,0.6)'; ctx.lineWidth = 2; ctx.stroke();
+        const grd = ctx.createLinearGradient(0, sLY - 40, 0, sLY + 40); grd.addColorStop(0, 'rgba(80,200,120,0)'); grd.addColorStop(0.5, 'rgba(80,200,120,0.15)'); grd.addColorStop(1, 'rgba(80,200,120,0)'); ctx.fillStyle = grd; ctx.fillRect(0, sLY - 40, w, 80);
+        // 실시간 분석 메시지
+        ctx.fillStyle = 'rgba(80,200,120,0.8)'; ctx.font = 'bold 14px system-ui'; ctx.textAlign = 'center';
+        const msgs = ['인생 지도 데이터 연동 중...', '기색 데이터 감지 중...', '12궁 동기화 중...', '에너지 패턴 분석 중...'];
+        ctx.fillText(msgs[Math.floor(Date.now() / 600) % msgs.length], w / 2, h - 20);
+        aFr = requestAnimationFrame(drawScan);
+      } else if (camStream) {
+        aFr = requestAnimationFrame(drawScan);
+      }
+    }
+
+    function setFB(state) {
+      const dot = document.getElementById('fd'), txt = document.getElementById('ft'), sub = document.getElementById('fs'); if (!dot) return;
+      dot.className = 'fb-dot';
+      if (state === 'idle') {
+        dot.classList.add('warn');
+        if (sMode === 'face') { txt.textContent = '얼굴을 원 안에 가득 채워주세요'; sub.textContent = '정면 응시, 카메라를 얼굴에 가까이 당겨주세요'; }
+        else if (sMode === 'palm_left') { txt.textContent = '왼손 (선천운) 손바닥을 카메라에 펼쳐주세요'; sub.textContent = '손금이 잘 보이도록 밝은 곳에서 가까이 대주세요'; }
+        else { txt.textContent = '오른손 (후천운) 손바닥을 카메라에 펼쳐주세요'; sub.textContent = '손금이 잘 보이도록 밝은 곳에서 가까이 대주세요'; }
+      }
+      else if (state === 'aligning') { dot.classList.add('warn'); txt.textContent = '정렬 중... 조금 더 가까이'; sub.textContent = '얼굴을 타원 가이드 중앙에 맞춰주세요'; }
+      else if (state === 'ready') { dot.classList.add('ok'); txt.textContent = '준비 완료 - 셔터를 눌러주세요'; sub.textContent = '3초간 정지 후 촬영'; }
+      else if (state === 'scanning') { dot.classList.add('sc'); txt.textContent = '스캔 중... 움직이지 마세요'; sub.textContent = 'AI 분석 진행 중'; }
+    }
+
+    function setMode(m, btn) {
+      sMode = m;
+      document.getElementById('mf').classList.toggle('on', m === 'face');
+      document.getElementById('mp').classList.toggle('on', m === 'palm');
+      const guideMsg = document.getElementById('camGuideMsg');
+      if (guideMsg) guideMsg.textContent = m === 'face' ? '얼굴을 타원 안에 가득 채워주세요' : '손바닥을 펼쳐 육각형 안에 맞춰주세요';
+      resetScan();
+    }
+    function tGrid() { gOn = !gOn; document.getElementById('bg').classList.toggle('active', gOn); drawScan(); }
+    function tLight() { lOn = !lOn; document.getElementById('bl').classList.toggle('active', lOn); drawScan(); }
+    function resetScan() {
+      sState = 'idle';
+      document.getElementById('ps').classList.remove('show');
+      document.getElementById('rs').classList.remove('show');
+      document.getElementById('sh').classList.remove('cap');
+      setFB('idle');
+      if (aFr) { cancelAnimationFrame(aFr); aFr = null; }
+      // 가이드 메시지 복구
+      const guideMsg = document.getElementById('cam-guide-msg');
+      if (guideMsg) {
+        guideMsg.textContent = sMode === 'face' ? '얼굴을 원 안에 가득 채워주세요' : '손바닥을 화면 중앙에 펼쳐주세요';
+      }
+      drawScan();
+    }
+
+    function doCapture() {
+      if (sState === 'scanning' || sState === 'done') return;
+      sState = 'scanning';
+      document.getElementById('sh').classList.add('cap');
+      setFB('scanning');
+      sLY = 0; sLD = 1; drawScan();
+      document.getElementById('ps').classList.add('show');
+      document.getElementById('rs').classList.remove('show');
+      const c = document.getElementById('psteps'); c.innerHTML = '';
+      STEPS.forEach((s, i) => {
+        const d = document.createElement('div');
+        d.className = 'prog-step';
+        d.innerHTML = `<div class="sico wait" id="si${i}">${i + 1}</div><div class="slbl" id="sl${i}">${s.label}</div><div class="spct" id="sp${i}"></div>`;
+        c.appendChild(d);
+      });
+
+      // AI 결과 초기화
+      window._scanResult = undefined;
+
+      // 셔터 플래시 효과
+      const flash = document.getElementById('shutterFlash');
+      if (flash) {
+        flash.classList.add('on');
+        setTimeout(() => flash.classList.remove('on'), 150);
+      }
+      // 가이드 메시지 변경
+      const guideMsg = document.getElementById('camGuideMsg');
+      if (guideMsg) guideMsg.textContent = '✓ 촬영 완료! AI 분석 중...';
+
+      // 실제 사진 캡처
+      const video = document.getElementById('camVideo');
+      const snapCanvas = document.createElement('canvas');
+      snapCanvas.width = 640; snapCanvas.height = 400;
+      const snapCtx = snapCanvas.getContext('2d');
+      if (video && video.readyState >= 2) {
+        // 미러 보정: 캔버스는 정방향으로 저장 (AI 분석용)
+        snapCtx.save();
+        snapCtx.scale(-1, 1);
+        snapCtx.drawImage(video, -640, 0, 640, 400);
+        snapCtx.restore();
+      } else {
+        snapCtx.fillStyle = '#111'; snapCtx.fillRect(0, 0, 640, 400);
+      }
+      const imageData = snapCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+
+      // 단계별 UI 진행하면서 AI 분석 병렬 실행
+      runStep(0);
+      analyzeWithAI(imageData);
+    }
+
+    async function analyzeWithAI(imageData) {
+      const modeLabel = sMode === 'face' ? '관상' : '손금';
+      // 사주 데이터가 있으면 통합 분석, 없으면 관상/손금만
+      const sd = _sajuData;
+      const sajuContext = sd
+        ? `[의뢰인 사주 정보]
+- 이름: ${sd.name} (${sd.gender}성)
+- 생년월일: ${sd.year}년 ${sd.month}월 ${sd.day}일 (${sd.cal})
+- 태어난 시간: ${sd.timeStr}
+- 현재 나이: ${sd.age}세
+- 자미두수 명궁 주성: ${sd.star}
+- 현재 대운: ${sd.daewoon || '미상'}
+- 사주 요약: ${sd.summary || ''}
+
+위 사주 정보를 바탕으로 `
+        : '';
+
+      const prompt = sMode === 'face'
+        ? `당신은 동양 전통 명리학의 '기색(氣色)' 분석 전문가입니다.
+이미지에서 감지되는 빛의 분포, 명암 패턴, 에너지 흐름을 바탕으로 자미두수 12궁과의 연관성을 해석해주세요.
+실제 인물 식별이나 생체 정보 분석이 아닌, 순수하게 동양 명리학의 관점에서 이미지의 기운(氣運)을 읽는 것입니다.
+
+${sajuContext}
+
+${sd ? `이 분의 자미두수 명궁 주성은 ${sd.star}이며, 현재 대운은 ${sd.daewoon || ''}입니다. 이미지의 기색 에너지와 명반을 교차 해석해주세요.` : '이미지의 기색 에너지를 자미두수 12궁과 연관하여 해석해주세요.'}
+
+반드시 아래 JSON 형식으로만 응답하세요. 다른 텍스트 없이 JSON만:
+{
+  "overall": "기색+사주 통합 한줄 요약 (30자 이내)",
+  "match_pct": 숫자(75~95 사이),
+  "features": [
+    {"name":"이마(관록궁)","score":숫자(0-100),"desc":"관록궁 기색 에너지와 사주 직업운 교차 해석","tag":"관록운","color":"#FFD700","tBg":"rgba(255,215,0,0.15)","tC":"#FFD700"},
+    {"name":"눈빛(명궁)","score":숫자,"desc":"명궁 에너지 흐름과 사주 명궁 주성 교차 해석","tag":"핵심기운","color":"#50C878","tBg":"rgba(80,200,120,0.15)","tC":"#50C878"},
+    {"name":"코(재백궁)","score":숫자,"desc":"재백궁 기색과 사주 재물운 교차 해석","tag":"재물운","color":"#8aacf0","tBg":"rgba(96,130,220,0.15)","tC":"#8aacf0"},
+    {"name":"입(처첩궁)","score":숫자,"desc":"처첩궁 에너지와 사주 인간관계운 교차 해석","tag":"인간관계","color":"#cc88bb","tBg":"rgba(180,100,180,0.15)","tC":"#cc88bb"},
+    {"name":"턱(전택궁)","score":숫자,"desc":"전택궁 기색과 사주 기반운 교차 해석","tag":"기반/의지","color":"#EF9F27","tBg":"rgba(200,130,30,0.15)","tC":"#EF9F27"}
+  ],
+  "palace_sync": [
+    {"palace":"명궁","result":"명궁 기색 에너지와 사주 명궁 일치도","score":숫자},
+    {"palace":"재백궁","result":"재백궁 기색과 재물운 교차 분석","score":숫자},
+    {"palace":"관록궁","result":"관록궁 기색과 직업운 교차 분석","score":숫자},
+    {"palace":"전택궁","result":"전택궁 기색과 기반운 교차 분석","score":숫자}
+  ],
+  "interpretation": "자미두수 명반 + 매화역수 오늘 괘 + 기색 에너지를 3중 교차한 통합 해석 (4-5문장, <em>강조</em> <b>금색강조</b> 사용 가능)"
+}`
+        : `당신은 동양 전통 수상학의 '장문(掌紋)' 에너지 분석 전문가입니다.
+이미지에서 감지되는 선의 흐름, 에너지 패턴, 기운의 분포를 바탕으로 자미두수 12궁과의 연관성을 해석해주세요.
+실제 신체 정보 분석이 아닌, 순수하게 동양 명리학의 관점에서 이미지의 기운 흐름을 읽는 것입니다.
+
+${sajuContext}
+
+${sd ? `이 분의 자미두수 명궁 주성은 ${sd.star}이며, 현재 대운은 ${sd.daewoon || ''}입니다.` : ''}
+${sMode === 'palm_left' ? '이것은 왼손(선천운)입니다. 타고난 기질과 자미두수 명반의 선천적 특성을 중심으로 해석해주세요.' : '이것은 오른손(후천운)입니다. 현재와 미래의 운세, 매화역수 오늘의 기회, 기문둔갑 성공 치트키와 연결하여 해석해주세요.'}
+
+반드시 아래 JSON 형식으로만 응답하세요. 다른 텍스트 없이 JSON만:
+{
+  "overall": "장문+사주 통합 한줄 요약 (30자 이내)",
+  "match_pct": 숫자(75~95 사이),
+  "features": [
+    {"name":"감정선(부처궁)","score":숫자(0-100),"desc":"감정선 에너지와 사주 부처궁 교차 해석","tag":"애정운","color":"#cc88bb","tBg":"rgba(180,100,180,0.15)","tC":"#cc88bb"},
+    {"name":"두뇌선(명궁)","score":숫자,"desc":"두뇌선 에너지와 사주 명궁 주성 교차 해석","tag":"지혜/판단","color":"#8aacf0","tBg":"rgba(96,130,220,0.15)","tC":"#8aacf0"},
+    {"name":"생명선(건강궁)","score":숫자,"desc":"생명선 에너지와 사주 건강궁 교차 해석","tag":"건강/활력","color":"#50C878","tBg":"rgba(80,200,120,0.15)","tC":"#50C878"},
+    {"name":"운명선(관록궁)","score":숫자,"desc":"운명선 에너지와 사주 대운 교차 해석","tag":"직업/대운","color":"#FFD700","tBg":"rgba(255,215,0,0.15)","tC":"#FFD700"},
+    {"name":"태양선(재백궁)","score":숫자,"desc":"태양선 에너지와 사주 관록궁 교차 해석","tag":"명예/성공","color":"#EF9F27","tBg":"rgba(200,130,30,0.15)","tC":"#EF9F27"}
+  ],
+  "palace_sync": [
+    {"palace":"재백궁","result":"장문 에너지와 사주 재백궁 교차 분석","score":숫자},
+    {"palace":"관록궁","result":"장문 에너지와 사주 관록궁 교차 분석","score":숫자},
+    {"palace":"부처궁","result":"장문 에너지와 사주 부처궁 교차 분석","score":숫자},
+    {"palace":"건강궁","result":"장문 에너지와 사주 건강궁 교차 분석","score":숫자}
+  ],
+  "interpretation": "자미두수 명반 + 기문둔갑 오늘 방위 + 장문 에너지를 3중 교차한 통합 해석 (4-5문장, <em>강조</em> <b>금색강조</b> 사용 가능)"
+}`;
+
+      try {
+        const response = await fetch('https://api.anthropic.com/v1/messages', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            'anthropic-dangerous-direct-browser-access': 'true',
+            'x-api-key': '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',
+            'anthropic-version': '2023-06-01'
+          },
+          body: JSON.stringify({
+            model: 'claude-haiku-4-5-20251001',
+            max_tokens: 4000,
+            messages: [{
+              role: 'user',
+              content: [
+                { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageData } },
+                { type: 'text', text: prompt }
+              ]
+            }]
+          })
+        });
+
+        const data = await response.json();
+        const text = data.content?.map(c => c.text || '').join('') || '';
+        const clean = text.replace(/```json|```/g, '').trim();
+        const result = JSON.parse(clean);
+        window._scanResult = result;
+      } catch (e) {
+        console.error('관상 AI 오류:', e);
+        window._scanResult = null;
+      }
+    }
+    function runStep(i) {
+      if (i >= STEPS.length) {
+        // AI 분석 완료 대기 후 결과 표시
+        const waitForAI = (attempts) => {
+          if (window._scanResult !== undefined || attempts > 30) {
+            setTimeout(showResult, 300);
+          } else {
+            setTimeout(() => waitForAI(attempts + 1), 300);
+          }
+        };
+        waitForAI(0);
+        return;
+      }
+      const si = document.getElementById('si' + i), sl = document.getElementById('sl' + i), sp = document.getElementById('sp' + i);
+      si.className = 'sico act'; si.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>';
+      sl.className = 'slbl act'; let pct = 0;
+      const iv = setInterval(() => { pct = Math.min(100, pct + Math.round(100 / (STEPS[i].dur / 50))); sp.textContent = pct + '%'; if (pct >= 100) { clearInterval(iv); si.className = 'sico done'; si.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>'; sl.className = 'slbl done'; setTimeout(() => runStep(i + 1), 100); } }, 50);
+    }
+    function showResult() {
+      if (aFr) { cancelAnimationFrame(aFr); aFr = null; } sState = 'done'; setFB('ready');
+
+      // 썸네일: 비디오에서 캡처
+      const tc = document.getElementById('tc');
+      if (tc) {
+        const ctx = tc.getContext('2d');
+        const vid = document.getElementById('camVideo');
+        if (vid && vid.readyState >= 2) {
+          ctx.drawImage(vid, 0, 0, 64, 80);
+        } else {
+          ctx.fillStyle = '#111'; ctx.fillRect(0, 0, 64, 80);
+        }
+      }
+      // 결과 이름/정보 업데이트
+      const resNameEl = document.querySelector('#rs .res-hero div div:first-child');
+      if (resNameEl && _sajuData) {
+        resNameEl.textContent = _sajuData.name + ' · ' + _sajuData.timeStr + '생';
+      }
+
+      document.getElementById('rs').classList.add('show');
+      const fg = document.getElementById('fg'); fg.innerHTML = '';
+
+      // AI 결과 또는 샘플 데이터
+      const r = window._scanResult;
+      const feats = r ? r.features : FEATS;
+
+      // 명반 일치도 업데이트
+      if (r) {
+        const matchEl = document.querySelector('.match-badge');
+        if (matchEl) matchEl.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>명반 일치도 ${r.match_pct}%`;
+        const ibBody = document.querySelector('#rs .ib-body');
+        if (ibBody) ibBody.innerHTML = r.interpretation;
+        const pl = document.getElementById('pl'); pl.innerHTML = '';
+        if (r.palace_sync) {
+          r.palace_sync.forEach(p => {
+            const d = document.createElement('div'); d.className = 'pm-item';
+            d.innerHTML = `<span class="pm-palace">${p.palace}</span><span class="pm-result">${p.result}</span><span class="pm-score" style="color:var(--em)">${p.score}점</span>`;
+            pl.appendChild(d);
+          });
+        }
+      }
+
+      feats.forEach(f => { const d = document.createElement('div'); d.className = 'feat-card'; d.innerHTML = `<div class="feat-head"><div class="feat-name">${f.name}</div><div class="feat-score" style="color:${f.color};">${f.score}</div></div><div class="feat-bar"><div class="feat-fill" style="width:0%;background:${f.color};" data-w="${f.score}"></div></div><div class="feat-desc">${f.desc}</div><span class="feat-tag" style="background:${f.tBg};color:${f.tC};">${f.tag}</span>`; fg.appendChild(d); });
+      setTimeout(() => document.querySelectorAll('.feat-fill').forEach(f => f.style.width = f.dataset.w + '%'), 80);
+      const pl = document.getElementById('pl'); pl.innerHTML = '';
+      PALACES.forEach(p => { const d = document.createElement('div'); d.className = 'pm-item'; d.innerHTML = `<div class="pm-palace">${p.name}</div><div class="pm-bar-wrap"><div class="pm-fill" style="width:0%;background:${p.color};" data-w="${p.pct}"></div></div><div class="pm-pct">${p.pct}%</div><div style="font-size:10px;color:${p.color};font-weight:700;width:60px;text-align:right;flex-shrink:0;">${p.c}</div>`; pl.appendChild(d); });
+      setTimeout(() => document.querySelectorAll('.pm-fill').forEach(f => f.style.width = f.dataset.w + '%'), 80);
+    }
+
+    function buildChannels() {
+      const g = document.getElementById('chg'); if (!g) return; g.innerHTML = '';
+      CH.forEach(c => {
+        const d = document.createElement('div');
+        d.className = 'chc' + (c.id === selCh ? ' sel' : '');
+        if (c.id === selCh) d.style.borderColor = c.sb;
+        d.innerHTML = `<div class="chico" style="background:${c.iBg};"><svg viewBox="0 0 24 24" fill="none" stroke="${c.iC}" stroke-width="2">${c.icon}</svg></div><div style="flex:1;min-width:0;"><div class="chnm">${c.name}${c.coming ? '<span class="ch-coming">준비중</span>' : ''}</div><div class="chhdl">${c.handle}</div><div class="chmood">${c.mood}</div><span class="chtag" style="background:${c.tBg};color:${c.tC};">${c.tag}</span></div>`;
+        d.onclick = () => { selCh = c.id; renderCh(); };
+        g.appendChild(d);
+      });
+      renderCh();
+    }
+
+    function renderCh() {
+      const c = CH.find(x => x.id === selCh);
+      document.querySelectorAll('.chc').forEach((card, i) => { if (i < CH.length) { card.classList.toggle('sel', CH[i].id === selCh); card.style.borderColor = CH[i].id === selCh ? CH[i].sb : ''; } });
+      const yl = document.getElementById('ytl'), ylt = document.getElementById('ytlt'), yn = document.getElementById('ytnote');
+      yl.href = c.url; yl.style.background = c.btn;
+      if (c.coming) { ylt.textContent = c.name + ' 채널 보기 (콘텐츠 업로드 준비 중)'; yn.innerHTML = '<span style="color:#ccaa00;">채널은 열려있으나 콘텐츠 업로드 준비 중입니다</span>'; }
+      else { ylt.textContent = '유튜브에서 ' + c.name + ' 열기 >'; yn.innerHTML = '<span style="color:var(--em);">↑ 클릭하면 유튜브로 이동합니다</span>'; }
+      const wc2 = document.getElementById('wc2'), wt2 = document.getElementById('wt2'), wb2 = document.getElementById('wb2');
+      if (wc2) { wc2.style.background = c.why.bg; wc2.style.borderColor = c.why.bd; }
+      if (wt2) { wt2.style.color = c.why.tc; wt2.textContent = c.why.title; }
+      if (wb2) wb2.innerHTML = c.why.body;
+    }
+
+    window.addEventListener('resize', () => {
+      if (document.getElementById('pg-main-user').classList.contains('on')) { drawWave(); drawCompass(); }
+      if (document.getElementById('pg-scan').classList.contains('on')) drawScan();
+    });
+    const _kp = new URLSearchParams(window.location.search);
+    const _kc = _kp.get('code');
+    if (_kc) {
+      window.history.replaceState({}, '', '/');
+      loginSuccess({ name: '카카오 사용자', avatar: null, provider: 'kakao' });
+    }
+    buildExperts();
+    setTimeout(() => { drawWave(); drawCompass(); }, 80);
+  </script>
+</body>
+
+</html>

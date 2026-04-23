@@ -899,6 +899,7 @@ const clean = jsonMatch ? jsonMatch[0] : text.replace(/```json|```/g, '').trim()
 const result = JSON.parse(clean);
 
     showLoading(false);
+      sessionStorage.setItem(cacheKey, JSON.stringify(result));
     renderSajuResult(name, year, month, day, timeStr, age, result);
 
   } catch (e) {
@@ -944,7 +945,7 @@ function renderSajuResult(name, year, month, day, timeStr, age, r) {
         ${src ? `<div style="font-size:9px;color:rgba(153,153,204,0.7);margin-top:3px;line-height:1.3;">${src}</div>` : ''}
       </div>`;
   });
-sessionStorage.setItem(cacheKey, JSON.stringify(result));
+
   if (r.lucky_direction) {
     const dirCard = document.createElement('div');
     dirCard.style.cssText = 'background:rgba(96,130,220,0.08);border:1px solid rgba(96,130,220,0.2);border-radius:10px;padding:.7rem 1rem;display:flex;align-items:center;gap:12px;margin-bottom:.85rem;';
@@ -958,7 +959,7 @@ sessionStorage.setItem(cacheKey, JSON.stringify(result));
       </div>`;
     document.getElementById('saju-result-body').prepend(dirCard);
   }
-sessionStorage.setItem(cacheKey, JSON.stringify(result));
+
   const sections = [
     { icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>', color: '#FFD700', title: '자미두수 - 명궁 주성: ' + r.star + ' · ' + (r.daewoon||''), body: r.ziwei },
     { icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>', color: '#FFD700', title: '자미두수 - 명궁 해석', body: r.palace_desc },

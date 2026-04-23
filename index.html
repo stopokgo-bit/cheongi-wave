@@ -934,8 +934,9 @@ const dayVal = document.getElementById('inp-day').value;
 
     const data = await response.json();
     const text = data.content?.map(c => c.text || '').join('') || '';
-    const clean = text.replace(/```json|```/g, '').trim();
-    const result = JSON.parse(clean);
+const jsonMatch = text.match(/\{[\s\S]*\}/);
+const clean = jsonMatch ? jsonMatch[0] : text.replace(/```json|```/g, '').trim();
+const result = JSON.parse(clean);
 
     showLoading(false);
     renderSajuResult(name, year, month, day, timeStr, age, result);

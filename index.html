@@ -598,13 +598,52 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
         <button class="mtbtn" id="mp2" onclick="setMode('palm_right',this)">오른손<span style="font-size:9px;display:block;color:rgba(255,255,255,0.5);">후천운</span></button>
       </div>
     </div>
+
+    <!-- 카메라/사진 전환 -->
+    <div style="display:flex;gap:8px;margin-bottom:.75rem;">
+      <button id="input-cam-btn" onclick="setInputMode('camera')" style="flex:1;padding:9px;border-radius:10px;border:1px solid var(--em);background:rgba(80,200,120,0.15);color:var(--em);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>실시간 카메라
+      </button>
+      <button id="input-photo-btn" onclick="setInputMode('photo')" style="flex:1;padding:9px;border-radius:10px;border:1px solid var(--bd);background:var(--bg2);color:var(--t2);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:5px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>사진 업로드
+      </button>
+    </div>
+
+    <!-- 사진 업로드 영역 -->
+    <div id="photo-upload-area" style="display:none;margin-bottom:.75rem;">
+      <input type="file" id="photo-input" accept="image/*" style="display:none;" onchange="handlePhotoUpload(event)">
+      <div id="upload-drop-zone" onclick="document.getElementById('photo-input').click()" style="border:2px dashed rgba(80,200,120,0.4);border-radius:16px;padding:2.5rem 1rem;text-align:center;cursor:pointer;background:rgba(80,200,120,0.04);transition:all .2s;">
+        <div style="font-size:40px;margin-bottom:.75rem;">📸</div>
+        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:.4rem;" id="upload-label">사진을 업로드해주세요</div>
+        <div style="font-size:12px;color:var(--t2);margin-bottom:1rem;" id="upload-sublabel">관상: 정면 얼굴 · 손금: 손바닥 펼친 사진</div>
+        <div style="display:inline-flex;align-items:center;gap:6px;padding:10px 22px;background:var(--em);border-radius:8px;font-size:13px;font-weight:700;color:#fff;">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>갤러리에서 선택
+        </div>
+        <div style="font-size:10px;color:var(--t2);margin-top:.6rem;">SNS DM으로 받은 사진도 OK</div>
+      </div>
+      <!-- 미리보기 -->
+      <div id="photo-preview" style="display:none;margin-top:.75rem;">
+        <div style="position:relative;">
+          <img id="preview-img" style="width:100%;border-radius:12px;max-height:320px;object-fit:cover;display:block;" />
+          <div style="position:absolute;top:8px;right:8px;display:flex;gap:6px;">
+            <button onclick="document.getElementById('photo-input').click()" style="padding:6px 12px;border-radius:8px;background:rgba(0,0,0,0.75);border:1px solid rgba(255,255,255,0.2);color:#fff;font-size:11px;font-weight:600;cursor:pointer;font-family:inherit;">다시 선택</button>
+          </div>
+        </div>
+        <div id="photo-quality-hint" style="margin-top:.5rem;padding:.6rem .85rem;border-radius:8px;font-size:11px;"></div>
+        <button onclick="analyzePhoto()" style="width:100%;margin-top:.6rem;padding:13px;background:var(--gold);border:none;border-radius:10px;color:#0f0f3a;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>이 사진으로 분석 시작
+        </button>
+      </div>
+    </div>
+
+    <!-- 카메라 영역 -->
+    <div id="camera-area">
     <div class="cam-stage"><canvas id="sc" width="640" height="400"></canvas>
       <div class="fb-bar">
         <div class="fb-dot warn" id="fd"></div>
         <div class="fb-txt" id="ft">카메라를 눈높이에 맞춰 주세요</div>
         <div class="fb-sub" id="fs">얼굴을 가이드 안에 맞춰주세요</div>
       </div>
-      <!-- 자동 촬영 정렬 바 -->
       <div style="position:absolute;bottom:52px;left:0;right:0;padding:0 1rem;">
         <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;">
           <div id="align-bar" style="height:100%;width:0%;background:var(--em);border-radius:2px;transition:width .2s;"></div>
@@ -616,6 +655,7 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
       <div class="side-ctrl"><div class="ctrl-btn" id="bg" onclick="tGrid()">격자 가이드</div><div class="ctrl-btn" id="bl" onclick="tLight()">밝기 보정</div></div>
       <button class="shutter" id="sh" onclick="doCapture()"><div class="si"></div></button>
       <div class="side-ctrl"><div class="ctrl-btn" onclick="resetScan()">다시 찍기</div><div class="ctrl-btn" onclick="setMode('palm_left',document.getElementById('mp'))">손금 전환</div></div>
+    </div>
     </div>
     <div class="tips-row">
       <div class="tip-card"><div class="tip-icon" style="background:rgba(80,200,120,0.15);"><svg viewBox="0 0 24 24" fill="none" stroke="#50C878" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="tip-text">정면을 바라보고 표정을 편안하게</div></div>
@@ -676,37 +716,135 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
     </div>
   </div>
 
-  <!-- REPORT -->
+
+  <!-- REPORT / 결제 페이지 -->
   <div id="pg-report" class="pg">
     <div class="pgtop">
       <div class="back-btn" onclick="showPg('main')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--t)" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg></div>
       <h1>라이프 컴퍼스 50P 리포트</h1>
     </div>
-    <!-- 스캔 데이터 요약 -->
-    <div id="report-scan-summary" style="display:none;background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:12px;padding:.85rem 1rem;margin-bottom:1rem;">
-      <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:.5rem;">📊 분석에 포함된 데이터</div>
-      <div style="display:flex;gap:8px;flex-wrap:wrap;" id="report-data-tags"></div>
-    </div>
-    <div style="background:rgba(80,200,120,0.1);border:1px solid rgba(80,200,120,0.2);border-radius:12px;padding:1rem;margin-bottom:1rem;display:flex;align-items:center;gap:10px;" class="fu">
-      <div style="width:32px;height:32px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg></div>
-      <div><div style="font-size:14px;font-weight:700;color:#fff;" id="report-title">결제 완료 — 즉시 열람 가능</div><div style="font-size:11px;color:var(--t2);">₩89,000 · 에스크로 보호 완료</div></div>
-    </div>
-    <div class="ib fu"><div class="ib-title" id="report-ib-title">천기성 명주 핵심 해석</div><div class="ib-body" id="report-ib-body"><em>천기성(天機星)</em>은 계략과 지혜의 별입니다. 두뇌와 빠른 상황 판단력으로 기획·전략·컨설팅 분야에서 탁월한 성과를 냅니다.<br><br><b>40~49세 천동성 대운(92점)</b>이 인생 최대의 황금기입니다. <b>2027년 5월</b> 관록궁 화록 발동 — 승진·계약 확정.</div></div>
 
-    <div id="report-generate-btn" style="margin-bottom:1rem;">
-      <button onclick="generate50PReport()" style="width:100%;padding:16px;background:linear-gradient(135deg,#FFD700,#FFA500);border:none;border-radius:12px;color:#0f0f3a;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
-        📜 나만의 50P 인생 지침서 생성하기
-      </button>
-      <div style="font-size:11px;color:var(--t2);text-align:center;margin-top:.5rem;">재물·직업·애정·건강·대운·개운법 완전 분석 · 약 30초 소요</div>
+    <!-- 결제 전 화면 -->
+    <div id="payment-section">
+      <!-- 얼리버드 배너 -->
+      <div id="earlybird-banner" style="background:linear-gradient(135deg,rgba(255,100,0,0.15),rgba(255,50,50,0.1));border:1px solid rgba(255,100,0,0.35);border-radius:12px;padding:.8rem 1rem;margin-bottom:1rem;display:flex;align-items:center;justify-content:space-between;gap:8px;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="font-size:18px;">🔥</div>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:#ff6b35;">얼리버드 특가 진행 중</div>
+            <div style="font-size:11px;color:var(--t2);">정식 오픈 전 한정 할인가</div>
+          </div>
+        </div>
+        <div id="earlybird-count" style="font-size:11px;font-weight:700;color:#ff6b35;text-align:right;">잔여 <span id="eb-count">7</span>석</div>
+      </div>
+
+      <!-- 가격 카드 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:1rem;">
+        <!-- 얼리버드 -->
+        <div id="price-early" onclick="selectPlan('early')" style="background:rgba(255,215,0,0.08);border:2px solid var(--gold);border-radius:14px;padding:1rem;cursor:pointer;position:relative;transition:all .2s;">
+          <div style="position:absolute;top:-10px;left:50%;transform:translateX(-50%);background:var(--gold);color:#0f0f3a;font-size:10px;font-weight:700;padding:2px 12px;border-radius:20px;white-space:nowrap;">✦ 얼리버드</div>
+          <div style="font-size:11px;color:var(--t2);margin-top:.5rem;text-decoration:line-through;">₩89,000</div>
+          <div style="font-size:26px;font-weight:700;color:var(--gold);">₩19,900</div>
+          <div style="font-size:10px;color:var(--em);font-weight:700;">78% 할인</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:.4rem;line-height:1.5;">50P 인생 지침서<br>관상·손금 통합분석<br>대운 타임라인</div>
+        </div>
+        <!-- 정가 -->
+        <div id="price-full" onclick="selectPlan('full')" style="background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:14px;padding:1rem;cursor:pointer;transition:all .2s;opacity:0.7;">
+          <div style="font-size:11px;color:var(--t2);margin-top:.5rem;">정가</div>
+          <div style="font-size:26px;font-weight:700;color:#fff;">₩89,000</div>
+          <div style="font-size:10px;color:var(--t2);font-weight:700;">정식 오픈 후</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:.4rem;line-height:1.5;">50P 인생 지침서<br>관상·손금 통합분석<br>대운 타임라인<br>+ PDF 다운로드</div>
+        </div>
+      </div>
+
+      <!-- 포함 항목 -->
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:12px;padding:.85rem 1rem;margin-bottom:1rem;">
+        <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:.6rem;">📋 리포트에 포함되는 것</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;">
+          <div style="font-size:11px;color:var(--t2);display:flex;align-items:center;gap:5px;"><span style="color:var(--em);">✓</span> 자미두수 명반 풀이</div>
+          <div style="font-size:11px;color:var(--t2);display:flex;align-items:center;gap:5px;"><span style="color:var(--em);">✓</span> 생애 대운 흐름</div>
+          <div style="font-size:11px;color:var(--t2);display:flex;align-items:center;gap:5px;"><span style="color:var(--em);">✓</span> 재물·투자운</div>
+          <div style="font-size:11px;color:var(--t2);display:flex;align-items:center;gap:5px;"><span style="color:var(--em);">✓</span> 직업·커리어운</div>
+          <div style="font-size:11px;color:var(--t2);display:flex;align-items:center;gap:5px;"><span style="color:var(--em);">✓</span> 애정·결혼운</div>
+          <div style="font-size:11px;color:var(--t2);display:flex;align-items:center;gap:5px;"><span style="color:var(--em);">✓</span> 건강·체질 분석</div>
+          <div style="font-size:11px;color:var(--t2);display:flex;align-items:center;gap:5px;"><span style="color:var(--em);">✓</span> 기문둔갑 전략</div>
+          <div style="font-size:11px;color:var(--t2);display:flex;align-items:center;gap:5px;"><span style="color:var(--em);">✓</span> 매화역수 월별운</div>
+          <div style="font-size:11px;color:var(--t2);display:flex;align-items:center;gap:5px;"><span style="color:var(--em);">✓</span> 개운법·길일</div>
+          <div style="font-size:11px;color:var(--t2);display:flex;align-items:center;gap:5px;"><span style="color:var(--em);">✓</span> 2025~2027 타임라인</div>
+        </div>
+      </div>
+
+      <!-- 결제 버튼들 -->
+      <div id="payment-btns" style="display:flex;flex-direction:column;gap:10px;margin-bottom:1rem;">
+        <!-- 카카오페이 -->
+        <button onclick="doPayment('kakao')" style="width:100%;padding:14px;background:#FEE500;border:none;border-radius:12px;color:#3C1E1E;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none"><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.72 1.6 5.12 4 6.56L5 21l4.28-2.56A12 12 0 0 0 12 18.6c5.52 0 10-3.48 10-7.8S17.52 3 12 3z" fill="#3C1E1E"/></svg>
+          카카오페이로 결제 <span id="pay-price-kakao">₩19,900</span>
+        </button>
+        <!-- 토스 -->
+        <button onclick="doPayment('toss')" style="width:100%;padding:14px;background:#0064FF;border:none;border-radius:12px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <span style="font-size:16px;font-weight:900;letter-spacing:-1px;">toss</span>
+          토스로 결제 <span id="pay-price-toss">₩19,900</span>
+        </button>
+        <!-- 계좌이체 -->
+        <button onclick="doPayment('bank')" style="width:100%;padding:14px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:12px;color:var(--t);font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg>
+          계좌이체 <span id="pay-price-bank">₩19,900</span>
+        </button>
+      </div>
+
+      <!-- 계좌이체 안내 (숨김) -->
+      <div id="bank-info" style="display:none;background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:12px;padding:1rem;margin-bottom:1rem;">
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.75rem;">🏦 계좌이체 안내</div>
+        <div style="font-size:13px;color:var(--t2);line-height:2;">
+          은행: <strong style="color:#fff;">카카오뱅크</strong><br>
+          계좌: <strong style="color:#fff;" id="bank-account">3333-00-0000000</strong><br>
+          예금주: <strong style="color:#fff;">천기웨이브</strong><br>
+          금액: <strong style="color:var(--gold);" id="bank-amount">₩19,900</strong>
+        </div>
+        <div style="margin-top:.75rem;padding:.6rem .85rem;background:rgba(80,200,120,0.08);border-radius:8px;font-size:11px;color:var(--em);">
+          📱 입금 후 아래 버튼을 눌러 입금자명을 알려주세요.<br>확인 후 24시간 내 리포트를 발송해드립니다.
+        </div>
+        <button onclick="confirmBankTransfer()" style="width:100%;margin-top:.75rem;padding:12px;background:var(--em);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">
+          ✓ 입금 완료 알림 보내기
+        </button>
+      </div>
+
+      <div style="font-size:11px;color:var(--t2);text-align:center;line-height:1.7;">
+        결제 즉시 리포트 생성 · 브라우저에 저장됩니다<br>
+        문의: 스레드 DM 또는 이메일
+      </div>
     </div>
 
-    <div id="report-full-body" style="margin-bottom:1rem;"></div>
+    <!-- 결제 완료 후 리포트 화면 -->
+    <div id="report-paid-section" style="display:none;">
+      <div style="background:rgba(80,200,120,0.1);border:1px solid rgba(80,200,120,0.2);border-radius:12px;padding:1rem;margin-bottom:1rem;display:flex;align-items:center;gap:10px;">
+        <div style="width:32px;height:32px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg></div>
+        <div><div style="font-size:14px;font-weight:700;color:#fff;" id="report-title">결제 완료 — 즉시 열람 가능</div><div style="font-size:11px;color:var(--t2);" id="report-price-tag">₩19,900 · 얼리버드</div></div>
+      </div>
 
-    <div class="cta-row fu">
-      <button class="btn-gold" id="report-scan-btn" onclick="showPg('scan')">✦ AI 관상·손금 스캔 추가</button>
-      <button class="btn-em" onclick="showPg('sound')">음악 처방 받기</button>
-      <button class="btn-out" onclick="showPg('main')">메인으로</button>
+      <div id="report-scan-summary" style="display:none;background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:12px;padding:.85rem 1rem;margin-bottom:1rem;">
+        <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:.5rem;">📊 분석에 포함된 데이터</div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;" id="report-data-tags"></div>
+      </div>
+
+      <div class="ib"><div class="ib-title" id="report-ib-title">명주 핵심 해석</div><div class="ib-body" id="report-ib-body"></div></div>
+
+      <div id="report-generate-btn" style="margin:1rem 0;">
+        <button onclick="generate50PReport()" style="width:100%;padding:16px;background:linear-gradient(135deg,#FFD700,#FFA500);border:none;border-radius:12px;color:#0f0f3a;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          📜 50P 인생 지침서 생성하기
+        </button>
+        <div style="font-size:11px;color:var(--t2);text-align:center;margin-top:.5rem;">약 30초 소요</div>
+      </div>
+
+      <div id="report-full-body" style="margin-bottom:1rem;"></div>
+
+      <div class="cta-row">
+        <button class="btn-gold" id="report-scan-btn" onclick="showPg('scan')">📷 관상·손금 스캔 추가</button>
+        <button class="btn-em" onclick="showPg('sound')">음악 처방</button>
+        <button class="btn-out" onclick="showPg('main')">메인으로</button>
+      </div>
     </div>
   </div>
 
@@ -1575,6 +1713,167 @@ function populateReport() {
       btnEl.style.background = allDone ? 'var(--em)' : 'var(--gold)';
     }
   }
+}
+
+/* ── 입력 모드 전환 (카메라/사진) ── */
+var currentInputMode = 'camera';
+function setInputMode(mode) {
+  currentInputMode = mode;
+  var camBtn = document.getElementById('input-cam-btn');
+  var photoBtn = document.getElementById('input-photo-btn');
+  var camArea = document.getElementById('camera-area');
+  var photoArea = document.getElementById('photo-upload-area');
+  if (mode === 'camera') {
+    camBtn.style.cssText += ';border-color:var(--em);background:rgba(80,200,120,0.15);color:var(--em);';
+    photoBtn.style.cssText += ';border-color:var(--bd);background:var(--bg2);color:var(--t2);';
+    if(camArea) camArea.style.display = 'block';
+    if(photoArea) photoArea.style.display = 'none';
+    startCamera();
+  } else {
+    photoBtn.style.cssText += ';border-color:var(--em);background:rgba(80,200,120,0.15);color:var(--em);';
+    camBtn.style.cssText += ';border-color:var(--bd);background:var(--bg2);color:var(--t2);';
+    if(camArea) camArea.style.display = 'none';
+    if(photoArea) photoArea.style.display = 'block';
+    stopCamera();
+    var lbl = document.getElementById('upload-label');
+    var sub = document.getElementById('upload-sublabel');
+    if (sMode === 'face') {
+      if(lbl) lbl.textContent = '얼굴 정면 사진을 업로드하세요';
+      if(sub) sub.textContent = '밝은 곳에서 찍은 정면 사진 권장';
+    } else if (sMode === 'palm_left') {
+      if(lbl) lbl.textContent = '왼손 손바닥 사진을 업로드하세요';
+      if(sub) sub.textContent = '손바닥이 잘 보이게 펼쳐서 찍은 사진';
+    } else {
+      if(lbl) lbl.textContent = '오른손 손바닥 사진을 업로드하세요';
+      if(sub) sub.textContent = '손바닥이 잘 보이게 펼쳐서 찍은 사진';
+    }
+  }
+}
+
+function handlePhotoUpload(event) {
+  var file = event.target.files[0]; if (!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var imgEl = document.getElementById('preview-img');
+    var previewEl = document.getElementById('photo-preview');
+    var dropZone = document.getElementById('upload-drop-zone');
+    var hintEl = document.getElementById('photo-quality-hint');
+    imgEl.src = e.target.result;
+    previewEl.style.display = 'block';
+    dropZone.style.display = 'none';
+    var hints = {
+      face: '✅ 얼굴 사진 업로드 완료! 분석을 시작하세요.<br><span style="color:var(--t2);">💡 눈·코·입이 모두 보이는 정면 사진이 가장 정확해요</span>',
+      palm_left: '✅ 왼손 사진 업로드 완료! 분석을 시작하세요.<br><span style="color:var(--t2);">💡 손금이 선명하게 보이는 밝은 사진이 좋아요</span>',
+      palm_right: '✅ 오른손 사진 업로드 완료! 분석을 시작하세요.<br><span style="color:var(--t2);">💡 손가락 쭉 펴고 손바닥 정면으로 찍으세요</span>'
+    };
+    hintEl.style.cssText = 'background:rgba(80,200,120,0.1);border:1px solid rgba(80,200,120,0.25);border-radius:8px;padding:.6rem .85rem;font-size:11px;color:var(--em);margin-top:.5rem;';
+    hintEl.innerHTML = hints[sMode] || hints.face;
+    window.uploadedPhotoData = e.target.result;
+  };
+  reader.readAsDataURL(file);
+}
+
+function analyzePhoto() {
+  if (!window.uploadedPhotoData) return;
+  var cv = document.getElementById('sc'); if (!cv) return;
+  var W = cv.offsetWidth || 640;
+  cv.width = W*2; cv.height = Math.round(W*0.75)*2; cv.style.height = Math.round(W*0.75)+'px';
+  var ctx = cv.getContext('2d');
+  var img = new Image();
+  img.onload = function() {
+    var scale = Math.max(cv.width/img.width, cv.height/img.height);
+    var dw = img.width*scale, dh = img.height*scale;
+    ctx.drawImage(img, (cv.width-dw)/2, (cv.height-dh)/2, dw, dh);
+    capturedImages[sMode] = cv.toDataURL('image/jpeg', 0.8);
+    window.uploadedPhotoData = null;
+    document.getElementById('photo-upload-area').style.display = 'none';
+    document.getElementById('camera-area').style.display = 'block';
+    document.getElementById('ps').classList.add('show');
+    document.getElementById('rs').classList.remove('show');
+    sState = 'scanning';
+    var c = document.getElementById('psteps'); c.innerHTML = '';
+    var photoSteps = [
+      {label:'사진 화질 및 선명도 확인', dur:500},
+      {label: sMode==='face' ? '얼굴 랜드마크 68점 추출' : '손금선 패턴 분석', dur:800},
+      {label: sMode==='face' ? '12궁 명반 동기화' : '3대 역술 손금 분석', dur:700},
+      {label:'통합 해석 생성', dur:600}
+    ];
+    photoSteps.forEach(function(s, i) {
+      var d = document.createElement('div'); d.className = 'prog-step';
+      d.innerHTML = '<div class="sico wait" id="si'+i+'">'+(i+1)+'</div><div class="slbl" id="sl'+i+'">'+s.label+'</div><div class="spct" id="sp'+i+'"></div>';
+      c.appendChild(d);
+    });
+    var origSteps = STEPS.splice(0);
+    photoSteps.forEach(function(s){ STEPS.push(s); });
+    runStep(0);
+    setTimeout(function(){ STEPS.length=0; origSteps.forEach(function(s){ STEPS.push(s); }); }, 5000);
+  };
+  img.src = capturedImages[sMode];
+}
+
+/* ── 결제 시스템 ── */
+var selectedPlan = 'early';
+var PRICES = { early: 19900, full: 89000 };
+
+function selectPlan(plan) {
+  selectedPlan = plan;
+  document.getElementById('price-early').style.opacity = plan === 'early' ? '1' : '0.6';
+  document.getElementById('price-early').style.borderWidth = plan === 'early' ? '2px' : '1px';
+  document.getElementById('price-full').style.opacity = plan === 'full' ? '1' : '0.6';
+  document.getElementById('price-full').style.borderWidth = plan === 'full' ? '2px' : '1px';
+  var price = '₩' + PRICES[plan].toLocaleString();
+  ['kakao','toss','bank'].forEach(function(id) {
+    var el = document.getElementById('pay-price-' + id);
+    if (el) el.textContent = price;
+  });
+  var ba = document.getElementById('bank-amount');
+  if (ba) ba.textContent = price;
+}
+
+function doPayment(method) {
+  var inp = window.lastSajuInput;
+  if (!inp) { alert('먼저 사주 분석을 완료해주세요!'); showPg('main'); return; }
+  var price = PRICES[selectedPlan];
+  var priceStr = '₩' + price.toLocaleString();
+
+  if (method === 'bank') {
+    var bi = document.getElementById('bank-info');
+    bi.style.display = bi.style.display === 'none' ? 'block' : 'none';
+    return;
+  }
+  if (method === 'kakao') {
+    window.open('https://qr.kakaopay.com/Ej8X1ioaO', '_blank'); // ← 실제 카카오페이 링크로 교체
+    setTimeout(function() {
+      if (confirm('카카오페이 송금을 완료하셨나요?\n확인 후 리포트가 활성화됩니다.')) {
+        paymentSuccess(priceStr);
+      }
+    }, 2500);
+  } else if (method === 'toss') {
+    window.location.href = 'supertoss://send?amount=' + price;
+    setTimeout(function() {
+      if (confirm('토스 송금을 완료하셨나요?')) {
+        paymentSuccess(priceStr);
+      }
+    }, 3000);
+  }
+}
+
+function confirmBankTransfer() {
+  var inp = window.lastSajuInput;
+  var name = prompt('입금자명을 입력해주세요:', inp ? inp.name : '');
+  if (name) {
+    alert('✓ 입금 확인 요청 접수!\n\n입금자명: ' + name + '\n확인 후 24시간 내 발송됩니다.\n문의: 스레드 DM');
+    paymentSuccess('₩' + PRICES[selectedPlan].toLocaleString());
+  }
+}
+
+function paymentSuccess(priceStr) {
+  document.getElementById('payment-section').style.display = 'none';
+  document.getElementById('report-paid-section').style.display = 'block';
+  var ptag = document.getElementById('report-price-tag');
+  if (ptag) ptag.textContent = priceStr + ' · ' + (selectedPlan === 'early' ? '얼리버드' : '정가');
+  populateReport();
+  showShareToast('🎉 결제 완료! 리포트를 생성하세요');
 }
 
 /* ── 50P 리포트 생성 ── */

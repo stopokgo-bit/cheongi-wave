@@ -6,6 +6,7 @@
 <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
 <title>천기 웨이브 — 천기 웨이브</title>
 <meta name="description" content="정통 자미두수, 기문둔갑, 매화역수 기반 프리미엄 명리 플랫폼">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><polygon points='12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26' fill='%23FFD700'/></svg>">
 <style>
 *{box-sizing:border-box;margin:0;padding:0;}
 :root{--em:#50C878;--gold:#FFD700;--bg:#0f0f3a;--bg2:rgba(255,255,255,0.05);--bd:rgba(255,255,255,0.1);--t:#e8e8f4;--t2:#9999cc;--t3:#ccccee;}
@@ -393,19 +394,17 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
     <div class="hero fu">
       <div class="hero-title"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>당신의 천기(天機)를 스캔하세요</div>
 
-      <!-- ROW1: 이름 + 성별 -->
       <div class="form-row r2" style="margin-bottom:10px;">
         <div class="ig"><label>이름</label><input type="text" placeholder="이름 입력" id="inp-name"></div>
         <div class="ig">
           <label>성별</label>
           <div style="display:flex;gap:6px;">
-            <button type="button" class="gender-btn on" id="gbtn-m" onclick="setGender('남')" style="pointer-events:auto;">남성</button>
-            <button type="button" class="gender-btn" id="gbtn-f" onclick="setGender('여')" style="pointer-events:auto;">여성</button>
+            <button type="button" class="gender-btn on" id="gbtn-m" onclick="setGender('남')">남성</button>
+            <button type="button" class="gender-btn" id="gbtn-f" onclick="setGender('여')">여성</button>
           </div>
         </div>
       </div>
 
-      <!-- ROW2: 생년월일 (한국식) -->
       <div class="ig" style="margin-bottom:10px;">
         <label>생년월일</label>
         <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
@@ -429,7 +428,6 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
         </div>
       </div>
 
-      <!-- ROW3: 생시 + 시간모름 -->
       <div class="form-row r2" style="margin-bottom:10px;">
         <div class="ig">
           <label>태어난 시간 (생시) <span style="color:var(--em);font-size:10px;" title="시간 미입력 시 성격/기질 위주 분석">ⓘ</span></label>
@@ -451,7 +449,6 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
         </div>
       </div>
 
-      <!-- ROW4: 3대 역학 배너 -->
       <div class="method-banner">
         <div class="method-item">
           <div class="method-name">인생 지도</div>
@@ -475,7 +472,9 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
       <button class="scan-full-btn" onclick="doSajuScan()">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         3대 정밀 역학 통합 분석 시작 🌊
-      </button></div>
+      </button>
+    </div>
+
     <div class="two-col fu2">
       <div class="wcard">
         <div class="ct">생애 길흉 파동 (Destiny Wave)</div>
@@ -499,6 +498,7 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
         <div class="cdesc">지금 이 방향으로 이동하면<br>계약과 귀인의 도움을 얻기 좋습니다.</div>
       </div>
     </div>
+
     <div class="bio fu3">
       <div>
         <div class="cambox" onclick="showPg('scan')">
@@ -521,10 +521,12 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
         <div class="aitp">* 카메라를 눈높이에 맞추고 고정해 주세요.</div>
       </div>
     </div>
+
     <div class="exsec fu4">
       <div class="exhdr"><h2>실시간 매칭 전문가</h2><a href="#">전체 보기 &gt;</a></div>
       <div class="exgrid" id="eg"></div>
     </div>
+
     <div class="bgrid fu4">
       <div class="bc" onclick="showPg('report')">
         <div class="bci" style="background:rgba(255,215,0,0.15);"><svg viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
@@ -584,13 +586,17 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
     <div class="pgtop">
       <div class="back-btn" onclick="showPg('main')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--t)" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg></div>
       <h1>AI 관상 스캔</h1>
-      <div class="mode-toggle"><button class="mtbtn on" id="mf" onclick="setMode('face',this)">관상</button><button class="mtbtn" id="mp" onclick="setMode('palm_left',this)">왼손<span style="font-size:9px;display:block;color:rgba(255,255,255,0.5);">선천운</span></button><button class="mtbtn" id="mp2" onclick="setMode('palm_right',this)">오른손<span style="font-size:9px;display:block;color:rgba(255,255,255,0.5);">후천운</span></button></div>
+      <div class="mode-toggle">
+        <button class="mtbtn on" id="mf" onclick="setMode('face',this)">관상</button>
+        <button class="mtbtn" id="mp" onclick="setMode('palm_left',this)">왼손<span style="font-size:9px;display:block;color:rgba(255,255,255,0.5);">선천운</span></button>
+        <button class="mtbtn" id="mp2" onclick="setMode('palm_right',this)">오른손<span style="font-size:9px;display:block;color:rgba(255,255,255,0.5);">후천운</span></button>
+      </div>
     </div>
     <div class="cam-stage"><canvas id="sc" width="640" height="400"></canvas><div class="fb-bar"><div class="fb-dot warn" id="fd"></div><div class="fb-txt" id="ft">카메라를 눈높이에 맞춰 주세요</div><div class="fb-sub" id="fs">얼굴을 가이드 안에 맞춰주세요</div></div></div>
     <div class="ctrl-row">
       <div class="side-ctrl"><div class="ctrl-btn" id="bg" onclick="tGrid()">격자 가이드</div><div class="ctrl-btn" id="bl" onclick="tLight()">밝기 보정</div></div>
       <button class="shutter" id="sh" onclick="doCapture()"><div class="si"></div></button>
-      <div class="side-ctrl"><div class="ctrl-btn" onclick="resetScan()">다시 찍기</div><div class="ctrl-btn" onclick="setMode('palm',document.getElementById('mp'))">손금 전환</div></div>
+      <div class="side-ctrl"><div class="ctrl-btn" onclick="resetScan()">다시 찍기</div><div class="ctrl-btn" onclick="setMode('palm_left',document.getElementById('mp'))">손금 전환</div></div>
     </div>
     <div class="tips-row">
       <div class="tip-card"><div class="tip-icon" style="background:rgba(80,200,120,0.15);"><svg viewBox="0 0 24 24" fill="none" stroke="#50C878" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg></div><div class="tip-text">정면을 바라보고 표정을 편안하게</div></div>
@@ -608,7 +614,7 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
       <div class="ib"><div class="ib-title">관상·명반 통합 해석</div><div class="ib-body">이마(관록궁)가 <em>넓고 둥글게 발달</em>하여 명반의 천동성 화록과 완벽하게 일치합니다. 눈빛의 <em>예리함(천기성 명궁)</em>과 인중의 길이가 <b>이동운 91점</b>을 뒷받침합니다.</div></div>
       <div class="cta-row">
         <button class="btn-gold" onclick="showPg('report')">✦ 관상 포함 50P 리포트</button>
-        <button class="btn-em" onclick="setMode('palm',document.getElementById('mp'));resetScan()">손금 스캔 이어서</button>
+        <button class="btn-em" onclick="setMode('palm_left',document.getElementById('mp'));resetScan()">손금 스캔 이어서</button>
         <button class="btn-out" onclick="showPg('main')">메인으로</button>
       </div>
     </div>
@@ -682,7 +688,6 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
     </div>
 
     <div id="saju-score-row" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem;"></div>
-
     <div id="saju-result-body" style="display:flex;flex-direction:column;gap:.85rem;"></div>
 
     <div style="margin-top:1rem;" class="cta-row">
@@ -718,33 +723,16 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
           <button class="auth-tab" id="atab-join" onclick="switchAuthTab('join')">회원가입</button>
         </div>
       </div>
-
-      <!-- LOGIN BODY -->
       <div class="auth-body" id="abody-login">
         <div class="auth-sec">간편 로그인</div>
         <div class="soc-btns">
           <button class="soc-btn" id="kakao-login-btn" onclick="doKakaoLogin()">
-            <div class="soc-ico" style="background:#FEE500;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.72 1.6 5.12 4 6.56L5 21l4.28-2.56A12 12 0 0 0 12 18.6c5.52 0 10-3.48 10-7.8S17.52 3 12 3z" fill="#3C1E1E"/></svg>
-            </div>
-            <span class="soc-lbl">카카오톡으로 로그인</span>
-            <span class="kakao-badge">추천</span>
+            <div class="soc-ico" style="background:#FEE500;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.72 1.6 5.12 4 6.56L5 21l4.28-2.56A12 12 0 0 0 12 18.6c5.52 0 10-3.48 10-7.8S17.52 3 12 3z" fill="#3C1E1E"/></svg></div>
+            <span class="soc-lbl">카카오톡으로 로그인</span><span class="kakao-badge">추천</span>
           </button>
-          <button class="soc-btn" onclick="alertOauth('토스')">
-            <div class="soc-ico" style="background:#0064FF;color:#fff;font-size:11px;font-weight:700;">T</div>
-            <span class="soc-lbl">토스로 로그인</span>
-            <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
-          </button>
-          <button class="soc-btn" onclick="alertOauth('PASS')">
-            <div class="soc-ico" style="background:#E8002D;color:#fff;font-size:9px;font-weight:700;">PASS</div>
-            <span class="soc-lbl">PASS로 로그인</span>
-            <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
-          </button>
-          <button class="soc-btn" onclick="alertOauth('네이버')">
-            <div class="soc-ico" style="background:#03C75A;color:#fff;font-size:12px;font-weight:700;">N</div>
-            <span class="soc-lbl">네이버로 로그인</span>
-            <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
-          </button>
+          <button class="soc-btn" onclick="alertOauth('토스')"><div class="soc-ico" style="background:#0064FF;color:#fff;font-size:11px;font-weight:700;">T</div><span class="soc-lbl">토스로 로그인</span><svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg></button>
+          <button class="soc-btn" onclick="alertOauth('PASS')"><div class="soc-ico" style="background:#E8002D;color:#fff;font-size:9px;font-weight:700;">PASS</div><span class="soc-lbl">PASS로 로그인</span><svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg></button>
+          <button class="soc-btn" onclick="alertOauth('네이버')"><div class="soc-ico" style="background:#03C75A;color:#fff;font-size:12px;font-weight:700;">N</div><span class="soc-lbl">네이버로 로그인</span><svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg></button>
         </div>
         <div class="auth-div"><div class="auth-div-line"></div><div class="auth-div-txt">또는 이메일로</div><div class="auth-div-line"></div></div>
         <div class="auth-inp-grp">
@@ -758,33 +746,13 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
           <button class="auth-link" onclick="switchAuthTab('join')">회원가입</button>
         </div>
       </div>
-
-      <!-- JOIN BODY -->
       <div class="auth-body" id="abody-join" style="display:none;">
         <div class="auth-sec">간편 회원가입 — 3초 완료</div>
         <div class="soc-btns">
-          <button class="soc-btn" onclick="doKakaoLogin()">
-            <div class="soc-ico" style="background:#FEE500;">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.72 1.6 5.12 4 6.56L5 21l4.28-2.56A12 12 0 0 0 12 18.6c5.52 0 10-3.48 10-7.8S17.52 3 12 3z" fill="#3C1E1E"/></svg>
-            </div>
-            <span class="soc-lbl">카카오톡으로 시작하기</span>
-            <span class="kakao-badge">추천</span>
-          </button>
-          <button class="soc-btn" onclick="alertOauth('토스')">
-            <div class="soc-ico" style="background:#0064FF;color:#fff;font-size:11px;font-weight:700;">T</div>
-            <span class="soc-lbl">토스로 시작하기</span>
-            <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
-          </button>
-          <button class="soc-btn" onclick="alertOauth('PASS')">
-            <div class="soc-ico" style="background:#E8002D;color:#fff;font-size:9px;font-weight:700;">PASS</div>
-            <span class="soc-lbl">PASS로 시작하기</span>
-            <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
-          </button>
-          <button class="soc-btn" onclick="alertOauth('네이버')">
-            <div class="soc-ico" style="background:#03C75A;color:#fff;font-size:12px;font-weight:700;">N</div>
-            <span class="soc-lbl">네이버로 시작하기</span>
-            <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg>
-          </button>
+          <button class="soc-btn" onclick="doKakaoLogin()"><div class="soc-ico" style="background:#FEE500;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.72 1.6 5.12 4 6.56L5 21l4.28-2.56A12 12 0 0 0 12 18.6c5.52 0 10-3.48 10-7.8S17.52 3 12 3z" fill="#3C1E1E"/></svg></div><span class="soc-lbl">카카오톡으로 시작하기</span><span class="kakao-badge">추천</span></button>
+          <button class="soc-btn" onclick="alertOauth('토스')"><div class="soc-ico" style="background:#0064FF;color:#fff;font-size:11px;font-weight:700;">T</div><span class="soc-lbl">토스로 시작하기</span><svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg></button>
+          <button class="soc-btn" onclick="alertOauth('PASS')"><div class="soc-ico" style="background:#E8002D;color:#fff;font-size:9px;font-weight:700;">PASS</div><span class="soc-lbl">PASS로 시작하기</span><svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg></button>
+          <button class="soc-btn" onclick="alertOauth('네이버')"><div class="soc-ico" style="background:#03C75A;color:#fff;font-size:12px;font-weight:700;">N</div><span class="soc-lbl">네이버로 시작하기</span><svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg></button>
         </div>
         <div class="auth-div"><div class="auth-div-line"></div><div class="auth-div-txt">또는 이메일로</div><div class="auth-div-line"></div></div>
         <div class="auth-inp-grp">
@@ -795,10 +763,7 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
         <button class="auth-submit" onclick="doEmailJoin()">가입하고 천기 스캔 시작</button>
         <div class="auth-terms">가입 시 <a href="#">이용약관</a> 및 <a href="#">개인정보처리방침</a>에 동의합니다.</div>
       </div>
-
-      <button class="auth-close" onclick="closeAuth()">
-        <svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-      </button>
+      <button class="auth-close" onclick="closeAuth()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
     </div>
   </div>
 </div>
@@ -806,7 +771,6 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
 <script>
 /* =====================================================
    천기 웨이브 - 자미두수 AI 분석 엔진
-   Claude API (model: 'claude-haiku-4-5-20251001',) 연동
    ===================================================== */
 
 const SAJU_LOADING_MSGS = [
@@ -820,29 +784,63 @@ const SAJU_LOADING_MSGS = [
 let selectedGender = '남';
 let selectedCal = '양력';
 
-function setGender(g){
+function setGender(g) {
   selectedGender = g;
-  document.getElementById('gbtn-m').classList.toggle('on', g==='남');
-  document.getElementById('gbtn-f').classList.toggle('on', g==='여');
+  document.getElementById('gbtn-m').classList.toggle('on', g === '남');
+  document.getElementById('gbtn-f').classList.toggle('on', g === '여');
 }
-function setCal(c){
+function setCal(c) {
   selectedCal = c;
-  ['solar','lunar','leap'].forEach(id => document.getElementById('cbtn-'+id).classList.remove('on'));
+  ['solar','lunar','leap'].forEach(id => document.getElementById('cbtn-' + id).classList.remove('on'));
   const map = {'양력':'solar','음력':'lunar','음력윤달':'leap'};
-  if(map[c]) document.getElementById('cbtn-'+map[c]).classList.add('on');
+  if (map[c]) document.getElementById('cbtn-' + map[c]).classList.add('on');
+}
+
+function showLoading(show) {
+  const el = document.getElementById('sajuLoading');
+  el.style.display = show ? 'flex' : 'none';
+  if (show) {
+    document.getElementById('loading-msg').textContent = SAJU_LOADING_MSGS[0][0];
+    document.getElementById('loading-sub').textContent = SAJU_LOADING_MSGS[0][1];
+  }
 }
 
 async function doSajuScan() {
   const name = document.getElementById('inp-name').value.trim();
-  // inp-birth removed - using inp-year/month/day
   const time = document.getElementById('inp-time').value;
   const unknownTime = document.getElementById('unk').checked;
   const gender = selectedGender;
   const cal = selectedCal;
 
+  const yearVal = document.getElementById('inp-year').value;
+  const monthVal = document.getElementById('inp-month').value;
+  const dayVal = document.getElementById('inp-day').value;
+
   if (!name) { alert('이름을 입력해 주세요.'); return; }
+  if (!yearVal || !monthVal || !dayVal) { alert('생년월일을 입력해 주세요.'); return; }
   if (!time && !unknownTime) { alert('태어난 시간을 선택하거나\n"시간을 모릅니다"에 체크해 주세요.'); return; }
 
+  const year = yearVal;
+  const month = monthVal;
+  const day = dayVal;
+  const timeStr = unknownTime ? '미상 (삼주 분석)' : time;
+  const today = new Date();
+  const age = today.getFullYear() - parseInt(yearVal);
+
+  // ✅ 캐시 체크 (있으면 바로 렌더링)
+  const cacheKey = 'saju_' + name + '_' + year + '_' + month + '_' + day + '_' + gender + '_' + cal;
+  const cached = sessionStorage.getItem(cacheKey);
+  if (cached) {
+    try {
+      const r = JSON.parse(cached);
+      renderSajuResult(name, year, month, day, timeStr, age, r);
+      return;
+    } catch(e) {
+      sessionStorage.removeItem(cacheKey);
+    }
+  }
+
+  // ✅ 캐시 없을 때 API 호출
   showLoading(true);
   let msgIdx = 0;
   const msgTimer = setInterval(() => {
@@ -850,32 +848,20 @@ async function doSajuScan() {
     document.getElementById('loading-msg').textContent = SAJU_LOADING_MSGS[msgIdx][0];
     document.getElementById('loading-sub').textContent = SAJU_LOADING_MSGS[msgIdx][1];
   }, 1800);
-const yearVal = document.getElementById('inp-year').value;
-const monthVal = document.getElementById('inp-month').value;
-const dayVal = document.getElementById('inp-day').value;
-  const year = yearVal;
-  const month = monthVal;
-  const day = dayVal;
-  const timeStr = unknownTime ? '미상 (삼주 분석)' : time;
-  const today = new Date();
-  const age = today.getFullYear() - parseInt(yearVal);
-let cacheKey = `saju_${name}_${year}_${month}_${day}_${gender}_${cal}`;
-let cached = sessionStorage.getItem(cacheKey);
-if (cached) { 
-  clearInterval(msgTimer);
-  showLoading(false);
-  const r = JSON.parse(cached);
-  renderSajuResult(name, year, month, day, timeStr, age, r);
-  return;
-}
-const prompt = `사주 명리학 AI로 분석하세요. JSON만 출력하세요.
 
-이름:${name} 성별:${gender} 생년월일:${year}년${month}월${day}일(${cal}) 시간:${timeStr} 나이:${age}세
+  const prompt = '사주 명리학 AI로 분석하세요. JSON만 출력하세요.\n\n' +
+    '이름:' + name + ' 성별:' + gender + ' 생년월일:' + year + '년' + month + '월' + day + '일(' + cal + ') 시간:' + timeStr + ' 나이:' + age + '세\n\n' +
+    '반드시 아래 형식 JSON만 출력:\n' +
+    '{"star":"주성명","palace_desc":"특성","daewoon":"현재대운","base_score":85,' +
+    '"scores":{"재물운":80,"직업운":85,"애정운":75,"건강운":80},' +
+    '"score_trends":{"재물운":"상승중","직업운":"안정","애정운":"하락중","건강운":"안정"},' +
+    '"score_sources":{"재물운":"근거","직업운":"근거","애정운":"근거","건강운":"근거"},' +
+    '"ziwei":"자미두수분석","meihua":"매화역수분석","qimen":"기문둔갑분석",' +
+    '"hybrid_msg":"통합메시지","career":"직업분석","wealth":"재물분석",' +
+    '"love":"애정분석","luck_period":"대운분석","caution":"개운법",' +
+    '"lucky_direction":"동쪽","lucky_items":["빨간색","3","화요일"],"summary":"30자요약"}';
 
-반드시 아래 형식 JSON만 출력:
-{"star":"주성명","palace_desc":"특성","daewoon":"현재대운","base_score":85,"scores":{"재물운":80,"직업운":85,"애정운":75,"건강운":80},"score_trends":{"재물운":"상승중","직업운":"안정","애정운":"하락중","건강운":"안정"},"score_sources":{"재물운":"근거","직업운":"근거","애정운":"근거","건강운":"근거"},"ziwei":"자미두수분석","meihua":"매화역수분석","qimen":"기문둔갑분석","hybrid_msg":"통합메시지","career":"직업분석","wealth":"재물분석","love":"애정분석","luck_period":"대운분석","caution":"개운법","lucky_direction":"동쪽","lucky_items":["빨간색","3","화요일"],"summary":"30자요약"}`;
-if (cached) {
-    try {
+  try {
     const response = await fetch('/api/saju', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -893,13 +879,13 @@ if (cached) {
     }
 
     const data = await response.json();
-    const text = data.content?.map(c => c.text || '').join('') || '';
-const jsonMatch = text.match(/\{[\s\S]*\}/);
-const clean = jsonMatch ? jsonMatch[0] : text.replace(/```json|```/g, '').trim();
-const result = JSON.parse(clean);
+    const text = data.content ? data.content.map(function(c){ return c.text || ''; }).join('') : '';
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    const clean = jsonMatch ? jsonMatch[0] : text.replace(/```json|```/g, '').trim();
+    const result = JSON.parse(clean);
 
     showLoading(false);
-      sessionStorage.setItem(cacheKey, JSON.stringify(result));
+    sessionStorage.setItem(cacheKey, JSON.stringify(result));
     renderSajuResult(name, year, month, day, timeStr, age, result);
 
   } catch (e) {
@@ -909,95 +895,100 @@ const result = JSON.parse(clean);
   }
 }
 
-function showLoading(show) {
-  const el = document.getElementById('sajuLoading');
-  el.style.display = show ? 'flex' : 'none';
-  if (show) {
-    document.getElementById('loading-msg').textContent = SAJU_LOADING_MSGS[0][0];
-    document.getElementById('loading-sub').textContent = SAJU_LOADING_MSGS[0][1];
-  }
-}
-
 function renderSajuResult(name, year, month, day, timeStr, age, r) {
   document.getElementById('saju-page-title').textContent = name + '님의 천기 분석';
   document.getElementById('saju-date-tag').textContent = new Date().toLocaleDateString('ko-KR');
 
   document.getElementById('saju-profile-name').textContent =
-    name + ' · ' + r.star + ' 명주';
+    name + ' · ' + (r.star || '') + ' 명주';
   document.getElementById('saju-profile-info').innerHTML =
     year + '년 ' + month + '월 ' + day + '일 · ' + timeStr +
-    ' · ' + age + '세 · <em style="color:var(--em);">' + r.summary + '</em>';
+    ' · ' + age + '세 · <em style="color:var(--em);">' + (r.summary || '') + '</em>';
 
   const scoreColors = { '재물운': '#FFD700', '직업운': '#50C878', '애정운': '#cc88bb', '건강운': '#8aacf0' };
-  const trendIcon = { '상승중': '↑', '하락중': '↓', '안정': '->' };
+  const trendIcon = { '상승중': '↑', '하락중': '↓', '안정': '→' };
   const trendColor = { '상승중': '#50C878', '하락중': '#e74c3c', '안정': '#9999cc' };
 
   const scoreRow = document.getElementById('saju-score-row');
   scoreRow.innerHTML = '';
-  Object.entries(r.scores).forEach(([k, v]) => {
-    const trend = r.score_trends?.[k] || '안정';
-    const src = r.score_sources?.[k] || '';
-scoreRow.innerHTML += 
-    '<div class="saju-score-card">' +
-        '<div class="saju-score-label">' + k + '</div>' +
-        '<div class="saju-score-val" style="color:' + (scoreColors[k]) + '">' + Math.round(v) + '</div>' +
-        '<div class="saju-score-trend" style="color:' + (trendColor[trend] || '#9999cc') + '">' + (trendIcon[trend] || '->') + ' ' + trend + ' ' + '안정' + '</div>' +
-        (src ? '<div style="font-size:9px;color:rgba(153,153,204,0.7);margin-top:3px;line-height:1.3;">' + src + '</div>' : '') +
-    '</div>';
-});
+
+  if (r.scores) {
+    Object.entries(r.scores).forEach(function(entry) {
+      var k = entry[0];
+      var v = entry[1];
+      var trend = (r.score_trends && r.score_trends[k]) ? r.score_trends[k] : '안정';
+      var src = (r.score_sources && r.score_sources[k]) ? r.score_sources[k] : '';
+      var color = scoreColors[k] || '#fff';
+      var tColor = trendColor[trend] || '#9999cc';
+      var tIcon = trendIcon[trend] || '→';
+      var srcHtml = src ? ('<div style="font-size:9px;color:rgba(153,153,204,0.7);margin-top:3px;line-height:1.3;">' + src + '</div>') : '';
+
+      scoreRow.innerHTML +=
+        '<div class="saju-score-card">' +
+          '<div class="saju-score-label">' + k + '</div>' +
+          '<div class="saju-score-val" style="color:' + color + '">' + Math.round(v) + '</div>' +
+          '<div class="saju-score-trend" style="color:' + tColor + '">' + tIcon + ' ' + trend + '</div>' +
+          srcHtml +
+        '</div>';
+    });
+  }
+
+  // ✅ 길방 카드 - dirCard 정상 처리
+  const body = document.getElementById('saju-result-body');
+  body.innerHTML = '';
 
   if (r.lucky_direction) {
     const dirCard = document.createElement('div');
     dirCard.style.cssText = 'background:rgba(96,130,220,0.08);border:1px solid rgba(96,130,220,0.2);border-radius:10px;padding:.7rem 1rem;display:flex;align-items:center;gap:12px;margin-bottom:.85rem;';
-    dirCard.innerHTML = `
-dirCard.innerHTML = 
-    '<div style="width:40px;height:40px;border-radius:50%;background:rgba(96,130,220,0.15);border:1px solid rgba(96,130,220,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
+    dirCard.innerHTML =
+      '<div style="width:40px;height:40px;border-radius:50%;background:rgba(96,130,220,0.15);border:1px solid rgba(96,130,220,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
         '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8aacf0" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24,7.76 11.29,11.29 7.76,16.24 12.71,12.71"/></svg>' +
-    '</div>' +
-    '<div>' +
+      '</div>' +
+      '<div>' +
         '<div style="font-size:11px;color:#8aacf0;font-weight:700;margin-bottom:2px;">기문둔갑 오늘의 길방</div>' +
         '<div style="font-size:15px;font-weight:700;color:#fff;">' + r.lucky_direction + '</div>' +
-    '</div>';
+      '</div>';
+    body.appendChild(dirCard);
   }
 
   const sections = [
-    { icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>', color: '#FFD700', title: '자미두수 - 명궁 주성: ' + r.star + ' · ' + (r.daewoon||''), body: r.ziwei },
-    { icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>', color: '#FFD700', title: '자미두수 - 명궁 해석', body: r.palace_desc },
-    { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#50C878', title: '매화역수 - 오늘의 파도', body: r.meihua },
-    { icon: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>', color: '#8aacf0', title: '기문둔갑 - 나침반·전략', body: r.qimen },
-    { icon: '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>', color: '#FFD700', title: '3대 역학 통합 메시지', body: r.hybrid_msg },
-    { icon: '<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', color: '#FFD700', title: '재물·금전운', body: r.wealth },
-    { icon: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/>', color: '#50C878', title: '직업·커리어운', body: r.career },
-    { icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>', color: '#cc88bb', title: '애정·인간관계', body: r.love },
-    { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#8aacf0', title: '대운 흐름 · 향후 3년', body: r.luck_period },
-    { icon: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', color: '#EF9F27', title: '주의사항 · 개운법', body: r.caution },
+    { icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>', color: '#FFD700', title: '자미두수 - 명궁 주성: ' + (r.star || '') + ' · ' + (r.daewoon || ''), body: r.ziwei || '' },
+    { icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>', color: '#FFD700', title: '자미두수 - 명궁 해석', body: r.palace_desc || '' },
+    { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#50C878', title: '매화역수 - 오늘의 파도', body: r.meihua || '' },
+    { icon: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>', color: '#8aacf0', title: '기문둔갑 - 나침반·전략', body: r.qimen || '' },
+    { icon: '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>', color: '#FFD700', title: '3대 역학 통합 메시지', body: r.hybrid_msg || '' },
+    { icon: '<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', color: '#FFD700', title: '재물·금전운', body: r.wealth || '' },
+    { icon: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/>', color: '#50C878', title: '직업·커리어운', body: r.career || '' },
+    { icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>', color: '#cc88bb', title: '애정·인간관계', body: r.love || '' },
+    { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#8aacf0', title: '대운 흐름 · 향후 3년', body: r.luck_period || '' },
+    { icon: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', color: '#EF9F27', title: '주의사항 · 개운법', body: r.caution || '' },
   ];
 
-  const body = document.getElementById('saju-result-body');
-  body.innerHTML = '';
-  sections.forEach(s => {
+  sections.forEach(function(s) {
+    if (!s.body) return;
     const div = document.createElement('div');
     div.className = 'saju-section';
-    div.innerHTML = `
-      <div class="saju-section-title" style="color:${s.color}">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${s.color}" stroke-width="2">${s.icon}</svg>
-        ${s.title}
-      </div>
-      <div class="saju-section-body saju-streaming">${s.body}</div>`;
+    div.innerHTML =
+      '<div class="saju-section-title" style="color:' + s.color + '">' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="' + s.color + '" stroke-width="2">' + s.icon + '</svg>' +
+        s.title +
+      '</div>' +
+      '<div class="saju-section-body saju-streaming">' + s.body + '</div>';
     body.appendChild(div);
   });
 
-  if (r.lucky_items?.length) {
+  if (r.lucky_items && r.lucky_items.length) {
     const luckDiv = document.createElement('div');
     luckDiv.className = 'saju-section';
-    luckDiv.innerHTML = `
-      <div class="saju-section-title" style="color:var(--gold)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-        오늘의 길한 아이템
-      </div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:.2rem;">
-        ${r.lucky_items.map(i => `<span class="saju-tag" style="background:rgba(255,215,0,0.12);color:var(--gold);border:1px solid rgba(255,215,0,0.25);">✦ ${i}</span>`).join('')}
-      </div>`;
+    var itemsHtml = r.lucky_items.map(function(i) {
+      return '<span class="saju-tag" style="background:rgba(255,215,0,0.12);color:var(--gold);border:1px solid rgba(255,215,0,0.25);">✦ ' + i + '</span>';
+    }).join('');
+    luckDiv.innerHTML =
+      '<div class="saju-section-title" style="color:var(--gold)">' +
+        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>' +
+        '오늘의 길한 아이템' +
+      '</div>' +
+      '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:.2rem;">' + itemsHtml + '</div>';
     body.appendChild(luckDiv);
   }
 
@@ -1005,106 +996,83 @@ dirCard.innerHTML =
   window.scrollTo(0, 0);
 }
 </script>
-<script>
-/* Kakao JS Key */
-const KAKAO_JS_KEY = 'c67fa5fbeff62e7471a00b20a4eccae7';
 
+<script>
+const KAKAO_JS_KEY = 'c67fa5fbeff62e7471a00b20a4eccae7';
 let currentUser = null;
 
-function initKakao(){
-  try{
-    if(window.Kakao && !window.Kakao.isInitialized()){
-      window.Kakao.init(KAKAO_JS_KEY);
-    }
-  }catch(e){}
+function initKakao() {
+  try { if (window.Kakao && !window.Kakao.isInitialized()) window.Kakao.init(KAKAO_JS_KEY); } catch(e) {}
 }
-
-function openAuth(tab){
+function openAuth(tab) {
   initKakao();
   document.getElementById('authOverlay').classList.add('show');
-  switchAuthTab(tab||'login');
-  document.body.style.overflow='hidden';
+  switchAuthTab(tab || 'login');
+  document.body.style.overflow = 'hidden';
 }
-function closeAuth(){
+function closeAuth() {
   document.getElementById('authOverlay').classList.remove('show');
-  document.body.style.overflow='';
+  document.body.style.overflow = '';
 }
-function overlayClose(e){
-  if(e.target===document.getElementById('authOverlay')) closeAuth();
+function overlayClose(e) { if (e.target === document.getElementById('authOverlay')) closeAuth(); }
+function switchAuthTab(t) {
+  document.getElementById('atab-login').classList.toggle('on', t === 'login');
+  document.getElementById('atab-join').classList.toggle('on', t === 'join');
+  document.getElementById('abody-login').style.display = t === 'login' ? 'block' : 'none';
+  document.getElementById('abody-join').style.display = t === 'join' ? 'block' : 'none';
 }
-function switchAuthTab(t){
-  document.getElementById('atab-login').classList.toggle('on',t==='login');
-  document.getElementById('atab-join').classList.toggle('on',t==='join');
-  document.getElementById('abody-login').style.display=t==='login'?'block':'none';
-  document.getElementById('abody-join').style.display=t==='join'?'block':'none';
+function doKakaoLogin() {
+  if (KAKAO_JS_KEY === 'YOUR_KAKAO_JS_KEY') { alert('카카오 JavaScript 키를 설정해 주세요.'); return; }
+  try { window.Kakao.Auth.authorize({ redirectUri: window.location.origin }); } catch(e) { alert('카카오 SDK 오류: ' + e.message); }
 }
-
-function doKakaoLogin(){
-  if(KAKAO_JS_KEY==='YOUR_KAKAO_JS_KEY'){
-    alert('카카오 JavaScript 키를 설정해 주세요.\n\nhttps://developers.kakao.com 에서\n앱을 등록하고 JS 키를 발급받은 후\nindex.html 상단의 KAKAO_JS_KEY 값을 교체하면 됩니다.');
-    return;
-  }
-  try{
-    window.Kakao.Auth.authorize({
-      redirectUri: window.location.origin,
-    });
-  }catch(e){alert('카카오 SDK 오류: '+e.message);}
+function doEmailLogin() {
+  const email = document.getElementById('li-email').value.trim();
+  const pw = document.getElementById('li-pw').value;
+  if (!email || !email.includes('@')) { alert('올바른 이메일을 입력해 주세요.'); return; }
+  if (!pw) { alert('비밀번호를 입력해 주세요.'); return; }
+  loginSuccess({ name: email.split('@')[0], avatar: null, provider: 'email' });
 }
-
-function doEmailLogin(){
-  const email=document.getElementById('li-email').value.trim();
-  const pw=document.getElementById('li-pw').value;
-  if(!email||!email.includes('@')){alert('올바른 이메일을 입력해 주세요.');return;}
-  if(!pw){alert('비밀번호를 입력해 주세요.');return;}
-  const name=email.split('@')[0];
-  loginSuccess({name:name,avatar:null,provider:'email'});
+function doEmailJoin() {
+  const name = document.getElementById('ji-name').value.trim();
+  const email = document.getElementById('ji-email').value.trim();
+  const pw = document.getElementById('ji-pw').value;
+  if (!name) { alert('이름을 입력해 주세요.'); return; }
+  if (!email || !email.includes('@')) { alert('올바른 이메일을 입력해 주세요.'); return; }
+  if (!pw || pw.length < 8) { alert('비밀번호를 8자 이상 입력해 주세요.'); return; }
+  loginSuccess({ name: name, avatar: null, provider: 'email' });
 }
-function doEmailJoin(){
-  const name=document.getElementById('ji-name').value.trim();
-  const email=document.getElementById('ji-email').value.trim();
-  const pw=document.getElementById('ji-pw').value;
-  if(!name){alert('이름을 입력해 주세요.');return;}
-  if(!email||!email.includes('@')){alert('올바른 이메일을 입력해 주세요.');return;}
-  if(!pw||pw.length<8){alert('비밀번호를 8자 이상 입력해 주세요.');return;}
-  loginSuccess({name:name,avatar:null,provider:'email'});
-}
-
-function alertOauth(p){
-  alert(p+' 로그인은 해당 플랫폼의\n파트너/개발자 계약 후 연동 가능합니다.\n\n현재는 카카오 로그인과 이메일 로그인을\n사용해 주세요.');
-}
-
-function loginSuccess(user){
-  currentUser=user;
+function alertOauth(p) { alert(p + ' 로그인은 해당 플랫폼의\n파트너/개발자 계약 후 연동 가능합니다.\n\n현재는 카카오 로그인과 이메일 로그인을\n사용해 주세요.'); }
+function loginSuccess(user) {
+  currentUser = user;
   closeAuth();
-  const area=document.getElementById('nav-auth-area');
-  const initials=user.name.slice(0,1).toUpperCase();
-  area.innerHTML=`
-    <div class="nav-user-pill">
-      <div class="nav-user-avatar">${initials}</div>
-      <span class="nav-user-name">${user.name}</span>
-      <button class="nav-logout" onclick="doLogout()">로그아웃</button>
-    </div>`;
+  const area = document.getElementById('nav-auth-area');
+  const initials = user.name.slice(0, 1).toUpperCase();
+  area.innerHTML =
+    '<div class="nav-user-pill">' +
+      '<div class="nav-user-avatar">' + initials + '</div>' +
+      '<span class="nav-user-name">' + user.name + '</span>' +
+      '<button class="nav-logout" onclick="doLogout()">로그아웃</button>' +
+    '</div>';
 }
-function doLogout(){
-  if(currentUser?.provider==='kakao'){
-    try{window.Kakao.Auth.logout();}catch(e){}
-  }
-  currentUser=null;
-  document.getElementById('nav-auth-area').innerHTML=`
-    <button class="nav-login-btn" onclick="openAuth('login')">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>로그인
-    </button>`;
+function doLogout() {
+  if (currentUser && currentUser.provider === 'kakao') { try { window.Kakao.Auth.logout(); } catch(e) {} }
+  currentUser = null;
+  document.getElementById('nav-auth-area').innerHTML =
+    '<button class="nav-login-btn" onclick="openAuth(\'login\')">' +
+      '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>로그인' +
+    '</button>';
 }
-document.addEventListener('keydown',e=>{if(e.key==='Escape')closeAuth();});
+document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeAuth(); });
 </script>
+
 <script>
-const EX=[
-  {name:'천명 도사',spec:'자미두수·기문둔갑',rat:'4.9',tags:['#비즈니스','#승진운'],top:false},
-  {name:'연화 선생',spec:'매화역수·심리상담',rat:'4.8',tags:['#연애','#재회부적'],top:false},
-  {name:'자미 광인',spec:'정통 자미두수',rat:'5.0',tags:['#평생총운','#50p리포트'],top:true},
+const EX = [
+  {name:'천명 도사', spec:'자미두수·기문둔갑', rat:'4.9', tags:['#비즈니스','#승진운'], top:false},
+  {name:'연화 선생', spec:'매화역수·심리상담', rat:'4.8', tags:['#연애','#재회부적'], top:false},
+  {name:'자미 광인', spec:'정통 자미두수', rat:'5.0', tags:['#평생총운','#50p리포트'], top:true},
 ];
 
-const CH=[
+const CH = [
   {id:'urban',name:'UrbanPulseMix',handle:'@urbanpulsemix',url:'https://youtube.com/@urbanpulsemix?si=QdYFCZR-weLTTQe0',mood:'팝·팝트랩·힙합팝 · 트렌디 여성 보컬',tag:'오늘 추천',tBg:'rgba(255,215,0,0.18)',tC:'#FFD700',iBg:'rgba(255,215,0,0.15)',iC:'#FFD700',btn:'#e74c3c',sb:'#FFD700',icon:'<polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>',coming:false,why:{bg:'rgba(255,215,0,0.05)',bd:'rgba(255,215,0,0.2)',tc:'#FFD700',title:'UrbanPulseMix - 오전·활동 처방',body:'직업운 <em>88점</em>, 이동운 <em>91점</em> - 오늘은 활동과 추진의 날. 도시적 팝·힙합팝이 <b>관록궁 삼합 기운</b>을 극대화합니다.'}},
   {id:'yeoni',name:'YeoniWave',handle:'@YeoniWave',url:'https://youtube.com/@yeoniwave?si=5sJ_CeJywBoLV193',mood:'재즈·올드팝 · 허스키 여성 보컬 · 따뜻한 감정선',tag:'저녁 처방',tBg:'rgba(80,200,120,0.15)',tC:'#50C878',iBg:'rgba(80,200,120,0.15)',iC:'#50C878',btn:'#1e6e40',sb:'#50C878',icon:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',coming:false,why:{bg:'rgba(80,200,120,0.05)',bd:'rgba(80,200,120,0.2)',tc:'#50C878',title:'YeoniWave - 저녁 감정 회복 처방',body:'지친 마음에 부드럽게 닿는 <em>따뜻한 음악의 파도</em>. 재즈와 올드팝 기반 허스키 보컬이 내면 풍요를 자극합니다.'}},
   {id:'luck1',name:'행운곱하기',handle:'@luckmultipy',url:'https://youtube.com/@luckmultipy?si=9lmI5iyq7YXDBHNO',mood:'미스터리 앰비언트 · 반복 청취형 · 정서적 의식감',tag:'긍정 흐름',tBg:'rgba(255,165,0,0.15)',tC:'#FFA500',iBg:'rgba(255,165,0,0.15)',iC:'#FFA500',btn:'#7a4800',sb:'#FFA500',icon:'<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>',coming:false,why:{bg:'rgba(255,165,0,0.05)',bd:'rgba(255,165,0,0.2)',tc:'#FFA500',title:'행운곱하기 - 마인드셋 정렬',body:'좋은 기운을 <em>믿고 머무르게 하는</em> 몰입형 사운드. 오후 마인드셋을 <b>풍요로운 방향</b>으로 정렬할 때 활용하십시오.'}},
@@ -1114,7 +1082,7 @@ const CH=[
   {id:'deep',name:'Deep Rest Mode',handle:'@cloud9modeon',url:'https://youtube.com/@cloud9modeon?si=E1VgoSb-A9gVUJxh',mood:'앰비언트 · 블랙스크린 · 저자극 · 느린 호흡 음장',tag:'취침 전',tBg:'rgba(96,130,220,0.15)',tC:'#8aacf0',iBg:'rgba(96,130,220,0.15)',iC:'#8aacf0',btn:'#253070',sb:'#6082dc',icon:'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',coming:false,why:{bg:'rgba(96,130,220,0.05)',bd:'rgba(96,130,220,0.2)',tc:'#8aacf0',title:'Deep Rest Mode - 수면·뇌 완전 휴식',body:'블랙 스크린 기반 앰비언트로 <em>완전히 내려놓는</em> 밤의 공간. <b>뇌를 알파-세타-델타</b>로 자연 전환합니다.'}},
 ];
 
-const FEATS=[
+const FEATS = [
   {name:'이마 (관록궁)',score:88,color:'#50C878',desc:'넓고 둥근 형태. 직업운 강함.',tag:'명반 일치',tBg:'rgba(80,200,120,0.18)',tC:'#3db866'},
   {name:'눈빛 (명궁)',score:92,color:'#50C878',desc:'예리하고 깊은 눈빛. 천기성 직관력.',tag:'강력 일치',tBg:'rgba(80,200,120,0.18)',tC:'#3db866'},
   {name:'코 (재백궁)',score:79,color:'#FFD700',desc:'우뚝하고 안정적. 태음 화권 일치.',tag:'일치',tBg:'rgba(255,215,0,0.15)',tC:'#B8860B'},
@@ -1122,188 +1090,339 @@ const FEATS=[
   {name:'입술 (부처궁)',score:62,color:'#cc88bb',desc:'부드러운 곡선. 애정운 주의.',tag:'보통',tBg:'rgba(204,136,187,0.15)',tC:'#8a4870'},
   {name:'턱선 (전택궁)',score:70,color:'#EF9F27',desc:'안정적 턱선. 40대 이후 부동산.',tag:'일치',tBg:'rgba(255,215,0,0.15)',tC:'#B8860B'},
 ];
-const PALACES=[
+const PALACES = [
   {name:'명궁',pct:92,color:'#50C878',c:'강력 확인'},{name:'관록궁',pct:88,color:'#50C878',c:'확인'},
   {name:'천이궁',pct:85,color:'#50C878',c:'확인'},{name:'재백궁',pct:79,color:'#FFD700',c:'확인'},
   {name:'전택궁',pct:70,color:'#EF9F27',c:'일치'},{name:'부처궁',pct:62,color:'#cc88bb',c:'보통'},
 ];
-const STEPS=[
+const STEPS = [
   {label:'얼굴 감지 및 정렬 확인',dur:600},{label:'3D 랜드마크 68점 추출',dur:900},
   {label:'골격 구조 분석',dur:700},{label:'12궁 명반 좌표 동기화',dur:1000},
   {label:'관상·사주 통합 해석 생성',dur:800},
 ];
-const WD=[{age:'20대',w:72,c:80,l:65},{age:'30대',w:65,c:85,l:70},{age:'45세',w:88,c:92,l:75,ev:'황금기'},{age:'50대',w:78,c:80,l:68},{age:'60대',w:55,c:60,l:74},{age:'70대',w:70,c:75,l:80}];
+const WD = [{age:'20대',w:72,c:80,l:65},{age:'30대',w:65,c:85,l:70},{age:'45세',w:88,c:92,l:75,ev:'황금기'},{age:'50대',w:78,c:80,l:68},{age:'60대',w:55,c:60,l:74},{age:'70대',w:70,c:75,l:80}];
 
-let selCh='urban',sMode='face',gOn=false,lOn=false,sState='idle',aFr=null,sLY=0,sLD=1,chBuilt=false;
+let selCh = 'urban', sMode = 'face', gOn = false, lOn = false, sState = 'idle', aFr = null, sLY = 0, sLD = 1, chBuilt = false;
 
-function showPg(pg,btn,sub){
-  document.querySelectorAll('.pg').forEach(p=>p.classList.remove('on'));
-  const id=pg==='main'?'pg-main-'+(sub||'user'):'pg-'+pg;
-  const el=document.getElementById(id);if(el)el.classList.add('on');
-  if(pg==='main'){
-    document.querySelectorAll('.nbtn').forEach(b=>b.classList.remove('on','gon'));
-    if(sub==='cms'){document.getElementById('bn-cms').classList.add('gon');animCMS();}
-    else{document.getElementById('bn-user').classList.add('on');setTimeout(()=>{drawWave();drawCompass();},80);}
+function showPg(pg, btn, sub) {
+  document.querySelectorAll('.pg').forEach(function(p) { p.classList.remove('on'); });
+  var id = pg === 'main' ? 'pg-main-' + (sub || 'user') : 'pg-' + pg;
+  var el = document.getElementById(id);
+  if (el) el.classList.add('on');
+  if (pg === 'main') {
+    document.querySelectorAll('.nbtn').forEach(function(b) { b.classList.remove('on','gon'); });
+    if (sub === 'cms') { document.getElementById('bn-cms').classList.add('gon'); animCMS(); }
+    else { document.getElementById('bn-user').classList.add('on'); setTimeout(function(){ drawWave(); drawCompass(); }, 80); }
   }
-  if(pg==='scan'){setTimeout(()=>{drawScan();setTimeout(()=>{setFB('aligning');setTimeout(()=>setFB('ready'),1500);},800);},80);}
-  if(pg==='sound'&&!chBuilt){buildChannels();chBuilt=true;}
-  if(pg==='saju'){setTimeout(()=>{drawWave();},80);}
-  window.scrollTo(0,0);
+  if (pg === 'scan') { setTimeout(function(){ drawScan(); setTimeout(function(){ setFB('aligning'); setTimeout(function(){ setFB('ready'); }, 1500); }, 800); }, 80); }
+  if (pg === 'sound' && !chBuilt) { buildChannels(); chBuilt = true; }
+  if (pg === 'saju') { setTimeout(function(){ drawWave(); }, 80); }
+  window.scrollTo(0, 0);
 }
 
-function buildExperts(){
-  const g=document.getElementById('eg');if(!g)return;
-  EX.forEach(e=>{
-    const d=document.createElement('div');d.className='ecard'+(e.top?' top':'');
-    d.innerHTML=`<div class="echdr"><div class="eav"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><div class="edot pulse"></div></div><div style="flex:1;"><div class="enm">${e.name}${e.top?'<span class="tbdg">TOP</span>':''}</div><div class="esp">${e.spec}</div><div class="ert">${'*'.repeat(Math.floor(parseFloat(e.rat)))} ${e.rat}</div></div></div><div class="etgs">${e.tags.map(t=>`<span class="etg">${t}</span>`).join('')}</div><div class="ebs"><button class="eb m">상담 신청</button><button class="eb s">프로필</button></div>`;
+function buildExperts() {
+  var g = document.getElementById('eg'); if (!g) return;
+  EX.forEach(function(e) {
+    var d = document.createElement('div');
+    d.className = 'ecard' + (e.top ? ' top' : '');
+    d.innerHTML =
+      '<div class="echdr"><div class="eav"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><div class="edot pulse"></div></div>' +
+      '<div style="flex:1;"><div class="enm">' + e.name + (e.top ? '<span class="tbdg">TOP</span>' : '') + '</div>' +
+      '<div class="esp">' + e.spec + '</div><div class="ert">' + '★'.repeat(Math.floor(parseFloat(e.rat))) + ' ' + e.rat + '</div></div></div>' +
+      '<div class="etgs">' + e.tags.map(function(t){ return '<span class="etg">' + t + '</span>'; }).join('') + '</div>' +
+      '<div class="ebs"><button class="eb m">상담 신청</button><button class="eb s">프로필</button></div>';
     g.appendChild(d);
   });
 }
 
-function animCMS(){
-  function ac(id,to,dur,fmt){const el=document.getElementById(id);if(!el)return;const s=performance.now();(function step(now){const t=Math.min((now-s)/dur,1),e=1-Math.pow(1-t,3);el.textContent=fmt(to*e);if(t<1)requestAnimationFrame(step);})(performance.now());}
-  ac('c1',1240,1200,v=>Math.round(v).toLocaleString());
-  ac('c2',4.9,1300,v=>v.toFixed(1));
-  ac('c3',21450000,1400,v=>'₩'+Math.round(v).toLocaleString());
+function animCMS() {
+  function ac(id, to, dur, fmt) {
+    var el = document.getElementById(id); if (!el) return;
+    var s = performance.now();
+    (function step(now) {
+      var t = Math.min((now - s) / dur, 1), ev = 1 - Math.pow(1 - t, 3);
+      el.textContent = fmt(to * ev);
+      if (t < 1) requestAnimationFrame(step);
+    })(performance.now());
+  }
+  ac('c1', 1240, 1200, function(v){ return Math.round(v).toLocaleString(); });
+  ac('c2', 4.9, 1300, function(v){ return v.toFixed(1); });
+  ac('c3', 21450000, 1400, function(v){ return '₩' + Math.round(v).toLocaleString(); });
 }
 
-function drawWave(){
-  const cv=document.getElementById('wc');if(!cv)return;
-  const W=cv.offsetWidth||580;cv.width=W*2;cv.height=340;cv.style.height='170px';
-  const ctx=cv.getContext('2d'),H=340,pad={t:24,b:36,l:18,r:18};
-  const gW=W*2-pad.l-pad.r,gH=H-pad.t-pad.b;
-  function xy(i,v){return{x:pad.l+(i/(WD.length-1))*gW,y:pad.t+gH-(v/100)*gH};}
-  let pr=0;
-  function frame(){
-    ctx.clearRect(0,0,W*2,H);
-    [40,60,85].forEach(y=>{const gy=pad.t+gH-(y/100)*gH;ctx.strokeStyle='rgba(255,255,255,0.07)';ctx.lineWidth=1;ctx.setLineDash([5,5]);ctx.beginPath();ctx.moveTo(pad.l,gy);ctx.lineTo(W*2-pad.r,gy);ctx.stroke();ctx.setLineDash([]);});
-    function line(key,col){
-      ctx.beginPath();ctx.strokeStyle=col;ctx.lineWidth=3;ctx.lineJoin='round';
-      const mi=Math.min(Math.floor(pr),WD.length-1);
-      for(let i=0;i<=mi;i++){const{x,y}=xy(i,WD[i][key]);i===0?ctx.moveTo(x,y):ctx.lineTo(x,y);}
-      if(pr<WD.length-1){const f=pr-Math.floor(pr),i0=Math.floor(pr),i1=Math.min(i0+1,WD.length-1);const p0=xy(i0,WD[i0][key]),p1=xy(i1,WD[i1][key]);ctx.lineTo(p0.x+(p1.x-p0.x)*f,p0.y+(p1.y-p0.y)*f);}
+function drawWave() {
+  var cv = document.getElementById('wc'); if (!cv) return;
+  var W = cv.offsetWidth || 580;
+  cv.width = W * 2; cv.height = 340; cv.style.height = '170px';
+  var ctx = cv.getContext('2d'), H = 340, pad = {t:24,b:36,l:18,r:18};
+  var gW = W * 2 - pad.l - pad.r, gH = H - pad.t - pad.b;
+  function xy(i, v) { return {x: pad.l + (i / (WD.length - 1)) * gW, y: pad.t + gH - (v / 100) * gH}; }
+  var pr = 0;
+  function frame() {
+    ctx.clearRect(0, 0, W * 2, H);
+    [40,60,85].forEach(function(y) {
+      var gy = pad.t + gH - (y / 100) * gH;
+      ctx.strokeStyle = 'rgba(255,255,255,0.07)'; ctx.lineWidth = 1;
+      ctx.setLineDash([5,5]); ctx.beginPath(); ctx.moveTo(pad.l, gy); ctx.lineTo(W*2-pad.r, gy); ctx.stroke(); ctx.setLineDash([]);
+    });
+    function line(key, col) {
+      ctx.beginPath(); ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.lineJoin = 'round';
+      var mi = Math.min(Math.floor(pr), WD.length - 1);
+      for (var i = 0; i <= mi; i++) { var p = xy(i, WD[i][key]); i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); }
+      if (pr < WD.length - 1) {
+        var f = pr - Math.floor(pr), i0 = Math.floor(pr), i1 = Math.min(i0+1, WD.length-1);
+        var p0 = xy(i0, WD[i0][key]), p1 = xy(i1, WD[i1][key]);
+        ctx.lineTo(p0.x + (p1.x - p0.x) * f, p0.y + (p1.y - p0.y) * f);
+      }
       ctx.stroke();
-      for(let i=0;i<Math.min(Math.floor(pr+1),WD.length);i++){const{x,y}=xy(i,WD[i][key]);ctx.beginPath();ctx.arc(x,y,5,0,Math.PI*2);ctx.fillStyle=col;ctx.fill();}
+      for (var j = 0; j < Math.min(Math.floor(pr + 1), WD.length); j++) {
+        var pt = xy(j, WD[j][key]); ctx.beginPath(); ctx.arc(pt.x, pt.y, 5, 0, Math.PI*2);
+        ctx.fillStyle = col; ctx.fill();
+      }
     }
-    line('w','#50C878');line('c','#FFD700');line('l','#cc88bb');
-    WD.forEach((d,i)=>{const{x}=xy(i,50);ctx.fillStyle='rgba(255,255,255,0.45)';ctx.font='18px system-ui';ctx.textAlign='center';ctx.fillText(d.age,x,H-4);});
-    pr+=0.045;if(pr<WD.length-1)requestAnimationFrame(frame);
+    line('w','#50C878'); line('c','#FFD700'); line('l','#cc88bb');
+    WD.forEach(function(d, i) {
+      var p = xy(i, 50);
+      ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.font = '18px system-ui';
+      ctx.textAlign = 'center'; ctx.fillText(d.age, p.x, H - 4);
+    });
+    pr += 0.045; if (pr < WD.length - 1) requestAnimationFrame(frame);
   }
   frame();
-  cv.onmousemove=function(e){const r=cv.getBoundingClientRect(),mx=(e.clientX-r.left)*(W*2/r.width);let ci=0,md=Infinity;WD.forEach((d,i)=>{const{x}=xy(i,50);const dd=Math.abs(mx-x);if(dd<md){md=dd;ci=i;}});const d=WD[ci],{x}=xy(ci,50);const tt=document.getElementById('wtt');if(!tt)return;tt.style.left=Math.min(x/2+8,W-160)+'px';tt.style.top='8px';tt.style.opacity='1';tt.innerHTML=`<strong style="color:#50C878;display:block;margin-bottom:2px;">${d.age}</strong>재물 ${d.w} · 직업 ${d.c} · 애정 ${d.l}`;};
-  cv.onmouseleave=()=>{const tt=document.getElementById('wtt');if(tt)tt.style.opacity='0';};
+  cv.onmousemove = function(e) {
+    var r = cv.getBoundingClientRect(), mx = (e.clientX - r.left) * (W * 2 / r.width);
+    var ci = 0, md = Infinity;
+    WD.forEach(function(d, i) { var p = xy(i, 50); var dd = Math.abs(mx - p.x); if (dd < md) { md = dd; ci = i; } });
+    var d = WD[ci], p = xy(ci, 50);
+    var tt = document.getElementById('wtt'); if (!tt) return;
+    tt.style.left = Math.min(p.x / 2 + 8, W - 160) + 'px';
+    tt.style.top = '8px'; tt.style.opacity = '1';
+    tt.innerHTML = '<strong style="color:#50C878;display:block;margin-bottom:2px;">' + d.age + '</strong>재물 ' + d.w + ' · 직업 ' + d.c + ' · 애정 ' + d.l;
+  };
+  cv.onmouseleave = function() { var tt = document.getElementById('wtt'); if (tt) tt.style.opacity = '0'; };
 }
 
-function drawCompass(){
-  const cv=document.getElementById('cc');if(!cv)return;
-  const ctx=cv.getContext('2d'),cx=75,cy=75,r=62;let angle=45;
-  (function frame(){
-    ctx.clearRect(0,0,150,150);
-    ctx.beginPath();ctx.arc(cx,cy,r,0,Math.PI*2);ctx.strokeStyle='rgba(255,255,255,0.12)';ctx.lineWidth=2;ctx.stroke();
-    [['북(N)',0],['동(E)',90],['남(S)',180],['서(W)',270]].forEach(([l,deg])=>{const rad=(deg-90)*Math.PI/180;ctx.fillStyle='rgba(255,255,255,0.5)';ctx.font='11px system-ui';ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(l,cx+Math.cos(rad)*(r-12),cy+Math.sin(rad)*(r-12));});
-    ctx.save();ctx.translate(cx,cy);ctx.rotate(angle*Math.PI/180);ctx.beginPath();ctx.moveTo(0,-50);ctx.lineTo(7,0);ctx.lineTo(0,50);ctx.lineTo(-7,0);ctx.closePath();ctx.fillStyle='#FFD700';ctx.fill();ctx.beginPath();ctx.arc(0,0,5,0,Math.PI*2);ctx.fillStyle='rgba(255,255,255,0.9)';ctx.fill();ctx.restore();
-    angle=45+Math.sin(Date.now()/600)*2;requestAnimationFrame(frame);
+function drawCompass() {
+  var cv = document.getElementById('cc'); if (!cv) return;
+  var ctx = cv.getContext('2d'), cx = 75, cy = 75, r = 62;
+  var angle = 45;
+  (function frame() {
+    ctx.clearRect(0, 0, 150, 150);
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 2; ctx.stroke();
+    [['북(N)',0],['동(E)',90],['남(S)',180],['서(W)',270]].forEach(function(item) {
+      var rad = (item[1] - 90) * Math.PI / 180;
+      ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '11px system-ui';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(item[0], cx + Math.cos(rad) * (r - 12), cy + Math.sin(rad) * (r - 12));
+    });
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle * Math.PI / 180);
+    ctx.beginPath(); ctx.moveTo(0, -50); ctx.lineTo(7, 0); ctx.lineTo(0, 50); ctx.lineTo(-7, 0); ctx.closePath();
+    ctx.fillStyle = '#FFD700'; ctx.fill();
+    ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI*2);
+    ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fill();
+    ctx.restore();
+    angle = 45 + Math.sin(Date.now() / 600) * 2;
+    requestAnimationFrame(frame);
   })();
 }
 
-function drawScan(){
-  const cv=document.getElementById('sc');if(!cv)return;
-  const W=cv.offsetWidth||640;cv.width=W*2;cv.height=Math.round(W*0.625)*2;cv.style.height=Math.round(W*0.625)+'px';
-  const ctx=cv.getContext('2d'),w=cv.width,h=cv.height;
-  ctx.fillStyle='#0a0a20';ctx.fillRect(0,0,w,h);
-  if(lOn){ctx.fillStyle='rgba(255,255,200,0.04)';ctx.fillRect(0,0,w,h);}
-  if(sMode==='face'){
-    const cx=w/2,cy=h/2,rx=w*0.22,ry=h*0.38;
-    ctx.beginPath();ctx.ellipse(cx,cy,rx,ry,0,0,Math.PI*2);ctx.strokeStyle='rgba(80,200,120,0.55)';ctx.lineWidth=2;ctx.setLineDash([8,6]);ctx.stroke();ctx.setLineDash([]);
-    [{x:cx,y:cy-ry*0.55,l:'이마'},{x:cx-rx*0.55,y:cy-ry*0.15,l:'눈(좌)'},{x:cx+rx*0.55,y:cy-ry*0.15,l:'눈(우)'},{x:cx,y:cy+ry*0.05,l:'코'},{x:cx,y:cy+ry*0.35,l:'입'},{x:cx,y:cy+ry*0.62,l:'턱'}].forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,5,0,Math.PI*2);ctx.fillStyle='rgba(80,200,120,0.7)';ctx.fill();ctx.fillStyle='rgba(80,200,120,0.9)';ctx.font='20px system-ui';ctx.textAlign='center';ctx.fillText(p.l,p.x,p.y+(p.y<cy?-14:18));});
+function drawScan() {
+  var cv = document.getElementById('sc'); if (!cv) return;
+  var W = cv.offsetWidth || 640;
+  cv.width = W * 2; cv.height = Math.round(W * 0.625) * 2;
+  cv.style.height = Math.round(W * 0.625) + 'px';
+  var ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
+  ctx.fillStyle = '#0a0a20'; ctx.fillRect(0, 0, w, h);
+  if (lOn) { ctx.fillStyle = 'rgba(255,255,200,0.04)'; ctx.fillRect(0, 0, w, h); }
+
+  if (sMode === 'face') {
+    var cx2 = w/2, cy2 = h/2, rx = w*0.22, ry = h*0.38;
+    ctx.beginPath(); ctx.ellipse(cx2, cy2, rx, ry, 0, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(80,200,120,0.55)'; ctx.lineWidth = 2; ctx.setLineDash([8,6]); ctx.stroke(); ctx.setLineDash([]);
+    [{x:cx2,y:cy2-ry*0.55,l:'이마'},{x:cx2-rx*0.55,y:cy2-ry*0.15,l:'눈(좌)'},{x:cx2+rx*0.55,y:cy2-ry*0.15,l:'눈(우)'},{x:cx2,y:cy2+ry*0.05,l:'코'},{x:cx2,y:cy2+ry*0.35,l:'입'},{x:cx2,y:cy2+ry*0.62,l:'턱'}].forEach(function(p) {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI*2); ctx.fillStyle = 'rgba(80,200,120,0.7)'; ctx.fill();
+      ctx.fillStyle = 'rgba(80,200,120,0.9)'; ctx.font = '20px system-ui'; ctx.textAlign = 'center';
+      ctx.fillText(p.l, p.x, p.y + (p.y < cy2 ? -14 : 18));
+    });
   } else {
-    const px=w*0.2,py=h*0.12,pw=w*0.6,ph=h*0.76;
-    ctx.beginPath();ctx.moveTo(px+pw*0.5,py);ctx.lineTo(px+pw,py+ph*0.15);ctx.lineTo(px+pw,py+ph*0.8);ctx.lineTo(px+pw*0.5,py+ph);ctx.lineTo(px,py+ph*0.8);ctx.lineTo(px,py+ph*0.15);ctx.closePath();ctx.strokeStyle='rgba(80,200,120,0.55)';ctx.lineWidth=2;ctx.setLineDash([8,6]);ctx.stroke();ctx.setLineDash([]);
-    [{x1:px+pw*0.15,y1:py+ph*0.25,x2:px+pw*0.85,y2:py+ph*0.35,l:'감정선'},{x1:px+pw*0.2,y1:py+ph*0.45,x2:px+pw*0.75,y2:py+ph*0.55,l:'두뇌선'},{x1:px+pw*0.35,y1:py+ph*0.2,x2:px+pw*0.4,y2:py+ph*0.85,l:'생명선'},{x1:px+pw*0.55,y1:py+ph*0.18,x2:px+pw*0.58,y2:py+ph*0.75,l:'운명선'}].forEach(l=>{ctx.beginPath();ctx.moveTo(l.x1,l.y1);ctx.lineTo(l.x2,l.y2);ctx.strokeStyle='rgba(80,200,120,0.5)';ctx.lineWidth=2;ctx.stroke();ctx.fillStyle='rgba(255,215,0,0.85)';ctx.font='18px system-ui';ctx.textAlign='left';ctx.fillText(l.l,(l.x1+l.x2)/2+10,(l.y1+l.y2)/2);});
+    var px = w*0.2, py = h*0.12, pw = w*0.6, ph = h*0.76;
+    ctx.beginPath(); ctx.moveTo(px+pw*0.5,py); ctx.lineTo(px+pw,py+ph*0.15); ctx.lineTo(px+pw,py+ph*0.8);
+    ctx.lineTo(px+pw*0.5,py+ph); ctx.lineTo(px,py+ph*0.8); ctx.lineTo(px,py+ph*0.15); ctx.closePath();
+    ctx.strokeStyle = 'rgba(80,200,120,0.55)'; ctx.lineWidth = 2; ctx.setLineDash([8,6]); ctx.stroke(); ctx.setLineDash([]);
+    [{x1:px+pw*0.15,y1:py+ph*0.25,x2:px+pw*0.85,y2:py+ph*0.35,l:'감정선'},
+     {x1:px+pw*0.2,y1:py+ph*0.45,x2:px+pw*0.75,y2:py+ph*0.55,l:'두뇌선'},
+     {x1:px+pw*0.35,y1:py+ph*0.2,x2:px+pw*0.4,y2:py+ph*0.85,l:'생명선'},
+     {x1:px+pw*0.55,y1:py+ph*0.18,x2:px+pw*0.58,y2:py+ph*0.75,l:'운명선'}].forEach(function(l) {
+      ctx.beginPath(); ctx.moveTo(l.x1,l.y1); ctx.lineTo(l.x2,l.y2);
+      ctx.strokeStyle = 'rgba(80,200,120,0.5)'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = 'rgba(255,215,0,0.85)'; ctx.font = '18px system-ui'; ctx.textAlign = 'left';
+      ctx.fillText(l.l, (l.x1+l.x2)/2+10, (l.y1+l.y2)/2);
+    });
   }
-  if(gOn){ctx.strokeStyle='rgba(255,255,255,0.08)';ctx.lineWidth=1;for(let x=0;x<w;x+=w/6){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,h);ctx.stroke();}for(let y=0;y<h;y+=h/4){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(w,y);ctx.stroke();}}
-  if(sState==='scanning'){
-    sLY+=3*sLD;if(sLY>h||sLY<0)sLD*=-1;
-    ctx.beginPath();ctx.moveTo(0,sLY);ctx.lineTo(w,sLY);ctx.strokeStyle='rgba(80,200,120,0.5)';ctx.lineWidth=2;ctx.stroke();
-    const grd=ctx.createLinearGradient(0,sLY-30,0,sLY+30);grd.addColorStop(0,'rgba(80,200,120,0)');grd.addColorStop(0.5,'rgba(80,200,120,0.12)');grd.addColorStop(1,'rgba(80,200,120,0)');ctx.fillStyle=grd;ctx.fillRect(0,sLY-30,w,60);
-    aFr=requestAnimationFrame(drawScan);
+
+  if (gOn) {
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1;
+    for (var x = 0; x < w; x += w/6) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+    for (var y = 0; y < h; y += h/4) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+  }
+
+  if (sState === 'scanning') {
+    sLY += 3 * sLD; if (sLY > h || sLY < 0) sLD *= -1;
+    ctx.beginPath(); ctx.moveTo(0, sLY); ctx.lineTo(w, sLY);
+    ctx.strokeStyle = 'rgba(80,200,120,0.5)'; ctx.lineWidth = 2; ctx.stroke();
+    var grd = ctx.createLinearGradient(0, sLY-30, 0, sLY+30);
+    grd.addColorStop(0,'rgba(80,200,120,0)'); grd.addColorStop(0.5,'rgba(80,200,120,0.12)'); grd.addColorStop(1,'rgba(80,200,120,0)');
+    ctx.fillStyle = grd; ctx.fillRect(0, sLY-30, w, 60);
+    aFr = requestAnimationFrame(drawScan);
   }
 }
 
-function setFB(state){
-  const dot=document.getElementById('fd'),txt=document.getElementById('ft'),sub=document.getElementById('fs');if(!dot)return;
-  dot.className='fb-dot';
-  if(state==='idle'){dot.classList.add('warn');txt.textContent=sMode==='face'?'카메라를 눈높이에 맞춰 주세요':'손바닥을 카메라 앞에 펼쳐 주세요';sub.textContent='가이드 라인에 맞춰주세요';}
-  else if(state==='aligning'){dot.classList.add('warn');txt.textContent='정렬 중... 조금 더 가까이';sub.textContent='얼굴을 타원 가이드 중앙에 맞춰주세요';}
-  else if(state==='ready'){dot.classList.add('ok');txt.textContent='준비 완료 - 셔터를 눌러주세요';sub.textContent='3초간 정지 후 촬영';}
-  else if(state==='scanning'){dot.classList.add('sc');txt.textContent='스캔 중... 움직이지 마세요';sub.textContent='AI 분석 진행 중';}
+function setFB(state) {
+  var dot = document.getElementById('fd'), txt = document.getElementById('ft'), sub = document.getElementById('fs');
+  if (!dot) return;
+  dot.className = 'fb-dot';
+  if (state === 'idle') { dot.classList.add('warn'); txt.textContent = sMode === 'face' ? '카메라를 눈높이에 맞춰 주세요' : '손바닥을 카메라 앞에 펼쳐 주세요'; sub.textContent = '가이드 라인에 맞춰주세요'; }
+  else if (state === 'aligning') { dot.classList.add('warn'); txt.textContent = '정렬 중... 조금 더 가까이'; sub.textContent = '얼굴을 타원 가이드 중앙에 맞춰주세요'; }
+  else if (state === 'ready') { dot.classList.add('ok'); txt.textContent = '준비 완료 - 셔터를 눌러주세요'; sub.textContent = '3초간 정지 후 촬영'; }
+  else if (state === 'scanning') { dot.classList.add('sc'); txt.textContent = '스캔 중... 움직이지 마세요'; sub.textContent = 'AI 분석 진행 중'; }
 }
 
-function setMode(m,btn){sMode=m;document.getElementById('mf').classList.toggle('on',m==='face');document.getElementById('mp').classList.toggle('on',m==='palm');resetScan();}
-function tGrid(){gOn=!gOn;document.getElementById('bg').classList.toggle('active',gOn);drawScan();}
-function tLight(){lOn=!lOn;document.getElementById('bl').classList.toggle('active',lOn);drawScan();}
-function resetScan(){sState='idle';document.getElementById('ps').classList.remove('show');document.getElementById('rs').classList.remove('show');document.getElementById('sh').classList.remove('cap');setFB('idle');if(aFr){cancelAnimationFrame(aFr);aFr=null;}drawScan();}
+function setMode(m, btn) {
+  sMode = m;
+  document.getElementById('mf').classList.toggle('on', m === 'face');
+  document.getElementById('mp').classList.toggle('on', m === 'palm_left');
+  document.getElementById('mp2').classList.toggle('on', m === 'palm_right');
+  resetScan();
+}
+function tGrid() { gOn = !gOn; document.getElementById('bg').classList.toggle('active', gOn); drawScan(); }
+function tLight() { lOn = !lOn; document.getElementById('bl').classList.toggle('active', lOn); drawScan(); }
+function resetScan() {
+  sState = 'idle';
+  document.getElementById('ps').classList.remove('show');
+  document.getElementById('rs').classList.remove('show');
+  document.getElementById('sh').classList.remove('cap');
+  setFB('idle');
+  if (aFr) { cancelAnimationFrame(aFr); aFr = null; }
+  drawScan();
+}
 
-function doCapture(){
-  if(sState==='scanning'||sState==='done')return;
-  sState='scanning';document.getElementById('sh').classList.add('cap');setFB('scanning');
-  sLY=0;sLD=1;drawScan();
-  document.getElementById('ps').classList.add('show');document.getElementById('rs').classList.remove('show');
-  const c=document.getElementById('psteps');c.innerHTML='';
-  STEPS.forEach((s,i)=>{const d=document.createElement('div');d.className='prog-step';d.innerHTML=`<div class="sico wait" id="si${i}">${i+1}</div><div class="slbl" id="sl${i}">${s.label}</div><div class="spct" id="sp${i}"></div>`;c.appendChild(d);});
+function doCapture() {
+  if (sState === 'scanning' || sState === 'done') return;
+  sState = 'scanning'; document.getElementById('sh').classList.add('cap'); setFB('scanning');
+  sLY = 0; sLD = 1; drawScan();
+  document.getElementById('ps').classList.add('show');
+  document.getElementById('rs').classList.remove('show');
+  var c = document.getElementById('psteps'); c.innerHTML = '';
+  STEPS.forEach(function(s, i) {
+    var d = document.createElement('div'); d.className = 'prog-step';
+    d.innerHTML = '<div class="sico wait" id="si' + i + '">' + (i+1) + '</div><div class="slbl" id="sl' + i + '">' + s.label + '</div><div class="spct" id="sp' + i + '"></div>';
+    c.appendChild(d);
+  });
   runStep(0);
 }
-function runStep(i){
-  if(i>=STEPS.length){setTimeout(showResult,300);return;}
-  const si=document.getElementById('si'+i),sl=document.getElementById('sl'+i),sp=document.getElementById('sp'+i);
-  si.className='sico act';si.innerHTML='<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>';
-  sl.className='slbl act';let pct=0;
-  const iv=setInterval(()=>{pct=Math.min(100,pct+Math.round(100/(STEPS[i].dur/50)));sp.textContent=pct+'%';if(pct>=100){clearInterval(iv);si.className='sico done';si.innerHTML='<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>';sl.className='slbl done';setTimeout(()=>runStep(i+1),100);}},50);
+function runStep(i) {
+  if (i >= STEPS.length) { setTimeout(showResult, 300); return; }
+  var si = document.getElementById('si'+i), sl = document.getElementById('sl'+i), sp = document.getElementById('sp'+i);
+  si.className = 'sico act';
+  si.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>';
+  sl.className = 'slbl act';
+  var pct = 0;
+  var iv = setInterval(function() {
+    pct = Math.min(100, pct + Math.round(100 / (STEPS[i].dur / 50)));
+    sp.textContent = pct + '%';
+    if (pct >= 100) {
+      clearInterval(iv);
+      si.className = 'sico done';
+      si.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>';
+      sl.className = 'slbl done';
+      setTimeout(function(){ runStep(i + 1); }, 100);
+    }
+  }, 50);
 }
-function showResult(){
-  if(aFr){cancelAnimationFrame(aFr);aFr=null;}sState='done';setFB('ready');
-  const tc=document.getElementById('tc');if(tc){const ctx=tc.getContext('2d');ctx.fillStyle='#111';ctx.fillRect(0,0,64,80);ctx.beginPath();ctx.ellipse(32,34,16,22,0,0,Math.PI*2);ctx.strokeStyle='rgba(80,200,120,0.6)';ctx.lineWidth=1;ctx.stroke();[{x:32,y:15},{x:20,y:28},{x:44,y:28},{x:32,y:38},{x:32,y:52}].forEach(p=>{ctx.beginPath();ctx.arc(p.x,p.y,2,0,Math.PI*2);ctx.fillStyle='rgba(80,200,120,0.7)';ctx.fill();});}
+function showResult() {
+  if (aFr) { cancelAnimationFrame(aFr); aFr = null; }
+  sState = 'done'; setFB('ready');
+  var tc = document.getElementById('tc');
+  if (tc) {
+    var ctx = tc.getContext('2d');
+    ctx.fillStyle = '#111'; ctx.fillRect(0, 0, 64, 80);
+    ctx.beginPath(); ctx.ellipse(32, 34, 16, 22, 0, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(80,200,120,0.6)'; ctx.lineWidth = 1; ctx.stroke();
+    [{x:32,y:15},{x:20,y:28},{x:44,y:28},{x:32,y:38},{x:32,y:52}].forEach(function(p) {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fillStyle = 'rgba(80,200,120,0.7)'; ctx.fill();
+    });
+  }
   document.getElementById('rs').classList.add('show');
-  const fg=document.getElementById('fg');fg.innerHTML='';
-  FEATS.forEach(f=>{const d=document.createElement('div');d.className='feat-card';d.innerHTML=`<div class="feat-head"><div class="feat-name">${f.name}</div><div class="feat-score" style="color:${f.color};">${f.score}</div></div><div class="feat-bar"><div class="feat-fill" style="width:0%;background:${f.color};" data-w="${f.score}"></div></div><div class="feat-desc">${f.desc}</div><span class="feat-tag" style="background:${f.tBg};color:${f.tC};">${f.tag}</span>`;fg.appendChild(d);});
-  setTimeout(()=>document.querySelectorAll('.feat-fill').forEach(f=>f.style.width=f.dataset.w+'%'),80);
-  const pl=document.getElementById('pl');pl.innerHTML='';
-  PALACES.forEach(p=>{const d=document.createElement('div');d.className='pm-item';d.innerHTML=`<div class="pm-palace">${p.name}</div><div class="pm-bar-wrap"><div class="pm-fill" style="width:0%;background:${p.color};" data-w="${p.pct}"></div></div><div class="pm-pct">${p.pct}%</div><div style="font-size:10px;color:${p.color};font-weight:700;width:60px;text-align:right;flex-shrink:0;">${p.c}</div>`;pl.appendChild(d);});
-  setTimeout(()=>document.querySelectorAll('.pm-fill').forEach(f=>f.style.width=f.dataset.w+'%'),80);
+  var fg = document.getElementById('fg'); fg.innerHTML = '';
+  FEATS.forEach(function(f) {
+    var d = document.createElement('div'); d.className = 'feat-card';
+    d.innerHTML =
+      '<div class="feat-head"><div class="feat-name">' + f.name + '</div><div style="color:' + f.color + ';">' + f.score + '</div></div>' +
+      '<div class="feat-bar"><div class="feat-fill" style="width:0%;background:' + f.color + ';" data-w="' + f.score + '"></div></div>' +
+      '<div class="feat-desc">' + f.desc + '</div>' +
+      '<span class="feat-tag" style="background:' + f.tBg + ';color:' + f.tC + ';">' + f.tag + '</span>';
+    fg.appendChild(d);
+  });
+  setTimeout(function(){ document.querySelectorAll('.feat-fill').forEach(function(f){ f.style.width = f.dataset.w + '%'; }); }, 80);
+  var pl = document.getElementById('pl'); pl.innerHTML = '';
+  PALACES.forEach(function(p) {
+    var d = document.createElement('div'); d.className = 'pm-item';
+    d.innerHTML =
+      '<div class="pm-palace">' + p.name + '</div>' +
+      '<div class="pm-bar-wrap"><div class="pm-fill" style="width:0%;background:' + p.color + ';" data-w="' + p.pct + '"></div></div>' +
+      '<div class="pm-pct">' + p.pct + '%</div>' +
+      '<div style="font-size:10px;color:' + p.color + ';font-weight:700;width:60px;text-align:right;flex-shrink:0;">' + p.c + '</div>';
+    pl.appendChild(d);
+  });
+  setTimeout(function(){ document.querySelectorAll('.pm-fill').forEach(function(f){ f.style.width = f.dataset.w + '%'; }); }, 80);
 }
 
-function buildChannels(){
-  const g=document.getElementById('chg');if(!g)return;g.innerHTML='';
-  CH.forEach(c=>{
-    const d=document.createElement('div');
-    d.className='chc'+(c.id===selCh?' sel':'');
-    if(c.id===selCh)d.style.borderColor=c.sb;
-    d.innerHTML=`<div class="chico" style="background:${c.iBg};"><svg viewBox="0 0 24 24" fill="none" stroke="${c.iC}" stroke-width="2">${c.icon}</svg></div><div style="flex:1;min-width:0;"><div class="chnm">${c.name}${c.coming?'<span class="ch-coming">준비중</span>':''}</div><div class="chhdl">${c.handle}</div><div class="chmood">${c.mood}</div><span class="chtag" style="background:${c.tBg};color:${c.tC};">${c.tag}</span></div>`;
-    d.onclick=()=>{selCh=c.id;renderCh();};
+function buildChannels() {
+  var g = document.getElementById('chg'); if (!g) return;
+  g.innerHTML = '';
+  CH.forEach(function(c) {
+    var d = document.createElement('div');
+    d.className = 'chc' + (c.id === selCh ? ' sel' : '');
+    if (c.id === selCh) d.style.borderColor = c.sb;
+    d.innerHTML =
+      '<div class="chico" style="background:' + c.iBg + ';"><svg viewBox="0 0 24 24" fill="none" stroke="' + c.iC + '" stroke-width="2">' + c.icon + '</svg></div>' +
+      '<div style="flex:1;min-width:0;"><div class="chnm">' + c.name + (c.coming ? '<span class="ch-coming">준비중</span>' : '') + '</div>' +
+      '<div class="chhdl">' + c.handle + '</div><div class="chmood">' + c.mood + '</div>' +
+      '<span class="chtag" style="background:' + c.tBg + ';color:' + c.tC + ';">' + c.tag + '</span></div>';
+    d.onclick = function(){ selCh = c.id; renderCh(); };
     g.appendChild(d);
   });
   renderCh();
 }
 
-function renderCh(){
-  const c=CH.find(x=>x.id===selCh);
-  document.querySelectorAll('.chc').forEach((card,i)=>{if(i<CH.length){card.classList.toggle('sel',CH[i].id===selCh);card.style.borderColor=CH[i].id===selCh?CH[i].sb:'';}});
-  const yl=document.getElementById('ytl'),ylt=document.getElementById('ytlt'),yn=document.getElementById('ytnote');
-  yl.href=c.url;yl.style.background=c.btn;
-  if(c.coming){ylt.textContent=c.name+' 채널 보기 (콘텐츠 업로드 준비 중)';yn.innerHTML='<span style="color:#ccaa00;">채널은 열려있으나 콘텐츠 업로드 준비 중입니다</span>';}
-  else{ylt.textContent='유튜브에서 '+c.name+' 열기 >';yn.innerHTML='<span style="color:var(--em);">↑ 클릭하면 유튜브로 이동합니다</span>';}
-  const wc2=document.getElementById('wc2'),wt2=document.getElementById('wt2'),wb2=document.getElementById('wb2');
-  if(wc2){wc2.style.background=c.why.bg;wc2.style.borderColor=c.why.bd;}
-  if(wt2){wt2.style.color=c.why.tc;wt2.textContent=c.why.title;}
-  if(wb2)wb2.innerHTML=c.why.body;
+function renderCh() {
+  var c = CH.find(function(x){ return x.id === selCh; });
+  document.querySelectorAll('.chc').forEach(function(card, i) {
+    if (i < CH.length) { card.classList.toggle('sel', CH[i].id === selCh); card.style.borderColor = CH[i].id === selCh ? CH[i].sb : ''; }
+  });
+  var yl = document.getElementById('ytl'), ylt = document.getElementById('ytlt'), yn = document.getElementById('ytnote');
+  yl.href = c.url; yl.style.background = c.btn;
+  if (c.coming) {
+    ylt.textContent = c.name + ' 채널 보기 (콘텐츠 업로드 준비 중)';
+    yn.innerHTML = '<span style="color:#ccaa00;">채널은 열려있으나 콘텐츠 업로드 준비 중입니다</span>';
+  } else {
+    ylt.textContent = '유튜브에서 ' + c.name + ' 열기 >';
+    yn.innerHTML = '<span style="color:var(--em);">↑ 클릭하면 유튜브로 이동합니다</span>';
+  }
+  var wc2 = document.getElementById('wc2'), wt2 = document.getElementById('wt2'), wb2 = document.getElementById('wb2');
+  if (wc2) { wc2.style.background = c.why.bg; wc2.style.borderColor = c.why.bd; }
+  if (wt2) { wt2.style.color = c.why.tc; wt2.textContent = c.why.title; }
+  if (wb2) wb2.innerHTML = c.why.body;
 }
 
-window.addEventListener('resize',()=>{
-  if(document.getElementById('pg-main-user').classList.contains('on')){drawWave();drawCompass();}
-  if(document.getElementById('pg-scan').classList.contains('on'))drawScan();
+window.addEventListener('resize', function() {
+  if (document.getElementById('pg-main-user').classList.contains('on')) { drawWave(); drawCompass(); }
+  if (document.getElementById('pg-scan').classList.contains('on')) drawScan();
 });
+
 buildExperts();
-setTimeout(()=>{drawWave();drawCompass();},80);
+setTimeout(function(){ drawWave(); drawCompass(); }, 80);
 </script>
 </body>
 </html>

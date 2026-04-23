@@ -859,9 +859,9 @@ const dayVal = document.getElementById('inp-day').value;
   const timeStr = unknownTime ? '미상 (삼주 분석)' : time;
   const today = new Date();
   const age = today.getFullYear() - parseInt(yearVal);
-const cacheKey = `saju_${name}_${year}_${month}_${day}_${gender}_${cal}`;
-const cached = sessionStorage.getItem(cacheKey);
-if (cached) {
+let cacheKey = `saju_${name}_${year}_${month}_${day}_${gender}_${cal}`;
+let cached = sessionStorage.getItem(cacheKey);
+if (cached) { 
   clearInterval(msgTimer);
   showLoading(false);
   const r = JSON.parse(cached);
@@ -874,7 +874,7 @@ const prompt = `사주 명리학 AI로 분석하세요. JSON만 출력하세요.
 
 반드시 아래 형식 JSON만 출력:
 {"star":"주성명","palace_desc":"특성","daewoon":"현재대운","base_score":85,"scores":{"재물운":80,"직업운":85,"애정운":75,"건강운":80},"score_trends":{"재물운":"상승중","직업운":"안정","애정운":"하락중","건강운":"안정"},"score_sources":{"재물운":"근거","직업운":"근거","애정운":"근거","건강운":"근거"},"ziwei":"자미두수분석","meihua":"매화역수분석","qimen":"기문둔갑분석","hybrid_msg":"통합메시지","career":"직업분석","wealth":"재물분석","love":"애정분석","luck_period":"대운분석","caution":"개운법","lucky_direction":"동쪽","lucky_items":["빨간색","3","화요일"],"summary":"30자요약"}`;
-
+if (cached) {
     try {
     const response = await fetch('/api/saju', {
       method: 'POST',

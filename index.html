@@ -850,7 +850,9 @@ async function doSajuScan() {
     document.getElementById('loading-msg').textContent = SAJU_LOADING_MSGS[msgIdx][0];
     document.getElementById('loading-sub').textContent = SAJU_LOADING_MSGS[msgIdx][1];
   }, 1800);
-
+const yearVal = document.getElementById('inp-year').value;
+const monthVal = document.getElementById('inp-month').value;
+const dayVal = document.getElementById('inp-day').value;
   const year = yearVal;
   const month = monthVal;
   const day = dayVal;

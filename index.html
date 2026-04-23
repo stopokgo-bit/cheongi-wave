@@ -806,7 +806,7 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
 <script>
 /* =====================================================
    천기 웨이브 - 자미두수 AI 분석 엔진
-   Claude API (claude-sonnet-4-20250514) 연동
+   Claude API (model: 'claude-haiku-4-5-20251001',) 연동
    ===================================================== */
 
 const SAJU_LOADING_MSGS = [
@@ -920,7 +920,7 @@ const dayVal = document.getElementById('inp-day').value;
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-sonnet-4-20250514',
+        model: 'model: 'claude-haiku-4-5-20251001',',
         max_tokens: 1500,
         messages: [{ role: 'user', content: prompt }]
       })

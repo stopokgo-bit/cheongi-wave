@@ -494,8 +494,10 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
         <div class="ct">기문둔갑 전략 나침반</div>
         <div class="cs" style="text-align:center;margin-bottom:.5rem;">현재 위치 기준 실시간 길방(吉方)</div>
         <canvas id="cc" width="150" height="150" style="width:150px;height:150px;display:block;margin:0 auto;"></canvas>
-        <div class="cdir" style="margin-top:.6rem;">추천 길방: <span>북동(NE)</span></div>
-        <div class="cdesc">지금 이 방향으로 이동하면<br>계약과 귀인의 도움을 얻기 좋습니다.</div>
+        <div id="compass-hint" style="font-size:10px;color:var(--em);text-align:center;margin-top:4px;">📱 나침반 탭하면 실시간 방향 감지</div>
+        <div class="cdir" style="margin-top:.4rem;">추천 길방: <span id="compass-dir-text">북동(NE)</span></div>
+        <div class="cdesc" id="compass-desc-text">지금 이 방향으로 이동하면<br>계약과 귀인의 도움을 얻기 좋습니다.</div>
+        <div style="font-size:10px;color:rgba(153,153,204,0.6);text-align:center;margin-top:.3rem;">🔴 북쪽 · 🟡 길방</div>
       </div>
     </div>
 
@@ -676,13 +678,18 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
       <div class="back-btn" onclick="showPg('main')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--t)" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg></div>
       <h1>라이프 컴퍼스 50P 리포트</h1>
     </div>
+    <!-- 스캔 데이터 요약 -->
+    <div id="report-scan-summary" style="display:none;background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:12px;padding:.85rem 1rem;margin-bottom:1rem;">
+      <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:.5rem;">📊 분석에 포함된 데이터</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;" id="report-data-tags"></div>
+    </div>
     <div style="background:rgba(80,200,120,0.1);border:1px solid rgba(80,200,120,0.2);border-radius:12px;padding:1rem;margin-bottom:1rem;display:flex;align-items:center;gap:10px;" class="fu">
       <div style="width:32px;height:32px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;flex-shrink:0;"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg></div>
-      <div><div style="font-size:14px;font-weight:700;color:#fff;">결제 완료 — 즉시 열람 가능</div><div style="font-size:11px;color:var(--t2);">₩89,000 · 에스크로 보호 완료</div></div>
+      <div><div style="font-size:14px;font-weight:700;color:#fff;" id="report-title">결제 완료 — 즉시 열람 가능</div><div style="font-size:11px;color:var(--t2);">₩89,000 · 에스크로 보호 완료</div></div>
     </div>
-    <div class="ib fu"><div class="ib-title">천기성 명주 핵심 해석</div><div class="ib-body"><em>천기성(天機星)</em>은 계략과 지혜의 별입니다. 두뇌와 빠른 상황 판단력으로 기획·전략·컨설팅 분야에서 탁월한 성과를 냅니다.<br><br><b>40~49세 천동성 대운(92점)</b>이 인생 최대의 황금기입니다. <b>2027년 5월</b> 관록궁 화록 발동 — 승진·계약 확정.</div></div>
+    <div class="ib fu"><div class="ib-title" id="report-ib-title">천기성 명주 핵심 해석</div><div class="ib-body" id="report-ib-body"><em>천기성(天機星)</em>은 계략과 지혜의 별입니다. 두뇌와 빠른 상황 판단력으로 기획·전략·컨설팅 분야에서 탁월한 성과를 냅니다.<br><br><b>40~49세 천동성 대운(92점)</b>이 인생 최대의 황금기입니다. <b>2027년 5월</b> 관록궁 화록 발동 — 승진·계약 확정.</div></div>
     <div class="cta-row fu">
-      <button class="btn-gold" onclick="showPg('scan')">AI 관상 스캔 추가</button>
+      <button class="btn-gold" id="report-scan-btn" onclick="showPg('scan')">✦ AI 관상·손금 스캔 추가</button>
       <button class="btn-em" onclick="showPg('sound')">음악 처방 받기</button>
       <button class="btn-out" onclick="showPg('main')">메인으로</button>
     </div>
@@ -870,11 +877,14 @@ async function doSajuScan() {
 
   const prompt = '사주 명리학 AI로 분석하세요. JSON만 출력하세요.\n\n' +
     '이름:' + name + ' 성별:' + gender + ' 생년월일:' + year + '년' + month + '월' + day + '일(' + cal + ') 시간:' + timeStr + ' 나이:' + age + '세\n\n' +
-    '반드시 아래 형식 JSON만 출력:\n' +
+    '반드시 아래 형식 JSON만 출력 (wave_data는 20대~70대 각 시대별 재물/직업/애정 0-100점):\n' +
     '{"star":"주성명","palace_desc":"특성","daewoon":"현재대운","base_score":85,' +
     '"scores":{"재물운":80,"직업운":85,"애정운":75,"건강운":80},' +
     '"score_trends":{"재물운":"상승중","직업운":"안정","애정운":"하락중","건강운":"안정"},' +
     '"score_sources":{"재물운":"근거","직업운":"근거","애정운":"근거","건강운":"근거"},' +
+    '"wave_data":[{"age":"20대","w":65,"c":70,"l":60},{"age":"30대","w":72,"c":80,"l":68},{"age":"45세","w":88,"c":92,"l":75},{"age":"50대","w":78,"c":82,"l":70},{"age":"60대","w":65,"c":68,"l":75},{"age":"70대","w":70,"c":65,"l":80}],' +
+    '"compass_angle":45,' +
+    '"compass_desc":"북동 방향이 길방",' +
     '"ziwei":"자미두수분석","meihua":"매화역수분석","qimen":"기문둔갑분석",' +
     '"hybrid_msg":"통합메시지","career":"직업분석","wealth":"재물분석",' +
     '"love":"애정분석","luck_period":"대운분석","caution":"개운법",' +
@@ -1009,6 +1019,38 @@ function renderSajuResult(name, year, month, day, timeStr, age, r) {
       '</div>' +
       '<div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:.2rem;">' + itemsHtml + '</div>';
     body.appendChild(luckDiv);
+  }
+
+  // ✅ 분석 결과 전역 저장 (리포트에서 재사용)
+  window.lastSajuResult = r;
+  window.lastSajuInput = { name: name, year: year, month: month, day: day, timeStr: timeStr, age: age };
+
+  // ✅ 생애길흉파동 개인 데이터로 업데이트
+  if (r.wave_data && r.wave_data.length) {
+    WD.length = 0;
+    r.wave_data.forEach(function(d) { WD.push(d); });
+    // 메인 점수 뱃지도 업데이트
+    var wEl = document.querySelector('.sb.e span, .sb span.e');
+    var cEl = document.querySelector('.sb.g span, .sb span.g');
+    var lEl = document.querySelector('.sb.p span, .sb span.p');
+    var midIdx = Math.floor(WD.length / 2);
+    if (WD[midIdx]) {
+      var sbEls = document.querySelectorAll('.sbdg .sb span');
+      if (sbEls[0]) sbEls[0].textContent = WD[midIdx].w + '점';
+      if (sbEls[1]) sbEls[1].textContent = WD[midIdx].c + '점';
+      if (sbEls[2]) sbEls[2].textContent = WD[midIdx].l + '점';
+    }
+  }
+
+  // ✅ 나침반 개인 방향으로 업데이트
+  if (r.compass_angle !== undefined) {
+    window.sajuCompassAngle = r.compass_angle;
+    window.sajuCompassDesc = r.compass_desc || '';
+    // 나침반 텍스트 업데이트
+    var cdirEl = document.getElementById('compass-dir-text');
+    if (cdirEl) cdirEl.textContent = r.lucky_direction || '';
+    var cdescEl = document.getElementById('compass-desc-text');
+    if (cdescEl && r.compass_desc) cdescEl.innerHTML = r.compass_desc + '<br><span style="font-size:10px;color:var(--em);">기문둔갑 실시간 길방</span>';
   }
 
   showPg('saju');
@@ -1363,18 +1405,24 @@ function drawGuideOverlay(ctx, w, h) {
     ctx.fillRect(0,0,w,h);
     ctx.globalCompositeOperation = 'destination-out';
 
-    // 손 모양 경로 (오른손 기준, 왼손은 반전)
+    // ✅ 카메라 종류에 따라 손 방향 결정
+    var isMobileDev = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+    // PC 전면카메라: 미러O → 왼손 올리면 화면엔 엄지가 오른쪽 → 가이드도 우엄지(=오른손 모양)
+    // 모바일 후면카메라: 미러X → 왼손 올리면 화면엔 엄지가 왼쪽 → 가이드도 좌엄지(=왼손 모양)
+    var flipGuide = isMobileDev ? isLeft : !isLeft;
+
+    // 마스크
     ctx.save();
-    if (isLeft) { ctx.translate(w, 0); ctx.scale(-1, 1); }
+    if (flipGuide) { ctx.translate(w,0); ctx.scale(-1,1); }
     drawHandPath(ctx, hx, hy, hw, hh);
     ctx.fill();
     ctx.restore();
     ctx.restore();
 
-    // 손 모양 테두리 (왼손=금색, 오른손=파랑으로 구분)
+    // 손 모양 테두리 (왼손=금색, 오른손=파랑)
     var handColor = isLeft ? 'rgba(255,200,0,0.95)' : 'rgba(80,160,255,0.95)';
     ctx.save();
-    if (isLeft) { ctx.translate(w, 0); ctx.scale(-1, 1); }
+    if (flipGuide) { ctx.translate(w,0); ctx.scale(-1,1); }
     ctx.strokeStyle = handColor;
     ctx.lineWidth = 4;
     ctx.setLineDash([10,5]);
@@ -1383,19 +1431,21 @@ function drawGuideOverlay(ctx, w, h) {
     ctx.setLineDash([]);
     ctx.restore();
 
-    // 손금 라인 (손바닥 중심 기준)
+    // 손금 라인
     var lines = isLeft ? PALM_LINES_LEFT : PALM_LINES_RIGHT;
     var palmCX = hx, palmCY = hy + hh*0.10;
     var pw2 = hw*0.40, ph2 = hh*0.32;
 
+    // 오른손 기준 좌표
     var rawCoords = [
       {x1: palmCX-pw2*0.75, y1: palmCY-ph2*0.55, x2: palmCX+pw2*0.65, y2: palmCY-ph2*0.65},
       {x1: palmCX-pw2*0.80, y1: palmCY-ph2*0.05, x2: palmCX+pw2*0.55, y2: palmCY-ph2*0.20},
       {x1: palmCX-pw2*0.55, y1: palmCY-ph2*0.90, x2: palmCX-pw2*0.30, y2: palmCY+ph2*0.85},
       {x1: palmCX+pw2*0.05, y1: palmCY+ph2*0.80, x2: palmCX+pw2*0.02, y2: palmCY-ph2*0.90}
     ];
+    // flipGuide면 X 반전
     var lineCoords = rawCoords.map(function(l) {
-      if (!isLeft) return l;
+      if (!flipGuide) return l;
       return { x1: w-l.x1, y1: l.y1, x2: w-l.x2, y2: l.y2 };
     });
     lineCoords.forEach(function(l, i) {
@@ -1405,7 +1455,7 @@ function drawGuideOverlay(ctx, w, h) {
       ctx.fillText(lines[i].l, (l.x1+l.x2)/2, (l.y1+l.y2)/2 - 12);
     });
 
-    // 상단 뱃지 (왼손=노랑, 오른손=파랑)
+    // 상단 뱃지
     var badgeLabel = isLeft ? '✋ 왼손 — 선천운' : '🤚 오른손 — 후천운';
     var badgeBg = isLeft ? 'rgba(220,160,0,0.92)' : 'rgba(50,120,240,0.92)';
     var bw2 = 260, bh2 = 42, bx2 = w/2-bw2/2, by2 = 16;
@@ -1414,7 +1464,6 @@ function drawGuideOverlay(ctx, w, h) {
     else { ctx.fillRect(bx2,by2,bw2,bh2); }
     ctx.fillStyle = '#fff'; ctx.font = 'bold 22px system-ui'; ctx.textAlign = 'center';
     ctx.fillText(badgeLabel, w/2, by2+29);
-
     ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.font = '17px system-ui';
     ctx.fillText('손바닥이 보이게 카메라 앞에 올려주세요', w/2, h - 18);
   }
@@ -1452,11 +1501,62 @@ function showPg(pg, btn, sub) {
     if (sub === 'cms') { document.getElementById('bn-cms').classList.add('gon'); animCMS(); }
     else { document.getElementById('bn-user').classList.add('on'); setTimeout(function(){ drawWave(); drawCompass(); }, 80); }
   }
+  if (pg === 'report') { setTimeout(populateReport, 80); }
   if (pg === 'scan') { setTimeout(function(){ startCamera(); }, 80); }
   else { stopCamera(); }
   if (pg === 'sound' && !chBuilt) { buildChannels(); chBuilt = true; }
   if (pg === 'saju') { setTimeout(function(){ drawWave(); }, 80); }
   window.scrollTo(0, 0);
+}
+
+/* ── 리포트 페이지 기존 데이터 자동 채우기 ── */
+function populateReport() {
+  var r = window.lastSajuResult;
+  var inp = window.lastSajuInput;
+  if (!r || !inp) return;
+
+  // 제목 업데이트
+  var titleEl = document.getElementById('report-title');
+  if (titleEl) titleEl.textContent = inp.name + '님의 천기 리포트 — 열람 가능';
+
+  // 핵심 해석 업데이트
+  var ibtEl = document.getElementById('report-ib-title');
+  var ibbEl = document.getElementById('report-ib-body');
+  if (ibtEl) ibtEl.textContent = (r.star || '') + ' 명주 핵심 해석';
+  if (ibbEl) {
+    ibbEl.innerHTML =
+      '<em>' + (r.star || '') + '</em>은 ' + (r.palace_desc || '') + '<br><br>' +
+      '<b>' + (r.daewoon || '') + '</b> — ' + (r.hybrid_msg || '') + '<br><br>' +
+      (r.luck_period || '');
+  }
+
+  // 스캔 데이터 태그 표시
+  var tagsEl = document.getElementById('report-data-tags');
+  var summaryEl = document.getElementById('report-scan-summary');
+  if (tagsEl && summaryEl) {
+    var tags = [
+      { label: '✦ 사주 분석', done: true, color: 'var(--gold)' },
+      { label: '👁 관상 스캔', done: !!capturedImages.face, color: 'var(--em)' },
+      { label: '✋ 왼손 스캔', done: !!capturedImages.palm_left, color: 'var(--em)' },
+      { label: '🤚 오른손 스캔', done: !!capturedImages.palm_right, color: 'var(--em)' },
+    ];
+    tagsEl.innerHTML = tags.map(function(t) {
+      return '<span style="padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;' +
+        'background:' + (t.done ? 'rgba(80,200,120,0.15)' : 'rgba(255,255,255,0.05)') + ';' +
+        'color:' + (t.done ? t.color : 'rgba(153,153,204,0.5)') + ';' +
+        'border:1px solid ' + (t.done ? 'rgba(80,200,120,0.3)' : 'rgba(255,255,255,0.08)') + ';">' +
+        t.label + (t.done ? ' ✓' : ' —') + '</span>';
+    }).join('');
+    summaryEl.style.display = 'block';
+
+    // 스캔 안 한 게 있으면 버튼 강조
+    var btnEl = document.getElementById('report-scan-btn');
+    var allDone = capturedImages.face && capturedImages.palm_left && capturedImages.palm_right;
+    if (btnEl) {
+      btnEl.textContent = allDone ? '✓ 스캔 완료' : '📷 관상·손금 스캔 추가하기';
+      btnEl.style.background = allDone ? 'var(--em)' : 'var(--gold)';
+    }
+  }
 }
 
 function buildExperts() {
@@ -1544,26 +1644,125 @@ function drawWave() {
 function drawCompass() {
   var cv = document.getElementById('cc'); if (!cv) return;
   var ctx = cv.getContext('2d'), cx = 75, cy = 75, r = 62;
-  var angle = 45;
+
+  // ✅ 개인 길방 각도 (사주 분석값, 기본 45도)
+  var luckyAngle = (window.sajuCompassAngle !== undefined) ? window.sajuCompassAngle : 45;
+  var deviceHeading = 0; // 실제 폰 방향
+  var smoothHeading = 0; // 부드럽게 보간
+
+  // ✅ 실제 기기 방향 감지
+  function handleOrientation(e) {
+    // alpha = 나침반 방향 (0~360, 북쪽=0)
+    if (e.alpha !== null) {
+      deviceHeading = e.alpha;
+    }
+  }
+
+  // iOS 13+ 권한 요청
+  function requestCompassPermission() {
+    if (typeof DeviceOrientationEvent !== 'undefined' &&
+        typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then(function(state) {
+          if (state === 'granted') {
+            window.addEventListener('deviceorientation', handleOrientation, true);
+          }
+        })
+        .catch(console.error);
+    } else {
+      // Android / 일반 브라우저
+      window.addEventListener('deviceorientation', handleOrientation, true);
+    }
+  }
+
+  // 나침반 클릭하면 권한 요청
+  cv.style.cursor = 'pointer';
+  cv.onclick = function() {
+    requestCompassPermission();
+    cv.onclick = null; // 한 번만
+    // 안내 텍스트 제거
+    var hint = document.getElementById('compass-hint');
+    if (hint) hint.style.display = 'none';
+  };
+
+  // 자동 시도 (Android)
+  requestCompassPermission();
+
+  var compassRunning = true;
+
   (function frame() {
+    if (!compassRunning) return;
     ctx.clearRect(0, 0, 150, 150);
+
+    // 부드러운 보간
+    var diff = deviceHeading - smoothHeading;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+    smoothHeading += diff * 0.12;
+
+    // 배경 원
     ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2);
     ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 2; ctx.stroke();
-    [['북(N)',0],['동(E)',90],['남(S)',180],['서(W)',270]].forEach(function(item) {
-      var rad = (item[1] - 90) * Math.PI / 180;
-      ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '11px system-ui';
+
+    // 길방 방향 하이라이트 (금색 섹터)
+    var luckyRad = (luckyAngle - smoothHeading - 90) * Math.PI / 180;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r-2, luckyRad - 0.25, luckyRad + 0.25);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(255,215,0,0.18)'; ctx.fill();
+
+    // 방향 텍스트 (폰 회전에 따라 같이 회전)
+    [['N',0],['E',90],['S',180],['W',270]].forEach(function(item) {
+      var rad = (item[1] - smoothHeading - 90) * Math.PI / 180;
+      var tx = cx + Math.cos(rad) * (r - 13);
+      var ty = cy + Math.sin(rad) * (r - 13);
+      ctx.fillStyle = item[0] === 'N' ? '#e74c3c' : 'rgba(255,255,255,0.5)';
+      ctx.font = item[0] === 'N' ? 'bold 12px system-ui' : '11px system-ui';
       ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
-      ctx.fillText(item[0], cx + Math.cos(rad) * (r - 12), cy + Math.sin(rad) * (r - 12));
+      ctx.fillText(item[0], tx, ty);
     });
-    ctx.save(); ctx.translate(cx, cy); ctx.rotate(angle * Math.PI / 180);
-    ctx.beginPath(); ctx.moveTo(0, -50); ctx.lineTo(7, 0); ctx.lineTo(0, 50); ctx.lineTo(-7, 0); ctx.closePath();
-    ctx.fillStyle = '#FFD700'; ctx.fill();
+
+    // 눈금선
+    for (var deg = 0; deg < 360; deg += 30) {
+      var rad2 = (deg - smoothHeading - 90) * Math.PI / 180;
+      var len = deg % 90 === 0 ? 10 : 5;
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(rad2) * (r-2), cy + Math.sin(rad2) * (r-2));
+      ctx.lineTo(cx + Math.cos(rad2) * (r-2-len), cy + Math.sin(rad2) * (r-2-len));
+      ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1; ctx.stroke();
+    }
+
+    // 고정 바늘 (항상 위쪽 = 현재 폰이 향하는 방향)
+    // 빨간 끝 = 북쪽
+    ctx.save(); ctx.translate(cx, cy);
+    // 북쪽 (빨간)
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0, -46);
+    ctx.strokeStyle = '#e74c3c'; ctx.lineWidth = 3;
+    ctx.lineCap = 'round'; ctx.stroke();
+    // 남쪽 (흰색)
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0, 32);
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 3; ctx.stroke();
+    // 중심점
     ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI*2);
-    ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fill();
+    ctx.fillStyle = '#fff'; ctx.fill();
     ctx.restore();
-    angle = 45 + Math.sin(Date.now() / 600) * 2;
+
+    // 길방 화살표 (금색, 길방 방향 고정)
+    var laRad = (luckyAngle - smoothHeading - 90) * Math.PI / 180;
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(laRad + Math.PI/2);
+    ctx.beginPath(); ctx.moveTo(0, -38); ctx.lineTo(5, -28); ctx.lineTo(-5, -28); ctx.closePath();
+    ctx.fillStyle = 'rgba(255,215,0,0.85)'; ctx.fill();
+    ctx.restore();
+
     requestAnimationFrame(frame);
   })();
+
+  // 페이지 떠날 때 정리
+  window._stopCompass = function() {
+    compassRunning = false;
+    window.removeEventListener('deviceorientation', handleOrientation, true);
+  };
 }
 
 function drawScan() {

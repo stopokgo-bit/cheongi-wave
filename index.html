@@ -1237,8 +1237,9 @@ function drawCamLoop() {
     var dx = (w - dw) / 2, dy = (h - dh) / 2;
 
     ctx.save();
-    if (sMode === 'face') { ctx.scale(-1, 1); ctx.drawImage(camVideoEl, -dx-dw, dy, dw, dh); }
-    else { ctx.drawImage(camVideoEl, dx, dy, dw, dh); }
+    // ✅ 모든 모드 미러 (셀카처럼 자연스럽게)
+    ctx.scale(-1, 1);
+    ctx.drawImage(camVideoEl, -dx-dw, dy, dw, dh);
     ctx.restore();
 
     if (lOn) { ctx.fillStyle = 'rgba(255,255,200,0.06)'; ctx.fillRect(0, 0, w, h); }
@@ -1269,68 +1270,47 @@ function drawCamLoop() {
   loop();
 }
 
-/* ── 손 모양 경로 (오른손 기준) ── */
+/* ── 손 모양 경로 (오른손 기준, 손바닥 중심) ── */
 function drawHandPath(ctx, cx, cy, hw, hh) {
-  var px = cx, py = cy;
-  // 손가락 너비/높이
-  var fw = hw * 0.14;  // 손가락 너비
-  var gap = hw * 0.03; // 손가락 사이 간격
-  var pb = py + hh*0.22; // 손바닥 상단
-  var pbh = hh * 0.52;   // 손바닥 높이
-  var pbw = hw * 0.82;   // 손바닥 너비
+  // 손바닥이 화면 중앙 아래, 손가락은 위쪽 25%만
+  var palmCX = cx;
+  var palmCY = cy + hh * 0.10; // 손바닥 중심
+  var pw2 = hw * 0.40;   // 손바닥 반너비
+  var ph2 = hh * 0.32;   // 손바닥 반높이
+  var fw = hw * 0.14;    // 손가락 너비
+  var fingerBase = palmCY - ph2; // 손가락 시작 Y
+
+  // 손가락 X 위치 (왼→오: 검지, 중지, 약지, 새끼)
+  var fxArr = [palmCX - pw2*0.58, palmCX - pw2*0.20, palmCX + pw2*0.20, palmCX + pw2*0.58];
+  var fhArr = [hh*0.25, hh*0.30, hh*0.27, hh*0.19]; // 각 손가락 높이
 
   ctx.beginPath();
+  // 검지 왼쪽 시작
+  ctx.moveTo(fxArr[0] - fw*0.45, fingerBase);
 
-  // 새끼손가락 (가장 오른쪽, 짧음)
-  var f4x = px + hw*0.30;
-  var f4h = hh * 0.28;
-  ctx.moveTo(f4x - fw/2, pb);
-  ctx.lineTo(f4x - fw/2, pb - f4h);
-  ctx.quadraticCurveTo(f4x, pb - f4h - fw*0.5, f4x + fw/2, pb - f4h);
-  ctx.lineTo(f4x + fw/2, pb);
+  // 4개 손가락 그리기
+  for (var i = 0; i < 4; i++) {
+    var fx = fxArr[i], fh = fhArr[i];
+    ctx.lineTo(fx - fw*0.45, fingerBase);
+    ctx.lineTo(fx - fw*0.45, fingerBase - fh);
+    ctx.quadraticCurveTo(fx, fingerBase - fh - fw*0.55, fx + fw*0.45, fingerBase - fh);
+    ctx.lineTo(fx + fw*0.45, fingerBase);
+  }
 
-  // 약지
-  var f3x = f4x - fw - gap;
-  var f3h = hh * 0.36;
-  ctx.lineTo(f3x + fw/2, pb);
-  ctx.lineTo(f3x + fw/2, pb - f3h);
-  ctx.quadraticCurveTo(f3x, pb - f3h - fw*0.5, f3x - fw/2, pb - f3h);
-  ctx.lineTo(f3x - fw/2, pb);
+  // 새끼 오른쪽 → 손바닥 오른쪽
+  ctx.quadraticCurveTo(palmCX + pw2*0.92, fingerBase + ph2*0.3, palmCX + pw2*0.88, palmCY + ph2*0.6);
 
-  // 중지 (가장 김)
-  var f2x = f3x - fw - gap;
-  var f2h = hh * 0.42;
-  ctx.lineTo(f2x + fw/2, pb);
-  ctx.lineTo(f2x + fw/2, pb - f2h);
-  ctx.quadraticCurveTo(f2x, pb - f2h - fw*0.5, f2x - fw/2, pb - f2h);
-  ctx.lineTo(f2x - fw/2, pb);
+  // 손목 오른쪽 → 손목 아래 → 손목 왼쪽
+  ctx.quadraticCurveTo(palmCX + pw2*0.55, palmCY + ph2 + hh*0.06, palmCX, palmCY + ph2 + hh*0.08);
+  ctx.quadraticCurveTo(palmCX - pw2*0.55, palmCY + ph2 + hh*0.06, palmCX - pw2*0.88, palmCY + ph2*0.6);
 
-  // 검지
-  var f1x = f2x - fw - gap;
-  var f1h = hh * 0.38;
-  ctx.lineTo(f1x + fw/2, pb);
-  ctx.lineTo(f1x + fw/2, pb - f1h);
-  ctx.quadraticCurveTo(f1x, pb - f1h - fw*0.5, f1x - fw/2, pb - f1h);
-  ctx.lineTo(f1x - fw/2, pb + hh*0.04);
+  // 손바닥 왼쪽 → 엄지 시작
+  ctx.quadraticCurveTo(palmCX - pw2*0.95, fingerBase + ph2*0.1, palmCX - pw2*0.82, fingerBase - ph2*0.1);
 
-  // 엄지 (왼쪽, 짧고 옆으로)
-  var thx = px - hw*0.40;
-  var thy = pb + hh*0.10;
-  var thw = fw * 1.1;
-  var thh = hh * 0.26;
-  ctx.lineTo(thx + thw, thy);
-  ctx.lineTo(thx + thw*0.6, thy - thh);
-  ctx.quadraticCurveTo(thx - thw*0.1, thy - thh - thw*0.4, thx - thw*0.2, thy - thh*0.3);
-  ctx.quadraticCurveTo(thx - thw*0.3, thy + thh*0.2, thx, thy + thh*0.5);
-
-  // 손바닥 왼쪽 → 손목
-  ctx.quadraticCurveTo(px - hw*0.44, pb + pbh*0.5, px - hw*0.36, pb + pbh);
-
-  // 손목 아래 (반원)
-  ctx.quadraticCurveTo(px, pb + pbh + hh*0.08, px + hw*0.36, pb + pbh);
-
-  // 손바닥 오른쪽 → 새끼 아래
-  ctx.quadraticCurveTo(px + hw*0.44, pb + pbh*0.5, f4x - fw/2, pb);
+  // 엄지 (왼쪽으로 튀어나옴)
+  ctx.quadraticCurveTo(palmCX - pw2*1.15, fingerBase - ph2*0.3, palmCX - pw2*1.20, fingerBase - ph2*0.5);
+  ctx.quadraticCurveTo(palmCX - pw2*1.18, fingerBase - ph2*0.75, palmCX - pw2*0.95, fingerBase - ph2*0.65);
+  ctx.quadraticCurveTo(palmCX - pw2*0.72, fingerBase - ph2*0.5, fxArr[0] - fw*0.45, fingerBase);
 
   ctx.closePath();
 }
@@ -1396,55 +1376,52 @@ function drawGuideOverlay(ctx, w, h) {
     ctx.restore();
     ctx.restore();
 
-    // 손 모양 테두리
+    // 손 모양 테두리 (왼손=금색, 오른손=파랑으로 구분)
+    var handColor = isLeft ? 'rgba(255,200,0,0.95)' : 'rgba(80,160,255,0.95)';
     ctx.save();
     if (isLeft) { ctx.translate(w, 0); ctx.scale(-1, 1); }
-    ctx.strokeStyle = 'rgba(80,200,120,0.9)';
-    ctx.lineWidth = 3;
-    ctx.setLineDash([8,5]);
+    ctx.strokeStyle = handColor;
+    ctx.lineWidth = 4;
+    ctx.setLineDash([10,5]);
     drawHandPath(ctx, hx, hy, hw, hh);
     ctx.stroke();
     ctx.setLineDash([]);
     ctx.restore();
 
-    // 손금 라인
+    // 손금 라인 (손바닥 중심 기준)
     var lines = isLeft ? PALM_LINES_LEFT : PALM_LINES_RIGHT;
-    var bx = hx - hw*0.42; // 손바닥 왼쪽 기준
-    var by = hy - hh*0.28; // 손바닥 위쪽 기준
-    var bw = hw * 0.84;
-    var bh = hh * 0.56;
+    var palmCX = hx, palmCY = hy + hh*0.10;
+    var pw2 = hw*0.40, ph2 = hh*0.32;
 
-    var lineCoords = [
-      // 감정선 (위쪽 가로)
-      {x1: bx+bw*0.08, y1: by+bh*0.18, x2: bx+bw*0.88, y2: by+bh*0.12},
-      // 두뇌선 (중간 대각)
-      {x1: bx+bw*0.05, y1: by+bh*0.48, x2: bx+bw*0.80, y2: by+bh*0.40},
-      // 생명선 (왼쪽 세로 곡선)
-      {x1: bx+bw*0.20, y1: by+bh*0.05, x2: bx+bw*0.28, y2: by+bh*0.95},
-      // 운명선 (중앙 세로)
-      {x1: bx+bw*0.52, y1: by+bh*0.95, x2: bx+bw*0.50, y2: by+bh*0.05}
+    var rawCoords = [
+      {x1: palmCX-pw2*0.75, y1: palmCY-ph2*0.55, x2: palmCX+pw2*0.65, y2: palmCY-ph2*0.65},
+      {x1: palmCX-pw2*0.80, y1: palmCY-ph2*0.05, x2: palmCX+pw2*0.55, y2: palmCY-ph2*0.20},
+      {x1: palmCX-pw2*0.55, y1: palmCY-ph2*0.90, x2: palmCX-pw2*0.30, y2: palmCY+ph2*0.85},
+      {x1: palmCX+pw2*0.05, y1: palmCY+ph2*0.80, x2: palmCX+pw2*0.02, y2: palmCY-ph2*0.90}
     ];
-
-    // 왼손 반전
-    if (isLeft) {
-      lineCoords = lineCoords.map(function(l) {
-        return {
-          x1: w - l.x1, y1: l.y1,
-          x2: w - l.x2, y2: l.y2
-        };
-      });
-    }
-
+    var lineCoords = rawCoords.map(function(l) {
+      if (!isLeft) return l;
+      return { x1: w-l.x1, y1: l.y1, x2: w-l.x2, y2: l.y2 };
+    });
     lineCoords.forEach(function(l, i) {
       ctx.beginPath(); ctx.moveTo(l.x1,l.y1); ctx.lineTo(l.x2,l.y2);
-      ctx.strokeStyle = 'rgba(80,200,120,0.65)'; ctx.lineWidth = 2; ctx.stroke();
-      ctx.fillStyle = 'rgba(255,215,0,0.95)'; ctx.font = 'bold 20px system-ui'; ctx.textAlign = 'center';
-      ctx.fillText(lines[i].l, (l.x1+l.x2)/2, (l.y1+l.y2)/2 - 10);
+      ctx.strokeStyle = 'rgba(80,220,120,0.8)'; ctx.lineWidth = 3; ctx.stroke();
+      ctx.fillStyle = 'rgba(255,240,80,0.98)'; ctx.font = 'bold 22px system-ui'; ctx.textAlign = 'center';
+      ctx.fillText(lines[i].l, (l.x1+l.x2)/2, (l.y1+l.y2)/2 - 12);
     });
 
-    // 손 타입 레이블
-    ctx.fillStyle = 'rgba(80,200,120,0.95)'; ctx.font = 'bold 22px system-ui'; ctx.textAlign = 'center';
-    ctx.fillText(isLeft ? '✋ 왼손을 올려주세요 (선천운)' : '🤚 오른손을 올려주세요 (후천운)', w/2, hy + hh*0.42);
+    // 상단 뱃지 (왼손=노랑, 오른손=파랑)
+    var badgeLabel = isLeft ? '✋ 왼손 — 선천운' : '🤚 오른손 — 후천운';
+    var badgeBg = isLeft ? 'rgba(220,160,0,0.92)' : 'rgba(50,120,240,0.92)';
+    var bw2 = 260, bh2 = 42, bx2 = w/2-bw2/2, by2 = 16;
+    ctx.fillStyle = badgeBg;
+    if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(bx2,by2,bw2,bh2,21); ctx.fill(); }
+    else { ctx.fillRect(bx2,by2,bw2,bh2); }
+    ctx.fillStyle = '#fff'; ctx.font = 'bold 22px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText(badgeLabel, w/2, by2+29);
+
+    ctx.fillStyle = 'rgba(255,255,255,0.7)'; ctx.font = '17px system-ui';
+    ctx.fillText('손바닥이 보이게 카메라 앞에 올려주세요', w/2, h - 18);
   }
 }
 

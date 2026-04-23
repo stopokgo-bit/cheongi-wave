@@ -33,6 +33,14 @@ export default async function handler(req, res) {
     // 토큰 제한 - 최대 8000
     const maxTokens = Math.min(body.max_tokens || 6000, 8000);
 
+    const requestBody = {
+      model: model,
+      max_tokens: maxTokens,
+      messages: body.messages,
+    };
+    // system 프롬프트가 있으면 포함
+    if (body.system) requestBody.system = body.system;
+
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
@@ -40,11 +48,7 @@ export default async function handler(req, res) {
         'x-api-key': apiKey,
         'anthropic-version': '2023-06-01',
       },
-      body: JSON.stringify({
-        model: model,
-        max_tokens: maxTokens,
-        messages: body.messages,
-      }),
+      body: JSON.stringify(requestBody),
     });
 
     if (!response.ok) {

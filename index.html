@@ -1103,6 +1103,193 @@ const STEPS = [
 const WD = [{age:'20대',w:72,c:80,l:65},{age:'30대',w:65,c:85,l:70},{age:'45세',w:88,c:92,l:75,ev:'황금기'},{age:'50대',w:78,c:80,l:68},{age:'60대',w:55,c:60,l:74},{age:'70대',w:70,c:75,l:80}];
 
 let selCh = 'urban', sMode = 'face', gOn = false, lOn = false, sState = 'idle', aFr = null, sLY = 0, sLD = 1, chBuilt = false;
+let camStream = null, camVideoEl = null, camAnimFr = null;
+
+/* ── 카메라 시작 ── */
+function startCamera() {
+  var cv = document.getElementById('sc'); if (!cv) return;
+
+  // 이미 video 엘리먼트 있으면 재사용
+  if (!camVideoEl) {
+    camVideoEl = document.createElement('video');
+    camVideoEl.setAttribute('autoplay', '');
+    camVideoEl.setAttribute('playsinline', '');
+    camVideoEl.setAttribute('muted', '');
+    camVideoEl.style.display = 'none';
+    document.body.appendChild(camVideoEl);
+  }
+
+  if (camStream) {
+    drawCamLoop();
+    return;
+  }
+
+  setFB('idle');
+
+  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } } })
+    .then(function(stream) {
+      camStream = stream;
+      camVideoEl.srcObject = stream;
+      camVideoEl.play();
+      camVideoEl.onloadedmetadata = function() {
+        drawCamLoop();
+        setTimeout(function(){ setFB('aligning'); setTimeout(function(){ setFB('ready'); }, 1500); }, 600);
+      };
+    })
+    .catch(function(err) {
+      console.warn('카메라 접근 실패:', err);
+      setFB('nocam');
+      drawScanFallback(); // 카메라 없으면 기존 그림 모드
+    });
+}
+
+/* ── 카메라 스트림을 캔버스에 그리는 루프 ── */
+function drawCamLoop() {
+  var cv = document.getElementById('sc'); if (!cv || !camVideoEl) return;
+  if (camAnimFr) cancelAnimationFrame(camAnimFr);
+
+  var W = cv.offsetWidth || 640;
+  cv.width = W * 2; cv.height = Math.round(W * 0.625) * 2;
+  cv.style.height = Math.round(W * 0.625) + 'px';
+
+  function loop() {
+    var ctx = cv.getContext('2d');
+    var w = cv.width, h = cv.height;
+
+    // 카메라 영상 그리기 (좌우 반전 - 거울 모드)
+    ctx.save();
+    ctx.scale(-1, 1);
+    ctx.drawImage(camVideoEl, -w, 0, w, h);
+    ctx.restore();
+
+    // 밝기 보정
+    if (lOn) { ctx.fillStyle = 'rgba(255,255,200,0.06)'; ctx.fillRect(0, 0, w, h); }
+
+    // 가이드 오버레이
+    drawGuideOverlay(ctx, w, h);
+
+    // 스캔 라인 (스캔 중일 때)
+    if (sState === 'scanning') {
+      sLY += 3 * sLD;
+      if (sLY > h || sLY < 0) sLD *= -1;
+      var cx2 = w/2, ry = h * 0.40;
+      // 타원 안에만 스캔라인 표시
+      ctx.save();
+      ctx.beginPath(); ctx.ellipse(cx2, h/2, w*0.28, ry, 0, 0, Math.PI*2); ctx.clip();
+      ctx.beginPath(); ctx.moveTo(0, sLY); ctx.lineTo(w, sLY);
+      ctx.strokeStyle = 'rgba(80,200,120,0.6)'; ctx.lineWidth = 2; ctx.stroke();
+      var grd = ctx.createLinearGradient(0, sLY-30, 0, sLY+30);
+      grd.addColorStop(0,'rgba(80,200,120,0)'); grd.addColorStop(0.5,'rgba(80,200,120,0.15)'); grd.addColorStop(1,'rgba(80,200,120,0)');
+      ctx.fillStyle = grd; ctx.fillRect(0, sLY-30, w, 60);
+      ctx.restore();
+    }
+
+    camAnimFr = requestAnimationFrame(loop);
+  }
+  loop();
+}
+
+/* ── 가이드 오버레이 그리기 ── */
+function drawGuideOverlay(ctx, w, h) {
+  if (sMode === 'face') {
+    var cx2 = w/2, cy2 = h/2, rx = w*0.28, ry = h*0.40;
+
+    // 어두운 마스크 (타원 밖)
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.fillRect(0, 0, w, h);
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath(); ctx.ellipse(cx2, cy2, rx, ry, 0, 0, Math.PI*2); ctx.fill();
+    ctx.restore();
+
+    // 타원 테두리
+    ctx.beginPath(); ctx.ellipse(cx2, cy2, rx, ry, 0, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(80,200,120,0.8)'; ctx.lineWidth = 3; ctx.setLineDash([10,6]); ctx.stroke(); ctx.setLineDash([]);
+
+    // 격자 가이드
+    if (gOn) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 1;
+      [w/3, w*2/3].forEach(function(x){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); });
+      [h/3, h*2/3].forEach(function(y){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); });
+    }
+
+    // 랜드마크 포인트 (타원 안)
+    var pts = [
+      {x:cx2, y:cy2-ry*0.55, l:'이마'},
+      {x:cx2-rx*0.48, y:cy2-ry*0.12, l:'눈(좌)'},
+      {x:cx2+rx*0.48, y:cy2-ry*0.12, l:'눈(우)'},
+      {x:cx2, y:cy2+ry*0.08, l:'코'},
+      {x:cx2, y:cy2+ry*0.36, l:'입'},
+      {x:cx2, y:cy2+ry*0.65, l:'턱'}
+    ];
+    pts.forEach(function(p) {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(80,200,120,0.85)'; ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.font = 'bold 22px system-ui'; ctx.textAlign = 'center';
+      ctx.fillText(p.l, p.x, p.y + (p.y < cy2 ? -14 : 22));
+    });
+
+  } else {
+    // 손금 모드
+    var px = w*0.2, py = h*0.1, pw = w*0.6, ph = h*0.8;
+    ctx.save();
+    ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.fillRect(0,0,w,h);
+    ctx.globalCompositeOperation = 'destination-out';
+    ctx.beginPath();
+    ctx.moveTo(px+pw*0.5,py); ctx.lineTo(px+pw,py+ph*0.15); ctx.lineTo(px+pw,py+ph*0.8);
+    ctx.lineTo(px+pw*0.5,py+ph); ctx.lineTo(px,py+ph*0.8); ctx.lineTo(px,py+ph*0.15);
+    ctx.closePath(); ctx.fill();
+    ctx.restore();
+
+    ctx.beginPath();
+    ctx.moveTo(px+pw*0.5,py); ctx.lineTo(px+pw,py+ph*0.15); ctx.lineTo(px+pw,py+ph*0.8);
+    ctx.lineTo(px+pw*0.5,py+ph); ctx.lineTo(px,py+ph*0.8); ctx.lineTo(px,py+ph*0.15);
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(80,200,120,0.8)'; ctx.lineWidth = 3; ctx.setLineDash([8,6]); ctx.stroke(); ctx.setLineDash([]);
+
+    [{x1:px+pw*0.15,y1:py+ph*0.25,x2:px+pw*0.85,y2:py+ph*0.35,l:'감정선'},
+     {x1:px+pw*0.2,y1:py+ph*0.45,x2:px+pw*0.75,y2:py+ph*0.55,l:'두뇌선'},
+     {x1:px+pw*0.35,y1:py+ph*0.2,x2:px+pw*0.4,y2:py+ph*0.85,l:'생명선'},
+     {x1:px+pw*0.55,y1:py+ph*0.18,x2:px+pw*0.58,y2:py+ph*0.75,l:'운명선'}].forEach(function(l) {
+      ctx.beginPath(); ctx.moveTo(l.x1,l.y1); ctx.lineTo(l.x2,l.y2);
+      ctx.strokeStyle = 'rgba(80,200,120,0.55)'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = 'rgba(255,215,0,0.95)'; ctx.font = 'bold 20px system-ui'; ctx.textAlign = 'left';
+      ctx.fillText(l.l, (l.x1+l.x2)/2+10, (l.y1+l.y2)/2);
+    });
+
+    if (gOn) {
+      ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 1;
+      for (var x = 0; x < w; x += w/6) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
+      for (var y = 0; y < h; y += h/4) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
+    }
+  }
+}
+
+/* ── 카메라 없을 때 폴백 ── */
+function drawScanFallback() {
+  var cv = document.getElementById('sc'); if (!cv) return;
+  var W = cv.offsetWidth || 640;
+  cv.width = W*2; cv.height = Math.round(W*0.625)*2; cv.style.height = Math.round(W*0.625)+'px';
+  var ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
+  ctx.fillStyle = '#0a0a20'; ctx.fillRect(0,0,w,h);
+  ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.font = 'bold 28px system-ui'; ctx.textAlign = 'center';
+  ctx.fillText('📷 카메라 권한을 허용해 주세요', w/2, h/2-20);
+  ctx.font = '20px system-ui'; ctx.fillStyle = 'rgba(153,153,204,0.7)';
+  ctx.fillText('브라우저 주소창 옆 자물쇠 아이콘 → 카메라 허용', w/2, h/2+24);
+  drawGuideOverlay(ctx, w, h);
+}
+
+/* ── 카메라 정지 ── */
+function stopCamera() {
+  if (camAnimFr) { cancelAnimationFrame(camAnimFr); camAnimFr = null; }
+  if (camStream) { camStream.getTracks().forEach(function(t){ t.stop(); }); camStream = null; }
+}
+
+/* ── 기존 drawScan은 폴백용으로 유지 ── */
+function drawScan() {
+  if (camStream) { drawCamLoop(); return; }
+  startCamera();
+}
 
 function showPg(pg, btn, sub) {
   document.querySelectorAll('.pg').forEach(function(p) { p.classList.remove('on'); });
@@ -1114,7 +1301,8 @@ function showPg(pg, btn, sub) {
     if (sub === 'cms') { document.getElementById('bn-cms').classList.add('gon'); animCMS(); }
     else { document.getElementById('bn-user').classList.add('on'); setTimeout(function(){ drawWave(); drawCompass(); }, 80); }
   }
-  if (pg === 'scan') { setTimeout(function(){ drawScan(); setTimeout(function(){ setFB('aligning'); setTimeout(function(){ setFB('ready'); }, 1500); }, 800); }, 80); }
+  if (pg === 'scan') { setTimeout(function(){ startCamera(); }, 80); }
+  else { stopCamera(); }
   if (pg === 'sound' && !chBuilt) { buildChannels(); chBuilt = true; }
   if (pg === 'saju') { setTimeout(function(){ drawWave(); }, 80); }
   window.scrollTo(0, 0);
@@ -1286,6 +1474,7 @@ function setFB(state) {
   else if (state === 'aligning') { dot.classList.add('warn'); txt.textContent = '정렬 중... 조금 더 가까이'; sub.textContent = '얼굴을 타원 가이드 중앙에 맞춰주세요'; }
   else if (state === 'ready') { dot.classList.add('ok'); txt.textContent = '준비 완료 - 셔터를 눌러주세요'; sub.textContent = '3초간 정지 후 촬영'; }
   else if (state === 'scanning') { dot.classList.add('sc'); txt.textContent = '스캔 중... 움직이지 마세요'; sub.textContent = 'AI 분석 진행 중'; }
+  else if (state === 'nocam') { dot.classList.add('warn'); txt.textContent = '카메라 권한을 허용해 주세요'; sub.textContent = '브라우저 주소창 자물쇠 → 카메라 허용'; }
 }
 
 function setMode(m, btn) {
@@ -1304,13 +1493,17 @@ function resetScan() {
   document.getElementById('sh').classList.remove('cap');
   setFB('idle');
   if (aFr) { cancelAnimationFrame(aFr); aFr = null; }
-  drawScan();
+  // 카메라 루프 재시작
+  if (camStream) { drawCamLoop(); }
 }
 
 function doCapture() {
   if (sState === 'scanning' || sState === 'done') return;
-  sState = 'scanning'; document.getElementById('sh').classList.add('cap'); setFB('scanning');
-  sLY = 0; sLD = 1; drawScan();
+  sState = 'scanning';
+  document.getElementById('sh').classList.add('cap');
+  setFB('scanning');
+  sLY = 0; sLD = 1;
+
   document.getElementById('ps').classList.add('show');
   document.getElementById('rs').classList.remove('show');
   var c = document.getElementById('psteps'); c.innerHTML = '';
@@ -1341,17 +1534,21 @@ function runStep(i) {
   }, 50);
 }
 function showResult() {
-  if (aFr) { cancelAnimationFrame(aFr); aFr = null; }
+  if (camAnimFr) { cancelAnimationFrame(camAnimFr); camAnimFr = null; }
   sState = 'done'; setFB('ready');
+
+  // 썸네일: 실제 카메라 스냅샷 저장
   var tc = document.getElementById('tc');
   if (tc) {
     var ctx = tc.getContext('2d');
-    ctx.fillStyle = '#111'; ctx.fillRect(0, 0, 64, 80);
-    ctx.beginPath(); ctx.ellipse(32, 34, 16, 22, 0, 0, Math.PI*2);
-    ctx.strokeStyle = 'rgba(80,200,120,0.6)'; ctx.lineWidth = 1; ctx.stroke();
-    [{x:32,y:15},{x:20,y:28},{x:44,y:28},{x:32,y:38},{x:32,y:52}].forEach(function(p) {
-      ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI*2); ctx.fillStyle = 'rgba(80,200,120,0.7)'; ctx.fill();
-    });
+    if (camVideoEl && camStream) {
+      // 좌우 반전 거울 모드로 저장
+      ctx.save(); ctx.scale(-1,1); ctx.drawImage(camVideoEl, -64, 0, 64, 80); ctx.restore();
+    } else {
+      ctx.fillStyle = '#111'; ctx.fillRect(0,0,64,80);
+      ctx.beginPath(); ctx.ellipse(32,34,16,22,0,0,Math.PI*2);
+      ctx.strokeStyle='rgba(80,200,120,0.6)'; ctx.lineWidth=1; ctx.stroke();
+    }
   }
   document.getElementById('rs').classList.add('show');
   var fg = document.getElementById('fg'); fg.innerHTML = '';

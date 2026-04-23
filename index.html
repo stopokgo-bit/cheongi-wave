@@ -386,6 +386,10 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>로그인
         </button>
       </div>
+      <button class="nbtn" onclick="doShare()" style="padding:7px 12px;" title="공유하기">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
+        공유
+      </button>
     </div>
   </nav>
 
@@ -688,6 +692,17 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
       <div><div style="font-size:14px;font-weight:700;color:#fff;" id="report-title">결제 완료 — 즉시 열람 가능</div><div style="font-size:11px;color:var(--t2);">₩89,000 · 에스크로 보호 완료</div></div>
     </div>
     <div class="ib fu"><div class="ib-title" id="report-ib-title">천기성 명주 핵심 해석</div><div class="ib-body" id="report-ib-body"><em>천기성(天機星)</em>은 계략과 지혜의 별입니다. 두뇌와 빠른 상황 판단력으로 기획·전략·컨설팅 분야에서 탁월한 성과를 냅니다.<br><br><b>40~49세 천동성 대운(92점)</b>이 인생 최대의 황금기입니다. <b>2027년 5월</b> 관록궁 화록 발동 — 승진·계약 확정.</div></div>
+
+    <div id="report-generate-btn" style="margin-bottom:1rem;">
+      <button onclick="generate50PReport()" style="width:100%;padding:16px;background:linear-gradient(135deg,#FFD700,#FFA500);border:none;border-radius:12px;color:#0f0f3a;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:8px;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform=''">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        📜 나만의 50P 인생 지침서 생성하기
+      </button>
+      <div style="font-size:11px;color:var(--t2);text-align:center;margin-top:.5rem;">재물·직업·애정·건강·대운·개운법 완전 분석 · 약 30초 소요</div>
+    </div>
+
+    <div id="report-full-body" style="margin-bottom:1rem;"></div>
+
     <div class="cta-row fu">
       <button class="btn-gold" id="report-scan-btn" onclick="showPg('scan')">✦ AI 관상·손금 스캔 추가</button>
       <button class="btn-em" onclick="showPg('sound')">음악 처방 받기</button>
@@ -875,20 +890,34 @@ async function doSajuScan() {
     document.getElementById('loading-sub').textContent = SAJU_LOADING_MSGS[msgIdx][1];
   }, 1800);
 
-  const prompt = '사주 명리학 AI로 분석하세요. JSON만 출력하세요.\n\n' +
+  const prompt = '당신은 30년 경력의 정통 명리학 대가입니다. 아래 사주를 자미두수·매화역수·기문둔갑 3대 역학으로 깊이 있게 분석하세요. JSON만 출력하세요.\n\n' +
     '이름:' + name + ' 성별:' + gender + ' 생년월일:' + year + '년' + month + '월' + day + '일(' + cal + ') 시간:' + timeStr + ' 나이:' + age + '세\n\n' +
-    '반드시 아래 형식 JSON만 출력 (wave_data는 20대~70대 각 시대별 재물/직업/애정 0-100점):\n' +
-    '{"star":"주성명","palace_desc":"특성","daewoon":"현재대운","base_score":85,' +
-    '"scores":{"재물운":80,"직업운":85,"애정운":75,"건강운":80},' +
-    '"score_trends":{"재물운":"상승중","직업운":"안정","애정운":"하락중","건강운":"안정"},' +
-    '"score_sources":{"재물운":"근거","직업운":"근거","애정운":"근거","건강운":"근거"},' +
-    '"wave_data":[{"age":"20대","w":65,"c":70,"l":60},{"age":"30대","w":72,"c":80,"l":68},{"age":"45세","w":88,"c":92,"l":75},{"age":"50대","w":78,"c":82,"l":70},{"age":"60대","w":65,"c":68,"l":75},{"age":"70대","w":70,"c":65,"l":80}],' +
-    '"compass_angle":45,' +
-    '"compass_desc":"북동 방향이 길방",' +
-    '"ziwei":"자미두수분석","meihua":"매화역수분석","qimen":"기문둔갑분석",' +
-    '"hybrid_msg":"통합메시지","career":"직업분석","wealth":"재물분석",' +
-    '"love":"애정분석","luck_period":"대운분석","caution":"개운법",' +
-    '"lucky_direction":"동쪽","lucky_items":["빨간색","3","화요일"],"summary":"30자요약"}';
+    '각 분석 항목은 반드시 3~5문장 이상 구체적으로 서술하세요. 추상적인 표현 금지, 실제 명리학 용어와 근거를 포함하세요.\n\n' +
+    '반드시 아래 형식 JSON만 출력:\n' +
+    '{\n' +
+    '"star":"주성명(예:천기성)",\n' +
+    '"palace_desc":"명궁 특성 3문장 이상 상세 서술",\n' +
+    '"daewoon":"현재대운명(예:庚午대운 2020-2030)",\n' +
+    '"base_score":85,\n' +
+    '"scores":{"재물운":80,"직업운":85,"애정운":75,"건강운":80},\n' +
+    '"score_trends":{"재물운":"상승중","직업운":"안정","애정운":"하락중","건강운":"안정"},\n' +
+    '"score_sources":{"재물운":"태음화록 재백궁 입묘","직업운":"자미천상 관록궁 삼합","애정운":"염정화기 부처궁","건강운":"천동 전택궁 안정"},\n' +
+    '"wave_data":[{"age":"20대","w":65,"c":70,"l":60},{"age":"30대","w":72,"c":80,"l":68},{"age":"45세","w":88,"c":92,"l":75},{"age":"50대","w":78,"c":82,"l":70},{"age":"60대","w":65,"c":68,"l":75},{"age":"70대","w":70,"c":65,"l":80}],\n' +
+    '"compass_angle":45,\n' +
+    '"compass_desc":"북동 방향이 관록궁 길방",\n' +
+    '"ziwei":"자미두수 분석 4~5문장: 명궁 주성과 보성 조합, 사화(화록·화권·화과·화기) 배치, 삼합궁 관계, 현재 대운의 영향, 올해 유년 길흉을 구체적으로 서술",\n' +
+    '"meihua":"매화역수 분석 3~4문장: 오늘의 체괘와 용괘, 생극 관계, 현재 운기의 파도 방향, 이달 행동 지침을 구체적으로 서술",\n' +
+    '"qimen":"기문둔갑 분석 3~4문장: 현재 시반 포국, 길문·흉문 배치, 오늘 취해야 할 방위와 행동, 피해야 할 방향을 구체적으로 서술",\n' +
+    '"hybrid_msg":"3대 역학 통합 메시지 3~4문장: 세 역학이 공통으로 가리키는 핵심 흐름과 올해/내년 가장 중요한 변화를 서술",\n' +
+    '"career":"직업·커리어 분석 4~5문장: 적성 분야, 현재 직장운, 이직·창업 타이밍, 상사·동료 관계, 향후 3년 커리어 흐름",\n' +
+    '"wealth":"재물·금전 분석 4~5문장: 재물 취득 방식, 투자 적합성, 부동산운, 올해 재물 흐름, 주의해야 할 지출",\n' +
+    '"love":"애정·인간관계 분석 4~5문장: 이성운 특성, 현재 관계 상태, 결혼운 시기, 귀인 유형, 조심해야 할 인간관계",\n' +
+    '"luck_period":"대운 흐름·향후 3년 4~5문장: 현재 대운 특성, 올해·내년·내후년 소운 흐름, 황금기 시기, 주의 시기",\n' +
+    '"caution":"주의사항·개운법 3~4문장: 피해야 할 행동, 보완해야 할 오행, 구체적인 개운 방법, 길일·흉일",\n' +
+    '"lucky_direction":"동쪽",\n' +
+    '"lucky_items":["빨간색","숫자3","화요일","동쪽","매운 음식"],\n' +
+    '"summary":"핵심 한줄 요약 30자 이내"\n' +
+    '}';
 
   try {
     const response = await fetch('/api/saju', {
@@ -896,7 +925,7 @@ async function doSajuScan() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-haiku-4-5-20251001',
-        max_tokens: 1500,
+        max_tokens: 3000,
         messages: [{ role: 'user', content: prompt }]
       })
     });
@@ -1399,32 +1428,21 @@ function drawGuideOverlay(ctx, w, h) {
     var hy = cy2 - h*0.02; // 손바닥이 화면 중앙
     var isLeft = sMode === 'palm_left';
 
-    // 어두운 마스크
-    ctx.save();
-    ctx.fillStyle = 'rgba(0,0,0,0.5)';
-    ctx.fillRect(0,0,w,h);
-    ctx.globalCompositeOperation = 'destination-out';
-
+    // 어두운 마스크 제거 → 반투명 실루엣으로 변경
     // ✅ 카메라 종류에 따라 손 방향 결정
     var isMobileDev = /Mobi|Android|iPhone/i.test(navigator.userAgent);
-    // PC 전면카메라: 미러O → 왼손 올리면 화면엔 엄지가 오른쪽 → 가이드도 우엄지(=오른손 모양)
-    // 모바일 후면카메라: 미러X → 왼손 올리면 화면엔 엄지가 왼쪽 → 가이드도 좌엄지(=왼손 모양)
     var flipGuide = isMobileDev ? isLeft : !isLeft;
-
-    // 마스크
-    ctx.save();
-    if (flipGuide) { ctx.translate(w,0); ctx.scale(-1,1); }
-    drawHandPath(ctx, hx, hy, hw, hh);
-    ctx.fill();
-    ctx.restore();
-    ctx.restore();
-
-    // 손 모양 테두리 (왼손=금색, 오른손=파랑)
     var handColor = isLeft ? 'rgba(255,200,0,0.95)' : 'rgba(80,160,255,0.95)';
+
     ctx.save();
     if (flipGuide) { ctx.translate(w,0); ctx.scale(-1,1); }
+    // 반투명 녹색 채우기 (카메라 영상 위에 겹쳐 보임)
+    drawHandPath(ctx, hx, hy, hw, hh);
+    ctx.fillStyle = isLeft ? 'rgba(255,200,0,0.10)' : 'rgba(80,160,255,0.10)';
+    ctx.fill();
+    // 점선 테두리
     ctx.strokeStyle = handColor;
-    ctx.lineWidth = 4;
+    ctx.lineWidth = 3;
     ctx.setLineDash([10,5]);
     drawHandPath(ctx, hx, hy, hw, hh);
     ctx.stroke();
@@ -1557,6 +1575,123 @@ function populateReport() {
       btnEl.style.background = allDone ? 'var(--em)' : 'var(--gold)';
     }
   }
+}
+
+/* ── 50P 리포트 생성 ── */
+async function generate50PReport() {
+  var r = window.lastSajuResult;
+  var inp = window.lastSajuInput;
+  if (!r || !inp) {
+    alert('먼저 사주 분석을 완료해주세요!');
+    showPg('main');
+    return;
+  }
+
+  var btn = document.getElementById('report-generate-btn');
+  var bodyEl = document.getElementById('report-full-body');
+  if (btn) { btn.style.display = 'none'; }
+  if (bodyEl) { bodyEl.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--t2)"><div style="font-size:24px;margin-bottom:1rem;">📜</div><div style="font-size:14px;">50P 리포트 생성 중...<br>약 30초 소요됩니다</div></div>'; }
+
+  var prompt = '당신은 30년 경력 정통 명리학 대가입니다. 아래 사주 분석 데이터를 바탕으로 ' + inp.name + '님의 인생 지침서 형식의 상세 리포트를 작성하세요.\n\n' +
+    '기본 데이터: ' + JSON.stringify(r) + '\n\n' +
+    '다음 순서로 각 섹션을 풍부하게 작성하세요 (각 섹션 최소 5~8문장):\n\n' +
+    '1. 🌟 명주(命主) 총평 - ' + (r.star||'') + ' 명주의 본질과 인생 테마\n' +
+    '2. 📊 생애 대운 흐름 - 10년 단위 대운별 길흉 상세\n' +
+    '3. 💰 재물·부동산·투자운 - 언제 어떻게 재물이 들어오는가\n' +
+    '4. 🏆 직업·커리어·명예운 - 최적 직종과 커리어 전략\n' +
+    '5. ❤️ 애정·결혼·가족운 - 이상형과 인연 시기\n' +
+    '6. 🏥 건강·체질 분석 - 주의해야 할 신체 부위와 관리법\n' +
+    '7. 🧭 기문둔갑 전략 나침반 - 방위별 길흉과 이동 전략\n' +
+    '8. 🌸 매화역수 올해 운세 - 월별 길흉 포인트\n' +
+    '9. ✨ 개운법·주의사항 - 구체적인 실천 방법\n' +
+    '10. 📅 2025~2027년 핵심 타임라인 - 중요한 날짜와 사건\n\n' +
+    'HTML 형식으로 작성하되 <h3>, <p>, <strong>, <em> 태그만 사용하세요. JSON 아님, 순수 HTML 텍스트만 출력하세요.';
+
+  try {
+    var response = await fetch('/api/saju', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-haiku-4-5-20251001',
+        max_tokens: 4000,
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+
+    if (!response.ok) throw new Error('API 오류: ' + response.status);
+
+    var data = await response.json();
+    var html = data.content ? data.content.map(function(c){ return c.text || ''; }).join('') : '';
+
+    if (bodyEl) {
+      bodyEl.innerHTML =
+        '<div style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.2);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;">' +
+          '<div style="font-size:12px;color:var(--gold);font-weight:700;margin-bottom:.3rem;">✦ ' + inp.name + '님의 인생 지침서</div>' +
+          '<div style="font-size:11px;color:var(--t2);">' + inp.year + '년 ' + inp.month + '월 ' + inp.day + '일 · ' + (r.star||'') + ' 명주 · ' + new Date().toLocaleDateString('ko-KR') + ' 발행</div>' +
+        '</div>' +
+        '<div class="report-content" style="font-size:13px;color:var(--t2);line-height:2;display:flex;flex-direction:column;gap:1.2rem;">' +
+          html.replace(/<h3>/g, '<div style="font-size:15px;font-weight:700;color:#fff;margin-top:.5rem;margin-bottom:.3rem;display:flex;align-items:center;gap:6px;">').replace(/<\/h3>/g, '</div>').replace(/<p>/g, '<p style="margin:0;line-height:1.9;">').replace(/<strong>/g, '<strong style="color:var(--t3);">').replace(/<em>/g, '<em style="color:var(--em);font-style:normal;font-weight:600;">') +
+        '</div>';
+    }
+  } catch(e) {
+    if (bodyEl) bodyEl.innerHTML = '<div style="color:#e74c3c;padding:1rem;">오류가 발생했습니다: ' + e.message + '</div>';
+    if (btn) btn.style.display = 'block';
+  }
+}
+function doShare() {
+  var r = window.lastSajuResult;
+  var inp = window.lastSajuInput;
+  var url = window.location.href.split('?')[0];
+  var title = '천기 웨이브 — 정통 자미두수·기문둔갑 AI 명리';
+  var text = r && inp
+    ? inp.name + '님의 천기 분석: ' + (r.star||'') + ' 명주 · ' + (r.summary||'') + '\n' + url
+    : '천기 웨이브에서 나만의 사주 분석을 받아보세요! 🌊\n' + url;
+
+  // Web Share API (모바일)
+  if (navigator.share) {
+    navigator.share({ title: title, text: text, url: url })
+      .catch(function(){});
+    return;
+  }
+
+  // 폴백: 클립보드 복사
+  var copyText = text;
+  if (navigator.clipboard) {
+    navigator.clipboard.writeText(copyText).then(function() {
+      showShareToast('링크가 복사됐어요! 📋');
+    }).catch(function() {
+      fallbackCopy(copyText);
+    });
+  } else {
+    fallbackCopy(copyText);
+  }
+}
+
+function fallbackCopy(text) {
+  var ta = document.createElement('textarea');
+  ta.value = text;
+  ta.style.position = 'fixed'; ta.style.opacity = '0';
+  document.body.appendChild(ta);
+  ta.select();
+  try { document.execCommand('copy'); showShareToast('링크가 복사됐어요! 📋'); }
+  catch(e) { showShareToast('주소창 URL을 직접 복사해주세요'); }
+  document.body.removeChild(ta);
+}
+
+function showShareToast(msg) {
+  var t = document.getElementById('share-toast');
+  if (!t) {
+    t = document.createElement('div');
+    t.id = 'share-toast';
+    t.style.cssText = 'position:fixed;bottom:80px;left:50%;transform:translateX(-50%);' +
+      'background:rgba(80,200,120,0.95);color:#fff;padding:12px 24px;border-radius:24px;' +
+      'font-size:14px;font-weight:700;z-index:9999;transition:opacity .3s;white-space:nowrap;' +
+      'box-shadow:0 4px 20px rgba(0,0,0,0.3);';
+    document.body.appendChild(t);
+  }
+  t.textContent = msg;
+  t.style.opacity = '1';
+  setTimeout(function(){ t.style.opacity = '0'; }, 2500);
 }
 
 function buildExperts() {

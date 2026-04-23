@@ -1270,47 +1270,42 @@ function drawCamLoop() {
   loop();
 }
 
-/* ── 손 모양 경로 (오른손 기준, 손바닥 중심) ── */
+/* ── 손 모양 경로 (깔끔한 손 모양) ── */
 function drawHandPath(ctx, cx, cy, hw, hh) {
-  // 손바닥이 화면 중앙 아래, 손가락은 위쪽 25%만
-  var palmCX = cx;
-  var palmCY = cy + hh * 0.10; // 손바닥 중심
-  var pw2 = hw * 0.40;   // 손바닥 반너비
-  var ph2 = hh * 0.32;   // 손바닥 반높이
-  var fw = hw * 0.14;    // 손가락 너비
-  var fingerBase = palmCY - ph2; // 손가락 시작 Y
-
-  // 손가락 X 위치 (왼→오: 검지, 중지, 약지, 새끼)
-  var fxArr = [palmCX - pw2*0.58, palmCX - pw2*0.20, palmCX + pw2*0.20, palmCX + pw2*0.58];
-  var fhArr = [hh*0.25, hh*0.30, hh*0.27, hh*0.19]; // 각 손가락 높이
+  var px = cx, py = cy;
+  var pw = hw * 0.44;
+  var ph = hh * 0.28;
+  var palmTop = py - ph * 0.2;
+  var palmBot = py + ph * 1.4;
+  var fw = pw * 0.30;
+  var fingers = [
+    { x: px - pw*0.54, w: fw*0.90, h: hh*0.28 },
+    { x: px - pw*0.18, w: fw,      h: hh*0.34 },
+    { x: px + pw*0.18, w: fw,      h: hh*0.31 },
+    { x: px + pw*0.52, w: fw*0.78, h: hh*0.22 },
+  ];
 
   ctx.beginPath();
-  // 검지 왼쪽 시작
-  ctx.moveTo(fxArr[0] - fw*0.45, fingerBase);
+  ctx.moveTo(fingers[0].x - fingers[0].w/2, palmTop);
 
-  // 4개 손가락 그리기
-  for (var i = 0; i < 4; i++) {
-    var fx = fxArr[i], fh = fhArr[i];
-    ctx.lineTo(fx - fw*0.45, fingerBase);
-    ctx.lineTo(fx - fw*0.45, fingerBase - fh);
-    ctx.quadraticCurveTo(fx, fingerBase - fh - fw*0.55, fx + fw*0.45, fingerBase - fh);
-    ctx.lineTo(fx + fw*0.45, fingerBase);
-  }
+  fingers.forEach(function(f) {
+    ctx.lineTo(f.x - f.w/2, palmTop);
+    ctx.lineTo(f.x - f.w/2, palmTop - f.h);
+    ctx.quadraticCurveTo(f.x, palmTop - f.h - f.w*0.55, f.x + f.w/2, palmTop - f.h);
+    ctx.lineTo(f.x + f.w/2, palmTop);
+  });
 
-  // 새끼 오른쪽 → 손바닥 오른쪽
-  ctx.quadraticCurveTo(palmCX + pw2*0.92, fingerBase + ph2*0.3, palmCX + pw2*0.88, palmCY + ph2*0.6);
+  // 오른쪽 → 손목
+  ctx.quadraticCurveTo(px + pw*1.02, palmTop + ph*0.6, px + pw*0.95, palmBot - ph*0.2);
+  ctx.quadraticCurveTo(px + pw*0.75, palmBot + ph*0.1, px, palmBot + ph*0.18);
+  ctx.quadraticCurveTo(px - pw*0.75, palmBot + ph*0.1, px - pw*0.95, palmBot - ph*0.2);
+  ctx.quadraticCurveTo(px - pw*1.02, palmTop + ph*0.8, px - pw*0.98, palmTop + ph*0.35);
 
-  // 손목 오른쪽 → 손목 아래 → 손목 왼쪽
-  ctx.quadraticCurveTo(palmCX + pw2*0.55, palmCY + ph2 + hh*0.06, palmCX, palmCY + ph2 + hh*0.08);
-  ctx.quadraticCurveTo(palmCX - pw2*0.55, palmCY + ph2 + hh*0.06, palmCX - pw2*0.88, palmCY + ph2*0.6);
-
-  // 손바닥 왼쪽 → 엄지 시작
-  ctx.quadraticCurveTo(palmCX - pw2*0.95, fingerBase + ph2*0.1, palmCX - pw2*0.82, fingerBase - ph2*0.1);
-
-  // 엄지 (왼쪽으로 튀어나옴)
-  ctx.quadraticCurveTo(palmCX - pw2*1.15, fingerBase - ph2*0.3, palmCX - pw2*1.20, fingerBase - ph2*0.5);
-  ctx.quadraticCurveTo(palmCX - pw2*1.18, fingerBase - ph2*0.75, palmCX - pw2*0.95, fingerBase - ph2*0.65);
-  ctx.quadraticCurveTo(palmCX - pw2*0.72, fingerBase - ph2*0.5, fxArr[0] - fw*0.45, fingerBase);
+  // 엄지
+  ctx.quadraticCurveTo(px - pw*1.05, palmTop + ph*0.1, px - pw*1.12, palmTop - ph*0.1);
+  ctx.quadraticCurveTo(px - pw*1.18, palmTop - ph*0.45, px - pw*0.98, palmTop - ph*0.55);
+  ctx.quadraticCurveTo(px - pw*0.75, palmTop - ph*0.5, px - pw*0.68, palmTop - ph*0.2);
+  ctx.lineTo(fingers[0].x - fingers[0].w/2, palmTop);
 
   ctx.closePath();
 }
@@ -1354,12 +1349,12 @@ function drawGuideOverlay(ctx, w, h) {
     });
 
   } else {
-    // 손금 모드 - 실제 손 모양 가이드
+    // 손금 모드 - 손바닥 중심, 크게
     var cx2 = w/2, cy2 = h/2;
-    var hw = w * 0.38; // 손 너비
-    var hh = h * 0.72; // 손 높이
-    var hx = cx2;      // 손 중심 X
-    var hy = cy2 + h*0.04; // 손 중심 Y (약간 아래)
+    var hw = w * 0.56;   // 손 너비 크게
+    var hh = h * 0.80;   // 손 높이 크게
+    var hx = cx2;
+    var hy = cy2 - h*0.02; // 손바닥이 화면 중앙
     var isLeft = sMode === 'palm_left';
 
     // 어두운 마스크

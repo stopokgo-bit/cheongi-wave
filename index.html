@@ -136,9 +136,9 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
 .form-row.r2{grid-template-columns:1fr 1fr;}
 .form-row.r3{grid-template-columns:1fr 1fr 1fr;}
 @media(max-width:580px){.form-row.r3{grid-template-columns:1fr 1fr;}}
-.gender-btn{flex:1;padding:clamp(8px,1vw,13px) 0;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:var(--t2);font-size:clamp(12px,1.2vw,15px);font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;}
+.gender-btn{flex:1;padding:clamp(11px,1.2vw,14px) 0;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:var(--t2);font-size:clamp(13px,1.3vw,16px);font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;min-height:44px;-webkit-tap-highlight-color:transparent;}
 .gender-btn.on{background:rgba(80,200,120,0.15);border-color:var(--em);color:var(--em);}
-.cal-btn{flex:1;padding:clamp(8px,1vw,13px) 0;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:var(--t2);font-size:clamp(11px,1.1vw,14px);font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;}
+.cal-btn{flex:1;padding:clamp(9px,1vw,12px) 0;border-radius:8px;border:1px solid rgba(255,255,255,0.12);background:rgba(255,255,255,0.05);color:var(--t2);font-size:clamp(12px,1.2vw,14px);font-weight:600;cursor:pointer;font-family:inherit;transition:all .18s;min-height:40px;-webkit-tap-highlight-color:transparent;}
 .cal-btn.on{background:rgba(255,215,0,0.12);border-color:var(--gold);color:var(--gold);}
 .method-banner{margin-top:12px;background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:clamp(.6rem,1vw,1rem) clamp(.8rem,1.2vw,1.25rem);display:grid;grid-template-columns:1fr 1px 1fr 1px 1fr;gap:clamp(6px,1vw,12px);align-items:center;}
 .method-item{display:flex;flex-direction:column;align-items:center;gap:4px;padding:.2rem 0;}
@@ -1134,8 +1134,10 @@ let selectedCal = '양력';
 
 function setGender(g) {
   selectedGender = g;
-  document.getElementById('gbtn-m').classList.toggle('on', g === '남');
-  document.getElementById('gbtn-f').classList.toggle('on', g === '여');
+  var btnM = document.getElementById('gbtn-m');
+  var btnF = document.getElementById('gbtn-f');
+  if (btnM) { btnM.classList.toggle('on', g === '남'); }
+  if (btnF) { btnF.classList.toggle('on', g === '여'); }
 }
 function setCal(c) {
   selectedCal = c;
@@ -1173,6 +1175,7 @@ async function doSajuScan() {
   const day = dayVal;
   const timeStr = unknownTime ? '미상 (삼주 분석)' : time;
   const today = new Date();
+  const todayStr = today.getFullYear() + '년 ' + (today.getMonth()+1) + '월 ' + today.getDate() + '일';
   const age = today.getFullYear() - parseInt(yearVal);
 
   // ✅ localStorage 캐시 체크
@@ -1197,9 +1200,6 @@ async function doSajuScan() {
     document.getElementById('loading-msg').textContent = SAJU_LOADING_MSGS[msgIdx][0];
     document.getElementById('loading-sub').textContent = SAJU_LOADING_MSGS[msgIdx][1];
   }, 1800);
-
-  const today = new Date();
-  const todayStr = today.getFullYear() + '년 ' + (today.getMonth()+1) + '월 ' + today.getDate() + '일';
 
   const prompt =
     '당신은 자미두수·매화역수·기문둔갑을 40년간 연구한 최고 명리학 대가입니다.\n' +

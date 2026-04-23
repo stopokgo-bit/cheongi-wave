@@ -391,10 +391,10 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
 .saju-score-label{font-size:clamp(9px,1vw,12px);color:var(--t2);margin-bottom:4px;}
 .saju-score-val{font-size:clamp(18px,2.2vw,28px);font-weight:700;}
 .saju-score-trend{font-size:clamp(9px,1vw,12px);margin-top:2px;}
-.saju-section{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:clamp(.8rem,1.2vw,1.25rem) clamp(.85rem,1.3vw,1.4rem);}
+.saju-section{background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.1);border-radius:12px;padding:clamp(.65rem,1vw,1rem) clamp(.85rem,1.3vw,1.4rem);}
 .saju-section-title{font-size:clamp(12px,1.3vw,15px);font-weight:700;color:#fff;margin-bottom:.6rem;display:flex;align-items:center;gap:7px;}
 .saju-section-title svg{width:clamp(12px,1.2vw,16px);height:clamp(12px,1.2vw,16px);}
-.saju-section-body{font-size:clamp(12px,1.2vw,15px);color:var(--t2);line-height:1.95;}
+.saju-section-body{font-size:clamp(12px,1.2vw,15px);color:var(--t2);line-height:1.75;}
 .saju-section-body em{color:var(--em);font-style:normal;font-weight:600;}
 .saju-section-body b{color:var(--gold);font-weight:600;}
 .saju-section-body strong{color:#fff;font-weight:600;}
@@ -514,6 +514,18 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
   <div id="pg-main-user" class="pg on">
     <div class="hero fu">
       <div class="hero-title"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>당신의 천기(天機)를 스캔하세요</div>
+
+      <!-- ✅ 저장된 사용자 프로필 선택 -->
+      <div id="profile-bar" style="margin-bottom:12px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
+          <span style="font-size:11px;color:var(--t2);font-weight:600;">💾 저장된 프로필</span>
+          <button onclick="saveCurrentProfile()" style="font-size:11px;padding:4px 12px;border-radius:6px;background:rgba(80,200,120,0.15);border:1px solid rgba(80,200,120,0.3);color:var(--em);cursor:pointer;font-family:inherit;font-weight:600;">+ 현재 정보 저장</button>
+        </div>
+        <div id="profile-list" style="display:flex;gap:6px;flex-wrap:wrap;">
+          <div style="font-size:11px;color:rgba(153,153,204,0.5);padding:4px 0;">저장된 프로필이 없습니다</div>
+        </div>
+      </div>
+      <div style="height:1px;background:rgba(255,255,255,0.07);margin-bottom:12px;"></div>
 
       <div class="form-row r2" style="margin-bottom:10px;">
         <div class="ig"><label>이름</label><input type="text" placeholder="이름 입력" id="inp-name"></div>
@@ -1178,8 +1190,17 @@ async function doSajuScan() {
   const todayStr = today.getFullYear() + '년 ' + (today.getMonth()+1) + '월 ' + today.getDate() + '일';
   const age = today.getFullYear() - parseInt(yearVal);
 
+  // ✅ 마지막 입력값 자동 저장
+  try {
+    localStorage.setItem('cw_last_input', JSON.stringify({
+      name: name, year: year, month: month, day: day,
+      time: timeStr, unk: unknownTime,
+      gender: gender, cal: cal
+    }));
+  } catch(e) {}
+
   // ✅ localStorage 캐시 체크
-  const cacheKey = 'saju_' + name + '_' + year + '_' + month + '_' + day + '_' + gender + '_' + cal;
+  const cacheKey = 'saju_v3_' + name + '_' + year + '_' + month + '_' + day + '_' + gender + '_' + cal;
   const cached = localStorage.getItem(cacheKey) || sessionStorage.getItem(cacheKey);
   if (cached) {
     try {
@@ -1244,7 +1265,7 @@ async function doSajuScan() {
     '2. 각 텍스트 필드는 지시된 문장 수를 반드시 지켜라. 1~2문장으로 줄이면 틀린 답이다.\n' +
     '3. 입에 발린 말 금지. 약점·흉한 부분도 솔직하게.\n' +
     '4. 구체적 연도, 궁위 이름, 성曜 이름을 반드시 포함하라.\n' +
-    '5. 마지막 문장을 완성하라.'; +
+    '5. 마지막 문장을 완성하라.\n' +
     '=== 자미두수 분석 기준 ===\n' +
     '- 명궁 주성(14주성: 자미·천기·태양·무곡·천동·염정·천부·태음·탐랑·거문·천상·천량·칠살·파군) 파악\n' +
     '- 보성(문창·문곡·좌보·우필·천괴·천월·록존·천마 등) 조합 분석\n' +
@@ -1424,10 +1445,10 @@ function renderSajuResult(name, year, month, day, timeStr, age, r) {
   const sections = [
     { icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>', color: '#FFD700',
       title: '자미두수 — 명궁 주성: ' + (r.star || '') + ' · ' + (r.daewoon || ''),
-      body: (r.star_detail || '') + (r.palace_desc ? '<br><br>' + r.palace_desc : '') },
+      body: (r.star_detail || '') + (r.palace_desc ? '<br>' + r.palace_desc : '') },
     { icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>', color: '#FFD700',
       title: '자미두수 — 대운 심층 분석: ' + (r.daewoon || ''),
-      body: (r.daewoon_detail || '') + (r.ziwei ? '<br><br>' + r.ziwei : '') },
+      body: (r.daewoon_detail || '') + (r.ziwei ? '<br>' + r.ziwei : '') },
     { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#50C878',
       title: '매화역수 — 오늘의 파도 · 운기 방향',
       body: r.meihua || '' },
@@ -2131,7 +2152,138 @@ function populateReport() {
   }
 }
 
-/* ── 입력 모드 전환 (카메라/사진) ── */
+/* ══════════════════════════════════════
+   사용자 프로필 저장/불러오기
+══════════════════════════════════════ */
+var MAX_PROFILES = 5;
+
+function getProfiles() {
+  try { return JSON.parse(localStorage.getItem('cw_profiles') || '[]'); } catch(e) { return []; }
+}
+function saveProfiles(arr) {
+  try { localStorage.setItem('cw_profiles', JSON.stringify(arr)); } catch(e) {}
+}
+
+function saveCurrentProfile() {
+  var name  = (document.getElementById('inp-name')  || {}).value || '';
+  var year  = (document.getElementById('inp-year')  || {}).value || '';
+  var month = (document.getElementById('inp-month') || {}).value || '';
+  var day   = (document.getElementById('inp-day')   || {}).value || '';
+  var time  = (document.getElementById('inp-time')  || {}).value || '';
+  var unk   = (document.getElementById('unk')       || {}).checked || false;
+
+  if (!name || !year || !month || !day) {
+    showShareToast('⚠️ 이름과 생년월일을 먼저 입력해주세요'); return;
+  }
+
+  var profiles = getProfiles();
+
+  // 같은 이름이 있으면 덮어쓰기 확인
+  var existing = profiles.findIndex(function(p){ return p.name === name; });
+  if (existing >= 0) {
+    if (!confirm('"' + name + '" 프로필을 덮어쓸까요?')) return;
+    profiles.splice(existing, 1);
+  }
+
+  // 최대 5개 제한
+  if (profiles.length >= MAX_PROFILES) {
+    showShareToast('⚠️ 최대 5개까지 저장 가능합니다. 기존 프로필을 먼저 삭제해주세요.');
+    return;
+  }
+
+  profiles.push({
+    name: name, year: year, month: month, day: day,
+    time: time, unk: unk,
+    gender: selectedGender, cal: selectedCal,
+    savedAt: new Date().toLocaleDateString('ko-KR')
+  });
+  saveProfiles(profiles);
+  renderProfileBar();
+  showShareToast('✅ ' + name + ' 프로필이 저장됐습니다!');
+}
+
+function loadProfile(idx) {
+  var profiles = getProfiles();
+  var p = profiles[idx];
+  if (!p) return;
+
+  document.getElementById('inp-name').value  = p.name  || '';
+  document.getElementById('inp-year').value  = p.year  || '';
+  document.getElementById('inp-month').value = p.month || '';
+  document.getElementById('inp-day').value   = p.day   || '';
+  document.getElementById('inp-time').value  = p.time  || '';
+  document.getElementById('unk').checked     = p.unk   || false;
+
+  setGender(p.gender || '남');
+  setCal(p.cal || '양력');
+
+  // 활성 프로필 하이라이트
+  document.querySelectorAll('.profile-chip').forEach(function(el, i) {
+    el.style.borderColor = i === idx ? 'var(--em)' : 'var(--bd)';
+    el.style.background  = i === idx ? 'rgba(80,200,120,0.15)' : 'rgba(255,255,255,0.05)';
+    el.querySelector('.pname').style.color = i === idx ? 'var(--em)' : '#fff';
+  });
+
+  showShareToast('📂 ' + p.name + ' 불러왔습니다!');
+}
+
+function deleteProfile(idx) {
+  var profiles = getProfiles();
+  var p = profiles[idx];
+  if (!p) return;
+  if (!confirm('"' + p.name + '" 프로필을 삭제할까요?')) return;
+  profiles.splice(idx, 1);
+  saveProfiles(profiles);
+  renderProfileBar();
+  showShareToast('🗑️ 삭제됐습니다');
+}
+
+function renderProfileBar() {
+  var list = document.getElementById('profile-list');
+  if (!list) return;
+  var profiles = getProfiles();
+
+  if (!profiles.length) {
+    list.innerHTML = '<div style="font-size:11px;color:rgba(153,153,204,0.5);padding:4px 0;">저장된 프로필이 없습니다</div>';
+    return;
+  }
+
+  list.innerHTML = profiles.map(function(p, i) {
+    var initial = (p.name || '?').slice(0, 1);
+    var gColor = p.gender === '여' ? '#cc88bb' : '#8aacf0';
+    return '<div class="profile-chip" style="display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:10px;border:1px solid var(--bd);background:rgba(255,255,255,0.05);cursor:pointer;transition:all .15s;" onclick="loadProfile(' + i + ')">' +
+      '<div style="width:26px;height:26px;border-radius:50%;background:' + gColor + '33;border:1px solid ' + gColor + '55;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:' + gColor + ';flex-shrink:0;">' + initial + '</div>' +
+      '<div>' +
+        '<div class="pname" style="font-size:12px;font-weight:700;color:#fff;line-height:1.2;">' + p.name + '</div>' +
+        '<div style="font-size:10px;color:var(--t2);">' + p.year + '.' + p.month + '.' + p.day + ' · ' + p.gender + '</div>' +
+      '</div>' +
+      '<button onclick="event.stopPropagation();deleteProfile(' + i + ')" style="margin-left:2px;width:18px;height:18px;border-radius:50%;background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">×</button>' +
+    '</div>';
+  }).join('');
+}
+
+// 페이지 로드 시 프로필바 렌더링 + 마지막 입력값 복원
+(function initProfileBar() {
+  renderProfileBar();
+
+  // 마지막 입력값 자동 복원
+  try {
+    var last = localStorage.getItem('cw_last_input');
+    if (last) {
+      var p = JSON.parse(last);
+      setTimeout(function() {
+        if (p.name)  document.getElementById('inp-name').value  = p.name;
+        if (p.year)  document.getElementById('inp-year').value  = p.year;
+        if (p.month) document.getElementById('inp-month').value = p.month;
+        if (p.day)   document.getElementById('inp-day').value   = p.day;
+        if (p.time)  document.getElementById('inp-time').value  = p.time;
+        if (p.unk)   document.getElementById('unk').checked     = p.unk;
+        if (p.gender) setGender(p.gender);
+        if (p.cal)    setCal(p.cal);
+      }, 100);
+    }
+  } catch(e) {}
+})();
 var currentInputMode = 'camera';
 function setInputMode(mode) {
   currentInputMode = mode;

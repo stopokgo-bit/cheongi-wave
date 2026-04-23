@@ -859,7 +859,15 @@ const dayVal = document.getElementById('inp-day').value;
   const timeStr = unknownTime ? '미상 (삼주 분석)' : time;
   const today = new Date();
   const age = today.getFullYear() - parseInt(yearVal);
-
+const cacheKey = `saju_${name}_${year}_${month}_${day}_${gender}_${cal}`;
+const cached = sessionStorage.getItem(cacheKey);
+if (cached) {
+  clearInterval(msgTimer);
+  showLoading(false);
+  const r = JSON.parse(cached);
+  renderSajuResult(name, year, month, day, timeStr, age, r);
+  return;
+}
 const prompt = `사주 명리학 AI로 분석하세요. JSON만 출력하세요.
 
 이름:${name} 성별:${gender} 생년월일:${year}년${month}월${day}일(${cal}) 시간:${timeStr} 나이:${age}세
@@ -950,7 +958,7 @@ function renderSajuResult(name, year, month, day, timeStr, age, r) {
       </div>`;
     document.getElementById('saju-result-body').prepend(dirCard);
   }
-
+sessionStorage.setItem(cacheKey, JSON.stringify(result));
   const sections = [
     { icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>', color: '#FFD700', title: '자미두수 - 명궁 주성: ' + r.star + ' · ' + (r.daewoon||''), body: r.ziwei },
     { icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>', color: '#FFD700', title: '자미두수 - 명궁 해석', body: r.palace_desc },

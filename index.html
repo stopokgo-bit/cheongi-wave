@@ -592,7 +592,20 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
         <button class="mtbtn" id="mp2" onclick="setMode('palm_right',this)">오른손<span style="font-size:9px;display:block;color:rgba(255,255,255,0.5);">후천운</span></button>
       </div>
     </div>
-    <div class="cam-stage"><canvas id="sc" width="640" height="400"></canvas><div class="fb-bar"><div class="fb-dot warn" id="fd"></div><div class="fb-txt" id="ft">카메라를 눈높이에 맞춰 주세요</div><div class="fb-sub" id="fs">얼굴을 가이드 안에 맞춰주세요</div></div></div>
+    <div class="cam-stage"><canvas id="sc" width="640" height="400"></canvas>
+      <div class="fb-bar">
+        <div class="fb-dot warn" id="fd"></div>
+        <div class="fb-txt" id="ft">카메라를 눈높이에 맞춰 주세요</div>
+        <div class="fb-sub" id="fs">얼굴을 가이드 안에 맞춰주세요</div>
+      </div>
+      <!-- 자동 촬영 정렬 바 -->
+      <div style="position:absolute;bottom:52px;left:0;right:0;padding:0 1rem;">
+        <div style="height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;">
+          <div id="align-bar" style="height:100%;width:0%;background:var(--em);border-radius:2px;transition:width .2s;"></div>
+        </div>
+        <div id="align-hint" style="font-size:11px;color:rgba(255,255,255,0.6);text-align:center;margin-top:4px;"></div>
+      </div>
+    </div>
     <div class="ctrl-row">
       <div class="side-ctrl"><div class="ctrl-btn" id="bg" onclick="tGrid()">격자 가이드</div><div class="ctrl-btn" id="bl" onclick="tLight()">밝기 보정</div></div>
       <button class="shutter" id="sh" onclick="doCapture()"><div class="si"></div></button>
@@ -605,16 +618,22 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
     </div>
     <div class="prog-sec" id="ps"><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.75rem;">분석 진행 중...</div><div class="prog-steps" id="psteps"></div></div>
     <div class="result-sec" id="rs">
+      <!-- 촬영 탭 -->
+      <div style="display:flex;gap:8px;margin-bottom:.75rem;">
+        <div id="tab-face" style="flex:1;padding:6px 10px;border-radius:8px;background:rgba(80,200,120,0.1);border:1px solid rgba(80,200,120,0.25);font-size:11px;color:var(--em);font-weight:700;text-align:center;cursor:pointer;opacity:0.35;" onclick="if(capturedImages.face){sMode='face';showResult()}">👁 관상</div>
+        <div id="tab-left" style="flex:1;padding:6px 10px;border-radius:8px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.25);font-size:11px;color:var(--gold);font-weight:700;text-align:center;cursor:pointer;opacity:0.35;" onclick="if(capturedImages.palm_left){sMode='palm_left';showResult()}">🤚 왼손</div>
+        <div id="tab-right" style="flex:1;padding:6px 10px;border-radius:8px;background:rgba(96,130,220,0.1);border:1px solid rgba(96,130,220,0.25);font-size:11px;color:#8aacf0;font-weight:700;text-align:center;cursor:pointer;opacity:0.35;" onclick="if(capturedImages.palm_right){sMode='palm_right';showResult()}">✋ 오른손</div>
+      </div>
       <div class="res-hero">
         <div class="face-thumb"><canvas id="tc" width="64" height="80" style="width:64px;height:80px;"></canvas><div class="face-tag">스캔 완료</div></div>
-        <div><div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:3px;">홍길동 · 인시생</div><div style="font-size:11px;color:var(--t2);margin-bottom:.5rem;">관상 분석 완료 · 자미두수 12궁 동기화</div><div class="match-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>명반 일치도 87%</div></div>
+        <div><div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:3px;">스캔 완료</div><div style="font-size:11px;color:var(--t2);margin-bottom:.5rem;">분석 완료 · 3대 역술 동기화</div><div class="match-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>명반 일치도 87%</div></div>
       </div>
       <div class="feat-grid" id="fg"></div>
-      <div style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:.85rem;margin-bottom:.75rem;"><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.6rem;">12궁 관상 동기화 결과</div><div class="pm-list" id="pl"></div></div>
-      <div class="ib"><div class="ib-title">관상·명반 통합 해석</div><div class="ib-body">이마(관록궁)가 <em>넓고 둥글게 발달</em>하여 명반의 천동성 화록과 완벽하게 일치합니다. 눈빛의 <em>예리함(천기성 명궁)</em>과 인중의 길이가 <b>이동운 91점</b>을 뒷받침합니다.</div></div>
+      <div id="pl-section" style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:.85rem;margin-bottom:.75rem;"><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.6rem;">12궁 관상 동기화 결과</div><div class="pm-list" id="pl"></div></div>
+      <div class="ib"><div class="ib-title">관상·명반 통합 해석</div><div class="ib-body">이마(관록궁)가 <em>넓고 둥글게 발달</em>하여 명반의 천동성 화록과 완벽하게 일치합니다.</div></div>
       <div class="cta-row">
-        <button class="btn-gold" onclick="showPg('report')">✦ 관상 포함 50P 리포트</button>
-        <button class="btn-em" onclick="setMode('palm_left',document.getElementById('mp'));resetScan()">손금 스캔 이어서</button>
+        <button class="btn-gold" onclick="showPg('report')">✦ 50P 통합 리포트</button>
+        <button class="btn-em" onclick="setMode('palm_left',document.getElementById('mp'))">손금 스캔 이어서</button>
         <button class="btn-out" onclick="showPg('main')">메인으로</button>
       </div>
     </div>
@@ -1105,11 +1124,31 @@ const WD = [{age:'20대',w:72,c:80,l:65},{age:'30대',w:65,c:85,l:70},{age:'45�
 let selCh = 'urban', sMode = 'face', gOn = false, lOn = false, sState = 'idle', aFr = null, sLY = 0, sLD = 1, chBuilt = false;
 let camStream = null, camVideoEl = null, camAnimFr = null;
 
+// 스캔 결과 저장 (관상/왼손/오른손 독립)
+var scanResults = { face: null, palm_left: null, palm_right: null };
+var capturedImages = { face: null, palm_left: null, palm_right: null };
+
+// 자동 촬영 관련
+var autoCapTimer = null, alignScore = 0;
+
+// 손금 전용 랜드마크 데이터
+var PALM_LINES_LEFT = [
+  {l:'감정선', desc:'감수성이 풍부하고 인간관계 중심적. 애정운 강함.', score:82},
+  {l:'두뇌선', desc:'직관력과 분석력 균형. 창의적 사고 발달.', score:78},
+  {l:'생명선', desc:'생명력 길고 강함. 건강운 안정적.', score:88},
+  {l:'운명선', desc:'선천적 흐름 뚜렷. 타고난 사명감 있음.', score:74}
+];
+var PALM_LINES_RIGHT = [
+  {l:'감정선', desc:'후천적 노력으로 인간관계 확장. 현재 애정운 상승중.', score:76},
+  {l:'두뇌선', desc:'실용적 사고 발달. 현실적 판단력 강화됨.', score:85},
+  {l:'생명선', desc:'후천 건강관리 양호. 생활습관 개선 효과 나타남.', score:80},
+  {l:'운명선', desc:'후천 노력운 강함. 커리어 전환점 있음.', score:91}
+];
+
 /* ── 카메라 시작 ── */
 function startCamera() {
   var cv = document.getElementById('sc'); if (!cv) return;
 
-  // 이미 video 엘리먼트 있으면 재사용
   if (!camVideoEl) {
     camVideoEl = document.createElement('video');
     camVideoEl.setAttribute('autoplay', '');
@@ -1119,68 +1158,109 @@ function startCamera() {
     document.body.appendChild(camVideoEl);
   }
 
-  if (camStream) {
-    drawCamLoop();
-    return;
-  }
+  if (camStream) { drawCamLoop(); return; }
 
   setFB('idle');
 
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } } })
+  // 모바일: environment(후면), PC: user(전면)
+  var isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+  var constraints = {
+    video: {
+      facingMode: sMode === 'face' ? 'user' : (isMobile ? 'environment' : 'user'),
+      width: { ideal: 720 },
+      height: { ideal: 720 }  // ✅ 정사각형 요청 → 모바일 가로 늘어남 방지
+    }
+  };
+
+  navigator.mediaDevices.getUserMedia(constraints)
     .then(function(stream) {
       camStream = stream;
       camVideoEl.srcObject = stream;
       camVideoEl.play();
       camVideoEl.onloadedmetadata = function() {
         drawCamLoop();
-        setTimeout(function(){ setFB('aligning'); setTimeout(function(){ setFB('ready'); }, 1500); }, 600);
+        setTimeout(function(){ setFB('aligning'); setTimeout(function(){ setFB('ready'); startAlignCheck(); }, 1500); }, 600);
       };
     })
     .catch(function(err) {
       console.warn('카메라 접근 실패:', err);
       setFB('nocam');
-      drawScanFallback(); // 카메라 없으면 기존 그림 모드
+      drawScanFallback();
     });
 }
 
-/* ── 카메라 스트림을 캔버스에 그리는 루프 ── */
+/* ── 얼굴/손 정렬 자동 감지 (타이머 기반) ── */
+function startAlignCheck() {
+  if (autoCapTimer) clearInterval(autoCapTimer);
+  alignScore = 0;
+  var bar = document.getElementById('align-bar');
+  var hint = document.getElementById('align-hint');
+
+  autoCapTimer = setInterval(function() {
+    if (sState !== 'idle') { clearInterval(autoCapTimer); return; }
+    alignScore = Math.min(100, alignScore + Math.random() * 8 + 4);
+    var pct = Math.round(alignScore);
+    if (bar) bar.style.width = pct + '%';
+    if (hint) {
+      if (pct < 40) hint.textContent = sMode === 'face' ? '얼굴을 타원 안에 맞춰주세요' : '손바닥을 가이드 안에 펼쳐주세요';
+      else if (pct < 75) hint.textContent = '조금 더 가까이...';
+      else hint.textContent = '완벽해요! 잠시 후 자동 촬영됩니다 ✓';
+    }
+    if (alignScore >= 100) {
+      clearInterval(autoCapTimer);
+      if (sState === 'idle') {
+        setTimeout(function(){ doCapture(); }, 400);
+      }
+    }
+  }, 200);
+}
+
+/* ── 카메라 캔버스 루프 ── */
 function drawCamLoop() {
   var cv = document.getElementById('sc'); if (!cv || !camVideoEl) return;
   if (camAnimFr) cancelAnimationFrame(camAnimFr);
 
   var W = cv.offsetWidth || 640;
-  cv.width = W * 2; cv.height = Math.round(W * 0.625) * 2;
-  cv.style.height = Math.round(W * 0.625) + 'px';
+  // ✅ 모바일 비율 고정: 항상 4:3
+  cv.width = W * 2;
+  cv.height = Math.round(W * 2 * 0.75);
+  cv.style.height = Math.round(W * 0.75) + 'px';
 
   function loop() {
     var ctx = cv.getContext('2d');
     var w = cv.width, h = cv.height;
 
-    // 카메라 영상 그리기 (좌우 반전 - 거울 모드)
+    // ✅ 카메라 비디오 비율 유지하며 중앙 크롭
+    var vw = camVideoEl.videoWidth || w, vh = camVideoEl.videoHeight || h;
+    var scale = Math.max(w / vw, h / vh);
+    var dw = vw * scale, dh = vh * scale;
+    var dx = (w - dw) / 2, dy = (h - dh) / 2;
+
     ctx.save();
-    ctx.scale(-1, 1);
-    ctx.drawImage(camVideoEl, -w, 0, w, h);
+    if (sMode === 'face') { ctx.scale(-1, 1); ctx.drawImage(camVideoEl, -dx-dw, dy, dw, dh); }
+    else { ctx.drawImage(camVideoEl, dx, dy, dw, dh); }
     ctx.restore();
 
-    // 밝기 보정
     if (lOn) { ctx.fillStyle = 'rgba(255,255,200,0.06)'; ctx.fillRect(0, 0, w, h); }
 
-    // 가이드 오버레이
     drawGuideOverlay(ctx, w, h);
 
-    // 스캔 라인 (스캔 중일 때)
+    // 스캔라인
     if (sState === 'scanning') {
-      sLY += 3 * sLD;
+      sLY += 4 * sLD;
       if (sLY > h || sLY < 0) sLD *= -1;
-      var cx2 = w/2, ry = h * 0.40;
-      // 타원 안에만 스캔라인 표시
       ctx.save();
-      ctx.beginPath(); ctx.ellipse(cx2, h/2, w*0.28, ry, 0, 0, Math.PI*2); ctx.clip();
+      if (sMode === 'face') {
+        ctx.beginPath(); ctx.ellipse(w/2, h/2, w*0.24, h*0.38, 0, 0, Math.PI*2); ctx.clip();
+      } else {
+        var px2=w*0.15,py2=h*0.08,pw2=w*0.7,ph2=h*0.84;
+        ctx.beginPath(); ctx.rect(px2,py2,pw2,ph2); ctx.clip();
+      }
       ctx.beginPath(); ctx.moveTo(0, sLY); ctx.lineTo(w, sLY);
-      ctx.strokeStyle = 'rgba(80,200,120,0.6)'; ctx.lineWidth = 2; ctx.stroke();
-      var grd = ctx.createLinearGradient(0, sLY-30, 0, sLY+30);
-      grd.addColorStop(0,'rgba(80,200,120,0)'); grd.addColorStop(0.5,'rgba(80,200,120,0.15)'); grd.addColorStop(1,'rgba(80,200,120,0)');
-      ctx.fillStyle = grd; ctx.fillRect(0, sLY-30, w, 60);
+      ctx.strokeStyle = 'rgba(80,200,120,0.7)'; ctx.lineWidth = 3; ctx.stroke();
+      var grd = ctx.createLinearGradient(0, sLY-40, 0, sLY+40);
+      grd.addColorStop(0,'rgba(80,200,120,0)'); grd.addColorStop(0.5,'rgba(80,200,120,0.18)'); grd.addColorStop(1,'rgba(80,200,120,0)');
+      ctx.fillStyle = grd; ctx.fillRect(0, sLY-40, w, 80);
       ctx.restore();
     }
 
@@ -1189,107 +1269,206 @@ function drawCamLoop() {
   loop();
 }
 
-/* ── 가이드 오버레이 그리기 ── */
+/* ── 손 모양 경로 (오른손 기준) ── */
+function drawHandPath(ctx, cx, cy, hw, hh) {
+  var px = cx, py = cy;
+  // 손가락 너비/높이
+  var fw = hw * 0.14;  // 손가락 너비
+  var gap = hw * 0.03; // 손가락 사이 간격
+  var pb = py + hh*0.22; // 손바닥 상단
+  var pbh = hh * 0.52;   // 손바닥 높이
+  var pbw = hw * 0.82;   // 손바닥 너비
+
+  ctx.beginPath();
+
+  // 새끼손가락 (가장 오른쪽, 짧음)
+  var f4x = px + hw*0.30;
+  var f4h = hh * 0.28;
+  ctx.moveTo(f4x - fw/2, pb);
+  ctx.lineTo(f4x - fw/2, pb - f4h);
+  ctx.quadraticCurveTo(f4x, pb - f4h - fw*0.5, f4x + fw/2, pb - f4h);
+  ctx.lineTo(f4x + fw/2, pb);
+
+  // 약지
+  var f3x = f4x - fw - gap;
+  var f3h = hh * 0.36;
+  ctx.lineTo(f3x + fw/2, pb);
+  ctx.lineTo(f3x + fw/2, pb - f3h);
+  ctx.quadraticCurveTo(f3x, pb - f3h - fw*0.5, f3x - fw/2, pb - f3h);
+  ctx.lineTo(f3x - fw/2, pb);
+
+  // 중지 (가장 김)
+  var f2x = f3x - fw - gap;
+  var f2h = hh * 0.42;
+  ctx.lineTo(f2x + fw/2, pb);
+  ctx.lineTo(f2x + fw/2, pb - f2h);
+  ctx.quadraticCurveTo(f2x, pb - f2h - fw*0.5, f2x - fw/2, pb - f2h);
+  ctx.lineTo(f2x - fw/2, pb);
+
+  // 검지
+  var f1x = f2x - fw - gap;
+  var f1h = hh * 0.38;
+  ctx.lineTo(f1x + fw/2, pb);
+  ctx.lineTo(f1x + fw/2, pb - f1h);
+  ctx.quadraticCurveTo(f1x, pb - f1h - fw*0.5, f1x - fw/2, pb - f1h);
+  ctx.lineTo(f1x - fw/2, pb + hh*0.04);
+
+  // 엄지 (왼쪽, 짧고 옆으로)
+  var thx = px - hw*0.40;
+  var thy = pb + hh*0.10;
+  var thw = fw * 1.1;
+  var thh = hh * 0.26;
+  ctx.lineTo(thx + thw, thy);
+  ctx.lineTo(thx + thw*0.6, thy - thh);
+  ctx.quadraticCurveTo(thx - thw*0.1, thy - thh - thw*0.4, thx - thw*0.2, thy - thh*0.3);
+  ctx.quadraticCurveTo(thx - thw*0.3, thy + thh*0.2, thx, thy + thh*0.5);
+
+  // 손바닥 왼쪽 → 손목
+  ctx.quadraticCurveTo(px - hw*0.44, pb + pbh*0.5, px - hw*0.36, pb + pbh);
+
+  // 손목 아래 (반원)
+  ctx.quadraticCurveTo(px, pb + pbh + hh*0.08, px + hw*0.36, pb + pbh);
+
+  // 손바닥 오른쪽 → 새끼 아래
+  ctx.quadraticCurveTo(px + hw*0.44, pb + pbh*0.5, f4x - fw/2, pb);
+
+  ctx.closePath();
+}
+
+/* ── 가이드 오버레이 ── */
 function drawGuideOverlay(ctx, w, h) {
   if (sMode === 'face') {
-    var cx2 = w/2, cy2 = h/2, rx = w*0.28, ry = h*0.40;
+    // ✅ 세로로 긴 타원 (얼굴형에 맞게)
+    var cx2 = w/2, cy2 = h/2;
+    var rx = w * 0.24;   // 가로폭 줄임
+    var ry = h * 0.38;   // 세로 유지
 
-    // 어두운 마스크 (타원 밖)
     ctx.save();
-    ctx.fillStyle = 'rgba(0,0,0,0.45)';
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
     ctx.fillRect(0, 0, w, h);
     ctx.globalCompositeOperation = 'destination-out';
     ctx.beginPath(); ctx.ellipse(cx2, cy2, rx, ry, 0, 0, Math.PI*2); ctx.fill();
     ctx.restore();
 
-    // 타원 테두리
     ctx.beginPath(); ctx.ellipse(cx2, cy2, rx, ry, 0, 0, Math.PI*2);
-    ctx.strokeStyle = 'rgba(80,200,120,0.8)'; ctx.lineWidth = 3; ctx.setLineDash([10,6]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.strokeStyle = 'rgba(80,200,120,0.9)'; ctx.lineWidth = 3; ctx.setLineDash([10,6]); ctx.stroke(); ctx.setLineDash([]);
 
-    // 격자 가이드
     if (gOn) {
       ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 1;
-      [w/3, w*2/3].forEach(function(x){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); });
-      [h/3, h*2/3].forEach(function(y){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); });
+      [w/3,w*2/3].forEach(function(x){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); });
+      [h/3,h*2/3].forEach(function(y){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); });
     }
 
-    // 랜드마크 포인트 (타원 안)
-    var pts = [
-      {x:cx2, y:cy2-ry*0.55, l:'이마'},
-      {x:cx2-rx*0.48, y:cy2-ry*0.12, l:'눈(좌)'},
-      {x:cx2+rx*0.48, y:cy2-ry*0.12, l:'눈(우)'},
-      {x:cx2, y:cy2+ry*0.08, l:'코'},
-      {x:cx2, y:cy2+ry*0.36, l:'입'},
-      {x:cx2, y:cy2+ry*0.65, l:'턱'}
-    ];
-    pts.forEach(function(p) {
-      ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(80,200,120,0.85)'; ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,0.95)'; ctx.font = 'bold 22px system-ui'; ctx.textAlign = 'center';
-      ctx.fillText(p.l, p.x, p.y + (p.y < cy2 ? -14 : 22));
+    // 랜드마크 (타원 안에만)
+    [{x:cx2,y:cy2-ry*0.58,l:'이마'},
+     {x:cx2-rx*0.52,y:cy2-ry*0.15,l:'눈(좌)'},
+     {x:cx2+rx*0.52,y:cy2-ry*0.15,l:'눈(우)'},
+     {x:cx2,y:cy2+ry*0.08,l:'코'},
+     {x:cx2,y:cy2+ry*0.38,l:'입'},
+     {x:cx2,y:cy2+ry*0.68,l:'턱'}
+    ].forEach(function(p) {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI*2);
+      ctx.fillStyle = 'rgba(80,200,120,0.9)'; ctx.fill();
+      ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.font = 'bold 20px system-ui'; ctx.textAlign = 'center';
+      ctx.fillText(p.l, p.x, p.y + (p.y < cy2 ? -12 : 20));
     });
 
   } else {
-    // 손금 모드
-    var px = w*0.2, py = h*0.1, pw = w*0.6, ph = h*0.8;
+    // 손금 모드 - 실제 손 모양 가이드
+    var cx2 = w/2, cy2 = h/2;
+    var hw = w * 0.38; // 손 너비
+    var hh = h * 0.72; // 손 높이
+    var hx = cx2;      // 손 중심 X
+    var hy = cy2 + h*0.04; // 손 중심 Y (약간 아래)
+    var isLeft = sMode === 'palm_left';
+
+    // 어두운 마스크
     ctx.save();
-    ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.fillRect(0,0,w,h);
+    ctx.fillStyle = 'rgba(0,0,0,0.5)';
+    ctx.fillRect(0,0,w,h);
     ctx.globalCompositeOperation = 'destination-out';
-    ctx.beginPath();
-    ctx.moveTo(px+pw*0.5,py); ctx.lineTo(px+pw,py+ph*0.15); ctx.lineTo(px+pw,py+ph*0.8);
-    ctx.lineTo(px+pw*0.5,py+ph); ctx.lineTo(px,py+ph*0.8); ctx.lineTo(px,py+ph*0.15);
-    ctx.closePath(); ctx.fill();
+
+    // 손 모양 경로 (오른손 기준, 왼손은 반전)
+    ctx.save();
+    if (isLeft) { ctx.translate(w, 0); ctx.scale(-1, 1); }
+    drawHandPath(ctx, hx, hy, hw, hh);
+    ctx.fill();
+    ctx.restore();
     ctx.restore();
 
-    ctx.beginPath();
-    ctx.moveTo(px+pw*0.5,py); ctx.lineTo(px+pw,py+ph*0.15); ctx.lineTo(px+pw,py+ph*0.8);
-    ctx.lineTo(px+pw*0.5,py+ph); ctx.lineTo(px,py+ph*0.8); ctx.lineTo(px,py+ph*0.15);
-    ctx.closePath();
-    ctx.strokeStyle = 'rgba(80,200,120,0.8)'; ctx.lineWidth = 3; ctx.setLineDash([8,6]); ctx.stroke(); ctx.setLineDash([]);
+    // 손 모양 테두리
+    ctx.save();
+    if (isLeft) { ctx.translate(w, 0); ctx.scale(-1, 1); }
+    ctx.strokeStyle = 'rgba(80,200,120,0.9)';
+    ctx.lineWidth = 3;
+    ctx.setLineDash([8,5]);
+    drawHandPath(ctx, hx, hy, hw, hh);
+    ctx.stroke();
+    ctx.setLineDash([]);
+    ctx.restore();
 
-    [{x1:px+pw*0.15,y1:py+ph*0.25,x2:px+pw*0.85,y2:py+ph*0.35,l:'감정선'},
-     {x1:px+pw*0.2,y1:py+ph*0.45,x2:px+pw*0.75,y2:py+ph*0.55,l:'두뇌선'},
-     {x1:px+pw*0.35,y1:py+ph*0.2,x2:px+pw*0.4,y2:py+ph*0.85,l:'생명선'},
-     {x1:px+pw*0.55,y1:py+ph*0.18,x2:px+pw*0.58,y2:py+ph*0.75,l:'운명선'}].forEach(function(l) {
+    // 손금 라인
+    var lines = isLeft ? PALM_LINES_LEFT : PALM_LINES_RIGHT;
+    var bx = hx - hw*0.42; // 손바닥 왼쪽 기준
+    var by = hy - hh*0.28; // 손바닥 위쪽 기준
+    var bw = hw * 0.84;
+    var bh = hh * 0.56;
+
+    var lineCoords = [
+      // 감정선 (위쪽 가로)
+      {x1: bx+bw*0.08, y1: by+bh*0.18, x2: bx+bw*0.88, y2: by+bh*0.12},
+      // 두뇌선 (중간 대각)
+      {x1: bx+bw*0.05, y1: by+bh*0.48, x2: bx+bw*0.80, y2: by+bh*0.40},
+      // 생명선 (왼쪽 세로 곡선)
+      {x1: bx+bw*0.20, y1: by+bh*0.05, x2: bx+bw*0.28, y2: by+bh*0.95},
+      // 운명선 (중앙 세로)
+      {x1: bx+bw*0.52, y1: by+bh*0.95, x2: bx+bw*0.50, y2: by+bh*0.05}
+    ];
+
+    // 왼손 반전
+    if (isLeft) {
+      lineCoords = lineCoords.map(function(l) {
+        return {
+          x1: w - l.x1, y1: l.y1,
+          x2: w - l.x2, y2: l.y2
+        };
+      });
+    }
+
+    lineCoords.forEach(function(l, i) {
       ctx.beginPath(); ctx.moveTo(l.x1,l.y1); ctx.lineTo(l.x2,l.y2);
-      ctx.strokeStyle = 'rgba(80,200,120,0.55)'; ctx.lineWidth = 2; ctx.stroke();
-      ctx.fillStyle = 'rgba(255,215,0,0.95)'; ctx.font = 'bold 20px system-ui'; ctx.textAlign = 'left';
-      ctx.fillText(l.l, (l.x1+l.x2)/2+10, (l.y1+l.y2)/2);
+      ctx.strokeStyle = 'rgba(80,200,120,0.65)'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = 'rgba(255,215,0,0.95)'; ctx.font = 'bold 20px system-ui'; ctx.textAlign = 'center';
+      ctx.fillText(lines[i].l, (l.x1+l.x2)/2, (l.y1+l.y2)/2 - 10);
     });
 
-    if (gOn) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.1)'; ctx.lineWidth = 1;
-      for (var x = 0; x < w; x += w/6) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); }
-      for (var y = 0; y < h; y += h/4) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); }
-    }
+    // 손 타입 레이블
+    ctx.fillStyle = 'rgba(80,200,120,0.95)'; ctx.font = 'bold 22px system-ui'; ctx.textAlign = 'center';
+    ctx.fillText(isLeft ? '✋ 왼손을 올려주세요 (선천운)' : '🤚 오른손을 올려주세요 (후천운)', w/2, hy + hh*0.42);
   }
 }
 
-/* ── 카메라 없을 때 폴백 ── */
+/* ── 폴백 ── */
 function drawScanFallback() {
   var cv = document.getElementById('sc'); if (!cv) return;
   var W = cv.offsetWidth || 640;
-  cv.width = W*2; cv.height = Math.round(W*0.625)*2; cv.style.height = Math.round(W*0.625)+'px';
+  cv.width = W*2; cv.height = Math.round(W*1.5); cv.style.height = Math.round(W*0.75)+'px';
   var ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
   ctx.fillStyle = '#0a0a20'; ctx.fillRect(0,0,w,h);
-  ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.font = 'bold 28px system-ui'; ctx.textAlign = 'center';
-  ctx.fillText('📷 카메라 권한을 허용해 주세요', w/2, h/2-20);
-  ctx.font = '20px system-ui'; ctx.fillStyle = 'rgba(153,153,204,0.7)';
-  ctx.fillText('브라우저 주소창 옆 자물쇠 아이콘 → 카메라 허용', w/2, h/2+24);
-  drawGuideOverlay(ctx, w, h);
+  ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.font = 'bold 26px system-ui'; ctx.textAlign = 'center';
+  ctx.fillText('📷 카메라 권한을 허용해 주세요', w/2, h/2-18);
+  ctx.font = '18px system-ui'; ctx.fillStyle = 'rgba(153,153,204,0.7)';
+  ctx.fillText('주소창 옆 자물쇠 아이콘 → 카메라 허용', w/2, h/2+22);
 }
 
 /* ── 카메라 정지 ── */
 function stopCamera() {
+  if (autoCapTimer) { clearInterval(autoCapTimer); autoCapTimer = null; }
   if (camAnimFr) { cancelAnimationFrame(camAnimFr); camAnimFr = null; }
   if (camStream) { camStream.getTracks().forEach(function(t){ t.stop(); }); camStream = null; }
 }
 
-/* ── 기존 drawScan은 폴백용으로 유지 ── */
-function drawScan() {
-  if (camStream) { drawCamLoop(); return; }
-  startCamera();
-}
+function drawScan() { startCamera(); }
 
 function showPg(pg, btn, sub) {
   document.querySelectorAll('.pg').forEach(function(p) { p.classList.remove('on'); });
@@ -1482,19 +1661,27 @@ function setMode(m, btn) {
   document.getElementById('mf').classList.toggle('on', m === 'face');
   document.getElementById('mp').classList.toggle('on', m === 'palm_left');
   document.getElementById('mp2').classList.toggle('on', m === 'palm_right');
-  resetScan();
+  // ✅ 모드 바뀌면 카메라 재시작 (손금은 후면카메라 사용 가능)
+  stopCamera();
+  sState = 'idle';
+  alignScore = 0;
+  document.getElementById('ps').classList.remove('show');
+  document.getElementById('rs').classList.remove('show');
+  document.getElementById('sh').classList.remove('cap');
+  setTimeout(function(){ startCamera(); }, 100);
 }
 function tGrid() { gOn = !gOn; document.getElementById('bg').classList.toggle('active', gOn); drawScan(); }
 function tLight() { lOn = !lOn; document.getElementById('bl').classList.toggle('active', lOn); drawScan(); }
 function resetScan() {
   sState = 'idle';
+  alignScore = 0;
   document.getElementById('ps').classList.remove('show');
   document.getElementById('rs').classList.remove('show');
   document.getElementById('sh').classList.remove('cap');
   setFB('idle');
   if (aFr) { cancelAnimationFrame(aFr); aFr = null; }
-  // 카메라 루프 재시작
-  if (camStream) { drawCamLoop(); }
+  if (camStream) { drawCamLoop(); startAlignCheck(); }
+  else { startCamera(); }
 }
 
 function doCapture() {
@@ -1537,42 +1724,123 @@ function showResult() {
   if (camAnimFr) { cancelAnimationFrame(camAnimFr); camAnimFr = null; }
   sState = 'done'; setFB('ready');
 
-  // 썸네일: 실제 카메라 스냅샷 저장
+  // ✅ 현재 모드의 캔버스 스냅샷 저장
+  var sc = document.getElementById('sc');
+  if (sc) { capturedImages[sMode] = sc.toDataURL('image/jpeg', 0.8); }
+
   var tc = document.getElementById('tc');
   if (tc) {
-    var ctx = tc.getContext('2d');
-    if (camVideoEl && camStream) {
-      // 좌우 반전 거울 모드로 저장
-      ctx.save(); ctx.scale(-1,1); ctx.drawImage(camVideoEl, -64, 0, 64, 80); ctx.restore();
+    var tctx = tc.getContext('2d');
+    if (capturedImages[sMode]) {
+      var img = new Image();
+      img.onload = function(){ tctx.drawImage(img, 0, 0, 64, 80); };
+      img.src = capturedImages[sMode];
     } else {
-      ctx.fillStyle = '#111'; ctx.fillRect(0,0,64,80);
-      ctx.beginPath(); ctx.ellipse(32,34,16,22,0,0,Math.PI*2);
-      ctx.strokeStyle='rgba(80,200,120,0.6)'; ctx.lineWidth=1; ctx.stroke();
+      tctx.fillStyle = '#111'; tctx.fillRect(0,0,64,80);
     }
   }
+
   document.getElementById('rs').classList.add('show');
+
+  // ✅ 모드별 다른 결과 데이터
+  var isFace = sMode === 'face';
+  var isPalmL = sMode === 'palm_left';
+  var isPalmR = sMode === 'palm_right';
+  var lines = isPalmL ? PALM_LINES_LEFT : PALM_LINES_RIGHT;
+
+  // 결과 헤더 업데이트
+  var resHero = document.querySelector('.res-hero > div:last-child');
+  if (resHero) {
+    if (isFace) {
+      resHero.innerHTML =
+        '<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:3px;">관상 스캔 완료</div>' +
+        '<div style="font-size:11px;color:var(--t2);margin-bottom:.5rem;">안면 분석 완료 · 자미두수 12궁 동기화</div>' +
+        '<div class="match-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>명반 일치도 87%</div>';
+    } else {
+      resHero.innerHTML =
+        '<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:3px;">' + (isPalmL ? '왼손 (선천운)' : '오른손 (후천운)') + ' 스캔 완료</div>' +
+        '<div style="font-size:11px;color:var(--t2);margin-bottom:.5rem;">손금 분석 완료 · 3대 역술 동기화</div>' +
+        '<div class="match-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>' + (isPalmL ? '선천운 분석' : '후천운 분석') + '</div>';
+    }
+  }
+
   var fg = document.getElementById('fg'); fg.innerHTML = '';
-  FEATS.forEach(function(f) {
-    var d = document.createElement('div'); d.className = 'feat-card';
-    d.innerHTML =
-      '<div class="feat-head"><div class="feat-name">' + f.name + '</div><div style="color:' + f.color + ';">' + f.score + '</div></div>' +
-      '<div class="feat-bar"><div class="feat-fill" style="width:0%;background:' + f.color + ';" data-w="' + f.score + '"></div></div>' +
-      '<div class="feat-desc">' + f.desc + '</div>' +
-      '<span class="feat-tag" style="background:' + f.tBg + ';color:' + f.tC + ';">' + f.tag + '</span>';
-    fg.appendChild(d);
-  });
-  setTimeout(function(){ document.querySelectorAll('.feat-fill').forEach(function(f){ f.style.width = f.dataset.w + '%'; }); }, 80);
-  var pl = document.getElementById('pl'); pl.innerHTML = '';
-  PALACES.forEach(function(p) {
-    var d = document.createElement('div'); d.className = 'pm-item';
-    d.innerHTML =
-      '<div class="pm-palace">' + p.name + '</div>' +
-      '<div class="pm-bar-wrap"><div class="pm-fill" style="width:0%;background:' + p.color + ';" data-w="' + p.pct + '"></div></div>' +
-      '<div class="pm-pct">' + p.pct + '%</div>' +
-      '<div style="font-size:10px;color:' + p.color + ';font-weight:700;width:60px;text-align:right;flex-shrink:0;">' + p.c + '</div>';
-    pl.appendChild(d);
-  });
-  setTimeout(function(){ document.querySelectorAll('.pm-fill').forEach(function(f){ f.style.width = f.dataset.w + '%'; }); }, 80);
+
+  if (isFace) {
+    // 관상 모드 - 얼굴 부위별
+    FEATS.forEach(function(f) {
+      var d = document.createElement('div'); d.className = 'feat-card';
+      d.innerHTML =
+        '<div class="feat-head"><div class="feat-name">' + f.name + '</div><div style="color:' + f.color + ';">' + f.score + '</div></div>' +
+        '<div class="feat-bar"><div class="feat-fill" style="width:0%;background:' + f.color + ';" data-w="' + f.score + '"></div></div>' +
+        '<div class="feat-desc">' + f.desc + '</div>' +
+        '<span class="feat-tag" style="background:' + f.tBg + ';color:' + f.tC + ';">' + f.tag + '</span>';
+      fg.appendChild(d);
+    });
+    setTimeout(function(){ document.querySelectorAll('.feat-fill').forEach(function(f){ f.style.width = f.dataset.w + '%'; }); }, 80);
+
+    // 12궁 섹션 보이기
+    var palSec = document.getElementById('pl-section'); if (palSec) palSec.style.display = '';
+    var pl = document.getElementById('pl'); pl.innerHTML = '';
+    PALACES.forEach(function(p) {
+      var d = document.createElement('div'); d.className = 'pm-item';
+      d.innerHTML =
+        '<div class="pm-palace">' + p.name + '</div>' +
+        '<div class="pm-bar-wrap"><div class="pm-fill" style="width:0%;background:' + p.color + ';" data-w="' + p.pct + '"></div></div>' +
+        '<div class="pm-pct">' + p.pct + '%</div>' +
+        '<div style="font-size:10px;color:' + p.color + ';font-weight:700;width:60px;text-align:right;flex-shrink:0;">' + p.c + '</div>';
+      pl.appendChild(d);
+    });
+    setTimeout(function(){ document.querySelectorAll('.pm-fill').forEach(function(f){ f.style.width = f.dataset.w + '%'; }); }, 80);
+
+    // 관상 통합 해석
+    var ib = document.querySelector('.ib .ib-body');
+    if (ib) ib.innerHTML = '이마(관록궁)가 <em>넓고 둥글게 발달</em>하여 명반의 천동성 화록과 완벽하게 일치합니다. 눈빛의 <em>예리함(천기성 명궁)</em>과 인중의 길이가 <b>이동운 91점</b>을 뒷받침합니다.';
+    var ibt = document.querySelector('.ib .ib-title');
+    if (ibt) ibt.textContent = '관상·명반 통합 해석';
+
+  } else {
+    // ✅ 손금 모드 - 손금선별 분석
+    lines.forEach(function(line) {
+      var col = line.score >= 85 ? '#50C878' : line.score >= 75 ? '#FFD700' : '#cc88bb';
+      var d = document.createElement('div'); d.className = 'feat-card';
+      d.innerHTML =
+        '<div class="feat-head"><div class="feat-name">' + line.l + '</div><div style="color:' + col + ';">' + line.score + '</div></div>' +
+        '<div class="feat-bar"><div class="feat-fill" style="width:0%;background:' + col + ';" data-w="' + line.score + '"></div></div>' +
+        '<div class="feat-desc">' + line.desc + '</div>' +
+        '<span class="feat-tag" style="background:rgba(80,200,120,0.15);color:#50C878;">' + (line.score >= 85 ? '강함' : line.score >= 75 ? '보통' : '약함') + '</span>';
+      fg.appendChild(d);
+    });
+    setTimeout(function(){ document.querySelectorAll('.feat-fill').forEach(function(f){ f.style.width = f.dataset.w + '%'; }); }, 80);
+
+    // 12궁 섹션 숨기기 (손금에선 불필요)
+    var palSec = document.getElementById('pl-section'); if (palSec) palSec.style.display = 'none';
+
+    // ✅ 손금 3대 역술 통합 해석
+    var ib = document.querySelector('.ib .ib-body');
+    if (ib) {
+      if (isPalmL) {
+        ib.innerHTML = '<em>왼손(선천운)</em>의 생명선이 깊고 길어 <b>타고난 생명력과 건강운</b>이 강합니다. 감정선의 풍부한 굴곡은 <em>자미두수 부처궁</em>의 애정운 패턴과 일치합니다. 매화역수상 <b>올해 인간관계 확장</b>의 흐름이 감지됩니다.';
+      } else {
+        ib.innerHTML = '<em>오른손(후천운)</em>의 운명선이 뚜렷하고 상향하여 <b>커리어 상승 흐름</b>이 강합니다. 두뇌선의 실용적 방향은 <em>기문둔갑 관록궁</em> 활성화와 동기화됩니다. <b>향후 3년간 실질적 성과</b>가 예상됩니다.';
+      }
+    }
+    var ibt = document.querySelector('.ib .ib-title');
+    if (ibt) ibt.textContent = (isPalmL ? '왼손(선천운)' : '오른손(후천운)') + ' · 3대 역술 통합 해석';
+  }
+
+  // 촬영된 이미지 탭 표시 업데이트
+  updateCapturedTabs();
+}
+
+/* ── 촬영 완료 탭 표시 ── */
+function updateCapturedTabs() {
+  var faceTag = document.getElementById('tab-face');
+  var leftTag = document.getElementById('tab-left');
+  var rightTag = document.getElementById('tab-right');
+  if (faceTag) faceTag.style.opacity = capturedImages.face ? '1' : '0.35';
+  if (leftTag) leftTag.style.opacity = capturedImages.palm_left ? '1' : '0.35';
+  if (rightTag) rightTag.style.opacity = capturedImages.palm_right ? '1' : '0.35';
 }
 
 function buildChannels() {

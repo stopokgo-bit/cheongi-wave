@@ -3496,7 +3496,7 @@ function calcOhaengBalance(yh, ye, mh, me, dh, de) {
   return { counts: counts, strongest: max, weakest: min };
 }
 
-function getSajuString(year, month, day, time) {
+function getSajuString(year, month, day, time, cal) {
   var p = calcSajuPillar(parseInt(year), parseInt(month), parseInt(day));
   var timeH = '미상';
   if (time) {
@@ -3507,8 +3507,8 @@ function getSajuString(year, month, day, time) {
     }
   }
 
-  // ✅ 자미두수 포국 계산
-  var ziwei = calcZiweiChart(year, month, day, time || '');
+  // ✅ 자미두수 포국 계산 (음력 변환 포함)
+  var ziwei = calcZiweiChart(year, month, day, time || '', cal || '양력');
 
   return {
     pillars: p,
@@ -3727,7 +3727,7 @@ function setBatchStatus(uid, msg, color) {
 // 사주 분석 API 호출
 async function batchAnalyzeSaju(inp) {
   var age = new Date().getFullYear() - parseInt(inp.year);
-  var calc = getSajuString(inp.year, inp.month, inp.day, inp.time);
+  var calc = getSajuString(inp.year, inp.month, inp.day, inp.time, inp.cal||'양력');
   var prompt = '사주 분석:\n이름:' + inp.name + ' 성별:' + inp.gender + ' 만' + age + '세\n' +
     calc.summary + '\n' + (calc.ziwei ? '명궁주성:' + calc.ziwei.mainStar + ' ' + calc.ziwei.strengthName + '\n' : '') +
     '\nJSON만 응답:{"star":"주성명","daewoon":"현재대운","summary":"3줄요약",' +
@@ -3761,7 +3761,7 @@ async function batchAnalyzeSaju(inp) {
 // 인생 지침서 생성
 async function batchGenerateReport(inp, r) {
   var age = new Date().getFullYear() - parseInt(inp.year);
-  var calc = getSajuString(inp.year, inp.month, inp.day, inp.time);
+  var calc = getSajuString(inp.year, inp.month, inp.day, inp.time, inp.cal||'양력');
   var base = '사주:' + calc.summary + '\n' +
     (calc.ziwei ? '명궁주성:' + calc.ziwei.mainStar + ' ' + calc.ziwei.strengthName + '\n' : '') +
     '이름:' + inp.name + ' 성별:' + inp.gender + ' 만' + age + '세\n' +
@@ -4528,7 +4528,7 @@ async function generate50PReport() {
   if (scanResults.palm_right) { var pr=scanResults.palm_right; if(pr.overall) scanExtra+='오른손: '+pr.overall+'\n'; if(pr.warning) scanExtra+='오른손주의: '+pr.warning+'\n'; }
 
   // ✅ 실제 사주팔자 계산
-  var sajuCalc = getSajuString(inp.year, inp.month, inp.day, inp.time);
+  var sajuCalc = getSajuString(inp.year, inp.month, inp.day, inp.time, inp.cal||'양력');
   var currentYear = new Date().getFullYear();
   var age = currentYear - parseInt(inp.year);
 
@@ -5545,8 +5545,131 @@ setInterval(function() { if (currentUser) saveSessionTime(); }, 30000);
    자미두수 명궁 + 주성 계산 (정통 포국법)
 ══════════════════════════════════════ */
 
-// 자미두수 명궁 계산 (정통 寅起法)
-// 명궁 = 寅宮(인궁)을 1로 하여 월지 기준 + 시지 역행
+/* ══════════════════════════════════════
+   음양력 변환 + 자미두수 포국 (정통법)
+══════════════════════════════════════ */
+
+// 음력 1월 1일의 양력 날짜 테이블 (1940~2040)
+var LUNAR_NY = {
+  1940:[1,27],1941:[2,15],1942:[2,5],1943:[1,25],1944:[2,13],1945:[2,2],
+  1946:[1,22],1947:[2,10],1948:[1,30],1949:[2,17],1950:[2,7],1951:[1,27],
+  1952:[2,15],1953:[2,4],1954:[1,24],1955:[2,12],1956:[2,2],1957:[1,31],
+  1958:[2,18],1959:[2,8],1960:[1,28],1961:[2,15],1962:[2,5],1963:[1,25],
+  1964:[2,13],1965:[2,2],1966:[1,21],1967:[2,9],1968:[1,30],1969:[2,17],
+  1970:[1,27],1971:[1,27],1972:[2,15],1973:[2,3],1974:[1,23],1975:[2,11],
+  1976:[1,31],1977:[2,18],1978:[2,7],1979:[1,28],1980:[2,16],1981:[2,5],
+  1982:[1,25],1983:[2,13],1984:[2,2],1985:[2,20],1986:[2,9],1987:[1,29],
+  1988:[2,17],1989:[2,6],1990:[1,27],1991:[2,15],1992:[2,4],1993:[1,23],
+  1994:[2,10],1995:[1,31],1996:[2,19],1997:[2,7],1998:[1,28],1999:[2,16],
+  2000:[2,5],2001:[1,24],2002:[2,12],2003:[2,1],2004:[1,22],2005:[2,9],
+  2006:[1,29],2007:[2,18],2008:[2,7],2009:[1,26],2010:[2,14],2011:[2,3],
+  2012:[1,23],2013:[2,10],2014:[1,31],2015:[2,19],2016:[2,8],2017:[1,28],
+  2018:[2,16],2019:[2,5],2020:[1,25],2021:[2,12],2022:[2,1],2023:[1,22],
+  2024:[2,10],2025:[1,29],2026:[2,17],2027:[2,6],2028:[1,26],2029:[2,13],
+  2030:[2,3]
+};
+
+// 각 연도 음력 월별 일수 (30=큰달, 29=작은달)
+var LUNAR_MONTH_DAYS = {
+  1970:[30,29,30,29,30,29,30,30,29,30,29,30],
+  1971:[30,29,30,29,30,29,30,29,30,30,29,30],
+  1972:[29,30,30,29,29,30,29,30,29,30,30,29,30],
+  1973:[30,29,30,29,30,29,29,30,30,29,30,29],
+  1974:[30,30,29,30,29,29,30,29,30,29,30,29],
+  1975:[30,30,29,30,29,30,29,29,30,29,30,29,30],
+  1976:[30,29,30,30,29,30,29,30,29,29,30,29],
+  1977:[30,29,30,30,29,30,30,29,30,29,29,30],
+  1978:[29,30,29,30,29,30,30,29,30,30,29,29,30],
+  1979:[30,29,30,29,30,29,30,29,30,30,29,30],
+  1980:[29,30,29,30,29,29,30,29,30,30,29,30,30],
+  1981:[29,30,29,30,29,29,30,29,30,29,30,30],
+  1982:[30,29,30,29,30,29,29,30,29,30,29,30],
+  1983:[29,30,30,29,30,30,29,29,30,29,30,29,30],
+  1984:[29,30,29,30,30,29,30,29,29,30,29,30],
+  1985:[29,30,29,30,30,29,30,29,30,29,30,29],
+  1986:[30,29,29,30,30,29,30,29,30,30,29,30,29],
+  1987:[30,29,30,29,30,29,30,29,30,29,30,30],
+  1988:[29,30,29,30,29,30,29,30,29,30,29,30,30],
+  1989:[29,30,29,30,29,30,29,30,29,30,29,30],
+  1990:[29,30,30,29,30,29,30,29,30,29,29,30],
+  1991:[29,30,30,29,30,30,29,30,29,29,30,29,30],
+  1992:[29,30,29,30,30,29,30,29,30,29,30,29],
+  1993:[30,29,30,29,30,29,30,30,29,30,29,30,29],
+  1994:[30,29,29,30,29,30,30,29,30,30,29,30],
+  1995:[29,30,29,29,30,29,30,30,29,30,30,29],
+  1996:[30,30,29,29,30,29,30,29,30,30,29,30,29],
+  1997:[30,29,30,29,29,30,29,30,29,30,29,30],
+  1998:[30,29,30,29,30,29,29,30,29,30,29,30],
+  1999:[30,29,30,30,29,30,29,29,30,29,30,29,30],
+  2000:[29,30,30,29,30,29,30,29,29,30,29,30],
+  2001:[30,29,30,29,30,30,29,30,29,29,30,29],
+  2002:[30,29,30,29,30,30,29,30,30,29,29,30,29],
+  2003:[30,29,29,30,30,29,30,30,29,30,29,29],
+  2004:[30,29,30,29,30,29,30,30,29,30,30,29,29],
+  2005:[30,29,30,29,30,29,30,29,30,30,29,30],
+  2006:[29,30,29,30,29,29,30,29,30,30,29,30],
+  2007:[30,29,30,29,30,29,29,30,29,30,29,30,30],
+  2008:[29,30,29,30,29,30,29,29,30,29,30,30],
+  2009:[29,30,29,30,30,29,30,29,29,30,29,30],
+  2010:[29,30,29,30,30,29,30,30,29,29,30,29,30],
+  2011:[29,30,29,30,29,30,30,29,30,29,30,29],
+  2012:[30,29,29,30,29,30,30,29,30,30,29,29,30],
+  2013:[30,29,30,29,29,30,30,29,30,29,30,29],
+  2014:[30,30,29,29,30,29,30,29,30,29,30,29,30],
+  2015:[29,30,29,30,29,30,29,30,29,30,29,30],
+  2016:[29,30,29,30,29,30,29,30,30,29,30,29,30],
+  2017:[29,29,30,29,30,29,30,30,29,30,30,29],
+  2018:[30,29,29,30,29,30,29,30,30,29,30,29,30],
+  2019:[30,29,30,29,29,30,29,30,29,30,30,29],
+  2020:[30,30,29,30,29,29,30,29,29,30,30,29,30],
+  2021:[30,29,30,29,30,29,29,30,29,30,29,30],
+  2022:[30,29,30,30,29,30,29,29,30,29,30,29],
+  2023:[29,30,30,30,29,30,29,29,30,29,30,29,30],
+  2024:[29,30,30,29,30,29,30,29,29,30,29,30],
+  2025:[29,30,30,29,30,30,29,30,29,29,30,29]
+};
+
+function solarToLunarDay(year, month, day) {
+  var ny = LUNAR_NY[year];
+  if (!ny) return day; // 테이블 없으면 원본 날짜 반환
+
+  var monthDays = [31, (year%4===0&&(year%100!==0||year%400===0))?29:28, 31,30,31,30,31,31,30,31,30,31];
+
+  // 양력 해당일 → 연초부터 일수
+  var targetDay = 0;
+  for (var m = 1; m < month; m++) targetDay += monthDays[m-1];
+  targetDay += day;
+
+  // 음력 1월1일 → 연초부터 일수
+  var nyDay = 0;
+  for (var m2 = 1; m2 < ny[0]; m2++) nyDay += monthDays[m2-1];
+  nyDay += ny[1];
+
+  var diff = targetDay - nyDay; // 음력 1월1일로부터 경과일
+
+  if (diff < 0) {
+    // 이전 해 음력으로 처리
+    year = year - 1;
+    ny = LUNAR_NY[year];
+    if (!ny) return day;
+    var prevMonthDays = [31,28,31,30,31,30,31,31,30,31,30,31];
+    nyDay = 0;
+    for (var m3 = 1; m3 < ny[0]; m3++) nyDay += prevMonthDays[m3-1];
+    nyDay += ny[1];
+    diff = (365 + targetDay) - nyDay;
+  }
+
+  // 음력 달별 일수로 변환
+  var lmd = LUNAR_MONTH_DAYS[year] || [30,29,30,29,30,29,30,29,30,29,30,29];
+  var lunarDay = diff + 1; // 1-indexed
+  for (var lm = 0; lm < lmd.length; lm++) {
+    if (lunarDay <= lmd[lm]) break;
+    lunarDay -= lmd[lm];
+  }
+  return Math.max(1, Math.min(30, lunarDay));
+}
+
+// 명궁 계산 (정통 寅起法)
 function calcMingong(month, timeStr) {
   var timeMap = {
     '자시':0,'축시':1,'인시':2,'묘시':3,'진시':4,'사시':5,
@@ -5554,20 +5677,17 @@ function calcMingong(month, timeStr) {
   };
   var timeIdx = 0;
   for (var t in timeMap) {
-    if (timeStr && timeStr.indexOf(t.slice(0,1)) >= 0) {
+    if (timeStr && timeStr.startsWith(t.slice(0,2))) {
       timeIdx = timeMap[t]; break;
     }
   }
-  // 명궁 위치: (14 - month - timeIdx + 2) % 12 (인궁=2 기준)
   var mg = ((14 - parseInt(month) - timeIdx) % 12 + 12) % 12;
-  var GUNG = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
   var GUNG_KOR = ['자궁','축궁','인궁','묘궁','진궁','사궁','오궁','미궁','신궁','유궁','술궁','해궁'];
-  return { idx: mg, str: GUNG[mg], kor: GUNG_KOR[mg] };
+  return { idx: mg, kor: GUNG_KOR[mg], str: ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'][mg] };
 }
 
-// 자미성 위치 계산 (생일 기준)
+// 자미성 위치 (정통 포국표 - 음력 날짜 기준)
 function calcZiweiPos(day) {
-  // 정통 자미두수 자미성 위치표 (생일 1~30)
   var d = parseInt(day) || 1;
   var tbl = {1:2,2:2,3:2,4:3,5:3,6:4,7:4,8:5,9:5,10:6,
     11:6,12:6,13:7,14:7,15:8,16:8,17:9,18:9,19:10,
@@ -5575,65 +5695,64 @@ function calcZiweiPos(day) {
   return (tbl[d] !== undefined) ? tbl[d] : (d % 12);
 }
 
-// 14주성 배치 (자미성 기준 상대 위치)
 var ZIWEI_14STARS = [
-  { name:'자미성(紫微星)', offset:0, grade:'帝' },
-  { name:'천기성(天機星)', offset:-1, grade:'益' },
-  { name:'태양성(太陽星)', offset:2, grade:'貴' },
-  { name:'무곡성(武曲星)', offset:3, grade:'財' },
-  { name:'천동성(天同星)', offset:4, grade:'福' },
-  { name:'염정성(廉貞星)', offset:7, grade:'囚' },
-  { name:'천부성(天府星)', offset:0, grade:'財', mirror:true },
-  { name:'태음성(太陰星)', offset:1, grade:'富', mirror:true },
-  { name:'탐랑성(貪狼星)', offset:2, grade:'欲', mirror:true },
-  { name:'거문성(巨門星)', offset:3, grade:'暗', mirror:true },
-  { name:'천상성(天相星)', offset:4, grade:'印', mirror:true },
-  { name:'천량성(天梁星)', offset:5, grade:'蔭', mirror:true },
-  { name:'칠살성(七殺星)', offset:6, grade:'將', mirror:true },
-  { name:'파군성(破軍星)', offset:10, grade:'耗', mirror:true }
+  {name:'자미성(紫微星)',offset:0,mirror:false,grade:'帝'},
+  {name:'천기성(天機星)',offset:-1,mirror:false,grade:'益'},
+  {name:'태양성(太陽星)',offset:2,mirror:false,grade:'貴'},
+  {name:'무곡성(武曲星)',offset:3,mirror:false,grade:'財'},
+  {name:'천동성(天同星)',offset:4,mirror:false,grade:'福'},
+  {name:'염정성(廉貞星)',offset:7,mirror:false,grade:'囚'},
+  {name:'천부성(天府星)',offset:0,mirror:true,grade:'財'},
+  {name:'태음성(太陰星)',offset:1,mirror:true,grade:'富'},
+  {name:'탐랑성(貪狼星)',offset:2,mirror:true,grade:'欲'},
+  {name:'거문성(巨門星)',offset:3,mirror:true,grade:'暗'},
+  {name:'천상성(天相星)',offset:4,mirror:true,grade:'印'},
+  {name:'천량성(天梁星)',offset:5,mirror:true,grade:'蔭'},
+  {name:'칠살성(七殺星)',offset:6,mirror:true,grade:'將'},
+  {name:'파군성(破軍星)',offset:10,mirror:true,grade:'耗'}
 ];
 
-// 입묘/묘급/득지/낙함 등급 계산
 var STAR_STRENGTH = {
-  '자미성': [1,2,3,2,1,3,2,1,3,2,1,3],
-  '천기성': [2,1,3,1,2,2,1,3,2,3,1,2],
-  '태양성': [1,2,3,3,2,1,1,2,3,3,2,1],
-  '무곡성': [3,2,1,2,3,1,2,3,2,1,3,2],
-  '천동성': [2,3,2,1,2,3,3,2,1,2,3,2],
-  '염정성': [1,2,3,2,1,2,3,2,1,2,3,1],
-  '천부성': [3,2,3,2,1,2,3,2,3,2,1,2],
-  '태음성': [1,2,3,3,2,1,1,2,3,3,2,1],
-  '탐랑성': [2,3,2,1,3,2,1,3,2,1,3,2],
-  '거문성': [3,2,1,2,3,2,1,2,3,2,1,2],
-  '천상성': [2,1,2,3,2,1,2,3,2,1,2,3],
-  '천량성': [1,3,2,1,3,2,1,3,2,1,3,2],
-  '칠살성': [2,1,3,2,1,3,2,1,3,2,1,3],
-  '파군성': [3,2,1,3,2,1,3,2,1,3,2,1]
+  '자미성':[1,2,3,2,1,3,2,1,3,2,1,3],
+  '천기성':[2,1,3,1,2,2,1,3,2,3,1,2],
+  '태양성':[1,2,3,3,2,1,1,2,3,3,2,1],
+  '무곡성':[3,2,1,2,3,1,2,3,2,1,3,2],
+  '천동성':[2,3,2,1,2,3,3,2,1,2,3,2],
+  '염정성':[1,2,3,2,1,2,3,2,1,2,3,1],
+  '천부성':[3,2,3,2,1,2,3,2,3,2,1,2],
+  '태음성':[1,2,3,3,2,1,1,2,3,3,2,1],
+  '탐랑성':[2,3,2,1,3,2,1,3,2,1,3,2],
+  '거문성':[3,2,1,2,3,2,1,2,3,2,1,2],
+  '천상성':[2,1,2,3,2,1,2,3,2,1,2,3],
+  '천량성':[1,3,2,1,3,2,1,3,2,1,3,2],
+  '칠살성':[2,1,3,2,1,3,2,1,3,2,1,3],
+  '파군성':[3,2,1,3,2,1,3,2,1,3,2,1]
 };
-var STRENGTH_NAMES = ['낙함', '평', '득지', '묘급', '입묘'];
 
-function calcZiweiChart(year, month, day, timeStr) {
+function calcZiweiChart(year, month, day, timeStr, cal) {
   var mg = calcMingong(month, timeStr);
-  var zp = calcZiweiPos(day);
 
-  // 천부성 위치 (자미성과 대칭: 수궁水宮 기준)
-  var tianfuPos = ((6 - zp) % 12 + 12) % 12; // 자미 반대편
+  // ✅ 음력 날짜로 변환 (양력 입력 시)
+  var lunarDay = day;
+  if (!cal || cal === '양력') {
+    lunarDay = solarToLunarDay(parseInt(year), parseInt(month), parseInt(day));
+  }
+
+  var zp = calcZiweiPos(lunarDay);
+  var tianfuPos = ((6 - zp) % 12 + 12) % 12;
 
   var stars = {};
   ZIWEI_14STARS.forEach(function(s) {
-    var pos;
-    if (s.mirror) {
-      pos = (tianfuPos + s.offset) % 12;
-    } else {
-      pos = ((zp + s.offset) % 12 + 12) % 12;
-    }
+    var pos = s.mirror
+      ? (tianfuPos + s.offset) % 12
+      : ((zp + s.offset) % 12 + 12) % 12;
     var skey = s.name.slice(0, 3);
     var strength = STAR_STRENGTH[skey] ? STAR_STRENGTH[skey][pos] : 2;
     stars[s.name] = { pos: pos, grade: s.grade, strength: strength };
   });
 
-  // 명궁 주성 찾기 (strength 최대값 기준)
-  var mingungStar = '공궁(空宮)';
+  // 명궁 주성 찾기 (strength 최대값 기준, 공궁이면 대궁 참조)
+  var mingungStar = null;
   var mingungStrength = -1;
   ZIWEI_14STARS.forEach(function(s) {
     if (stars[s.name].pos === mg.idx) {
@@ -5644,20 +5763,38 @@ function calcZiweiChart(year, month, day, timeStr) {
     }
   });
 
-  // 등급명 생성
-  var strengthName = mingungStrength >= 4 ? '입묘' : mingungStrength >= 3 ? '묘급' : mingungStrength >= 2 ? '득지' : '평지';
-  var starShort = mingungStar.replace('성(', '').replace(/\(.*\)/, '').split('(')[0];
+  // 공궁 처리: 대궁(반대편) 별로 판단
+  var isKongGung = false;
+  if (!mingungStar) {
+    isKongGung = true;
+    var dagungIdx = (mg.idx + 6) % 12;
+    ZIWEI_14STARS.forEach(function(s) {
+      if (stars[s.name].pos === dagungIdx) {
+        if (stars[s.name].strength > mingungStrength) {
+          mingungStar = s.name;
+          mingungStrength = stars[s.name].strength;
+        }
+      }
+    });
+  }
+
+  if (!mingungStar) mingungStar = '공궁(空宮)';
+
+  var strengthName = mingungStrength >= 4 ? '입묘' : mingungStrength >= 3 ? '묘급' : mingungStrength >= 2 ? '득지' : mingungStrength >= 1 ? '평지' : '';
+  var GUNG_KOR = ['자궁','축궁','인궁','묘궁','진궁','사궁','오궁','미궁','신궁','유궁','술궁','해궁'];
 
   return {
     mingung: mg,
     ziweiPos: zp,
+    lunarDay: lunarDay,
+    isKongGung: isKongGung,
     stars: stars,
     mainStar: mingungStar,
-    mainStarShort: starShort,
     strengthName: strengthName,
-    summary: '명궁: ' + mg.kor + '(' + mg.str + ') | 명궁 주성: ' + mingungStar + ' ' + strengthName + ' | 자미성: ' + zp + '궁'
+    summary: '명궁:' + mg.kor + '(' + mg.str + ') | ' + (isKongGung ? '선천공궁→대궁참조 ' : '') + '명궁주성:' + mingungStar + (strengthName ? ' ' + strengthName : '') + ' | 자미성:' + GUNG_KOR[zp] + ' | 음력날짜:' + lunarDay + '일'
   };
 }
+
 
 
 /* ══════════════════════════════════════
@@ -5829,8 +5966,8 @@ async function runCompatibility() {
   }
 
   // 자미두수 포국 계산
-  var calc1 = getSajuString(p1.year, p1.month, p1.day, p1.time);
-  var calc2 = getSajuString(p2.year, p2.month, p2.day, p2.time);
+  var calc1 = getSajuString(p1.year, p1.month, p1.day, p1.time, '양력');
+  var calc2 = getSajuString(p2.year, p2.month, p2.day, p2.time, '양력');
 
   var baseInfo = '[' + p1.name + '] ' + p1.gender + ' ' + p1.year + '년 ' + p1.month + '월 ' + p1.day + '일 ' + (p1.time||'생시미상') + '\n' +
     '사주: ' + calc1.summary + '\n' +
@@ -6805,117 +6942,6 @@ setInterval(function() { if (currentUser) saveSessionTime(); }, 30000);
 
 // 자미두수 명궁 계산 (정통 寅起法)
 // 명궁 = 寅宮(인궁)을 1로 하여 월지 기준 + 시지 역행
-function calcMingong(month, timeStr) {
-  var timeMap = {
-    '자시':0,'축시':1,'인시':2,'묘시':3,'진시':4,'사시':5,
-    '오시':6,'미시':7,'신시':8,'유시':9,'술시':10,'해시':11
-  };
-  var timeIdx = 0;
-  for (var t in timeMap) {
-    if (timeStr && timeStr.indexOf(t.slice(0,1)) >= 0) {
-      timeIdx = timeMap[t]; break;
-    }
-  }
-  // 명궁 위치: (14 - month - timeIdx + 2) % 12 (인궁=2 기준)
-  var mg = ((14 - parseInt(month) - timeIdx) % 12 + 12) % 12;
-  var GUNG = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
-  var GUNG_KOR = ['자궁','축궁','인궁','묘궁','진궁','사궁','오궁','미궁','신궁','유궁','술궁','해궁'];
-  return { idx: mg, str: GUNG[mg], kor: GUNG_KOR[mg] };
-}
-
-// 자미성 위치 계산 (생일 기준)
-function calcZiweiPos(day) {
-  // 정통 자미두수 자미성 위치표 (생일 1~30)
-  var d = parseInt(day) || 1;
-  var tbl = {1:2,2:2,3:2,4:3,5:3,6:4,7:4,8:5,9:5,10:6,
-    11:6,12:6,13:7,14:7,15:8,16:8,17:9,18:9,19:10,
-    20:10,21:10,22:11,23:11,24:0,25:0,26:1,27:1,28:2,29:2,30:3};
-  return (tbl[d] !== undefined) ? tbl[d] : (d % 12);
-}
-
-// 14주성 배치 (자미성 기준 상대 위치)
-var ZIWEI_14STARS = [
-  { name:'자미성(紫微星)', offset:0, grade:'帝' },
-  { name:'천기성(天機星)', offset:-1, grade:'益' },
-  { name:'태양성(太陽星)', offset:2, grade:'貴' },
-  { name:'무곡성(武曲星)', offset:3, grade:'財' },
-  { name:'천동성(天同星)', offset:4, grade:'福' },
-  { name:'염정성(廉貞星)', offset:7, grade:'囚' },
-  { name:'천부성(天府星)', offset:0, grade:'財', mirror:true },
-  { name:'태음성(太陰星)', offset:1, grade:'富', mirror:true },
-  { name:'탐랑성(貪狼星)', offset:2, grade:'欲', mirror:true },
-  { name:'거문성(巨門星)', offset:3, grade:'暗', mirror:true },
-  { name:'천상성(天相星)', offset:4, grade:'印', mirror:true },
-  { name:'천량성(天梁星)', offset:5, grade:'蔭', mirror:true },
-  { name:'칠살성(七殺星)', offset:6, grade:'將', mirror:true },
-  { name:'파군성(破軍星)', offset:10, grade:'耗', mirror:true }
-];
-
-// 입묘/묘급/득지/낙함 등급 계산
-var STAR_STRENGTH = {
-  '자미성': [1,2,3,2,1,3,2,1,3,2,1,3],
-  '천기성': [2,1,3,1,2,2,1,3,2,3,1,2],
-  '태양성': [1,2,3,3,2,1,1,2,3,3,2,1],
-  '무곡성': [3,2,1,2,3,1,2,3,2,1,3,2],
-  '천동성': [2,3,2,1,2,3,3,2,1,2,3,2],
-  '염정성': [1,2,3,2,1,2,3,2,1,2,3,1],
-  '천부성': [3,2,3,2,1,2,3,2,3,2,1,2],
-  '태음성': [1,2,3,3,2,1,1,2,3,3,2,1],
-  '탐랑성': [2,3,2,1,3,2,1,3,2,1,3,2],
-  '거문성': [3,2,1,2,3,2,1,2,3,2,1,2],
-  '천상성': [2,1,2,3,2,1,2,3,2,1,2,3],
-  '천량성': [1,3,2,1,3,2,1,3,2,1,3,2],
-  '칠살성': [2,1,3,2,1,3,2,1,3,2,1,3],
-  '파군성': [3,2,1,3,2,1,3,2,1,3,2,1]
-};
-var STRENGTH_NAMES = ['낙함', '평', '득지', '묘급', '입묘'];
-
-function calcZiweiChart(year, month, day, timeStr) {
-  var mg = calcMingong(month, timeStr);
-  var zp = calcZiweiPos(day);
-
-  // 천부성 위치 (자미성과 대칭: 수궁水宮 기준)
-  var tianfuPos = ((6 - zp) % 12 + 12) % 12; // 자미 반대편
-
-  var stars = {};
-  ZIWEI_14STARS.forEach(function(s) {
-    var pos;
-    if (s.mirror) {
-      pos = (tianfuPos + s.offset) % 12;
-    } else {
-      pos = ((zp + s.offset) % 12 + 12) % 12;
-    }
-    var skey = s.name.slice(0, 3);
-    var strength = STAR_STRENGTH[skey] ? STAR_STRENGTH[skey][pos] : 2;
-    stars[s.name] = { pos: pos, grade: s.grade, strength: strength };
-  });
-
-  // 명궁 주성 찾기 (strength 최대값 기준)
-  var mingungStar = '공궁(空宮)';
-  var mingungStrength = -1;
-  ZIWEI_14STARS.forEach(function(s) {
-    if (stars[s.name].pos === mg.idx) {
-      if (stars[s.name].strength > mingungStrength) {
-        mingungStar = s.name;
-        mingungStrength = stars[s.name].strength;
-      }
-    }
-  });
-
-  // 등급명 생성
-  var strengthName = mingungStrength >= 4 ? '입묘' : mingungStrength >= 3 ? '묘급' : mingungStrength >= 2 ? '득지' : '평지';
-  var starShort = mingungStar.replace('성(', '').replace(/\(.*\)/, '').split('(')[0];
-
-  return {
-    mingung: mg,
-    ziweiPos: zp,
-    stars: stars,
-    mainStar: mingungStar,
-    mainStarShort: starShort,
-    strengthName: strengthName,
-    summary: '명궁: ' + mg.kor + '(' + mg.str + ') | 명궁 주성: ' + mingungStar + ' ' + strengthName + ' | 자미성: ' + zp + '궁'
-  };
-}
 
 
 /* ══════════════════════════════════════

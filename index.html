@@ -888,8 +888,17 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
       <button onclick="resetSettings()" style="width:100%;margin-top:6px;padding:9px;background:none;border:1px solid rgba(231,76,60,0.3);border-radius:8px;color:#e74c3c;font-size:12px;cursor:pointer;font-family:inherit;">초기화</button>
     </div>
 
-    <!-- ✅ 대량 리포트 생성 (관리자 전용) -->
-    <div style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.2);border-radius:12px;padding:1rem;margin-bottom:.75rem;">
+    <!-- ✅ 관리자 도구 -->
+    <div style="background:rgba(231,76,60,0.06);border:1px solid rgba(231,76,60,0.2);border-radius:12px;padding:.85rem;margin-bottom:.75rem;">
+      <div style="font-size:12px;font-weight:700;color:#e74c3c;margin-bottom:.6rem;">🔧 관리자 도구</div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        <button onclick="clearAllCache()" style="padding:8px 14px;background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.3);border-radius:8px;color:#e74c3c;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🗑️ 캐시 초기화</button>
+        <button onclick="showPg('main')" style="padding:8px 14px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.25);border-radius:8px;color:var(--gold);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🔮 분석 화면</button>
+        <button onclick="applyUISettings();showShareToast('✅ 설정 적용됨')" style="padding:8px 14px;background:rgba(80,200,120,0.1);border:1px solid rgba(80,200,120,0.25);border-radius:8px;color:var(--em);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">✓ 설정 즉시 적용</button>
+      </div>
+    </div>
+
+    <!-- ✅ 대량 리포트 생성 (관리자 전용) -->;border-radius:12px;padding:1rem;margin-bottom:.75rem;">
       <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.5rem;display:flex;align-items:center;gap:6px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
         대량 리포트 생성 · 발송
@@ -1295,7 +1304,7 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
           <div style="font-size:11px;color:var(--t2);margin-top:.5rem;">정가</div>
           <div style="font-size:26px;font-weight:700;color:#fff;">₩89,000</div>
           <div style="font-size:10px;color:var(--t2);font-weight:700;">정식 오픈 후</div>
-          <div style="font-size:10px;color:var(--t2);margin-top:.4rem;line-height:1.5;">50P 인생 지침서<br>관상·손금 통합분석<br>대운 타임라인<br>+ PDF 다운로드</div>
+          <div style="font-size:10px;color:var(--t2);margin-top:.4rem;line-height:1.5;">인생 지침서<br>관상·손금 통합분석<br>대운 타임라인<br>+ PDF 다운로드</div>
         </div>
       </div>
 
@@ -1353,7 +1362,7 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
       </div>
 
       <div style="font-size:11px;color:var(--t2);text-align:center;line-height:1.7;">
-        결제 즉시 리포트 생성 · 브라우저에 저장됩니다<br>
+        AI 분석 즉시 생성 · 브라우저에 저장됩니다<br>
         문의: 스레드 DM 또는 이메일
       </div>
     </div>
@@ -1474,7 +1483,7 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
     </div>
   </div>
 
-  <div class="footer">© 2026 천기 웨이브 (천기 웨이브). All rights reserved.<br>정통 자미두수, 기문둔갑, 매화역수 기반 프리미엄 명리 플랫폼</div>
+  <div class="footer">© 2026 천기 웨이브 (Cheongi Wave). All rights reserved.<br>정통 자미두수 · 기문둔갑 · 매화역수 기반 AI 명리 분석 플랫폼</div>
 </div>
 
 <!-- LOADING OVERLAY -->
@@ -2380,10 +2389,18 @@ function renderUserNav(user) {
   var adminBtn = document.getElementById('bn-admin');
   var cacheBtn = document.getElementById('admin-cache-btn');
   if (user.email) {
-    var isAdmin = user.email === 'stop.ok.go@gmail.com' || user.email.startsWith('admin') || localStorage.getItem('cw_admin_' + user.email) === '1';
+    var isAdmin = user.email === 'stop.ok.go@gmail.com' ||
+                  user.email === 'stop.ok.go@gmail.com'.toLowerCase() ||
+                  user.email.toLowerCase() === 'stop.ok.go@gmail.com' ||
+                  user.email.startsWith('admin') ||
+                  localStorage.getItem('cw_admin_' + user.email) === '1';
+    console.log('[천기웨이브] 로그인:', user.email, '| 관리자:', isAdmin);
     if (adminBtn) adminBtn.style.display = isAdmin ? 'flex' : 'none';
     if (cacheBtn) cacheBtn.style.display = isAdmin ? 'inline-flex' : 'none';
   }
+  // ✅ 로그인 시 프로필 바 표시
+  var profileBar = document.getElementById('profile-bar');
+  if (profileBar) profileBar.style.display = 'block';
 }
 
 function doLogout() {
@@ -2397,6 +2414,9 @@ function doLogout() {
   var cacheBtn = document.getElementById('admin-cache-btn');
   if (adminBtn) adminBtn.style.display = 'none';
   if (cacheBtn) cacheBtn.style.display = 'none';
+  // ✅ 저장된 프로필 섹션 숨기기
+  var profileBar = document.getElementById('profile-bar');
+  if (profileBar) profileBar.style.display = 'none';
   document.getElementById('nav-auth-area').innerHTML =
     '<button class="nav-login-btn" onclick="openAuth(\'login\')">' +
       '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>로그인' +
@@ -2406,10 +2426,13 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close
 
 // ✅ 페이지 로드 시 로그인 상태 복원
 (function restoreSession() {
+  var profileBar = document.getElementById('profile-bar');
+  if (profileBar) profileBar.style.display = 'none';
   var saved = loadUserFromStorage();
   if (saved) {
     currentUser = saved;
     renderUserNav(saved);
+    if (profileBar) profileBar.style.display = 'block';
   }
 })();
 </script>
@@ -2418,7 +2441,7 @@ document.addEventListener('keydown', function(e) { if (e.key === 'Escape') close
 const EX = [
   {name:'천명 도사', spec:'자미두수·기문둔갑', rat:'4.9', tags:['#비즈니스','#승진운'], top:false},
   {name:'연화 선생', spec:'매화역수·심리상담', rat:'4.8', tags:['#연애','#재회부적'], top:false},
-  {name:'자미 광인', spec:'정통 자미두수', rat:'5.0', tags:['#평생총운','#50p리포트'], top:true},
+  {name:'자미 광인', spec:'정통 자미두수', rat:'5.0', tags:['#평생총운','#인생지침서'], top:true},
 ];
 
 const CH = [

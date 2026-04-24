@@ -467,7 +467,11 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
 .auth-modal-wrap{position:relative;}
 
 /* NAV login button */
-.nav-login-btn{padding:6px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;border:1px solid var(--em);background:none;color:var(--em);transition:all .18s;display:flex;align-items:center;gap:5px;}
+.nav-login-btn{padding:clamp(6px,0.8vw,10px) clamp(10px,1.2vw,18px);border-radius:8px;font-size:clamp(11px,1.1vw,14px);font-weight:700;cursor:pointer;font-family:inherit;border:1px solid var(--bd);background:rgba(255,255,255,0.07);color:var(--t);transition:all .18s;display:flex;align-items:center;gap:5px;}
+.nav-login-btn:hover{border-color:var(--em);color:var(--em);}
+.nav-user-pill{display:flex;align-items:center;gap:6px;padding:clamp(6px,0.8vw,10px) clamp(10px,1.2vw,18px);border-radius:8px;border:1px solid var(--bd);background:rgba(255,255,255,0.07);font-size:clamp(11px,1.1vw,14px);}
+.nav-user-avatar{width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:#fff;flex-shrink:0;}
+.nav-user-name{color:#fff;font-weight:600;max-width:80px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .nav-login-btn:hover{background:rgba(80,200,120,0.12);}
 .nav-user-pill{display:flex;align-items:center;gap:8px;padding:5px 12px 5px 6px;border-radius:20px;background:rgba(80,200,120,0.12);border:1px solid rgba(80,200,120,0.25);}
 .nav-user-avatar{width:22px;height:22px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;}
@@ -505,10 +509,10 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
       </div>
     </a>
     <div class="nav-btns">
-      <!-- 서비스앱: 모바일에선 텍스트 숨김 -->
-      <button class="nbtn on" id="bn-user" onclick="showPg('main',this,'user')" title="서비스 앱">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
-        <span class="nav-label">서비스</span>
+      <!-- 천기 분석 버튼 -->
+      <button class="nbtn on" id="bn-user" onclick="showPg('main',this,'user')" title="천기 분석">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+        <span class="nav-label">천기 분석</span>
       </button>
       <!-- 관리 버튼 (로그인 시에만 표시) -->
       <button class="nbtn nav-cms-btn" id="bn-admin" onclick="showAdminPage()" title="회원 관리" style="display:none;">
@@ -517,13 +521,13 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
       </button>
       <!-- 로그인 -->
       <div id="nav-auth-area">
-        <button class="nav-login-btn" onclick="openAuth('login')" title="로그인">
+        <button class="nbtn" onclick="openAuth('login')" title="로그인">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
           <span class="nav-label">로그인</span>
         </button>
       </div>
       <!-- 공유 -->
-      <button class="nbtn" onclick="doShare()" title="공유하기" style="padding:7px 10px;">
+      <button class="nbtn" onclick="doShare()" title="공유하기">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
         <span class="nav-label">공유</span>
       </button>
@@ -1849,12 +1853,21 @@ function renderUserNav(user) {
   const area = document.getElementById('nav-auth-area');
   if (!area) return;
   const initials = (user.name || user.email || '?').slice(0, 1).toUpperCase();
+  const avatarHtml = user.avatar
+    ? '<img src="' + user.avatar + '" style="width:22px;height:22px;border-radius:50%;object-fit:cover;">'
+    : '<div class="nav-user-avatar">' + initials + '</div>';
   area.innerHTML =
     '<div class="nav-user-pill">' +
-      '<div class="nav-user-avatar">' + initials + '</div>' +
+      avatarHtml +
       '<span class="nav-user-name">' + (user.name || user.email) + '</span>' +
-      '<button class="nav-logout" onclick="doLogout()">로그아웃</button>' +
+      '<button class="nav-logout" onclick="doLogout()" style="font-size:11px;color:var(--t2);cursor:pointer;background:none;border:none;font-family:inherit;padding:0;margin-left:2px;">로그아웃</button>' +
     '</div>';
+  // 관리자면 관리 버튼 표시
+  var adminBtn = document.getElementById('bn-admin');
+  if (adminBtn && user.email) {
+    var isAdmin = user.email.startsWith('admin') || localStorage.getItem('cw_admin_' + user.email) === '1';
+    adminBtn.style.display = isAdmin ? 'flex' : 'none';
+  }
 }
 
 function doLogout() {

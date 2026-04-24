@@ -530,6 +530,11 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M18 13v6M21 16h-6"/></svg>
         <span class="nav-label">관리</span>
       </button>
+      <!-- 궁합 버튼 -->
+      <button class="nbtn" onclick="showCompatibility()" title="궁합 분석">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+        <span class="nav-label">궁합</span>
+      </button>
       <!-- 로그인 -->
       <div id="nav-auth-area">
         <button class="nbtn" onclick="openAuth('login')" title="로그인">
@@ -883,6 +888,55 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
       <button onclick="resetSettings()" style="width:100%;margin-top:6px;padding:9px;background:none;border:1px solid rgba(231,76,60,0.3);border-radius:8px;color:#e74c3c;font-size:12px;cursor:pointer;font-family:inherit;">초기화</button>
     </div>
 
+    <!-- ✅ 대량 리포트 생성 (관리자 전용) -->
+    <div style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.2);border-radius:12px;padding:1rem;margin-bottom:.75rem;">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.5rem;display:flex;align-items:center;gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        대량 리포트 생성 · 발송
+      </div>
+      <div style="font-size:11px;color:var(--t2);margin-bottom:.75rem;line-height:1.6;">
+        회원 목록에서 선택 → 생년월일 입력 → 리포트 자동 생성 → 이메일 발송
+      </div>
+
+      <!-- 고객 추가 입력 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div class="ig"><label>이름</label><input type="text" id="bulk-name" placeholder="고객 이름"></div>
+        <div class="ig"><label>이메일</label><input type="email" id="bulk-email" placeholder="발송할 이메일"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div class="ig"><label>생년</label><input type="number" id="bulk-year" placeholder="1990" style="width:100%;"></div>
+        <div class="ig"><label>월</label><input type="number" id="bulk-month" placeholder="1" min="1" max="12" style="width:100%;"></div>
+        <div class="ig"><label>일</label><input type="number" id="bulk-day" placeholder="1" min="1" max="31" style="width:100%;"></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div class="ig">
+          <label>생시</label>
+          <select id="bulk-time" style="width:100%;padding:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;">
+            <option value="">모름</option>
+            <option value="자시(23:30~01:29)">자시</option><option value="축시(01:30~03:29)">축시</option>
+            <option value="인시(03:30~05:29)">인시</option><option value="묘시(05:30~07:29)">묘시</option>
+            <option value="진시(07:30~09:29)">진시</option><option value="사시(09:30~11:29)">사시</option>
+            <option value="오시(11:30~13:29)">오시</option><option value="미시(13:30~15:29)">미시</option>
+            <option value="신시(15:30~17:29)">신시</option><option value="유시(17:30~19:29)">유시</option>
+            <option value="술시(19:30~21:29)">술시</option><option value="해시(21:30~23:29)">해시</option>
+          </select>
+        </div>
+        <div class="ig">
+          <label>성별</label>
+          <select id="bulk-gender" style="width:100%;padding:8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;">
+            <option value="남">남성</option><option value="여">여성</option>
+          </select>
+        </div>
+      </div>
+
+      <div id="bulk-status" style="font-size:12px;color:var(--t2);min-height:20px;margin-bottom:8px;"></div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <button onclick="bulkGenerate()" style="padding:11px;background:var(--gold);border:none;border-radius:8px;color:#0f0f3a;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">⚡ 리포트 생성</button>
+        <button onclick="bulkSendEmail()" style="padding:11px;background:var(--em);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📧 생성 후 발송</button>
+      </div>
+    </div>
+
     <!-- 새 회원 추가 (관리자용) -->
     <div id="admin-add-section" style="background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:12px;padding:1rem;">
       <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.75rem;">+ 회원 추가</div>
@@ -966,6 +1020,54 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
         <button class="btn-out" onclick="doLogout()">로그아웃</button>
       </div>
     </div>
+  </div>
+
+  <!-- SCAN -->
+  <div id="pg-compat" class="pg">
+    <div class="pgtop">
+      <div class="back-btn" onclick="showPg('main')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--t)" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg></div>
+      <h1>💑 궁합 분석</h1>
+    </div>
+
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:.75rem;margin-bottom:.75rem;">
+      <!-- 첫번째 사람 -->
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(80,200,120,0.3);border-radius:12px;padding:.85rem;">
+        <div style="font-size:12px;font-weight:700;color:var(--em);margin-bottom:.5rem;">첫 번째 사람</div>
+        <select id="compat-sel1" onchange="loadCompatProfile(1)" style="width:100%;padding:6px 8px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:6px;color:#fff;font-size:11px;font-family:inherit;margin-bottom:.4rem;">
+          <option value="">저장된 프로필</option>
+        </select>
+        <div class="ig" style="margin-bottom:.35rem;"><input type="text" id="compat1-name" placeholder="이름" style="width:100%;padding:7px 10px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:7px;color:#fff;font-size:12px;font-family:inherit;outline:none;"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:.35rem;">
+          <input type="number" id="compat1-year"  placeholder="년" style="padding:7px 4px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:7px;color:#fff;font-size:11px;font-family:inherit;outline:none;text-align:center;">
+          <input type="number" id="compat1-month" placeholder="월" min="1" max="12" style="padding:7px 4px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:7px;color:#fff;font-size:11px;font-family:inherit;outline:none;text-align:center;">
+          <input type="number" id="compat1-day"   placeholder="일" min="1" max="31" style="padding:7px 4px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:7px;color:#fff;font-size:11px;font-family:inherit;outline:none;text-align:center;">
+        </div>
+        <select id="compat1-gender" style="width:100%;padding:6px 8px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:6px;color:#fff;font-size:11px;font-family:inherit;">
+          <option value="남">남성</option><option value="여">여성</option>
+        </select>
+      </div>
+
+      <!-- 두번째 사람 -->
+      <div style="background:rgba(255,255,255,0.04);border:1px solid rgba(138,172,240,0.3);border-radius:12px;padding:.85rem;">
+        <div style="font-size:12px;font-weight:700;color:#8aacf0;margin-bottom:.5rem;">두 번째 사람</div>
+        <select id="compat-sel2" onchange="loadCompatProfile(2)" style="width:100%;padding:6px 8px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:6px;color:#fff;font-size:11px;font-family:inherit;margin-bottom:.4rem;">
+          <option value="">저장된 프로필</option>
+        </select>
+        <div class="ig" style="margin-bottom:.35rem;"><input type="text" id="compat2-name" placeholder="이름" style="width:100%;padding:7px 10px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:7px;color:#fff;font-size:12px;font-family:inherit;outline:none;"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:4px;margin-bottom:.35rem;">
+          <input type="number" id="compat2-year"  placeholder="년" style="padding:7px 4px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:7px;color:#fff;font-size:11px;font-family:inherit;outline:none;text-align:center;">
+          <input type="number" id="compat2-month" placeholder="월" min="1" max="12" style="padding:7px 4px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:7px;color:#fff;font-size:11px;font-family:inherit;outline:none;text-align:center;">
+          <input type="number" id="compat2-day"   placeholder="일" min="1" max="31" style="padding:7px 4px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:7px;color:#fff;font-size:11px;font-family:inherit;outline:none;text-align:center;">
+        </div>
+        <select id="compat2-gender" style="width:100%;padding:6px 8px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:6px;color:#fff;font-size:11px;font-family:inherit;">
+          <option value="남">남성</option><option value="여" selected>여성</option>
+        </select>
+      </div>
+    </div>
+
+    <button id="compat-btn" onclick="runCompatibility()" style="width:100%;padding:15px;background:linear-gradient(135deg,var(--em),#3498db);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;margin-bottom:1rem;">💑 궁합 분석 시작</button>
+
+    <div id="compat-result"></div>
   </div>
 
   <!-- SCAN -->
@@ -2278,7 +2380,7 @@ function renderUserNav(user) {
   var adminBtn = document.getElementById('bn-admin');
   var cacheBtn = document.getElementById('admin-cache-btn');
   if (user.email) {
-    var isAdmin = user.email.startsWith('admin') || localStorage.getItem('cw_admin_' + user.email) === '1';
+    var isAdmin = user.email === 'stop.ok.go@gmail.com' || user.email.startsWith('admin') || localStorage.getItem('cw_admin_' + user.email) === '1';
     if (adminBtn) adminBtn.style.display = isAdmin ? 'flex' : 'none';
     if (cacheBtn) cacheBtn.style.display = isAdmin ? 'inline-flex' : 'none';
   }
@@ -3894,7 +3996,7 @@ function downloadPDF() {
 
 
 /* ── 이메일 발송 ── */
-function sendReportEmail() {
+function sendReportEmail(presetEmail) {
   var r = window.lastSajuResult;
   var inp = window.lastSajuInput;
   if (!r || !inp) { alert('먼저 분석을 완료해주세요.'); return; }
@@ -3908,10 +4010,8 @@ function sendReportEmail() {
     '명주: ' + (r.star||'') + ' · ' + (r.daewoon||'') + '\n' +
     '요약: ' + (r.summary||'') + '\n\n' +
     '━━━ 상세 리포트 ━━━\n\n' +
-    plain + '\n\n' +
-    '🌊 https://cheongi-wave-61pz.vercel.app';
+    plain + '\n\n🌊 https://cheongi-wave-61pz.vercel.app';
 
-  // ✅ 이메일 발송 모달 (mailto + Gmail + 복사)
   var modal = document.getElementById('email-modal');
   if (!modal) {
     modal = document.createElement('div');
@@ -3920,57 +4020,68 @@ function sendReportEmail() {
     document.body.appendChild(modal);
   }
 
-  var defaultEmail = currentUser ? (currentUser.email || '') : '';
+  var defaultEmail = presetEmail || (currentUser ? (currentUser.email || '') : '');
   var encodedSubject = encodeURIComponent(subject);
   var encodedBody = encodeURIComponent(bodyText.substring(0, 1500) + '\n\n...(전체 리포트는 앱에서 확인)\n🌊 https://cheongi-wave-61pz.vercel.app');
 
   modal.innerHTML =
-    '<div style="background:#1a1a4e;border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:1.75rem;max-width:380px;width:100%;position:relative;">' +
-      '<button onclick="document.getElementById(\'email-modal\').style.display=\'none\'" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(255,255,255,0.4);font-size:20px;cursor:pointer;">×</button>' +
-      '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:.35rem;">📧 리포트 이메일 발송</div>' +
+    '<div style="background:#1a1a4e;border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:1.75rem;max-width:400px;width:100%;position:relative;">' +
+      '<button onclick="document.getElementById(\'email-modal\').style.display=\'none\';" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(255,255,255,0.4);font-size:20px;cursor:pointer;">×</button>' +
+      '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:.25rem;">📧 리포트 이메일 발송</div>' +
       '<div style="font-size:12px;color:var(--t2);margin-bottom:1rem;">' + inp.name + '님의 인생 지침서</div>' +
 
-      '<div style="display:flex;flex-direction:column;gap:8px;">' +
-        // Gmail 버튼
-        '<a href="https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(defaultEmail) + '&su=' + encodedSubject + '&body=' + encodedBody + '" target="_blank" ' +
-        'style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fff;font-size:13px;font-weight:700;text-decoration:none;">' +
-        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2z" fill="#EA4335"/><path d="M2 6l10 7 10-7" stroke="#fff" stroke-width="1.5"/></svg>' +
-        'Gmail로 열기</a>' +
-
-        // 기본 메일 앱
-        '<a href="mailto:' + defaultEmail + '?subject=' + encodedSubject + '&body=' + encodedBody + '" ' +
-        'style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--t2);font-size:13px;font-weight:600;text-decoration:none;">' +
-        '📬 기본 메일 앱으로 열기</a>' +
-
-        // 텍스트 복사
-        '<button id="email-copy-btn" style="padding:12px;background:rgba(80,200,120,0.12);border:1px solid rgba(80,200,120,0.3);border-radius:10px;color:var(--em);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">' +
-        '📋 리포트 텍스트 복사</button>' +
+      // ✅ 받는 사람 이메일 입력
+      '<div style="margin-bottom:1rem;">' +
+        '<label style="font-size:11px;color:var(--t2);margin-bottom:4px;display:block;">받는 사람 이메일</label>' +
+        '<input type="email" id="email-to" value="' + defaultEmail + '" placeholder="받을 이메일 주소 입력"' +
+        ' style="width:100%;padding:10px 12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:8px;color:#fff;font-size:13px;font-family:inherit;outline:none;box-sizing:border-box;">' +
       '</div>' +
 
-      '<div style="margin-top:.75rem;font-size:11px;color:rgba(255,255,255,0.3);text-align:center;">복사 후 원하는 메일 앱에 붙여넣기 하세요</div>' +
+      '<div style="display:flex;flex-direction:column;gap:8px;">' +
+        // Gmail
+        '<button id="email-gmail-btn" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">' +
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2z" fill="#EA4335"/><path d="M2 6l10 7 10-7" stroke="#fff" stroke-width="1.5"/></svg>' +
+        'Gmail로 열기</button>' +
+
+        // 기본 메일
+        '<button id="email-default-btn" style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--t2);font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;">' +
+        '📬 기본 메일 앱으로 열기</button>' +
+
+        // 복사
+        '<button id="email-copy-btn" style="padding:12px;background:rgba(80,200,120,0.12);border:1px solid rgba(80,200,120,0.3);border-radius:10px;color:var(--em);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">📋 리포트 텍스트 복사</button>' +
+      '</div>' +
+      '<div style="margin-top:.75rem;font-size:11px;color:rgba(255,255,255,0.3);text-align:center;">이메일 주소 입력 후 원하는 방법 선택</div>' +
     '</div>';
 
   modal.style.display = 'flex';
 
-  // 복사 버튼
   setTimeout(function() {
+    var toInput = document.getElementById('email-to');
+    var gmailBtn = document.getElementById('email-gmail-btn');
+    var defaultBtn = document.getElementById('email-default-btn');
     var copyBtn = document.getElementById('email-copy-btn');
-    if (copyBtn) {
-      copyBtn.onclick = function() {
-        navigator.clipboard.writeText(bodyText).then(function() {
-          copyBtn.textContent = '✅ 복사됐습니다!';
-          setTimeout(function(){ copyBtn.textContent = '📋 리포트 텍스트 복사'; }, 2000);
-        }).catch(function() {
-          var ta = document.createElement('textarea');
-          ta.value = bodyText;
-          document.body.appendChild(ta);
-          ta.select();
-          document.execCommand('copy');
-          document.body.removeChild(ta);
-          copyBtn.textContent = '✅ 복사됐습니다!';
-        });
-      };
-    }
+
+    function getTo() { return (toInput && toInput.value.trim()) || defaultEmail; }
+
+    if (gmailBtn) gmailBtn.onclick = function() {
+      var to = getTo();
+      window.open('https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(to) + '&su=' + encodedSubject + '&body=' + encodedBody, '_blank');
+    };
+    if (defaultBtn) defaultBtn.onclick = function() {
+      var to = getTo();
+      window.location.href = 'mailto:' + to + '?subject=' + encodedSubject + '&body=' + encodedBody;
+    };
+    if (copyBtn) copyBtn.onclick = function() {
+      navigator.clipboard.writeText(bodyText).then(function() {
+        copyBtn.textContent = '✅ 복사됐습니다!';
+        setTimeout(function(){ copyBtn.textContent = '📋 리포트 텍스트 복사'; }, 2000);
+      }).catch(function() {
+        var ta = document.createElement('textarea');
+        ta.value = bodyText; document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta);
+        copyBtn.textContent = '✅ 복사됐습니다!';
+      });
+    };
   }, 50);
 }
 
@@ -4178,16 +4289,20 @@ async function generate50PReport() {
     (inp.location ? '거주지:' + inp.location : '') + '\n' +
     '현재대운:' + (r.daewoon||'') + '\n\n'
 
-  var formatRules = '=== 출력 규칙 (절대 준수) ===\n' +
-    '1. HTML만 출력. <h3><h4><p><strong><em> 태그만.\n' +
-    '2. h3=섹션제목, h4=소제목(■기호 포함), p=본문\n' +
-    '3. ⛔ 각 섹션 분량 제한: h4 최대 2개, 각 h4 아래 p 최대 2개. 절대 초과 금지.\n' +
-    '4. ⛔ p태그 1개 = 1~2문장(80자 이내). 짧게.\n' +
-    '5. ⚠️표시: <p>⚠️ 내용</p>  ✦표시: <p>✦ 내용</p>\n' +
-    '6. ⛔ 5개 섹션 전부 완성 필수. 길게 쓰다 잘리면 실패.\n' +
-    '7. 마지막 p는 반드시 마침표로 끝낼 것.\n\n' +
-    '=== 서술 방식 ===\n' +
-    '과거→현재→미래 흐름. 실제 제공된 사주팔자(연주·월주·일주·시주) 반드시 활용.\n\n'
+  var formatRules = '=== 출력 규칙 ===\n' +
+    '1. HTML만 출력. <h3><h4><p><strong><em> 태그만 사용.\n' +
+    '2. h3=큰 섹션 제목 (금색 강조), h4=소제목(■기호), p=본문 (충분히 상세하게)\n' +
+    '3. 각 섹션: h4 2~4개, 각 h4 아래 p 3~5개. 구체적이고 실용적 내용으로 채울 것.\n' +
+    '4. p태그: 2~4문장, 역학 근거 + 실생활 적용까지 구체적으로.\n' +
+    '5. ⚠️주의/위험: <p>⚠️ 내용</p>  ✦기회/황금기: <p>✦ 내용</p>\n' +
+    '6. ⛔ 5개 섹션 모두 완성 필수. 각 섹션 균등하게 배분할 것.\n' +
+    '7. 마지막 p는 반드시 마침표로 끝낼 것.\n' +
+    '8. 절대 형식적이거나 단순한 내용 금지 — 이 사람만의 구체적 분석을 써라.\n\n' +
+    '=== 서술 방식 (중요) ===\n' +
+    '· 과거→현재→미래 흐름으로 서술\n' +
+    '· 실제 계산된 사주팔자(연주·월주·일주·시주)와 자미두수 포국 값 반드시 인용\n' +
+    '· 구체적 연도·나이·시기를 명시 (예: 2026년 하반기, 47세 이후)\n' +
+    '· 역학 용어는 <em>태그</em>로, 핵심 키워드는 <strong>태그</strong>로\n\n'
 
   var systemPrompt = '당신은 자미두수·매화역수·기문둔갑 40년 경력 명리학 대가입니다. HTML만 출력하고 다른 텍스트는 절대 쓰지 마세요.';
 
@@ -4195,33 +4310,33 @@ async function generate50PReport() {
   var prompt1 = '당신은 자미두수·매화역수·기문둔갑을 40년간 연구한 최고 명리학 대가입니다.\n' +
     inp.name + '님의 인생 지침서 1부를 작성하세요.\n\n' +
     baseData + formatRules +
-    '아래 5개 섹션을 순서대로 완성하라:\n\n' +
+    '아래 5개 섹션을 순서대로 완성하라. 각 섹션은 충분히 상세하게:\n\n' +
     '1. <h3>🌟 ' + (r.star||'') + ' 명주(命主) 총평 — 당신은 어떤 사람인가</h3>\n' +
-    '주성 기질·강점3·약점3·보성조합·사화배치·반복패턴.\n\n' +
+    '주성 근본 기질, 강점 3가지(역학 근거 포함), 약점 3가지(극복법 포함), 보성 조합이 만드는 개성, 사화 배치 영향, 인생 반복 패턴과 탈출법.\n\n' +
     '2. <h3>📊 생애 대운 완전 분석 — 20대부터 70대까지</h3>\n' +
-    '각 10년 대운 성曜·현재 대운(' + (r.daewoon||'') + ') 분석·황금기·주의 시기.\n\n' +
+    '각 10년 대운 성曜와 기운, 현재 대운(' + (r.daewoon||'') + ') 전반기/후반기 차이, 인생 황금기 시기와 이유, 가장 위험한 대운, 시기별 해야할 것/하지말아야 할 것.\n\n' +
     '3. <h3>💰 재물·부동산·투자운 완전 분석</h3>\n' +
-    '재백궁 배치·재물취득방식·투자적합3가지·절대금지투자·부동산운·향후5년재물흐름·사업vs직장.\n\n' +
+    '재백궁 배치로 본 재물 취득 방식, 재물 들어오는 시기와 나가는 패턴, 투자 적합 분야 3가지(이유 포함), 절대 금지 투자, 부동산 최적 타이밍, 향후 5년 재물 흐름, 사업vs직장 판단.\n\n' +
     '4. <h3>🏆 직업·커리어·명예운 완전 분석</h3>\n' +
-    '관록궁 최적직군3·현직장운실태·이직창업타이밍·상사동료관계·3년커리어전환점.\n\n' +
+    '관록궁으로 본 최적 직군 3가지(구체적 직업명), 현재 직장운 실태, 이직/창업 타이밍, 상사/동료 관계 패턴, 향후 3년 커리어 전환점.\n\n' +
     '5. <h3>💕 애정·결혼·인간관계 완전 분석</h3>\n' +
-    '부처궁으로 기혼/미혼 추정→맞춤분석·연애패턴·이상형·결혼/이혼/재혼운·인간관계 주의.\n\n';
+    '부처궁으로 기혼/미혼 추정 후 맞춤 분석, 연애 패턴과 반복 실수, 이상형 특성, 결혼/이혼/재혼 시기, 인간관계 주의 유형.\n\n';
 
   // ── 2단계: 섹션 6~10 ──
   var prompt2 = '당신은 자미두수·매화역수·기문둔갑을 40년간 연구한 최고 명리학 대가입니다.\n' +
     inp.name + '님의 인생 지침서 2부를 작성하세요.\n\n' +
     baseData + formatRules +
-    '아래 5개 섹션을 순서대로 완성하라:\n\n' +
+    '아래 5개 섹션을 순서대로 완성하라. 각 섹션 충분히 상세하게:\n\n' +
     '6. <h3>🏥 건강·체질 완전 분석</h3>\n' +
-    '질액궁 오행체질·주의신체3곳·시기별건강주의·식습관운동·2026~2028건강관리법.\n\n' +
+    '질액궁 오행 체질(강한/약한 오행), 주의해야 할 신체 부위 3곳(역학 근거), 시기별 건강 주의, 권장 음식·운동·생활습관, 2026~2028 건강 관리 포인트.\n\n' +
     '7. <h3>🧭 기문둔갑 전략 — 방위·시기·귀인</h3>\n' +
-    '올해 최고 길방·흉방·사업이동방위·계약협상유리시간대·귀인방향·귀인특성.\n\n' +
+    '올해 최고 길방과 흉방, 사업/이동 최적 방위(거주지 기준), 계약·협상·미팅에 유리한 시간대, 귀인 방향과 귀인 특성, 피해야 할 방위와 이유.\n\n' +
     '8. <h3>🌸 매화역수 — 이달부터 12개월 월별 운세</h3>\n' +
-    '각 월 2~3줄로만 작성. 형식: <h4>■ N월 — 제목</h4><p>운기방향</p><p>핵심행동</p>. TOP3월은 ✦ 표시.\n\n' +
+    '형식: <h4>■ N월 — 제목</h4><p>운기방향과 핵심조언</p> TOP3 중요한 달은 ✦ 표시. 각 월 2~3문장.\n\n' +
     '9. <h3>✨ 개운법·주의사항 실전 가이드</h3>\n' +
-    '구조적약점3·오행보완법·색깔음식방향숫자·매일실천개운법·이달주의사항3.\n\n' +
+    '이 명반 구조적 약점 3가지와 각각의 구체적 개운법, 오행 보완 방법(색상·음식·방향·숫자), 매일 실천 개운법, 이달 특별 주의사항.\n\n' +
     '10. <h3>📅 2025~2028 핵심 타임라인</h3>\n' +
-    '연도별 가장중요사건·기회·위험. 생애파동: ' + JSON.stringify(r.wave_data||[]) + '. 각연도 h4로 구분.\n\n';
+    '연도별로 <h4>■ 20XX년</h4> 형식으로 구분. 각 연도: 핵심 사건/기회/위험, 행동 지침. 생애파동: ' + JSON.stringify(r.wave_data||[]) + '\n\n';
 
   var fullHtml = '';
 
@@ -5284,6 +5399,180 @@ function calcZiweiChart(year, month, day, timeStr) {
   };
 }
 
+
+/* ══════════════════════════════════════
+   관리자 대량 리포트 생성
+══════════════════════════════════════ */
+function bulkGetInput() {
+  return {
+    name:   (document.getElementById('bulk-name')  ||{}).value||'',
+    email:  (document.getElementById('bulk-email') ||{}).value||'',
+    year:   (document.getElementById('bulk-year')  ||{}).value||'',
+    month:  (document.getElementById('bulk-month') ||{}).value||'',
+    day:    (document.getElementById('bulk-day')   ||{}).value||'',
+    time:   (document.getElementById('bulk-time')  ||{}).value||'',
+    gender: (document.getElementById('bulk-gender')||{}).value||'남',
+    cal: '양력'
+  };
+}
+function bulkSetStatus(msg, color) {
+  var el = document.getElementById('bulk-status');
+  if (el) { el.textContent = msg; el.style.color = color || 'var(--t2)'; }
+}
+async function bulkGenerate() {
+  var inp = bulkGetInput();
+  if (!inp.name || !inp.year || !inp.month || !inp.day) {
+    bulkSetStatus('⚠️ 이름·생년월일 필수', '#e74c3c'); return;
+  }
+  document.getElementById('inp-name').value  = inp.name;
+  document.getElementById('inp-year').value  = inp.year;
+  document.getElementById('inp-month').value = inp.month;
+  document.getElementById('inp-day').value   = inp.day;
+  if (inp.time) document.getElementById('inp-time').value = inp.time;
+  selectedGender = inp.gender; selectedCal = '양력';
+  bulkSetStatus('⏳ 사주 분석 중... 약 15초', 'var(--gold)');
+  try {
+    await doSajuScan();
+    var wc = 0;
+    var wi = setInterval(function() {
+      wc++;
+      if (window.lastSajuResult || wc > 30) {
+        clearInterval(wi);
+        bulkSetStatus('✅ 분석 완료! 인생 지침서 생성 중...', 'var(--em)');
+        showPg('report');
+        setTimeout(function() {
+          var btn = document.getElementById('report-generate-btn');
+          if (btn && btn.style.display !== 'none') btn.click();
+        }, 500);
+      }
+    }, 1000);
+  } catch(e) { bulkSetStatus('❌ 오류: ' + e.message, '#e74c3c'); }
+}
+async function bulkSendEmail() {
+  var inp = bulkGetInput();
+  if (!inp.email) { bulkSetStatus('⚠️ 이메일 입력 필수', '#e74c3c'); return; }
+  await bulkGenerate();
+  var wc = 0;
+  var wi = setInterval(function() {
+    wc++;
+    var rb = document.getElementById('report-full-body');
+    if ((rb && rb.innerHTML.length > 500) || wc > 120) {
+      clearInterval(wi);
+      if (rb && rb.innerHTML.length > 500) {
+        bulkSetStatus('✅ 완성! 이메일 발송 창 열기...', 'var(--em)');
+        setTimeout(function() { sendReportEmail(inp.email); }, 500);
+      }
+    }
+  }, 1000);
+}
+
+/* ══════════════════════════════════════
+   궁합 분석
+══════════════════════════════════════ */
+function showCompatibility() { showPg('compat'); setTimeout(renderCompatPage, 100); }
+
+function renderCompatPage() {
+  var profiles = [];
+  try { profiles = JSON.parse(localStorage.getItem('cw_profiles') || '[]'); } catch(e) {}
+  ['compat-sel1','compat-sel2'].forEach(function(id) {
+    var sel = document.getElementById(id);
+    if (!sel) return;
+    sel.innerHTML = '<option value="">직접 입력</option>' +
+      profiles.map(function(p, i) {
+        return '<option value="' + i + '">' + p.name + ' (' + p.year + '.' + p.month + '.' + p.day + ')</option>';
+      }).join('');
+  });
+}
+
+function loadCompatProfile(num) {
+  var profiles = [];
+  try { profiles = JSON.parse(localStorage.getItem('cw_profiles') || '[]'); } catch(e) {}
+  var sel = document.getElementById('compat-sel' + num);
+  var idx = parseInt((sel||{}).value);
+  if (isNaN(idx) || !profiles[idx]) return;
+  var p = profiles[idx];
+  ['name','year','month','day'].forEach(function(f) {
+    var el = document.getElementById('compat' + num + '-' + f);
+    if (el) el.value = p[f] || '';
+  });
+  var gEl = document.getElementById('compat' + num + '-gender');
+  if (gEl) gEl.value = p.gender || '남';
+}
+
+async function runCompatibility() {
+  var btn = document.getElementById('compat-btn');
+  var resultEl = document.getElementById('compat-result');
+  if (btn) btn.disabled = true;
+  if (resultEl) resultEl.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--t2);font-size:13px;">💑 궁합 분석 중... 약 20초</div>';
+
+  function getP(n) {
+    return {
+      name:   (document.getElementById('compat'+n+'-name')  ||{}).value||'',
+      year:   (document.getElementById('compat'+n+'-year')  ||{}).value||'',
+      month:  (document.getElementById('compat'+n+'-month') ||{}).value||'',
+      day:    (document.getElementById('compat'+n+'-day')   ||{}).value||'',
+      gender: (document.getElementById('compat'+n+'-gender')||{}).value||'남'
+    };
+  }
+  var p1 = getP(1), p2 = getP(2);
+  if (!p1.name||!p1.year||!p2.name||!p2.year) {
+    if (resultEl) resultEl.innerHTML = '<div style="color:#e74c3c;padding:1rem;">⚠️ 두 분의 이름과 생년월일을 입력해주세요.</div>';
+    if (btn) btn.disabled = false; return;
+  }
+
+  var prompt = '자미두수·매화역수·기문둔갑으로 두 사람의 궁합을 분석하라.\n\n' +
+    '【첫번째】' + p1.name + '·' + p1.gender + '·' + p1.year + '년' + p1.month + '월' + p1.day + '일\n' +
+    '【두번째】' + p2.name + '·' + p2.gender + '·' + p2.year + '년' + p2.month + '월' + p2.day + '일\n\n' +
+    'HTML(<h3><h4><p><strong><em>)로 작성:\n' +
+    '1.<h3>💑 궁합 종합 점수 및 총평</h3> 점수(100점만점)·총평·핵심특성\n' +
+    '2.<h3>⚡ 오행 상생·상극 분석</h3> 충돌지점·보완지점\n' +
+    '3.<h3>💬 소통·감정 궁합</h3> 대화방식·갈등유형·감정패턴\n' +
+    '4.<h3>💰 재물·사업 궁합</h3> 함께할때 재물운·사업파트너 가능성\n' +
+    '5.<h3>💕 애정·결혼 궁합</h3> 결혼적합도·장기전망·주의사항\n' +
+    '6.<h3>✨ 관계 발전 조언</h3> 구체적 조언 3가지\n\n' +
+    '각 섹션 h4 2~3개, p 2~4개. 구체적·실용적으로.';
+
+  try {
+    var response = await fetch('/api/saju', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-6', max_tokens: 6000,
+        system: '당신은 자미두수·매화역수·기문둔갑 40년 경력 명리학 대가입니다. HTML만 출력.',
+        messages: [{ role: 'user', content: prompt }]
+      })
+    });
+    var reader = response.body.getReader();
+    var decoder = new TextDecoder();
+    var html = '', buf = '';
+    while (true) {
+      var chunk = await reader.read();
+      if (chunk.done) break;
+      buf += decoder.decode(chunk.value, { stream: true });
+      var ls = buf.split('\n'); buf = ls.pop() || '';
+      for (var li = 0; li < ls.length; li++) {
+        var ln = ls[li].trim();
+        if (!ln.startsWith('data: ')) continue;
+        var dt = ln.slice(6).trim();
+        if (dt === '[DONE]') continue;
+        try {
+          var ev = JSON.parse(dt);
+          if (ev.type === 'content_block_delta' && ev.delta && ev.delta.text) {
+            html += ev.delta.text;
+            if (resultEl && html.length % 300 === 0) {
+              resultEl.innerHTML = renderReportHtml({name: p1.name + ' · ' + p2.name}, {}, html + '<span class="typing-cursor">|</span>');
+            }
+          }
+        } catch(e) {}
+      }
+    }
+    if (resultEl) resultEl.innerHTML = renderReportHtml({name: p1.name + ' · ' + p2.name}, {}, html);
+    showShareToast('💑 궁합 분석 완료!');
+  } catch(e) {
+    if (resultEl) resultEl.innerHTML = '<div style="color:#e74c3c;padding:1rem;">오류: ' + e.message + '</div>';
+  }
+  if (btn) btn.disabled = false;
+}
 
 var SIDO_DATA = {
   '서울특별시': ['강남구','강동구','강북구','강서구','관악구','광진구','구로구','금천구','노원구','도봉구','동대문구','동작구','마포구','서대문구','서초구','성동구','성북구','송파구','양천구','영등포구','용산구','은평구','종로구','중구','중랑구'],

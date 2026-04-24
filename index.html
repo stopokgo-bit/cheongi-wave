@@ -1351,51 +1351,69 @@ async function doSajuScan() {
     const reader = response.body.getReader();
     const decoder = new TextDecoder();
     let fullText = '';
+    let buffer = '';
 
     while (true) {
       const { done, value } = await reader.read();
       if (done) break;
 
-      const chunk = decoder.decode(value, { stream: true });
-      const lines = chunk.split('\n');
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split('\n');
+      // 마지막 불완전한 줄은 버퍼에 남김
+      buffer = lines.pop() || '';
 
       for (const line of lines) {
-        if (!line.startsWith('data: ')) continue;
-        const data = line.slice(6).trim();
+        const trimmed = line.trim();
+        if (!trimmed || !trimmed.startsWith('data: ')) continue;
+        const data = trimmed.slice(6).trim();
         if (data === '[DONE]') continue;
         try {
           const parsed = JSON.parse(data);
-          // content_block_delta 이벤트에서 텍스트 추출
-          if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
+          if (parsed.type === 'content_block_delta' &&
+              parsed.delta && parsed.delta.type === 'text_delta' &&
+              parsed.delta.text) {
             fullText += parsed.delta.text;
           }
-          // message_delta에서 stop 이벤트
-          if (parsed.type === 'message_stop') break;
-        } catch(e) { /* JSON 파싱 실패 무시 */ }
+        } catch(e) { /* 무시 */ }
       }
+    }
+
+    // 버퍼 잔여분 처리
+    if (buffer.trim().startsWith('data: ')) {
+      try {
+        const parsed = JSON.parse(buffer.trim().slice(6));
+        if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
+          fullText += parsed.delta.text;
+        }
+      } catch(e) {}
     }
 
     if (!fullText) throw new Error('AI 응답이 비어있습니다. 다시 시도해주세요.');
 
-    // ✅ JSON 파싱
+    // ✅ JSON 파싱 - 더 강력하게
     let result;
     try {
-      const jsonMatch = fullText.match(/\{[\s\S]*\}/);
-      const clean = jsonMatch ? jsonMatch[0] : fullText.replace(/```json|```/g, '').trim();
+      // 코드블록 제거
+      let clean = fullText.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+      // JSON 객체만 추출
+      const jsonMatch = clean.match(/\{[\s\S]*\}/);
+      if (jsonMatch) clean = jsonMatch[0];
       result = JSON.parse(clean);
     } catch(e) {
+      // 잘린 JSON 복구: 마지막 완성된 필드까지만 파싱
       try {
-        const partial = fullText.substring(0, fullText.lastIndexOf('"') + 1);
-        const fixed = partial.replace(/,\s*$/, '') + ',"summary":"분석 완료"}';
-        result = JSON.parse(fixed);
+        let partial = fullText;
+        // 마지막 완전한 쉼표+따옴표 위치까지 자르기
+        const lastComma = partial.lastIndexOf(',"');
+        if (lastComma > 0) partial = partial.substring(0, lastComma);
+        partial = partial.replace(/,\s*$/, '');
+        // 닫는 중괄호가 없으면 추가
+        if (!partial.trim().endsWith('}')) partial += ',"summary":"분석 완료"}';
+        result = JSON.parse(partial);
       } catch(e2) {
-        result = {
-          star: '분석 완료', summary: '분석이 완료됐습니다.',
-          ziwei: fullText.slice(0, 500),
-          scores: {재물운:75, 직업운:75, 애정운:75, 건강운:75},
-          score_trends: {재물운:'안정', 직업운:'안정', 애정운:'안정', 건강운:'안정'},
-          score_sources: {재물운:'분석 완료', 직업운:'분석 완료', 애정운:'분석 완료', 건강운:'분석 완료'}
-        };
+        // 최후 수단: 빈 결과
+        console.error('JSON 파싱 실패:', e.message, '\nfullText 앞부분:', fullText.slice(0, 200));
+        throw new Error('응답 파싱 오류. 다시 시도해주세요.\n(' + e.message + ')');
       }
     }
 

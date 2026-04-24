@@ -1344,32 +1344,57 @@ async function doSajuScan() {
 
     if (!response.ok) {
       const errBody = await response.text().catch(() => '');
-      throw new Error('서버 오류 ' + response.status + (errBody ? ': ' + errBody.slice(0, 100) : ''));
+      throw new Error('서버 오류 ' + response.status + (errBody ? ': ' + errBody.slice(0, 200) : ''));
     }
 
-    const data = await response.json();
-    const text = data.content ? data.content.map(function(c){ return c.text || ''; }).join('') : '';
+    // ✅ 스트리밍 응답 처리
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let fullText = '';
 
-    if (!text) throw new Error('AI 응답이 비어있습니다. 다시 시도해주세요.');
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
 
-    // ✅ JSON 파싱 강화
+      const chunk = decoder.decode(value, { stream: true });
+      const lines = chunk.split('\n');
+
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const data = line.slice(6).trim();
+        if (data === '[DONE]') continue;
+        try {
+          const parsed = JSON.parse(data);
+          // content_block_delta 이벤트에서 텍스트 추출
+          if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
+            fullText += parsed.delta.text;
+          }
+          // message_delta에서 stop 이벤트
+          if (parsed.type === 'message_stop') break;
+        } catch(e) { /* JSON 파싱 실패 무시 */ }
+      }
+    }
+
+    if (!fullText) throw new Error('AI 응답이 비어있습니다. 다시 시도해주세요.');
+
+    // ✅ JSON 파싱
     let result;
     try {
-      const jsonMatch = text.match(/\{[\s\S]*\}/);
-      const clean = jsonMatch ? jsonMatch[0] : text.replace(/```json|```/g, '').trim();
+      const jsonMatch = fullText.match(/\{[\s\S]*\}/);
+      const clean = jsonMatch ? jsonMatch[0] : fullText.replace(/```json|```/g, '').trim();
       result = JSON.parse(clean);
     } catch(e) {
       try {
-        const partial = text.substring(0, text.lastIndexOf('"') + 1);
+        const partial = fullText.substring(0, fullText.lastIndexOf('"') + 1);
         const fixed = partial.replace(/,\s*$/, '') + ',"summary":"분석 완료"}';
         result = JSON.parse(fixed);
       } catch(e2) {
-        // JSON 파싱 실패 시 기본 구조로 텍스트라도 표시
         result = {
           star: '분석 완료', summary: '분석이 완료됐습니다.',
-          ziwei: text.slice(0, 500), scores: {재물운:75,직업운:75,애정운:75,건강운:75},
-          score_trends: {재물운:'안정',직업운:'안정',애정운:'안정',건강운:'안정'},
-          score_sources: {재물운:'분석 완료',직업운:'분석 완료',애정운:'분석 완료',건강운:'분석 완료'}
+          ziwei: fullText.slice(0, 500),
+          scores: {재물운:75, 직업운:75, 애정운:75, 건강운:75},
+          score_trends: {재물운:'안정', 직업운:'안정', 애정운:'안정', 건강운:'안정'},
+          score_sources: {재물운:'분석 완료', 직업운:'분석 완료', 애정운:'분석 완료', 건강운:'분석 완료'}
         };
       }
     }

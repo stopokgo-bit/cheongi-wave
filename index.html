@@ -593,6 +593,88 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
         </div>
       </div>
 
+      <!-- ✅ 출생지 + 현재 거주지 -->
+      <div class="form-row r2" style="margin-bottom:10px;">
+        <div class="ig">
+          <label>태어난 곳 (출생지)
+            <span style="color:var(--em);font-size:10px;" title="시차 보정 및 기문둔갑 포국에 사용">ⓘ</span>
+          </label>
+          <select id="inp-birthplace" style="width:100%;padding:clamp(8px,1vw,13px) clamp(10px,1.2vw,16px);background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:clamp(12px,1.2vw,16px);font-family:inherit;outline:none;">
+            <option value="">출생지 선택</option>
+            <optgroup label="🇰🇷 서울/경기">
+              <option value="서울">서울특별시</option>
+              <option value="인천">인천광역시</option>
+              <option value="경기 수원">경기 수원</option>
+              <option value="경기 성남">경기 성남</option>
+              <option value="경기 고양">경기 고양</option>
+              <option value="경기 기타">경기 기타</option>
+            </optgroup>
+            <optgroup label="🇰🇷 충청/강원">
+              <option value="대전">대전광역시</option>
+              <option value="충남">충청남도</option>
+              <option value="충북">충청북도</option>
+              <option value="강원">강원도</option>
+            </optgroup>
+            <optgroup label="🇰🇷 영남">
+              <option value="부산">부산광역시</option>
+              <option value="대구">대구광역시</option>
+              <option value="울산">울산광역시</option>
+              <option value="경북">경상북도</option>
+              <option value="경남">경상남도</option>
+            </optgroup>
+            <optgroup label="🇰🇷 호남/제주">
+              <option value="광주">광주광역시</option>
+              <option value="전남">전라남도</option>
+              <option value="전북">전라북도</option>
+              <option value="제주">제주특별자치도</option>
+            </optgroup>
+            <optgroup label="🌏 해외">
+              <option value="미국 동부">미국 동부 (뉴욕/워싱턴)</option>
+              <option value="미국 서부">미국 서부 (LA/샌프란시스코)</option>
+              <option value="캐나다">캐나다</option>
+              <option value="일본">일본</option>
+              <option value="중국">중국</option>
+              <option value="유럽">유럽</option>
+              <option value="동남아">동남아시아</option>
+              <option value="기타 해외">기타 해외</option>
+            </optgroup>
+          </select>
+        </div>
+        <div class="ig">
+          <label>현재 거주지
+            <span style="color:var(--em);font-size:10px;" title="기문둔갑 길방·흉방 계산 기준">ⓘ</span>
+          </label>
+          <select id="inp-location" style="width:100%;padding:clamp(8px,1vw,13px) clamp(10px,1.2vw,16px);background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:clamp(12px,1.2vw,16px);font-family:inherit;outline:none;">
+            <option value="">거주지 선택</option>
+            <optgroup label="🇰🇷 서울/경기">
+              <option value="서울">서울특별시</option>
+              <option value="인천">인천광역시</option>
+              <option value="경기">경기도</option>
+            </optgroup>
+            <optgroup label="🇰🇷 지방">
+              <option value="부산">부산광역시</option>
+              <option value="대구">대구광역시</option>
+              <option value="대전">대전광역시</option>
+              <option value="광주">광주광역시</option>
+              <option value="울산">울산광역시</option>
+              <option value="강원">강원도</option>
+              <option value="충청">충청도</option>
+              <option value="경상">경상도</option>
+              <option value="전라">전라도</option>
+              <option value="제주">제주도</option>
+            </optgroup>
+            <optgroup label="🌏 해외">
+              <option value="미국">미국</option>
+              <option value="일본">일본</option>
+              <option value="중국">중국</option>
+              <option value="유럽">유럽</option>
+              <option value="동남아">동남아시아</option>
+              <option value="기타 해외">기타 해외</option>
+            </optgroup>
+          </select>
+        </div>
+      </div>
+
       <div class="form-row r2" style="margin-bottom:10px;">
         <div class="ig">
           <label>태어난 시간 (생시) <span style="color:var(--em);font-size:10px;" title="시간 미입력 시 성격/기질 위주 분석">ⓘ</span></label>
@@ -1127,6 +1209,16 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
 
       <!-- PDF/이메일 버튼 (리포트 생성 후 표시) -->
       <div id="report-action-btns" style="display:none;margin-bottom:1rem;">
+        <!-- ✅ 면책 문구 -->
+        <div style="background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:.6rem .85rem;margin-bottom:.6rem;font-size:11px;color:rgba(255,255,255,0.35);line-height:1.6;">
+          ℹ️ AI 기반 명리 참고 자료입니다. 실제 사주팔자를 계산하여 방향성을 제시하나, 중요한 결정은 전문가와 상의하세요.
+        </div>
+        <!-- ✅ 재생성 버튼 -->
+        <div id="report-regen-btn" style="display:none;margin-bottom:8px;">
+          <button onclick="generate50PReport()" style="width:100%;padding:10px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;">
+            🔄 인생 지침서 다시 생성
+          </button>
+        </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
           <button onclick="downloadPDF()" style="padding:12px;background:rgba(255,215,0,0.12);border:1px solid rgba(255,215,0,0.35);border-radius:10px;color:var(--gold);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;display:flex;align-items:center;justify-content:center;gap:6px;">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -1366,12 +1458,16 @@ async function doSajuScan() {
   const todayStr = today.getFullYear() + '년 ' + (today.getMonth()+1) + '월 ' + today.getDate() + '일';
   const age = today.getFullYear() - parseInt(yearVal);
 
+  const birthplace = (document.getElementById('inp-birthplace') || {}).value || '';
+  const location = (document.getElementById('inp-location') || {}).value || '';
+
   // ✅ 마지막 입력값 자동 저장
   try {
     localStorage.setItem('cw_last_input', JSON.stringify({
       name: name, year: year, month: month, day: day,
       time: timeStr, unk: unknownTime,
-      gender: gender, cal: cal
+      gender: gender, cal: cal,
+      birthplace: birthplace, location: location
     }));
   } catch(e) {}
 
@@ -1400,7 +1496,9 @@ async function doSajuScan() {
 
   const prompt =
     '사주 분석 대상:\n' +
-    '이름: ' + name + ' | 성별: ' + gender + ' | 생년월일: ' + year + '년 ' + month + '월 ' + day + '일(' + cal + ') | 생시: ' + timeStr + ' | 나이: ' + age + '세 | 오늘: ' + todayStr + '\n\n' +
+    '이름: ' + name + ' | 성별: ' + gender + ' | 생년월일: ' + year + '년 ' + month + '월 ' + day + '일(' + cal + ') | 생시: ' + timeStr + ' | 나이: ' + age + '세 | 오늘: ' + todayStr + '\n' +
+    (birthplace ? '출생지: ' + birthplace + ' | ' : '') +
+    (location ? '현재거주지: ' + location + '\n' : '\n') +
     '아래 JSON 형식으로만 응답하세요. 각 텍스트 필드는 반드시 4~6문장으로 작성하세요.\n\n' +
     '{\n' +
     '"star":"주성명",\n' +
@@ -1443,6 +1541,7 @@ async function doSajuScan() {
     '4. 구체적 연도, 궁위 이름, 성曜 이름을 반드시 포함하라.\n' +
     '5. 마지막 문장을 완성하라.\n' +
     '6. 나이와 명반으로 인생단계를 파악하라. 부처궁으로 기혼/미혼 추정 후 애정운 방향 결정. 20~30대=연애·결혼적기, 40~50대=부부관계·자녀·커리어전환, 60대+=건강·노후. 나이와 맞지 않는 형식적 조언 절대 금지.' +
+    '7. 출생지가 있으면 시차 보정과 지역 특성 반영. 현재 거주지가 있으면 기문둔갑 길방을 거주지 기준으로 계산(예: 서울 거주자의 동쪽=강원 방향, 서쪽=서해 방향).\\n' +
     '=== 자미두수 분석 기준 ===\n' +
     '- 명궁 주성(14주성: 자미·천기·태양·무곡·천동·염정·천부·태음·탐랑·거문·천상·천량·칠살·파군) 파악\n' +
     '- 보성(문창·문곡·좌보·우필·천괴·천월·록존·천마 등) 조합 분석\n' +
@@ -2724,6 +2823,8 @@ function saveCurrentProfile() {
   var day   = (document.getElementById('inp-day')   || {}).value || '';
   var time  = (document.getElementById('inp-time')  || {}).value || '';
   var unk   = (document.getElementById('unk')       || {}).checked || false;
+  var birthplace = (document.getElementById('inp-birthplace') || {}).value || '';
+  var location   = (document.getElementById('inp-location')   || {}).value || '';
 
   if (!name || !year || !month || !day) {
     showShareToast('⚠️ 이름과 생년월일을 먼저 입력해주세요'); return;
@@ -2748,6 +2849,7 @@ function saveCurrentProfile() {
     name: name, year: year, month: month, day: day,
     time: time, unk: unk,
     gender: selectedGender, cal: selectedCal,
+    birthplace: birthplace, location: location,
     savedAt: new Date().toLocaleDateString('ko-KR')
   });
   saveProfiles(profiles);
@@ -2766,6 +2868,8 @@ function loadProfile(idx) {
   document.getElementById('inp-day').value   = p.day   || '';
   document.getElementById('inp-time').value  = p.time  || '';
   document.getElementById('unk').checked     = p.unk   || false;
+  if (document.getElementById('inp-birthplace')) document.getElementById('inp-birthplace').value = p.birthplace || '';
+  if (document.getElementById('inp-location'))   document.getElementById('inp-location').value   = p.location   || '';
 
   setGender(p.gender || '남');
   setCal(p.cal || '양력');
@@ -2833,6 +2937,8 @@ function renderProfileBar() {
         if (p.unk)   document.getElementById('unk').checked     = p.unk;
         if (p.gender) setGender(p.gender);
         if (p.cal)    setCal(p.cal);
+        if (p.birthplace && document.getElementById('inp-birthplace')) document.getElementById('inp-birthplace').value = p.birthplace;
+        if (p.location   && document.getElementById('inp-location'))   document.getElementById('inp-location').value   = p.location;
       }, 100);
     }
   } catch(e) {}
@@ -3070,6 +3176,77 @@ function paymentSuccess(priceStr) {
   if (ptag) ptag.textContent = priceStr + ' · ' + (selectedPlan === 'early' ? '얼리버드' : '정가');
   populateReport();
   showShareToast('🎉 결제 완료! 리포트를 생성하세요');
+}
+
+
+/* ══════════════════════════════════════
+   사주팔자 실제 계산
+══════════════════════════════════════ */
+var HEAVENLY_KOR = ['갑(甲)','을(乙)','병(丙)','정(丁)','무(戊)','기(己)','경(庚)','신(辛)','임(壬)','계(癸)'];
+var EARTHLY_KOR  = ['자(子)','축(丑)','인(寅)','묘(卯)','진(辰)','사(巳)','오(午)','미(未)','신(申)','유(酉)','술(戌)','해(亥)'];
+var ANIMALS = ['쥐','소','호랑이','토끼','용','뱀','말','양','원숭이','닭','개','돼지'];
+var OHAENG = ['목(木)','목(木)','화(火)','화(火)','토(土)','토(土)','금(金)','금(金)','수(水)','수(水)'];
+var OHAENG_E = ['수(水)','토(土)','목(木)','목(木)','토(土)','화(火)','화(火)','토(土)','금(金)','금(金)','토(土)','수(水)'];
+
+function calcSajuPillar(year, month, day) {
+  // 연주
+  var yh = (year - 4) % 10;
+  var ye = (year - 4) % 12;
+  if (yh < 0) yh += 10;
+  if (ye < 0) ye += 12;
+
+  // 월주 (연간 기준 월간 계산)
+  var baseH = (yh % 5) * 2;
+  var mh = (baseH + month - 1) % 10;
+  var me = (month + 1) % 12;
+
+  // 일주 (율리우스일 기반)
+  var y = year, m = month, d = day;
+  if (m < 3) { m += 12; y -= 1; }
+  var A = Math.floor(y / 100);
+  var B = 2 - A + Math.floor(A / 4);
+  var jd = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + B - 1524;
+  var dh = ((jd - 11) % 10 + 10) % 10;
+  var de = ((jd - 11) % 12 + 12) % 12;
+
+  return {
+    year:  { h: yh, e: ye, str: HEAVENLY_KOR[yh] + ' ' + EARTHLY_KOR[ye], animal: ANIMALS[ye], ohaeng: OHAENG[yh] + '·' + OHAENG_E[ye] },
+    month: { h: mh, e: me, str: HEAVENLY_KOR[mh] + ' ' + EARTHLY_KOR[me] },
+    day:   { h: dh, e: de, str: HEAVENLY_KOR[dh] + ' ' + EARTHLY_KOR[de] },
+    // 일간(日干) - 본인의 핵심
+    daegan: HEAVENLY_KOR[dh],
+    // 오행 강약 분석
+    ohaengCount: calcOhaengBalance(yh, ye, mh, me, dh, de)
+  };
+}
+
+function calcOhaengBalance(yh, ye, mh, me, dh, de) {
+  var counts = {목:0, 화:0, 토:0, 금:0, 수:0};
+  var oMap = {0:'목',1:'목',2:'화',3:'화',4:'토',5:'토',6:'금',7:'금',8:'수',9:'수'};
+  var eMap = {0:'수',1:'토',2:'목',3:'목',4:'토',5:'화',6:'화',7:'토',8:'금',9:'금',10:'토',11:'수'};
+  [yh,mh,dh].forEach(function(h){ counts[oMap[h]]++; });
+  [ye,me,de].forEach(function(e){ counts[eMap[e]]++; });
+  var max='목', min='목';
+  Object.keys(counts).forEach(function(k){ if(counts[k]>counts[max]) max=k; if(counts[k]<counts[min]) min=k; });
+  return { counts: counts, strongest: max, weakest: min };
+}
+
+function getSajuString(year, month, day, time) {
+  var p = calcSajuPillar(parseInt(year), parseInt(month), parseInt(day));
+  var timeH = '미상';
+  if (time) {
+    var timeMap = {'자시':0,'축시':1,'인시':2,'묘시':3,'진시':4,'사시':5,'오시':6,'미시':7,'신시':8,'유시':9,'술시':10,'해시':11};
+    if (timeMap[time] !== undefined) {
+      var th = (p.day.h % 5 * 2 + timeMap[time]) % 10;
+      timeH = HEAVENLY_KOR[th] + ' ' + EARTHLY_KOR[timeMap[time]];
+    }
+  }
+  return {
+    pillars: p,
+    timeStr: timeH,
+    summary: '연주: ' + p.year.str + ' (' + p.year.animal + '띠) | 월주: ' + p.month.str + ' | 일주: ' + p.day.str + (timeH!=='미상' ? ' | 시주: ' + timeH : ' | 시주: 미상') + '\n' +
+             '일간(本命): ' + p.daegan + ' | 강한 오행: ' + p.ohaengCount.strongest + '(木) | 약한 오행: ' + p.ohaengCount.weakest
+  };
 }
 
 /* ══════════════════════════════════════
@@ -3733,6 +3910,7 @@ function checkScanBeforeReport() {
 
 function renderReportHtml(inp, r, html) {
   var styled = (html || '')
+    .replace(/```html?\s*/gi, '').replace(/```\s*/g, '')  // ✅ 코드블록 제거
     .replace(/<h3>/g, '<div style="font-size:15px;font-weight:800;color:#fff;margin-top:2rem;margin-bottom:.5rem;padding:8px .85rem;border-left:4px solid var(--gold);background:rgba(255,215,0,0.05);border-radius:0 8px 8px 0;line-height:1.4;">')
     .replace(/<\/h3>/g, '</div>')
     .replace(/<h4>/g, '<div style="font-size:13px;font-weight:700;color:var(--t3);margin:1rem 0 .3rem .85rem;padding-left:8px;border-left:2px solid rgba(255,255,255,0.2);">')
@@ -3766,16 +3944,35 @@ async function generate50PReport() {
   if (scanResults.palm_left) { var pl=scanResults.palm_left; if(pl.overall) scanExtra+='왼손: '+pl.overall+'\n'; if(pl.warning) scanExtra+='왼손주의: '+pl.warning+'\n'; }
   if (scanResults.palm_right) { var pr=scanResults.palm_right; if(pr.overall) scanExtra+='오른손: '+pr.overall+'\n'; if(pr.warning) scanExtra+='오른손주의: '+pr.warning+'\n'; }
 
-  var baseData = '분석 데이터: ' + JSON.stringify(r) + '\n\n' +
-    (scanExtra ? '스캔 데이터:\n' + scanExtra + '\n' : '') +
-    '이름: ' + inp.name + ' · 생년월일: ' + inp.year + '.' + inp.month + '.' + inp.day + ' · ' + (inp.gender||'') + ' · 만 ' + (new Date().getFullYear()-parseInt(inp.year)) + '세\n\n';
+  // ✅ 실제 사주팔자 계산
+  var sajuCalc = getSajuString(inp.year, inp.month, inp.day, inp.time);
+  var currentYear = new Date().getFullYear();
+  var age = currentYear - parseInt(inp.year);
 
-  var formatRules = '=== 규칙 ===\n' +
+  var baseData = '=== 실제 사주팔자 (계산값) ===\n' +
+    sajuCalc.summary + '\n' +
+    '강한 오행: ' + sajuCalc.pillars.ohaengCount.strongest + ' / 약한 오행(보완 필요): ' + sajuCalc.pillars.ohaengCount.weakest + '\n\n' +
+    '=== AI 분석 데이터 ===\n' +
+    '분석결과: ' + JSON.stringify(r) + '\n\n' +
+    (scanExtra ? '=== 관상·손금 스캔 ===\n' + scanExtra + '\n' : '') +
+    '=== 기본 정보 ===\n' +
+    '이름: ' + inp.name + ' · 성별: ' + (inp.gender||'') + ' · 만 ' + age + '세 · ' + (inp.cal||'양력') + '\n' +
+    '현재연도: ' + currentYear + ' · 현재 대운: ' + (r.daewoon||'') + '\n\n';
+
+  var formatRules = '=== 작성 규칙 ===\n' +
     '1. HTML만 출력. <h3><h4><p><strong><em><br> 태그만 사용.\n' +
-    '2. h3=섹션제목(금색배경), h4=소제목(■ 기호), p=본문\n' +
-    '3. 각 섹션: h4 2~3개, 각 h4 아래 p 2~3개. 짧고 명확하게.\n' +
-    '4. ⚠️ 주의사항: <p>⚠️ 내용</p>  ✦ 기회/황금기: <p>✦ 내용</p>\n' +
-    '5. 마지막 문장 반드시 마침표로 끝낼 것.\n\n';
+    '2. h3=섹션제목, h4=소제목(■ 기호), p=본문\n' +
+    '3. 각 섹션: h4 2~3개, 각 p 2~3개. 짧고 명확하게.\n' +
+    '4. ⚠️ 주의: <p>⚠️ 내용</p>  ✦ 기회: <p>✦ 내용</p>\n' +
+    '5. 마지막 문장 마침표로 끝낼 것.\n\n' +
+    '=== 서술 방식 (매우 중요) ===\n' +
+    '반드시 과거→현재→미래 흐름으로 서술하라:\n' +
+    '- 과거: 지금까지 어떤 삶을 살아왔는지 (사주 구조로 추론)\n' +
+    '- 현재: 지금 어떤 상황에 있을 가능성이 높은지 (대운+나이 기준)\n' +
+    '- 미래: 앞으로 어떤 일이 기다리고 있는지 (구체적 시기와 내용)\n' +
+    '예시: "지금까지 ○○한 삶의 패턴을 반복해왔을 것입니다. 현재는 ○○한 상황에 있을 가능성이 높으며, 앞으로 ○○년에 ○○한 변화가 찾아올 것입니다."\n\n' +
+    '=== 사용 가능한 실제 데이터 ===\n' +
+    '반드시 위에 제공된 실제 사주팔자(연주·월주·일주·시주)와 오행 강약을 분석에 활용하라. 일간(日干)이 본인의 핵심 기운이다.\n\n';
 
   var systemPrompt = '당신은 자미두수·매화역수·기문둔갑 40년 경력 명리학 대가입니다. HTML만 출력하고 다른 텍스트는 절대 쓰지 마세요.';
 
@@ -3880,6 +4077,9 @@ async function generate50PReport() {
       bodyEl.innerHTML = renderReportHtml(inp, r, fullHtml);
       var actionBtns = document.getElementById('report-action-btns');
       if (actionBtns) actionBtns.style.display = 'block';
+      // ✅ 재생성 버튼 표시
+      var regenBtn = document.getElementById('report-regen-btn');
+      if (regenBtn) regenBtn.style.display = 'block';
       try { localStorage.setItem('cw_report_' + inp.name, JSON.stringify({html: fullHtml, date: new Date().toISOString()})); } catch(e) {}
     }
 

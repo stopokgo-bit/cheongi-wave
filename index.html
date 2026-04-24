@@ -340,35 +340,21 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
 .ib-body em{color:var(--em);font-style:normal;font-weight:600;}
 .ib-body b{color:var(--gold);font-weight:600;}
 
-/* CMS */
-.promo{background:rgba(80,200,120,0.1);border:1px solid rgba(80,200,120,0.2);border-radius:16px 16px 0 0;padding:1rem 1.5rem;display:flex;align-items:center;justify-content:space-between;gap:1rem;flex-wrap:wrap;}
-.promo-btn{padding:8px 18px;background:var(--em);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:600;cursor:pointer;font-family:inherit;}
-.promo-btn:hover{background:#3db866;}
-.cms-body{background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-top:none;border-radius:0 0 16px 16px;padding:1.25rem 1.5rem;display:grid;grid-template-columns:1fr 250px;gap:1.5rem;}
-@media(max-width:640px){.cms-body{grid-template-columns:1fr;}}
-.cms-mt{font-size:14px;font-weight:700;color:#fff;margin-bottom:.75rem;display:flex;align-items:center;gap:6px;}
-.cms-mt svg{width:15px;height:15px;stroke:var(--em);}
-.mcds{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:.9rem;}
-.mc{background:rgba(255,255,255,0.05);border-radius:10px;padding:.7rem;}
-.mcl{font-size:11px;color:var(--t2);margin-bottom:.25rem;display:flex;align-items:center;gap:4px;}
-.mcl svg{width:11px;height:11px;stroke:var(--t2);}
-.mcv{font-size:19px;font-weight:700;color:#fff;}
-.mcd{font-size:11px;color:var(--em);margin-top:2px;}
-.mcd.gold{color:var(--gold);}
-.stit{font-size:13px;font-weight:600;color:#fff;margin-bottom:.6rem;}
-.stbl{width:100%;border-collapse:collapse;font-size:12px;table-layout:fixed;}
-.stbl th{color:var(--t2);font-weight:500;padding:6px;text-align:left;border-bottom:1px solid rgba(255,255,255,0.08);}
-.stbl td{padding:7px 6px;border-bottom:1px solid rgba(255,255,255,0.05);color:var(--t3);}
-.stbl td.neg{color:#e74c3c;}.stbl td.pos{color:var(--em);}
-.kwt{font-size:14px;font-weight:700;color:#fff;margin-bottom:.65rem;}
-.kwc{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:.85rem;}
-.kw{padding:4px 11px;border-radius:20px;border:1px solid rgba(255,255,255,0.14);font-size:12px;color:var(--t);cursor:pointer;transition:all .2s;}
-.kw:hover{border-color:var(--em);color:var(--em);}
-.kw .n{color:var(--em);font-weight:600;margin-left:3px;}
-.rvc{background:rgba(255,255,255,0.04);border-radius:10px;padding:.75rem;border:1px solid var(--bd);}
-.rvt{font-size:12px;color:var(--t2);line-height:1.6;font-style:italic;margin-bottom:.45rem;}
-.rvs{color:var(--gold);font-size:13px;}
-
+/* ADMIN */
+.admin-tab{padding:7px 16px;border-radius:20px;border:1px solid var(--bd);background:none;color:var(--t2);font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;transition:all .15s;}
+.admin-tab.on{background:var(--em);border-color:var(--em);color:#fff;}
+.member-card{background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:12px;padding:.85rem 1rem;transition:all .2s;}
+.member-card:hover{border-color:rgba(255,255,255,0.2);}
+.member-badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;}
+.badge-paid{background:rgba(255,215,0,0.15);color:var(--gold);border:1px solid rgba(255,215,0,0.3);}
+.badge-free{background:rgba(80,200,120,0.15);color:var(--em);border:1px solid rgba(80,200,120,0.3);}
+.badge-admin{background:rgba(138,172,240,0.15);color:#8aacf0;border:1px solid rgba(138,172,240,0.3);}
+.sched-grid{display:grid;grid-template-columns:repeat(7,1fr);gap:2px;margin-top:.5rem;}
+.sched-day{aspect-ratio:1;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:10px;cursor:pointer;transition:all .15s;}
+.sched-day.has-memo{background:rgba(255,215,0,0.15);}
+.sched-day.has-check{background:rgba(80,200,120,0.2);}
+.sched-day.today{border:1.5px solid var(--em);}
+.sched-day:hover{background:rgba(255,255,255,0.1);}
 /* SHARED */
 .cta-row{display:flex;gap:clamp(6px,0.8vw,12px);flex-wrap:wrap;}
 .btn-gold{flex:1;min-width:100px;padding:clamp(10px,1.1vw,15px);background:var(--gold);border:none;border-radius:10px;color:#0f0f3a;font-size:clamp(12px,1.2vw,15px);font-weight:700;cursor:pointer;font-family:inherit;transition:all .2s;}
@@ -490,10 +476,10 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
         <span class="nav-label">서비스</span>
       </button>
-      <!-- CMS: 모바일에선 숨김 -->
-      <button class="nbtn nav-cms-btn" id="bn-cms" onclick="showPg('main',this,'cms')" title="전문가 CMS">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
-        <span class="nav-label">CMS</span>
+      <!-- 관리 버튼 (로그인 시에만 표시) -->
+      <button class="nbtn nav-cms-btn" id="bn-admin" onclick="showAdminPage()" title="회원 관리" style="display:none;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M18 13v6M21 16h-6"/></svg>
+        <span class="nav-label">관리</span>
       </button>
       <!-- 로그인 -->
       <div id="nav-auth-area">
@@ -689,33 +675,47 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
   </div>
 
   <!-- CMS -->
+  <!-- ADMIN: 유료회원 관리 -->
   <div id="pg-main-cms" class="pg">
-    <div class="fu" style="border:1px solid var(--bd);border-radius:16px;overflow:hidden;margin-bottom:1.25rem;">
-      <div class="promo">
-        <div><div style="font-size:14px;font-weight:700;color:#fff;">신규 전문가 '샛별' 프로모션 적용 중</div><div style="font-size:12px;color:var(--t2);margin-top:2px;">90일간 최고 등급 수수료 혜택이 적용됩니다.</div></div>
-        <button class="promo-btn">상세 혜택 보기</button>
-      </div>
-      <div class="cms-body">
-        <div>
-          <div class="cms-mt"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>실시간 성과 지표</div>
-          <div class="mcds">
-            <div class="mc"><div class="mcl"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>총 상담 인원</div><div class="mcv" id="c1">0</div><div class="mcd">+12%</div></div>
-            <div class="mc"><div class="mcl"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>평균 평점</div><div class="mcv" id="c2">0.0</div><div class="mcd gold">Top 1%</div></div>
-            <div class="mc"><div class="mcl"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>누적 수익</div><div class="mcv" id="c3">₩0</div><div class="mcd">+₩340,000</div></div>
-          </div>
-          <div class="stit">정산 캘린더</div>
-          <table class="stbl"><thead><tr><th>날짜</th><th>상담액</th><th>수수료</th><th>정산액</th></tr></thead><tbody>
-            <tr><td>2026.04.21</td><td>₩120,000</td><td class="neg">-₩6,000</td><td class="pos">₩114,000</td></tr>
-            <tr><td>2026.04.20</td><td>₩250,000</td><td class="neg">-₩12,500</td><td class="pos">₩237,500</td></tr>
-            <tr><td>2026.04.19</td><td>₩80,000</td><td class="neg">-₩4,000</td><td class="pos">₩76,000</td></tr>
-          </tbody></table>
+    <div class="pgtop">
+      <div class="back-btn" onclick="showPg('main')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--t)" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg></div>
+      <h1>회원 관리</h1>
+      <div id="admin-role-badge" style="margin-left:auto;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;background:rgba(255,215,0,0.15);color:var(--gold);border:1px solid rgba(255,215,0,0.3);">관리자</div>
+    </div>
+
+    <!-- 역할 탭 -->
+    <div style="display:flex;gap:6px;margin-bottom:1rem;">
+      <button class="admin-tab on" id="tab-all" onclick="setAdminTab('all',this)">전체</button>
+      <button class="admin-tab" id="tab-paid" onclick="setAdminTab('paid',this)">유료회원</button>
+      <button class="admin-tab" id="tab-free" onclick="setAdminTab('free',this)">무료회원</button>
+    </div>
+
+    <!-- 월 네비게이션 -->
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:1rem;background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:12px;padding:.75rem 1rem;">
+      <button onclick="changeAdminMonth(-1)" style="background:none;border:none;color:var(--t);font-size:18px;cursor:pointer;padding:4px 8px;">‹</button>
+      <div id="admin-month-label" style="font-size:15px;font-weight:700;color:#fff;"></div>
+      <button onclick="changeAdminMonth(1)" style="background:none;border:none;color:var(--t);font-size:18px;cursor:pointer;padding:4px 8px;">›</button>
+    </div>
+
+    <!-- 회원 목록 + 스케줄러 -->
+    <div id="admin-member-list" style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:1rem;"></div>
+
+    <!-- 새 회원 추가 (관리자용) -->
+    <div id="admin-add-section" style="background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:12px;padding:1rem;">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.75rem;">+ 회원 추가</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px;">
+        <div class="ig"><label>이름</label><input type="text" id="new-member-name" placeholder="이름"></div>
+        <div class="ig"><label>역할</label>
+          <select id="new-member-role" style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:13px;font-family:inherit;">
+            <option value="paid">유료회원</option>
+            <option value="free">무료회원</option>
+            <option value="admin">관리자</option>
+          </select>
         </div>
-        <div>
-          <div class="kwt">리뷰 키워드 지도</div>
-          <div class="kwc"><span class="kw">#전문성<span class="n">450</span></span><span class="kw">#치유<span class="n">320</span></span><span class="kw">#정확한예측<span class="n">280</span></span><span class="kw">#진절함<span class="n">190</span></span><span class="kw">#통찰력<span class="n">150</span></span></div>
-          <div class="rvc"><div class="rvt">"자미두수 분석이 정말 소름 돋게 정확해요!"</div><div class="rvs">★★★★★</div></div>
-        </div>
       </div>
+      <div class="ig" style="margin-bottom:8px;"><label>이메일</label><input type="text" id="new-member-email" placeholder="이메일 주소"></div>
+      <div class="ig" style="margin-bottom:8px;"><label>메모</label><input type="text" id="new-member-memo" placeholder="특이사항 메모"></div>
+      <button onclick="addAdminMember()" style="width:100%;padding:11px;background:var(--em);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">✓ 추가</button>
     </div>
   </div>
 
@@ -2760,6 +2760,177 @@ function paymentSuccess(priceStr) {
   if (ptag) ptag.textContent = priceStr + ' · ' + (selectedPlan === 'early' ? '얼리버드' : '정가');
   populateReport();
   showShareToast('🎉 결제 완료! 리포트를 생성하세요');
+}
+
+/* ══════════════════════════════════════
+   유료회원 관리 페이지 JS
+══════════════════════════════════════ */
+var adminCurrentMonth = new Date().getMonth();
+var adminCurrentYear = new Date().getFullYear();
+var adminCurrentTab = 'all';
+var ROLE_LABEL = { admin: '관리자', paid: '유료회원', free: '무료회원' };
+var ROLE_BADGE = { admin: 'badge-admin', paid: 'badge-paid', free: 'badge-free' };
+
+function getAdminMembers() {
+  try { return JSON.parse(localStorage.getItem('cw_members') || '[]'); } catch(e) { return []; }
+}
+function saveAdminMembers(arr) {
+  try { localStorage.setItem('cw_members', JSON.stringify(arr)); } catch(e) {}
+}
+
+function showAdminPage() {
+  if (!currentUser) { openAuth('login'); return; }
+  showPg('main', null, 'cms');
+  renderAdminPage();
+}
+
+function renderAdminPage() {
+  var label = document.getElementById('admin-month-label');
+  if (label) label.textContent = adminCurrentYear + '년 ' + (adminCurrentMonth + 1) + '월';
+
+  var members = getAdminMembers();
+  var filtered = members.filter(function(m) {
+    if (adminCurrentTab === 'paid') return m.role === 'paid';
+    if (adminCurrentTab === 'free') return m.role === 'free';
+    return true;
+  });
+
+  var list = document.getElementById('admin-member-list');
+  if (!list) return;
+
+  if (!filtered.length) {
+    list.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--t2);font-size:13px;">등록된 회원이 없습니다<br><span style="font-size:11px;">아래 폼으로 회원을 추가해주세요</span></div>';
+    return;
+  }
+
+  list.innerHTML = filtered.map(function(m) {
+    var schedKey = 'sched_' + m.id + '_' + adminCurrentYear + '_' + adminCurrentMonth;
+    var schedData = {};
+    try { schedData = JSON.parse(localStorage.getItem(schedKey) || '{}'); } catch(e) {}
+
+    var daysInMonth = new Date(adminCurrentYear, adminCurrentMonth + 1, 0).getDate();
+    var firstDay = new Date(adminCurrentYear, adminCurrentMonth, 1).getDay();
+    var today = new Date();
+    var todayD = (today.getMonth() === adminCurrentMonth && today.getFullYear() === adminCurrentYear) ? today.getDate() : -1;
+
+    var calCells = ['일','월','화','수','목','금','토'].map(function(d){
+      return '<div style="font-size:9px;color:var(--t2);text-align:center;padding:2px 0;">' + d + '</div>';
+    }).join('');
+    for (var e = 0; e < firstDay; e++) calCells += '<div></div>';
+    for (var dd = 1; dd <= daysInMonth; dd++) {
+      var dayData = schedData[dd] || {};
+      var cls = 'sched-day' + (dayData.check?' has-check':(dayData.memo?' has-memo':'')) + (dd===todayD?' today':'');
+      var mid = m.id, d2 = dd, y2 = adminCurrentYear, mo2 = adminCurrentMonth;
+      calCells += '<div class="' + cls + '" data-mid="' + mid + '" data-day="' + d2 + '" data-year="' + y2 + '" data-month="' + mo2 + '" title="' + (dayData.memo||'') + '">' + dd + '</div>';
+    }
+
+    return '<div class="member-card">' +
+      '<div style="display:flex;align-items:center;gap:8px;margin-bottom:.5rem;">' +
+        '<div style="width:32px;height:32px;border-radius:50%;background:rgba(255,215,0,0.15);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:700;color:var(--gold);flex-shrink:0;">' + (m.name||'?').slice(0,1) + '</div>' +
+        '<div style="flex:1;">' +
+          '<div style="display:flex;align-items:center;gap:6px;">' +
+            '<span style="font-size:14px;font-weight:700;color:#fff;">' + (m.name||'') + '</span>' +
+            '<span class="member-badge ' + (ROLE_BADGE[m.role]||'') + '">' + (ROLE_LABEL[m.role]||m.role) + '</span>' +
+          '</div>' +
+          '<div style="font-size:11px;color:var(--t2);">' + (m.email||'') + (m.joinDate?' · '+m.joinDate:'') + '</div>' +
+        '</div>' +
+        '<button data-del="' + m.id + '" style="padding:4px 8px;background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.3);border-radius:6px;color:#e74c3c;font-size:11px;cursor:pointer;font-family:inherit;">삭제</button>' +
+      '</div>' +
+      (m.memo ? '<div style="font-size:11px;color:var(--t2);margin-bottom:.5rem;padding:.4rem .6rem;background:rgba(255,255,255,0.04);border-radius:6px;">📝 ' + m.memo + '</div>' : '') +
+      '<div style="font-size:11px;color:var(--t2);font-weight:600;margin-bottom:.3rem;">📅 ' + adminCurrentYear + '년 ' + (adminCurrentMonth+1) + '월</div>' +
+      '<div class="sched-grid">' + calCells + '</div>' +
+    '</div>';
+  }).join('');
+
+  // 이벤트 위임
+  list.onclick = function(e) {
+    var delBtn = e.target.closest('[data-del]');
+    if (delBtn) { deleteAdminMember(delBtn.dataset.del); return; }
+    var dayEl = e.target.closest('[data-mid]');
+    if (dayEl) { openSchedDay(dayEl.dataset.mid, parseInt(dayEl.dataset.day), parseInt(dayEl.dataset.year), parseInt(dayEl.dataset.month)); }
+  };
+}
+
+function setAdminTab(tab, btn) {
+  adminCurrentTab = tab;
+  document.querySelectorAll('.admin-tab').forEach(function(b){ b.classList.remove('on'); });
+  if (btn) btn.classList.add('on');
+  renderAdminPage();
+}
+
+function changeAdminMonth(delta) {
+  adminCurrentMonth += delta;
+  if (adminCurrentMonth > 11) { adminCurrentMonth = 0; adminCurrentYear++; }
+  if (adminCurrentMonth < 0) { adminCurrentMonth = 11; adminCurrentYear--; }
+  renderAdminPage();
+}
+
+function addAdminMember() {
+  var name = (document.getElementById('new-member-name')||{}).value || '';
+  var role = (document.getElementById('new-member-role')||{}).value || 'free';
+  var email = (document.getElementById('new-member-email')||{}).value || '';
+  var memo = (document.getElementById('new-member-memo')||{}).value || '';
+  if (!name) { showShareToast('이름을 입력해주세요'); return; }
+  var members = getAdminMembers();
+  members.push({ id: 'm_' + Date.now(), name: name, role: role, email: email, memo: memo, joinDate: new Date().toLocaleDateString('ko-KR') });
+  saveAdminMembers(members);
+  ['new-member-name','new-member-email','new-member-memo'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  showShareToast('✅ ' + name + ' 님 추가됐습니다!');
+  renderAdminPage();
+}
+
+function deleteAdminMember(id) {
+  var members = getAdminMembers();
+  var m = members.find(function(m){ return m.id === id; });
+  if (!m || !confirm('"' + m.name + '" 님을 삭제할까요?')) return;
+  saveAdminMembers(members.filter(function(m){ return m.id !== id; }));
+  renderAdminPage();
+}
+
+function openSchedDay(memberId, day, year, month) {
+  var schedKey = 'sched_' + memberId + '_' + year + '_' + month;
+  var schedData = {};
+  try { schedData = JSON.parse(localStorage.getItem(schedKey) || '{}'); } catch(e) {}
+  var dayData = schedData[day] || {};
+  var members = getAdminMembers();
+  var m = members.find(function(m){ return m.id === memberId; }) || {};
+
+  var modal = document.getElementById('sched-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'sched-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    document.body.appendChild(modal);
+  }
+  modal.innerHTML =
+    '<div style="background:#1a1a4e;border:1px solid var(--bd);border-radius:16px;padding:1.5rem;max-width:360px;width:100%;">' +
+      '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:1rem;">' + (m.name||'') + ' · ' + year + '년 ' + (month+1) + '월 ' + day + '일</div>' +
+      '<label style="display:flex;align-items:center;gap:8px;cursor:pointer;margin-bottom:.75rem;font-size:13px;color:#fff;">' +
+        '<input type="checkbox" id="sched-check" ' + (dayData.check?'checked':'') + ' style="accent-color:var(--em);width:16px;height:16px;">완료 체크' +
+      '</label>' +
+      '<div class="ig" style="margin-bottom:.75rem;"><label>메모/일정</label><input type="text" id="sched-memo" value="' + (dayData.memo||'').replace(/"/g,'&quot;') + '" placeholder="메모 입력" style="width:100%;"></div>' +
+      '<div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">' +
+        '<button id="sched-save-btn" style="padding:11px;background:var(--em);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">저장</button>' +
+        '<button id="sched-close-btn" style="padding:11px;background:none;border:1px solid var(--bd);border-radius:8px;color:var(--t);font-size:13px;cursor:pointer;font-family:inherit;">닫기</button>' +
+      '</div>' +
+    '</div>';
+  modal.style.display = 'flex';
+  document.getElementById('sched-save-btn').onclick = function(){ saveSchedDay(memberId, day, year, month); };
+  document.getElementById('sched-close-btn').onclick = function(){ modal.style.display = 'none'; };
+}
+
+function saveSchedDay(memberId, day, year, month) {
+  var schedKey = 'sched_' + memberId + '_' + year + '_' + month;
+  var schedData = {};
+  try { schedData = JSON.parse(localStorage.getItem(schedKey) || '{}'); } catch(e) {}
+  var check = (document.getElementById('sched-check')||{}).checked || false;
+  var memo = (document.getElementById('sched-memo')||{}).value || '';
+  if (check || memo) schedData[day] = { check: check, memo: memo };
+  else delete schedData[day];
+  localStorage.setItem(schedKey, JSON.stringify(schedData));
+  document.getElementById('sched-modal').style.display = 'none';
+  showShareToast('✅ 저장됐습니다!');
+  renderAdminPage();
 }
 
 /* ── PDF 다운로드 ── */

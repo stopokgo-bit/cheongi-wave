@@ -4075,30 +4075,32 @@ async function generate50PReport() {
   var currentYear = new Date().getFullYear();
   var age = currentYear - parseInt(inp.year);
 
-  var baseData = '=== 실제 사주팔자 (계산값) ===\n' +
+  var coreData = {
+    star: r.star, daewoon: r.daewoon, summary: r.summary,
+    scores: r.scores, lucky: r.lucky_mindset,
+    wave: (r.wave_data||[]).slice(0,3)
+  };
+  var baseData = '=== 사주팔자 ===\n' +
     sajuCalc.summary + '\n' +
-    '강한 오행: ' + sajuCalc.pillars.ohaengCount.strongest + ' / 약한 오행(보완 필요): ' + sajuCalc.pillars.ohaengCount.weakest + '\n\n' +
-    '=== AI 분석 데이터 ===\n' +
-    '분석결과: ' + JSON.stringify(r) + '\n\n' +
-    (scanExtra ? '=== 관상·손금 스캔 ===\n' + scanExtra + '\n' : '') +
-    '=== 기본 정보 ===\n' +
-    '이름: ' + inp.name + ' · 성별: ' + (inp.gender||'') + ' · 만 ' + age + '세 · ' + (inp.cal||'양력') + '\n' +
-    '현재연도: ' + currentYear + ' · 현재 대운: ' + (r.daewoon||'') + '\n\n';
+    '강한오행: ' + sajuCalc.pillars.ohaengCount.strongest + ' / 약한오행: ' + sajuCalc.pillars.ohaengCount.weakest + '\n\n' +
+    '=== 분석결과 ===\n' +
+    JSON.stringify(coreData) + '\n\n' +
+    (scanExtra ? '=== 스캔 ===\n' + scanExtra.slice(0,200) + '\n' : '') +
+    '이름:' + inp.name + ' 성별:' + (inp.gender||'') + ' 만' + age + '세\n' +
+    (inp.birthplace ? '출생지:' + inp.birthplace + ' ' : '') +
+    (inp.location ? '거주지:' + inp.location : '') + '\n' +
+    '현재대운:' + (r.daewoon||'') + '\n\n'
 
-  var formatRules = '=== 작성 규칙 ===\n' +
-    '1. HTML만 출력. <h3><h4><p><strong><em><br> 태그만 사용.\n' +
-    '2. h3=섹션제목, h4=소제목(■ 기호), p=본문\n' +
-    '3. 각 섹션: h4 2~3개, 각 p 2~3개. 짧고 명확하게.\n' +
-    '4. ⚠️ 주의: <p>⚠️ 내용</p>  ✦ 기회: <p>✦ 내용</p>\n' +
-    '5. 마지막 문장 마침표로 끝낼 것.\n\n' +
-    '=== 서술 방식 (매우 중요) ===\n' +
-    '반드시 과거→현재→미래 흐름으로 서술하라:\n' +
-    '- 과거: 지금까지 어떤 삶을 살아왔는지 (사주 구조로 추론)\n' +
-    '- 현재: 지금 어떤 상황에 있을 가능성이 높은지 (대운+나이 기준)\n' +
-    '- 미래: 앞으로 어떤 일이 기다리고 있는지 (구체적 시기와 내용)\n' +
-    '예시: "지금까지 ○○한 삶의 패턴을 반복해왔을 것입니다. 현재는 ○○한 상황에 있을 가능성이 높으며, 앞으로 ○○년에 ○○한 변화가 찾아올 것입니다."\n\n' +
-    '=== 사용 가능한 실제 데이터 ===\n' +
-    '반드시 위에 제공된 실제 사주팔자(연주·월주·일주·시주)와 오행 강약을 분석에 활용하라. 일간(日干)이 본인의 핵심 기운이다.\n\n';
+  var formatRules = '=== 출력 규칙 (절대 준수) ===\n' +
+    '1. HTML만 출력. <h3><h4><p><strong><em> 태그만.\n' +
+    '2. h3=섹션제목, h4=소제목(■기호 포함), p=본문\n' +
+    '3. ⛔ 각 섹션 분량 제한: h4 최대 2개, 각 h4 아래 p 최대 2개. 절대 초과 금지.\n' +
+    '4. ⛔ p태그 1개 = 1~2문장(80자 이내). 짧게.\n' +
+    '5. ⚠️표시: <p>⚠️ 내용</p>  ✦표시: <p>✦ 내용</p>\n' +
+    '6. ⛔ 5개 섹션 전부 완성 필수. 길게 쓰다 잘리면 실패.\n' +
+    '7. 마지막 p는 반드시 마침표로 끝낼 것.\n\n' +
+    '=== 서술 방식 ===\n' +
+    '과거→현재→미래 흐름. 실제 제공된 사주팔자(연주·월주·일주·시주) 반드시 활용.\n\n'
 
   var systemPrompt = '당신은 자미두수·매화역수·기문둔갑 40년 경력 명리학 대가입니다. HTML만 출력하고 다른 텍스트는 절대 쓰지 마세요.';
 

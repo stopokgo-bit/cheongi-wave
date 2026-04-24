@@ -502,8 +502,11 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
 </head>
 <body>
 <div class="app">
+  <!-- ✅ 공지 배너 -->
+  <div id="notice-banner" style="display:none;padding:10px 1rem;text-align:center;font-size:13px;font-weight:600;"></div>
+  <!-- ✅ 이벤트 배너 -->
+  <div id="event-banner" style="display:none;padding:10px 1rem;text-align:center;font-size:13px;font-weight:700;background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,165,0,0.15));border-bottom:1px solid rgba(255,215,0,0.2);color:var(--gold);"></div>
   <nav class="nav">
-    <a class="logo" onclick="showPg('main')">
       <div class="logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#0f0f3a"/></svg></div>
       <div>
         <div class="logo-text">천기 웨이브</div>
@@ -546,7 +549,7 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
           <span style="font-size:11px;color:var(--t2);font-weight:600;">💾 저장된 프로필</span>
           <div style="display:flex;gap:6px;">
-            <button onclick="clearAllCache()" style="font-size:11px;padding:4px 10px;border-radius:6px;background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.25);color:#e74c3c;cursor:pointer;font-family:inherit;font-weight:600;" title="분석 캐시 초기화">🗑️ 캐시 초기화</button>
+            <button id="admin-cache-btn" onclick="clearAllCache()" style="display:none;font-size:11px;padding:4px 10px;border-radius:6px;background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.25);color:#e74c3c;cursor:pointer;font-family:inherit;font-weight:600;" title="분석 캐시 초기화">🗑️ 캐시 초기화</button>
             <button onclick="saveCurrentProfile()" style="font-size:11px;padding:4px 12px;border-radius:6px;background:rgba(80,200,120,0.15);border:1px solid rgba(80,200,120,0.3);color:var(--em);cursor:pointer;font-family:inherit;font-weight:600;">+ 현재 정보 저장</button>
           </div>
         </div>
@@ -739,6 +742,76 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
 
     <!-- 회원 목록 + 스케줄러 -->
     <div id="admin-member-list" style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:1rem;"></div>
+
+    <!-- ✅ UI/UX 설정 섹션 -->
+    <div style="background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:12px;padding:1rem;margin-bottom:.75rem;">
+      <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.75rem;display:flex;align-items:center;gap:6px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--em)" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"/></svg>
+        UI / UX 설정
+      </div>
+
+      <!-- 공지 배너 -->
+      <div style="margin-bottom:.85rem;">
+        <label style="font-size:11px;color:var(--t2);font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:.4rem;">
+          <input type="checkbox" id="notice-on" onchange="applySettings()" style="accent-color:var(--em);width:14px;height:14px;">
+          📢 공지 배너 표시
+        </label>
+        <div class="ig">
+          <input type="text" id="notice-text" placeholder="공지 내용 입력 (예: 얼리버드 마감 D-3)"
+            oninput="applySettings()"
+            style="width:100%;padding:8px 12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;">
+        </div>
+        <div style="display:flex;gap:6px;margin-top:.35rem;flex-wrap:wrap;">
+          <select id="notice-type" onchange="applySettings()" style="padding:5px 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:6px;color:#fff;font-size:11px;font-family:inherit;">
+            <option value="info">ℹ️ 일반</option>
+            <option value="event">🎉 이벤트</option>
+            <option value="warn">⚠️ 주의</option>
+            <option value="gold">✦ 특별</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- 이벤트 배너 -->
+      <div style="margin-bottom:.85rem;">
+        <label style="font-size:11px;color:var(--t2);font-weight:600;display:flex;align-items:center;gap:6px;margin-bottom:.4rem;">
+          <input type="checkbox" id="event-on" onchange="applySettings()" style="accent-color:var(--gold);width:14px;height:14px;">
+          🎉 이벤트 배너 표시
+        </label>
+        <div class="ig">
+          <input type="text" id="event-text" placeholder="이벤트 문구 (예: 선착순 10명 무료!)"
+            oninput="applySettings()"
+            style="width:100%;padding:8px 12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;">
+        </div>
+      </div>
+
+      <!-- 가격 설정 -->
+      <div style="margin-bottom:.85rem;">
+        <div style="font-size:11px;color:var(--t2);font-weight:600;margin-bottom:.4rem;">💰 가격 설정</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="ig">
+            <label>얼리버드 가격</label>
+            <input type="number" id="price-early" placeholder="19900" value="19900"
+              oninput="applySettings()"
+              style="width:100%;padding:8px 12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;">
+          </div>
+          <div class="ig">
+            <label>정가</label>
+            <input type="number" id="price-normal" placeholder="49000" value="49000"
+              oninput="applySettings()"
+              style="width:100%;padding:8px 12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;">
+          </div>
+        </div>
+      </div>
+
+      <!-- 미리보기 -->
+      <div style="background:rgba(0,0,0,0.2);border-radius:8px;padding:.6rem .75rem;margin-bottom:.75rem;">
+        <div style="font-size:10px;color:var(--t2);margin-bottom:.3rem;">미리보기</div>
+        <div id="settings-preview" style="font-size:12px;color:var(--t2);">설정 없음</div>
+      </div>
+
+      <button onclick="saveSettings()" style="width:100%;padding:11px;background:var(--em);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">✓ 설정 저장 및 적용</button>
+      <button onclick="resetSettings()" style="width:100%;margin-top:6px;padding:9px;background:none;border:1px solid rgba(231,76,60,0.3);border-radius:8px;color:#e74c3c;font-size:12px;cursor:pointer;font-family:inherit;">초기화</button>
+    </div>
 
     <!-- 새 회원 추가 (관리자용) -->
     <div id="admin-add-section" style="background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:12px;padding:1rem;">
@@ -1909,11 +1982,13 @@ function renderUserNav(user) {
       '<span class="nav-user-name">' + (user.name || user.email) + '</span>' +
       '<button class="nav-logout" onclick="doLogout()" style="font-size:11px;color:var(--t2);cursor:pointer;background:none;border:none;font-family:inherit;padding:0;margin-left:2px;">로그아웃</button>' +
     '</div>';
-  // 관리자면 관리 버튼 표시
+  // 관리자면 관리 버튼 + 캐시 초기화 버튼 표시
   var adminBtn = document.getElementById('bn-admin');
-  if (adminBtn && user.email) {
+  var cacheBtn = document.getElementById('admin-cache-btn');
+  if (user.email) {
     var isAdmin = user.email.startsWith('admin') || localStorage.getItem('cw_admin_' + user.email) === '1';
-    adminBtn.style.display = isAdmin ? 'flex' : 'none';
+    if (adminBtn) adminBtn.style.display = isAdmin ? 'flex' : 'none';
+    if (cacheBtn) cacheBtn.style.display = isAdmin ? 'inline-flex' : 'none';
   }
 }
 
@@ -1922,7 +1997,12 @@ function doLogout() {
     try { window._firebaseSignOut(window._firebaseAuth); } catch(e) {}
   }
   currentUser = null;
-  clearUserFromStorage(); // ✅ localStorage 삭제
+  clearUserFromStorage();
+  // 관리자 전용 버튼 숨기기
+  var adminBtn = document.getElementById('bn-admin');
+  var cacheBtn = document.getElementById('admin-cache-btn');
+  if (adminBtn) adminBtn.style.display = 'none';
+  if (cacheBtn) cacheBtn.style.display = 'none';
   document.getElementById('nav-auth-area').innerHTML =
     '<button class="nav-login-btn" onclick="openAuth(\'login\')">' +
       '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>로그인' +
@@ -2975,6 +3055,94 @@ function paymentSuccess(priceStr) {
 }
 
 /* ══════════════════════════════════════
+   UI/UX 설정 관리
+══════════════════════════════════════ */
+var SETTINGS_KEY = 'cw_ui_settings';
+
+function getUISettings() {
+  try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'); } catch(e) { return {}; }
+}
+
+function applyUISettings() {
+  var s = getUISettings();
+  var nb = document.getElementById('notice-banner');
+  if (nb) {
+    if (s.noticeOn && s.noticeText) {
+      var bgMap = { info:'rgba(80,160,255,0.12)', event:'rgba(80,200,120,0.12)', warn:'rgba(231,76,60,0.12)', gold:'rgba(255,215,0,0.10)' };
+      var colMap = { info:'#8aacf0', event:'#50C878', warn:'#e74c3c', gold:'#FFD700' };
+      var t = s.noticeType || 'info';
+      nb.style.cssText = 'display:block;padding:10px 1rem;text-align:center;font-size:13px;font-weight:600;background:' + bgMap[t] + ';color:' + colMap[t] + ';border-bottom:1px solid ' + bgMap[t] + ';';
+      nb.textContent = s.noticeText;
+    } else { nb.style.display = 'none'; }
+  }
+  var eb = document.getElementById('event-banner');
+  if (eb) {
+    if (s.eventOn && s.eventText) {
+      eb.style.display = 'block';
+      eb.textContent = '🎉 ' + s.eventText;
+    } else { eb.style.display = 'none'; }
+  }
+  if (s.priceEarly && window.PRICES) window.PRICES.early = parseInt(s.priceEarly);
+  if (s.priceNormal && window.PRICES) window.PRICES.normal = parseInt(s.priceNormal);
+}
+
+function applySettings() {
+  var noticeOn   = (document.getElementById('notice-on')   ||{}).checked||false;
+  var noticeText = (document.getElementById('notice-text') ||{}).value  ||'';
+  var eventOn    = (document.getElementById('event-on')    ||{}).checked||false;
+  var eventText  = (document.getElementById('event-text')  ||{}).value  ||'';
+  var priceEarly = (document.getElementById('price-early') ||{}).value  ||'19900';
+  var priceNormal= (document.getElementById('price-normal')||{}).value  ||'49000';
+  var lines = [];
+  if (noticeOn && noticeText)  lines.push('📢 공지: "' + noticeText + '"');
+  if (eventOn && eventText)    lines.push('🎉 이벤트: "' + eventText + '"');
+  lines.push('💰 얼리버드 ₩' + parseInt(priceEarly).toLocaleString() + ' / 정가 ₩' + parseInt(priceNormal).toLocaleString());
+  var pv = document.getElementById('settings-preview');
+  if (pv) pv.innerHTML = lines.join('<br>');
+}
+
+function saveSettings() {
+  var s = {
+    noticeOn:   (document.getElementById('notice-on')   ||{}).checked||false,
+    noticeText: (document.getElementById('notice-text') ||{}).value  ||'',
+    noticeType: (document.getElementById('notice-type') ||{}).value  ||'info',
+    eventOn:    (document.getElementById('event-on')    ||{}).checked||false,
+    eventText:  (document.getElementById('event-text')  ||{}).value  ||'',
+    priceEarly: (document.getElementById('price-early') ||{}).value  ||'19900',
+    priceNormal:(document.getElementById('price-normal')||{}).value  ||'49000',
+  };
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
+  applyUISettings();
+  showShareToast('✅ 설정 저장 완료! 즉시 반영됩니다.');
+}
+
+function resetSettings() {
+  if (!confirm('모든 UI 설정을 초기화할까요?')) return;
+  localStorage.removeItem(SETTINGS_KEY);
+  ['notice-text','event-text'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
+  ['notice-on','event-on'].forEach(function(id){ var el=document.getElementById(id); if(el) el.checked=false; });
+  var ep=document.getElementById('price-early');   if(ep) ep.value='19900';
+  var np=document.getElementById('price-normal');  if(np) np.value='49000';
+  applyUISettings();
+  showShareToast('🔄 설정이 초기화됐습니다.');
+}
+
+function loadSettingsToAdmin() {
+  var s = getUISettings();
+  var el;
+  el=document.getElementById('notice-on');    if(el) el.checked=!!s.noticeOn;
+  el=document.getElementById('notice-text');  if(el) el.value=s.noticeText||'';
+  el=document.getElementById('notice-type');  if(el) el.value=s.noticeType||'info';
+  el=document.getElementById('event-on');     if(el) el.checked=!!s.eventOn;
+  el=document.getElementById('event-text');   if(el) el.value=s.eventText||'';
+  el=document.getElementById('price-early');  if(el) el.value=s.priceEarly||'19900';
+  el=document.getElementById('price-normal'); if(el) el.value=s.priceNormal||'49000';
+  applySettings();
+}
+
+(function(){ setTimeout(applyUISettings, 150); })();
+
+/* ══════════════════════════════════════
    유료회원 관리 페이지 JS
 ══════════════════════════════════════ */
 var adminCurrentMonth = new Date().getMonth();
@@ -2994,6 +3162,7 @@ function showAdminPage() {
   if (!currentUser) { openAuth('login'); return; }
   showPg('main', null, 'cms');
   renderAdminPage();
+  setTimeout(loadSettingsToAdmin, 100);
 }
 
 function renderAdminPage() {

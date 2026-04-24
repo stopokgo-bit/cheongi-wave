@@ -810,7 +810,23 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
 
     <!-- 카메라 영역 -->
     <div id="camera-area">
-    <div class="cam-stage"><canvas id="sc" width="640" height="400"></canvas>
+    <div class="cam-stage" style="position:relative;">
+      <!-- ✅ 현재 모드 크게 표시 (카메라 상단 중앙) -->
+      <div id="cam-mode-badge" style="position:absolute;top:12px;left:50%;transform:translateX(-50%);z-index:10;
+        background:rgba(15,15,58,0.85);border:1.5px solid rgba(255,255,255,0.2);
+        border-radius:24px;padding:8px 20px;display:flex;align-items:center;gap:8px;
+        backdrop-filter:blur(8px);white-space:nowrap;">
+        <span id="cam-mode-icon" style="font-size:18px;">👁</span>
+        <span id="cam-mode-text" style="font-size:14px;font-weight:700;color:#fff;">관상 스캔</span>
+        <span id="cam-mode-sub" style="font-size:11px;color:rgba(255,255,255,0.5);">얼굴을 타원에 맞춰주세요</span>
+      </div>
+      <!-- 스캔 완료 현황 -->
+      <div style="position:absolute;top:12px;right:12px;z-index:10;display:flex;gap:4px;">
+        <div id="dot-face" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.3);"></div>
+        <div id="dot-left" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.3);"></div>
+        <div id="dot-right" style="width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.3);"></div>
+      </div>
+      <canvas id="sc" width="640" height="400"></canvas>
       <div class="fb-bar">
         <div class="fb-dot warn" id="fd"></div>
         <div class="fb-txt" id="ft">카메라를 눈높이에 맞춰 주세요</div>
@@ -855,9 +871,9 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
       <div class="feat-grid" id="fg"></div>
       <div id="pl-section" style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:.85rem;margin-bottom:.75rem;"><div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.6rem;">12궁 관상 동기화 결과</div><div class="pm-list" id="pl"></div></div>
       <div class="ib"><div class="ib-title">관상·명반 통합 해석</div><div class="ib-body">이마(관록궁)가 <em>넓고 둥글게 발달</em>하여 명반의 천동성 화록과 완벽하게 일치합니다.</div></div>
-      <div class="cta-row">
-        <button class="btn-gold" onclick="showPg('report')">✦ 인생 지침서</button>
-        <button class="btn-em" onclick="setMode('palm_left',document.getElementById('mp'))">손금 스캔 이어서</button>
+      <div class="cta-row" id="scan-cta-row">
+        <button class="btn-gold" onclick="checkScanBeforeReport()">✦ 인생 지침서</button>
+        <button class="btn-em" id="scan-next-btn" onclick="goNextScan()">손금 스캔 이어서</button>
         <button class="btn-out" onclick="showPg('main')">메인으로</button>
       </div>
     </div>
@@ -1314,7 +1330,7 @@ async function doSajuScan() {
     '"hybrid_msg":"3대 역학 통합: 공통으로 가리키는 올해 핵심 흐름(1문장). 지금 반드시 잡아야 할 기회(1문장). 반드시 피해야 할 위험(1문장). 내년과 비교해 올해가 특별한 이유(1문장). 지금 이 순간 가장 중요한 행동 한 가지(1문장). 총 5문장.",\n' +
     '"career":"최적 직군 2가지와 명리학적 근거(1문장). 현재 직장운 실태 좋은 점(1문장). 현재 직장운 나쁜 점(1문장). 이직·창업 최적 타이밍 구체적 연도(1문장). 향후 3년 커리어 핵심 전환점(1문장). 총 5문장.",\n' +
     '"wealth":"재물 취득 주요 경로와 시기(1문장). 투자 적합 분야와 절대 피해야 할 투자(1문장). 부동산운과 최적 타이밍(1문장). 올해 재물 흐름(1문장). 돈이 새는 패턴과 차단법(1문장). 총 5문장.",\n' +
-    '"love":"반복되는 연애 패턴과 명리학적 이유(1문장). 현재 애정운 실태(1문장). 이상형 유형과 잘 맞는 상대 특성(1문장). 결혼 적기(1문장). 반드시 피해야 할 인연 유형과 이유(1문장). 총 5문장.",\n' +
+    '"love":"부처궁 성曜 배치로 현재 결혼 여부를 먼저 판단하라(기혼인지 미혼인지 명반으로 추정). 기혼이면 부부관계 현황과 개선법, 가정운, 배우자와의 갈등 패턴을 서술. 미혼이면 인연 시기와 이상형 특성, 결혼적기를 서술. 중년 이후라면 자녀관계·가족운 위주로 서술. 나이와 대운을 반드시 고려하여 현실에 맞는 분석을 하라. 총 5문장.",\n' +
     '"luck_period":"현재 대운 핵심 키워드와 올해 소운(1문장). 상반기와 하반기 중 유리한 쪽(1문장). 내년과 내후년 주요 변화(1문장). 인생 황금기 시기(1문장). 가장 조심할 시기와 이유(1문장). 총 5문장.",\n' +
     '"caution":"명반 구조적 약점 2가지(1문장). 삶에서 반복되는 실수 패턴(1문장). 보완해야 할 오행과 구체적 방법(1문장). 이달 반드시 주의할 행동 2가지(1문장). 오늘부터 실천할 개운 행동(1문장). 총 5문장.",\n' +
     '"lucky_direction":"북동",\n' +
@@ -1335,6 +1351,7 @@ async function doSajuScan() {
     '3. 입에 발린 말 금지. 약점·흉한 부분도 솔직하게.\n' +
     '4. 구체적 연도, 궁위 이름, 성曜 이름을 반드시 포함하라.\n' +
     '5. 마지막 문장을 완성하라.\n' +
+    '6. 나이와 명반으로 인생단계를 파악하라. 부처궁으로 기혼/미혼 추정 후 애정운 방향 결정. 20~30대=연애·결혼적기, 40~50대=부부관계·자녀·커리어전환, 60대+=건강·노후. 나이와 맞지 않는 형식적 조언 절대 금지.' +
     '=== 자미두수 분석 기준 ===\n' +
     '- 명궁 주성(14주성: 자미·천기·태양·무곡·천동·염정·천부·태음·탐랑·거문·천상·천량·칠살·파군) 파악\n' +
     '- 보성(문창·문곡·좌보·우필·천괴·천월·록존·천마 등) 조합 분석\n' +
@@ -2089,7 +2106,11 @@ async function analyzePalmWithAI(isLeft, capturedImageData) {
     if (isLeft) PALM_LINES_LEFT = palmLines;
     else PALM_LINES_RIGHT = palmLines;
 
-    return { palmLines: palmLines, overall: res.overall, warning: res.warning, lucky_finger: res.lucky_finger };
+    // ✅ scanResults에도 저장 (리포트에서 활용)
+    var key = isLeft ? 'palm_left' : 'palm_right';
+    scanResults[key] = { palmLines: palmLines, overall: res.overall, warning: res.warning, lucky_finger: res.lucky_finger };
+
+    return scanResults[key];
   } catch(e) {
     console.error('손금 AI 분석 실패:', e);
     return null;
@@ -2836,20 +2857,101 @@ function doPayment(method) {
   if (!inp) { alert('먼저 사주 분석을 완료해주세요!'); showPg('main'); return; }
   var price = PRICES[selectedPlan];
   var priceStr = '₩' + price.toLocaleString();
+  var isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
 
   if (method === 'bank') {
     var bi = document.getElementById('bank-info');
     bi.style.display = bi.style.display === 'none' ? 'block' : 'none';
     return;
   }
+
   if (method === 'kakao') {
-    // 카카오페이 송금 링크로 이동 후 확인 불필요 - 수동 확인으로 대체
-    alert('카카오페이 준비 중입니다.\n계좌이체를 이용해 주세요.');
-  } else if (method === 'toss') {
-    // 토스 앱으로 이동 - 입금 후 계좌이체 확인 버튼 사용
-    alert('토스 앱으로 이동합니다.\n송금 완료 후 계좌이체 확인 버튼을 눌러주세요.');
-    window.location.href = 'supertoss://send?amount=' + price;
+    // 카카오페이는 준비 중
+    showPaymentModal('kakao', price, priceStr, isMobile);
+    return;
   }
+
+  if (method === 'toss') {
+    showPaymentModal('toss', price, priceStr, isMobile);
+    return;
+  }
+}
+
+function showPaymentModal(method, price, priceStr, isMobile) {
+  var modal = document.getElementById('pay-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'pay-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    document.body.appendChild(modal);
+  }
+
+  var content = '';
+  if (method === 'toss') {
+    if (isMobile) {
+      // 모바일: 토스 앱 딥링크
+      content =
+        '<div style="text-align:center;margin-bottom:1rem;">' +
+        '<div style="font-size:28px;margin-bottom:.5rem;">toss</div>' +
+        '<div style="font-size:14px;color:var(--t2);">토스 앱으로 송금</div></div>' +
+        '<a href="supertoss://send?amount=' + price + '" style="display:block;width:100%;padding:14px;background:#0064FF;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;text-align:center;text-decoration:none;margin-bottom:.75rem;">토스 앱 열기 →</a>' +
+        '<div style="font-size:12px;color:var(--t2);text-align:center;margin-bottom:1rem;">송금 완료 후 아래 버튼을 눌러주세요</div>' +
+        '<button id="pay-confirm-btn" style="width:100%;padding:12px;background:var(--em);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">✓ 송금 완료했어요</button>';
+    } else {
+      // PC: 계좌이체 안내 + QR 대안
+      content =
+        '<div style="text-align:center;margin-bottom:1rem;">' +
+        '<div style="font-size:24px;font-weight:900;color:#0064FF;margin-bottom:.35rem;">toss</div>' +
+        '<div style="font-size:13px;color:var(--t2);">PC에서는 아래 방법을 이용해주세요</div></div>' +
+        '<div style="background:rgba(0,100,255,0.1);border:1px solid rgba(0,100,255,0.3);border-radius:10px;padding:1rem;margin-bottom:.75rem;">' +
+        '<div style="font-size:12px;font-weight:700;color:#6bb3ff;margin-bottom:.5rem;">📱 방법 1 — 핸드폰 토스 앱</div>' +
+        '<div style="font-size:12px;color:var(--t2);line-height:1.8;">토스 앱 → 송금 → 계좌번호 입력<br>' +
+        '<strong style="color:#fff;">카카오뱅크 3333-00-0000000</strong><br>' +
+        '금액: <strong style="color:#0064FF;">' + price.toLocaleString() + '원</strong></div></div>' +
+        '<div style="background:rgba(255,255,255,0.05);border:1px solid var(--bd);border-radius:10px;padding:1rem;margin-bottom:.75rem;">' +
+        '<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:.5rem;">🏦 방법 2 — 계좌이체</div>' +
+        '<div style="font-size:12px;color:var(--t2);line-height:1.8;">은행: 카카오뱅크<br>' +
+        '계좌: <strong style="color:#fff;">3333-00-0000000</strong><br>' +
+        '예금주: <strong style="color:#fff;">천기웨이브</strong><br>' +
+        '금액: <strong style="color:var(--gold);">' + price.toLocaleString() + '원</strong></div></div>' +
+        '<button id="pay-confirm-btn" style="width:100%;padding:12px;background:var(--em);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">✓ 입금 완료했어요</button>';
+    }
+  } else if (method === 'kakao') {
+    content =
+      '<div style="text-align:center;margin-bottom:1rem;">' +
+      '<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:.35rem;">카카오페이</div>' +
+      '<div style="font-size:12px;color:var(--t2);">현재 준비 중입니다</div></div>' +
+      '<div style="background:rgba(255,255,255,0.05);border:1px solid var(--bd);border-radius:10px;padding:1rem;margin-bottom:.75rem;">' +
+      '<div style="font-size:12px;color:var(--t2);line-height:1.8;">계좌이체를 이용해 주세요<br>' +
+      '은행: 카카오뱅크<br>' +
+      '계좌: <strong style="color:#fff;">3333-00-0000000</strong><br>' +
+      '금액: <strong style="color:var(--gold);">' + price.toLocaleString() + '원</strong></div></div>' +
+      '<button id="pay-confirm-btn" style="width:100%;padding:12px;background:var(--em);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">✓ 입금 완료했어요</button>';
+  }
+
+  modal.innerHTML =
+    '<div style="background:#1a1a4e;border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:1.75rem;max-width:380px;width:100%;position:relative;">' +
+    '<button onclick="document.getElementById(\'pay-modal\').style.display=\'none\'" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(255,255,255,0.4);font-size:20px;cursor:pointer;">×</button>' +
+    '<div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:1rem;">💳 결제 안내 — ' + priceStr + '</div>' +
+    content +
+    '</div>';
+
+  modal.style.display = 'flex';
+
+  // 완료 버튼 이벤트
+  setTimeout(function() {
+    var confirmBtn = document.getElementById('pay-confirm-btn');
+    if (confirmBtn) {
+      confirmBtn.onclick = function() {
+        var name = prompt('입금자명을 입력해주세요 (확인용):', inp.name || '');
+        if (name) {
+          modal.style.display = 'none';
+          paymentSuccess(priceStr);
+          showShareToast('🎉 결제 확인 중! 잠시 후 리포트를 이용해주세요.');
+        }
+      };
+    }
+  }, 100);
 }
 
 function confirmBankTransfer() {
@@ -3111,6 +3213,42 @@ function sendReportEmail() {
 
 /* ── 인생 지침서 생성 ── */
 /* ── 인생 지침서 진입 전 스캔 확인 ── */
+/* ── 스캔 다음 단계 이동 ── */
+function goNextScan() {
+  var hasFace = !!capturedImages.face;
+  var hasLeft = !!capturedImages.palm_left;
+  var hasRight = !!capturedImages.palm_right;
+
+  if (!hasFace) {
+    setMode('face', document.getElementById('mf'));
+  } else if (!hasLeft) {
+    setMode('palm_left', document.getElementById('mp'));
+  } else if (!hasRight) {
+    setMode('palm_right', document.getElementById('mp2'));
+  }
+}
+
+function updateScanCTA() {
+  var hasFace = !!capturedImages.face;
+  var hasLeft = !!capturedImages.palm_left;
+  var hasRight = !!capturedImages.palm_right;
+  var allDone = hasFace && hasLeft && hasRight;
+
+  var nextBtn = document.getElementById('scan-next-btn');
+  if (!nextBtn) return;
+
+  if (allDone) {
+    // 모두 완료 → 다음 스캔 버튼 숨김
+    nextBtn.style.display = 'none';
+  } else {
+    nextBtn.style.display = '';
+    // 다음 미완료 항목 표시
+    if (!hasFace) nextBtn.textContent = '📷 관상 스캔하기';
+    else if (!hasLeft) nextBtn.textContent = '✋ 왼손 스캔 이어서';
+    else if (!hasRight) nextBtn.textContent = '🤚 오른손 스캔 이어서';
+  }
+}
+
 function closeScanModal() {
   var m = document.getElementById('scan-check-modal');
   if (m) m.style.display = 'none';
@@ -3196,12 +3334,41 @@ async function generate50PReport() {
   var prompt = '당신은 자미두수·매화역수·기문둔갑을 40년간 연구한 최고 명리학 대가입니다.\n' +
     inp.name + '님의 인생 지침서를 아래 분석 데이터를 바탕으로 작성하세요.\n\n' +
     '분석 데이터: ' + JSON.stringify(r) + '\n\n' +
+    // ✅ 관상·손금 스캔 결과 추가
+    (function() {
+      var scanExtra = '';
+      if (scanResults.face) {
+        scanExtra += '관상 스캔 결과:\n';
+        var f = scanResults.face;
+        if (f.lines) scanExtra += JSON.stringify(f.lines) + '\n';
+        if (f.overall) scanExtra += '관상 통합해석: ' + f.overall + '\n';
+      }
+      if (scanResults.palm_left) {
+        scanExtra += '\n왼손(선천운) 손금 결과:\n';
+        var pl = scanResults.palm_left;
+        if (pl.palmLines) pl.palmLines.forEach(function(l){ scanExtra += l.l + ': ' + l.desc + ' (점수:' + l.score + ')\n'; });
+        if (pl.overall) scanExtra += '왼손 통합해석: ' + pl.overall + '\n';
+        if (pl.warning) scanExtra += '주의: ' + pl.warning + '\n';
+      }
+      if (scanResults.palm_right) {
+        scanExtra += '\n오른손(후천운) 손금 결과:\n';
+        var pr = scanResults.palm_right;
+        if (pr.palmLines) pr.palmLines.forEach(function(l){ scanExtra += l.l + ': ' + l.desc + ' (점수:' + l.score + ')\n'; });
+        if (pr.overall) scanExtra += '오른손 통합해석: ' + pr.overall + '\n';
+        if (pr.warning) scanExtra += '주의: ' + pr.warning + '\n';
+      }
+      return scanExtra ? '스캔 데이터:\n' + scanExtra + '\n' : '(관상·손금 스캔 데이터 없음 - 사주만으로 분석)\n\n';
+    })() +
     '=== 절대 원칙 ===\n' +
     '• 입에 발린 말 금지. 약점·위험·흉한 시기도 반드시 솔직하게 서술.\n' +
     '• 각 섹션 최소 12~15문장. 절대 짧게 쓰지 말 것.\n' +
     '• 실제 연도·나이·구체적 사건명 반드시 포함.\n' +
     '• 자미두수 14주성·보성·사화 이동 원리, 매화역수 체용 생극, 기문둔갑 팔문구성 전문 용어 실제 사용.\n' +
-    '• 각 섹션 마지막 문장 반드시 완성할 것.\n\n' +
+    '• 각 섹션 마지막 문장 반드시 완성할 것.\n' +
+    '• 관상·손금 스캔 데이터가 있으면 반드시 해당 섹션에 언급하라:\n' +
+    '  - 관상 데이터 → 성격·기질·직업운 섹션에 반영\n' +
+    '  - 왼손(선천운) → 타고난 기질·재물·애정 섹션에 반영\n' +
+    '  - 오른손(후천운) → 현재 운세·커리어·건강 섹션에 반영\n\n' +
     '=== 작성할 10개 섹션 ===\n\n' +
     '1. <h3>🌟 ' + (r.star||'') + ' 명주(命主) 총평 — 당신은 어떤 사람인가</h3>\n' +
     '주성의 근본 기질과 에너지, 강점 3가지와 약점 3가지를 솔직하게,\n' +
@@ -3245,7 +3412,8 @@ async function generate50PReport() {
     '10. <h3>📅 2025~2028 핵심 타임라인 — 중요한 변화의 지도</h3>\n' +
     '연도별 가장 중요한 사건·기회·위험, 각 연도의 핵심 행동 지침,\n' +
     '특별히 주목해야 할 날짜와 그 이유, 중장기 인생 전략 제안.\n\n' +
-    'HTML 형식으로 작성. <h3>, <p>, <strong>, <em> 태그만 사용. JSON 아님. 순수 HTML만 출력.';
+    'HTML 형식으로 작성. <h3>, <p>, <strong>, <em> 태그만 사용. JSON 아님. 순수 HTML만 출력.\n\n' +
+    '⚠️ 절대 중요: 마지막 섹션(10번 타임라인)까지 반드시 완성하라. 문장이 잘리면 안 된다. 각 섹션을 간결하게 써서 10개 섹션을 모두 완성하는 것이 우선이다. 분량보다 완성이 중요하다.';
 
   try {
     var response = await fetch('/api/saju', {
@@ -3253,7 +3421,7 @@ async function generate50PReport() {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 8000,
+        max_tokens: 16000,
         messages: [{ role: 'user', content: prompt }]
       })
     });
@@ -3625,7 +3793,39 @@ function setMode(m, btn) {
   document.getElementById('mf').classList.toggle('on', m === 'face');
   document.getElementById('mp').classList.toggle('on', m === 'palm_left');
   document.getElementById('mp2').classList.toggle('on', m === 'palm_right');
-  // ✅ 모드 바뀌면 카메라 재시작 (손금은 후면카메라 사용 가능)
+
+  // ✅ 카메라 상단 뱃지 업데이트
+  var modeIcon = document.getElementById('cam-mode-icon');
+  var modeText = document.getElementById('cam-mode-text');
+  var modeSub = document.getElementById('cam-mode-sub');
+  var badge = document.getElementById('cam-mode-badge');
+  if (modeIcon && modeText && modeSub) {
+    if (m === 'face') {
+      modeIcon.textContent = '👁';
+      modeText.textContent = '관상 스캔';
+      modeSub.textContent = '얼굴을 타원에 맞춰주세요';
+      if (badge) badge.style.borderColor = 'rgba(80,200,120,0.5)';
+    } else if (m === 'palm_left') {
+      modeIcon.textContent = '✋';
+      modeText.textContent = '왼손 스캔 (선천운)';
+      modeSub.textContent = '손바닥이 보이게 펼쳐주세요';
+      if (badge) badge.style.borderColor = 'rgba(255,200,0,0.5)';
+    } else {
+      modeIcon.textContent = '🤚';
+      modeText.textContent = '오른손 스캔 (후천운)';
+      modeSub.textContent = '손바닥이 보이게 펼쳐주세요';
+      if (badge) badge.style.borderColor = 'rgba(80,160,255,0.5)';
+    }
+  }
+
+  // ✅ 완료 도트 업데이트
+  var dotFace = document.getElementById('dot-face');
+  var dotLeft = document.getElementById('dot-left');
+  var dotRight = document.getElementById('dot-right');
+  if (dotFace) dotFace.style.background = capturedImages.face ? 'var(--em)' : 'rgba(255,255,255,0.3)';
+  if (dotLeft) dotLeft.style.background = capturedImages.palm_left ? 'var(--gold)' : 'rgba(255,255,255,0.3)';
+  if (dotRight) dotRight.style.background = capturedImages.palm_right ? '#8aacf0' : 'rgba(255,255,255,0.3)';
+
   stopCamera();
   sState = 'idle';
   alignScore = 0;
@@ -3687,6 +3887,8 @@ function runStep(i) {
 function showResult() {
   if (camAnimFr) { cancelAnimationFrame(camAnimFr); camAnimFr = null; }
   sState = 'done'; setFB('done');
+  // ✅ 스캔 CTA 버튼 상태 업데이트
+  setTimeout(updateScanCTA, 100);
 
   // ✅ 현재 모드의 캔버스 스냅샷 저장
   var sc = document.getElementById('sc');
@@ -3784,6 +3986,14 @@ function showResult() {
     // 관상 통합 해석
     var ib = document.querySelector('.ib .ib-body');
     if (ib) ib.innerHTML = '이마(관록궁)가 <em>넓고 둥글게 발달</em>하여 명반의 천동성 화록과 완벽하게 일치합니다. 눈빛의 <em>예리함(천기성 명궁)</em>과 인중의 길이가 <b>이동운 91점</b>을 뒷받침합니다.';
+    var ibt = document.querySelector('.ib .ib-title');
+    if (ibt) ibt.textContent = '관상·명반 통합 해석';
+
+    // ✅ 관상 결과 scanResults에 저장 (리포트 활용)
+    scanResults.face = {
+      lines: FEATS.map(function(f){ return { name: f.name, desc: f.desc, score: f.pct, tag: f.tag }; }),
+      overall: FEATS.map(function(f){ return f.name + '(' + f.pct + '%): ' + f.desc; }).join(', ')
+    };
     var ibt = document.querySelector('.ib .ib-title');
     if (ibt) ibt.textContent = '관상·명반 통합 해석';
 

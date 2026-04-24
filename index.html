@@ -653,7 +653,7 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
           <canvas id="wc" height="170" style="width:100%;cursor:crosshair;border-radius:6px;"></canvas>
           <div id="wtt" style="position:absolute;background:rgba(10,10,40,0.95);border:1px solid rgba(80,200,120,0.3);border-radius:8px;padding:7px 11px;font-size:11px;color:#fff;pointer-events:none;opacity:0;transition:opacity .15s;z-index:5;white-space:nowrap;top:8px;left:8px;"></div>
         </div>
-        <button class="wcta" onclick="showPg('report')">인생 지침서에서 상세 타임라인 보기 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg></button>
+        <button class="wcta" onclick="goToTimeline()">인생 지침서에서 상세 타임라인 보기 <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9,18 15,12 9,6"/></svg></button>
       </div>
       <div class="cmpc">
         <div class="ct">기문둔갑 전략 나침반</div>
@@ -3582,6 +3582,51 @@ function updateScanCTA() {
   }
 }
 
+function goToTimeline() {
+  checkScanBeforeReport();
+  // 리포트 페이지 로드 후 타임라인 섹션으로 스크롤
+  setTimeout(function() {
+    var reportBody = document.getElementById('report-full-body');
+    if (!reportBody) return;
+
+    // 타임라인 h3 찾기
+    var allH3 = reportBody.querySelectorAll('h3, [style*="border-left"]');
+    var timelineEl = null;
+    allH3.forEach(function(el) {
+      if (el.textContent.includes('타임라인') || el.textContent.includes('Timeline') || el.textContent.includes('2025') || el.textContent.includes('2026')) {
+        timelineEl = el;
+      }
+    });
+
+    if (timelineEl) {
+      // 타임라인 섹션 하이라이트 후 스크롤
+      timelineEl.style.background = 'rgba(255,215,0,0.08)';
+      timelineEl.style.borderRadius = '8px';
+      timelineEl.style.padding = '8px 12px';
+      setTimeout(function() {
+        timelineEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        setTimeout(function() { timelineEl.style.background = ''; }, 2000);
+      }, 300);
+    } else {
+      // 리포트 아직 없으면 생성 후 스크롤
+      var btn = document.getElementById('report-generate-btn');
+      if (btn && btn.style.display !== 'none') {
+        btn.click();
+        var waitInterval = setInterval(function() {
+          var body = document.getElementById('report-full-body');
+          if (body && body.innerHTML.length > 500) {
+            clearInterval(waitInterval);
+            goToTimeline();
+          }
+        }, 1000);
+      } else {
+        // 리포트 맨 아래로 스크롤
+        if (reportBody) reportBody.scrollIntoView({ behavior: 'smooth', block: 'end' });
+      }
+    }
+  }, 400);
+}
+
 function closeScanModal() {
   var m = document.getElementById('scan-check-modal');
   if (m) m.style.display = 'none';
@@ -3744,8 +3789,10 @@ async function generate50PReport() {
     '매일 실천할 수 있는 개운 루틴, 매월 챙겨야 할 길일, 절대 하지 말아야 할 행동 5가지,\n' +
     '이름·숫자·색깔의 에너지 활용법.\n\n' +
     '10. <h3>📅 2025~2028 핵심 타임라인 — 중요한 변화의 지도</h3>\n' +
-    '연도별 가장 중요한 사건·기회·위험, 각 연도의 핵심 행동 지침,\n' +
-    '특별히 주목해야 할 날짜와 그 이유, 중장기 인생 전략 제안.\n\n' +
+    '연도별 가장 중요한 사건·기회·위험을 구체적으로 서술하라.\n' +
+    '생애 파동 데이터: ' + JSON.stringify(r.wave_data || WD) + '\n' +
+    '위 데이터의 w(웰빙)/c(커리어)/l(행운) 수치를 반드시 인용하며 설명하라.\n' +
+    '각 연도마다: 주요 변화 · 핵심 행동 지침 · 주의 시기를 <p> 태그로 분리해서 서술.\n\n' +
     'HTML 형식으로 작성. 아래 태그만 사용: <h3>, <p>, <strong>, <em>, <br>. JSON 아님. 순수 HTML만 출력.\n\n' +
     '=== 레이아웃 규칙 (반드시 준수) ===\n' +
     '1. 섹션 제목은 <h3>으로 감싸라.\n' +

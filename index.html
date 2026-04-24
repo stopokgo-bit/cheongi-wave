@@ -3322,35 +3322,146 @@ function downloadPDF() {
   var reportBody = document.getElementById('report-full-body');
   if (!reportBody || !reportBody.innerHTML.trim()) { alert('먼저 인생 지침서를 생성해주세요.'); return; }
 
-  var win = window.open('', '_blank');
-  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8">');
-  win.document.write('<title>' + inp.name + '님의 천기 웨이브 인생 지침서</title>');
-  win.document.write('<style>body{font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif;max-width:760px;margin:0 auto;padding:40px;color:#1a1a2e;line-height:1.9;font-size:14px;}');
-  win.document.write('.cover{text-align:center;padding:50px 0;border-bottom:3px double #c8920a;margin-bottom:40px;}');
-  win.document.write('.cover h1{font-size:24px;color:#0f0f3a;margin-bottom:8px;font-weight:700;}');
-  win.document.write('.cover .sub{font-size:13px;color:#666;margin:4px 0;}');
-  win.document.write('.badge{display:inline-block;padding:6px 20px;background:#FFD700;color:#0f0f3a;border-radius:20px;font-weight:700;font-size:12px;margin-top:14px;}');
-  win.document.write('h3{color:#0f0f3a;font-size:15px;border-left:4px solid #FFD700;padding-left:12px;margin:28px 0 10px;font-weight:700;}');
-  win.document.write('p{color:#2a2a3a;font-size:13px;margin:8px 0;line-height:1.9;}');
-  win.document.write('em{color:#1a6b3a;font-style:normal;font-weight:600;}');
-  win.document.write('strong{color:#0f0f3a;font-weight:700;}');
-  win.document.write('.footer{margin-top:50px;padding-top:16px;border-top:1px solid #ddd;text-align:center;font-size:11px;color:#999;}');
-  win.document.write('.print-btn{text-align:center;margin:30px 0;padding:20px;background:#f8f8f8;border-radius:8px;}');
-  win.document.write('@media print{.print-btn{display:none;}}</style></head><body>');
-  win.document.write('<div class="cover"><div style="font-size:36px;margin-bottom:10px;">☆</div>');
-  win.document.write('<h1>' + inp.name + '님의 인생 지침서</h1>');
-  win.document.write('<div class="sub">' + inp.year + '년 ' + inp.month + '월 ' + inp.day + '일 · ' + (r.star||'') + ' 명주 · ' + (r.daewoon||'') + '</div>');
-  win.document.write('<div class="sub">' + new Date().toLocaleDateString('ko-KR') + ' 발행</div>');
-  win.document.write('<div class="badge">천기 웨이브 — 정통 자미두수·기문둔갑·매화역수 AI 분석</div></div>');
+  var scores = r.scores || {};
+  var wealth = scores['재물운'] || 75;
+  var career = scores['직업운'] || 75;
+  var love   = scores['애정운'] || 75;
+  var health = scores['건강운'] || 75;
+
+  function scoreBar(label, val, color) {
+    var w = Math.round(val * 4.2);
+    return '<div style="margin-bottom:12px;">' +
+      '<div style="display:flex;justify-content:space-between;margin-bottom:4px;">' +
+        '<span style="font-size:12px;font-weight:600;color:#333;">' + label + '</span>' +
+        '<span style="font-size:13px;font-weight:700;color:' + color + ';">' + val + '점</span>' +
+      '</div>' +
+      '<div style="background:#eee;border-radius:4px;height:10px;overflow:hidden;">' +
+        '<div style="width:' + w + 'px;max-width:100%;height:100%;background:' + color + ';border-radius:4px;"></div>' +
+      '</div></div>';
+  }
+
+  function radarChart() {
+    var cx=110,cy=100,rv=80;
+    var vals=[career,wealth,love,health,Math.round((career+wealth+love+health)/4)];
+    var labels=['직업운','재물운','애정운','건강운','종합'];
+    var cols=['#e74c3c','#f39c12','#cc88bb','#50C878','#3498db'];
+    var angs=vals.map(function(_,i){return(i*72-90)*Math.PI/180;});
+    var bg=[20,40,60,80,100].map(function(p){
+      var pts=angs.map(function(a){return[(cx+rv*p/100*Math.cos(a)).toFixed(1),(cy+rv*p/100*Math.sin(a)).toFixed(1)].join(',');}).join(' ');
+      return '<polygon points="'+pts+'" fill="none" stroke="#ddd" stroke-width="1"/>';
+    }).join('');
+    var axes=angs.map(function(a){return '<line x1="'+cx+'" y1="'+cy+'" x2="'+(cx+rv*Math.cos(a)).toFixed(1)+'" y2="'+(cy+rv*Math.sin(a)).toFixed(1)+'" stroke="#ccc" stroke-width="1"/>';}).join('');
+    var dpts=vals.map(function(v,i){return[(cx+rv*v/100*Math.cos(angs[i])).toFixed(1),(cy+rv*v/100*Math.sin(angs[i])).toFixed(1)].join(',');}).join(' ');
+    var lbls=labels.map(function(l,i){var lx=(cx+(rv+22)*Math.cos(angs[i])).toFixed(1),ly=(cy+(rv+22)*Math.sin(angs[i])).toFixed(1);return '<text x="'+lx+'" y="'+ly+'" font-size="10" text-anchor="middle" fill="'+cols[i]+'" font-weight="600">'+l+'</text>';}).join('');
+    var dots=vals.map(function(v,i){var dx=(cx+rv*v/100*Math.cos(angs[i])).toFixed(1),dy=(cy+rv*v/100*Math.sin(angs[i])).toFixed(1);return '<circle cx="'+dx+'" cy="'+dy+'" r="4" fill="'+cols[i]+'"/>';}).join('');
+    return '<svg width="220" height="200" viewBox="0 0 220 200">'+bg+axes+'<polygon points="'+dpts+'" fill="rgba(52,152,219,0.15)" stroke="#3498db" stroke-width="1.5"/>'+dots+lbls+'</svg>';
+  }
+
+  // 목차 추출
+  var sections=[];
+  var tmp=document.createElement('div');
+  tmp.innerHTML=reportBody.innerHTML;
+  tmp.querySelectorAll('h3').forEach(function(el,i){
+    var t=el.textContent.trim();
+    if(t.length>2&&t.length<60) sections.push({num:i+1,title:t});
+  });
+  var tocHtml=sections.length>0
+    ?sections.map(function(s){return '<tr><td style="padding:5px 8px;color:#999;font-size:12px;">'+s.num+'</td><td style="padding:5px 8px;font-size:12px;color:#333;">'+s.title+'</td><td style="padding:5px 8px;"><span style="border-bottom:1px dotted #ccc;display:inline-block;width:80px;"></span></td></tr>';}).join('')
+    :'<tr><td colspan="3" style="color:#999;padding:8px;font-size:12px;">목차를 추출하는 중...</td></tr>';
+
+  var win=window.open('','_blank');
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>'+inp.name+'님의 천기 웨이브 인생 지침서</title>');
+  win.document.write('<style>');
+  win.document.write('*{box-sizing:border-box;}body{font-family:"Malgun Gothic","Apple SD Gothic Neo",sans-serif;max-width:780px;margin:0 auto;padding:40px;color:#1a1a2e;line-height:1.9;font-size:14px;}');
+  win.document.write('.pb{page-break-after:always;}');
+  win.document.write('.cover{text-align:center;padding:60px 20px;background:linear-gradient(160deg,#0f0f3a,#1a1a5a 60%,#0f2a4a);color:#fff;border-radius:12px;}');
+  win.document.write('.intro{padding:28px;background:#f8f8ff;border-radius:12px;margin:32px 0;}');
+  win.document.write('.method-box{display:flex;gap:14px;margin-top:14px;flex-wrap:wrap;}');
+  win.document.write('.method-item{flex:1;min-width:150px;background:#fff;border-radius:8px;padding:12px;border-left:3px solid #FFD700;}');
+  win.document.write('.score-wrap{padding:24px;background:#f0f4ff;border-radius:12px;margin-bottom:28px;}');
+  win.document.write('.score-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;align-items:center;}');
+  win.document.write('h3{color:#0f0f3a;font-size:15px;border-left:4px solid #FFD700;padding-left:12px;margin:28px 0 8px;font-weight:700;}');
+  win.document.write('p{color:#2a2a3a;font-size:13px;margin:5px 0 5px 12px;line-height:1.95;}');
+  win.document.write('em{color:#1a6b3a;font-style:normal;font-weight:600;}strong{color:#0f0f3a;font-weight:700;}');
+  win.document.write('.footer-bar{margin-top:50px;padding-top:14px;border-top:2px solid #FFD700;display:flex;justify-content:space-between;font-size:11px;color:#999;}');
+  win.document.write('.print-btn{text-align:center;margin:28px 0;padding:18px;background:#f8f8f8;border-radius:8px;}');
+  win.document.write('@media print{.print-btn{display:none;}.pb{page-break-after:always;}}');
+  win.document.write('</style></head><body>');
+
+  // ① 커버
+  win.document.write('<div class="cover pb">');
+  win.document.write('<div style="font-size:44px;margin-bottom:12px;">☆</div>');
+  win.document.write('<div style="font-size:12px;letter-spacing:.2em;color:rgba(255,215,0,0.8);margin-bottom:10px;">CHEON-GI WAVE · 천기 웨이브</div>');
+  win.document.write('<div style="font-size:26px;font-weight:700;margin-bottom:8px;">인생 지침서</div>');
+  win.document.write('<div style="font-size:20px;font-weight:700;color:#FFD700;margin-bottom:16px;">'+inp.name+'님</div>');
+  win.document.write('<div style="font-size:13px;color:rgba(255,255,255,0.7);line-height:2;margin-bottom:18px;">');
+  win.document.write('생년월일: '+inp.year+'년 '+inp.month+'월 '+inp.day+'일 ('+( inp.cal||'양력')+')<br>');
+  win.document.write('생시: '+(inp.time||'미상')+' · '+(inp.gender||'')+' · 만 '+(new Date().getFullYear()-parseInt(inp.year))+'세<br>');
+  win.document.write('명주: '+(r.star||'')+' · '+(r.daewoon||'')+'<br>');
+  win.document.write('발행일: '+new Date().toLocaleDateString('ko-KR'));
+  win.document.write('</div>');
+  win.document.write('<div><span style="display:inline-block;padding:6px 18px;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.4);border-radius:20px;color:#FFD700;font-size:12px;font-weight:600;margin:3px;">자미두수</span>');
+  win.document.write('<span style="display:inline-block;padding:6px 18px;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.4);border-radius:20px;color:#FFD700;font-size:12px;font-weight:600;margin:3px;">기문둔갑</span>');
+  win.document.write('<span style="display:inline-block;padding:6px 18px;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.4);border-radius:20px;color:#FFD700;font-size:12px;font-weight:600;margin:3px;">매화역수</span></div>');
+  win.document.write('<div style="font-size:11px;color:rgba(255,255,255,0.35);margin-top:20px;">본 리포트는 AI 기반 명리 분석으로 참고용입니다</div>');
+  win.document.write('</div>');
+
+  // ② 소개 + 역학 안내
+  win.document.write('<div class="intro pb">');
+  win.document.write('<div style="font-size:15px;font-weight:700;color:#0f0f3a;margin-bottom:12px;padding-bottom:8px;border-bottom:2px solid #FFD700;">🌊 천기 웨이브란?</div>');
+  win.document.write('<p style="margin:0 0 10px;">천기 웨이브는 <strong>자미두수·기문둔갑·매화역수</strong> 3대 동양 역학을 AI와 결합하여 개인 맞춤 명리 분석을 제공하는 프리미엄 플랫폼입니다.</p>');
+  win.document.write('<div class="method-box">');
+  win.document.write('<div class="method-item"><div style="font-size:13px;font-weight:700;color:#0f0f3a;margin-bottom:4px;">☯ 자미두수</div><div style="font-size:11px;color:#666;line-height:1.7;">중국 송대 기원. 14주성·108보성으로 명반 구성. 타고난 성격·기질·인생 패턴 분석. 가장 정밀한 명리학.</div></div>');
+  win.document.write('<div class="method-item"><div style="font-size:13px;font-weight:700;color:#0f0f3a;margin-bottom:4px;">⊙ 기문둔갑</div><div style="font-size:11px;color:#666;line-height:1.7;">중국 최고 전략 역술. 팔문·구성으로 오늘의 길방·최적 행동 시기 도출. 사업·이동에 활용.</div></div>');
+  win.document.write('<div class="method-item"><div style="font-size:13px;font-weight:700;color:#0f0f3a;margin-bottom:4px;">✦ 매화역수</div><div style="font-size:11px;color:#666;line-height:1.7;">주역 64괘 기반. 현재 운기의 파도(상승·하강·전환)를 읽는 역술. 오늘·이달 운기 방향에 특화.</div></div>');
+  win.document.write('</div>');
+  win.document.write('<div style="margin-top:16px;padding:12px;background:#fff3cd;border-radius:8px;border-left:3px solid #FFD700;">');
+  win.document.write('<p style="margin:0;font-size:12px;color:#666;"><strong>💡 리포트 보는 법:</strong> <em>초록 기울임</em>=역학 전문용어, <strong>굵은 글씨</strong>=핵심 키워드. 부정적 내용은 미리 알고 대비하기 위한 것입니다.</p>');
+  win.document.write('</div></div>');
+
+  // ③ 운세 점수 시각화
+  win.document.write('<div class="score-wrap">');
+  win.document.write('<div style="font-size:15px;font-weight:700;color:#0f0f3a;margin-bottom:16px;">📊 '+inp.name+'님의 현재 운세 종합 점수</div>');
+  win.document.write('<div class="score-grid">');
+  win.document.write('<div>');
+  win.document.write(scoreBar('재물운',wealth,'#f39c12'));
+  win.document.write(scoreBar('직업운',career,'#e74c3c'));
+  win.document.write(scoreBar('애정운',love,'#cc88bb'));
+  win.document.write(scoreBar('건강운',health,'#50C878'));
+  win.document.write('<div style="margin-top:14px;padding:10px;background:#fff;border-radius:8px;text-align:center;">');
+  win.document.write('<div style="font-size:11px;color:#999;margin-bottom:2px;">종합 운세 지수</div>');
+  win.document.write('<div style="font-size:26px;font-weight:700;color:#0f0f3a;">'+Math.round((wealth+career+love+health)/4)+'점</div>');
+  win.document.write('<div style="font-size:11px;color:#666;">'+(r.summary||'')+'</div>');
+  win.document.write('</div></div>');
+  win.document.write('<div style="display:flex;flex-direction:column;align-items:center;">');
+  win.document.write(radarChart());
+  win.document.write('<div style="font-size:10px;color:#999;margin-top:4px;">* 현재 대운 기준 운세 레이더</div>');
+  win.document.write('</div></div></div>');
+
+  // ④ 목차
+  win.document.write('<div style="padding:0 0 28px;">');
+  win.document.write('<div style="font-size:15px;font-weight:700;color:#0f0f3a;margin-bottom:14px;padding-left:10px;border-left:4px solid #FFD700;">📋 목차</div>');
+  win.document.write('<table style="width:100%;border-collapse:collapse;">');
+  win.document.write('<tr style="border-bottom:2px solid #FFD700;"><th style="padding:6px 8px;text-align:left;font-size:11px;color:#999;width:30px;">No.</th><th style="padding:6px 8px;text-align:left;font-size:11px;color:#999;">섹션</th><th style="padding:6px 8px;text-align:right;font-size:11px;color:#999;width:100px;"></th></tr>');
+  win.document.write(tocHtml);
+  win.document.write('</table></div>');
+
+  // ⑤ 본문
+  win.document.write('<hr style="border:none;border-top:2px solid #FFD700;margin:0 0 28px;">');
+  win.document.write('<h2 style="font-size:17px;color:#0f0f3a;margin-bottom:20px;">📜 '+inp.name+'님의 인생 지침서 — 상세 분석</h2>');
   win.document.write(reportBody.innerHTML);
-  win.document.write('<div class="footer">© 2026 천기 웨이브 | cheongi-wave-61pz.vercel.app</div>');
-  win.document.write('<div class="print-btn"><p style="color:#555;margin-bottom:12px;">📥 PDF로 저장하려면 아래 버튼을 눌러 "PDF로 저장"을 선택하세요</p>');
-  win.document.write('<button onclick="window.print()" style="padding:12px 32px;background:#0f0f3a;color:#FFD700;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-right:8px;">🖨️ PDF 저장 / 인쇄</button>');
-  win.document.write('<button onclick="window.close()" style="padding:12px 20px;background:#ddd;color:#333;border:none;border-radius:8px;font-size:13px;cursor:pointer;">닫기</button></div>');
-  win.document.write('</body></html>');
+
+  // ⑥ 푸터 + 프린트 버튼
+  win.document.write('<div class="footer-bar"><span>🌊 천기 웨이브</span><span>'+inp.name+'님 · '+new Date().toLocaleDateString('ko-KR')+' 발행</span><span>cheongi-wave-61pz.vercel.app</span></div>');
+  win.document.write('<div class="print-btn">');
+  win.document.write('<p style="color:#555;margin-bottom:10px;">📥 PDF로 저장 → 인쇄 버튼 → <strong>PDF로 저장</strong> 선택</p>');
+  win.document.write('<button onclick="window.print()" style="padding:12px 28px;background:#0f0f3a;color:#FFD700;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-right:8px;">🖨️ PDF 저장 / 인쇄</button>');
+  win.document.write('<button onclick="window.close()" style="padding:12px 18px;background:#ddd;color:#333;border:none;border-radius:8px;font-size:13px;cursor:pointer;">닫기</button>');
+  win.document.write('</div></body></html>');
   win.document.close();
-  setTimeout(function(){ win.focus(); }, 300);
+  setTimeout(function(){win.focus();},300);
 }
+
 
 /* ── 이메일 발송 ── */
 function sendReportEmail() {
@@ -3360,25 +3471,77 @@ function sendReportEmail() {
   var reportBody = document.getElementById('report-full-body');
   if (!reportBody || !reportBody.innerHTML.trim()) { alert('먼저 인생 지침서를 생성해주세요.'); return; }
 
-  var defaultEmail = currentUser ? (currentUser.email || '') : '';
-  var toEmail = prompt('리포트를 받을 이메일 주소:', defaultEmail);
-  if (!toEmail || !toEmail.includes('@')) return;
-
-  // mailto로 기본 발송 (EmailJS 설정 전까지)
-  var subject = encodeURIComponent('[천기 웨이브] ' + inp.name + '님의 인생 지침서');
   var plain = reportBody.innerText || '';
-  var bodyText = encodeURIComponent(
-    '[ 천기 웨이브 - ' + inp.name + '님의 AI 명리 분석 ]\n' +
+  var subject = '[천기 웨이브] ' + inp.name + '님의 인생 지침서';
+  var bodyText = '[ 천기 웨이브 - ' + inp.name + '님의 AI 명리 분석 ]\n' +
     '생년월일: ' + inp.year + '.' + inp.month + '.' + inp.day + '\n' +
     '명주: ' + (r.star||'') + ' · ' + (r.daewoon||'') + '\n' +
     '요약: ' + (r.summary||'') + '\n\n' +
     '━━━ 상세 리포트 ━━━\n\n' +
-    plain.substring(0, 2000) + '\n\n...(전체 리포트는 앱에서 확인)\n\n' +
-    '🌊 https://cheongi-wave-61pz.vercel.app'
-  );
+    plain + '\n\n' +
+    '🌊 https://cheongi-wave-61pz.vercel.app';
 
-  window.open('mailto:' + toEmail + '?subject=' + subject + '&body=' + bodyText);
-  showShareToast('📧 메일 앱이 열립니다!');
+  // ✅ 이메일 발송 모달 (mailto + Gmail + 복사)
+  var modal = document.getElementById('email-modal');
+  if (!modal) {
+    modal = document.createElement('div');
+    modal.id = 'email-modal';
+    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.75);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;';
+    document.body.appendChild(modal);
+  }
+
+  var defaultEmail = currentUser ? (currentUser.email || '') : '';
+  var encodedSubject = encodeURIComponent(subject);
+  var encodedBody = encodeURIComponent(bodyText.substring(0, 1500) + '\n\n...(전체 리포트는 앱에서 확인)\n🌊 https://cheongi-wave-61pz.vercel.app');
+
+  modal.innerHTML =
+    '<div style="background:#1a1a4e;border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:1.75rem;max-width:380px;width:100%;position:relative;">' +
+      '<button onclick="document.getElementById(\'email-modal\').style.display=\'none\'" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(255,255,255,0.4);font-size:20px;cursor:pointer;">×</button>' +
+      '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:.35rem;">📧 리포트 이메일 발송</div>' +
+      '<div style="font-size:12px;color:var(--t2);margin-bottom:1rem;">' + inp.name + '님의 인생 지침서</div>' +
+
+      '<div style="display:flex;flex-direction:column;gap:8px;">' +
+        // Gmail 버튼
+        '<a href="https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(defaultEmail) + '&su=' + encodedSubject + '&body=' + encodedBody + '" target="_blank" ' +
+        'style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:rgba(255,255,255,0.08);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:#fff;font-size:13px;font-weight:700;text-decoration:none;">' +
+        '<svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M20 4H4a2 2 0 00-2 2v12a2 2 0 002 2h16a2 2 0 002-2V6a2 2 0 00-2-2z" fill="#EA4335"/><path d="M2 6l10 7 10-7" stroke="#fff" stroke-width="1.5"/></svg>' +
+        'Gmail로 열기</a>' +
+
+        // 기본 메일 앱
+        '<a href="mailto:' + defaultEmail + '?subject=' + encodedSubject + '&body=' + encodedBody + '" ' +
+        'style="display:flex;align-items:center;justify-content:center;gap:8px;padding:12px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.1);border-radius:10px;color:var(--t2);font-size:13px;font-weight:600;text-decoration:none;">' +
+        '📬 기본 메일 앱으로 열기</a>' +
+
+        // 텍스트 복사
+        '<button id="email-copy-btn" style="padding:12px;background:rgba(80,200,120,0.12);border:1px solid rgba(80,200,120,0.3);border-radius:10px;color:var(--em);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">' +
+        '📋 리포트 텍스트 복사</button>' +
+      '</div>' +
+
+      '<div style="margin-top:.75rem;font-size:11px;color:rgba(255,255,255,0.3);text-align:center;">복사 후 원하는 메일 앱에 붙여넣기 하세요</div>' +
+    '</div>';
+
+  modal.style.display = 'flex';
+
+  // 복사 버튼
+  setTimeout(function() {
+    var copyBtn = document.getElementById('email-copy-btn');
+    if (copyBtn) {
+      copyBtn.onclick = function() {
+        navigator.clipboard.writeText(bodyText).then(function() {
+          copyBtn.textContent = '✅ 복사됐습니다!';
+          setTimeout(function(){ copyBtn.textContent = '📋 리포트 텍스트 복사'; }, 2000);
+        }).catch(function() {
+          var ta = document.createElement('textarea');
+          ta.value = bodyText;
+          document.body.appendChild(ta);
+          ta.select();
+          document.execCommand('copy');
+          document.body.removeChild(ta);
+          copyBtn.textContent = '✅ 복사됐습니다!';
+        });
+      };
+    }
+  }, 50);
 }
 
 /* ── 인생 지침서 생성 ── */
@@ -3475,10 +3638,11 @@ function checkScanBeforeReport() {
 
 function renderReportHtml(inp, r, html) {
   var styled = (html || '')
-    .replace(/<h3>/g, '<div style="font-size:15px;font-weight:700;color:#fff;margin-top:1rem;margin-bottom:.4rem;border-left:3px solid var(--gold);padding-left:.75rem;">')
+    .replace(/<h3>/g, '<div style="font-size:15px;font-weight:700;color:#fff;margin-top:1.8rem;margin-bottom:.6rem;padding-left:.85rem;border-left:3px solid var(--gold);line-height:1.4;">')
     .replace(/<\/h3>/g, '</div>')
-    .replace(/<p>/g, '<p style="margin:.4rem 0;line-height:1.9;">')
-    .replace(/<strong>/g, '<strong style="color:var(--t3);">')
+    .replace(/<p>/g, '<p style="margin:.2rem 0;line-height:1.95;color:var(--t2);padding-left:.85rem;">')
+    .replace(/<p style="margin:.2rem 0[^"]*">\s*<br>\s*<\/p>/g, '<div style="height:.9rem;"></div>')
+    .replace(/<strong>/g, '<strong style="color:var(--t3);font-weight:700;">')
     .replace(/<em>/g, '<em style="color:var(--em);font-style:normal;font-weight:600;">');
   return '<div style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.2);border-radius:12px;padding:1rem 1.25rem;margin-bottom:1.5rem;">' +
     '<div style="font-size:12px;color:var(--gold);font-weight:700;margin-bottom:.3rem;">✦ ' + ((inp&&inp.name)||'') + '님의 인생 지침서</div>' +
@@ -3582,8 +3746,23 @@ async function generate50PReport() {
     '10. <h3>📅 2025~2028 핵심 타임라인 — 중요한 변화의 지도</h3>\n' +
     '연도별 가장 중요한 사건·기회·위험, 각 연도의 핵심 행동 지침,\n' +
     '특별히 주목해야 할 날짜와 그 이유, 중장기 인생 전략 제안.\n\n' +
-    'HTML 형식으로 작성. <h3>, <p>, <strong>, <em> 태그만 사용. JSON 아님. 순수 HTML만 출력.\n\n' +
-    '⚠️ 절대 중요: 마지막 섹션(10번 타임라인)까지 반드시 완성하라. 문장이 잘리면 안 된다. 각 섹션을 간결하게 써서 10개 섹션을 모두 완성하는 것이 우선이다. 분량보다 완성이 중요하다.';
+    'HTML 형식으로 작성. 아래 태그만 사용: <h3>, <p>, <strong>, <em>, <br>. JSON 아님. 순수 HTML만 출력.\n\n' +
+    '=== 레이아웃 규칙 (반드시 준수) ===\n' +
+    '1. 섹션 제목은 <h3>으로 감싸라.\n' +
+    '2. 같은 주제의 나열 항목은 <p>첫째, 내용</p><p>둘째, 내용</p><p>셋째, 내용</p> 형태로 각 줄 분리.\n' +
+    '3. 다른 주제로 넘어갈 때는 <p><br></p>로 빈 줄을 추가해 단락을 확실히 구분.\n' +
+    '4. 예시:\n' +
+    '   <h3>주의해야 할 신체 부위</h3>\n' +
+    '   <p>첫째, 간·담낭 계열 — 화기(化忌)가 질액궁을 공격하므로 주 1회 이상 공복혈당 체크 권장.</p>\n' +
+    '   <p>둘째, 관절·허리 — 천동성 특유의 음기 과잉으로 40대 중반 이후 무릎·요추 주의.</p>\n' +
+    '   <p>셋째, 심장·혈압 — 경진대운 화(火) 과잉 시기, 2026~2027년 정기 혈압 체크 필수.</p>\n' +
+    '   <p><br></p>\n' +
+    '   <h3>사업장·거주지 이사의 최적 방위</h3>\n' +
+    '   <p>기문둔갑 생문(生門) 기준 동북방이 2025~2026년 이사·확장 최적 방위.</p>\n' +
+    '   <p>사업 미팅·계약·협상에 유리한 시간대: 오전 9~11시(사시) 또는 오후 3~5시(신시).</p>\n' +
+    '5. <strong>은 핵심 키워드</strong>에만, <em>은 역학 용어</em>에만 사용.\n' +
+    '6. 모든 문장은 완성된 문장으로 끝낼 것.\n\n' +
+    '⚠️ 절대 중요: 마지막 섹션까지 반드시 완성하라. 분량보다 완성이 우선이다.';
 
   try {
     var response = await fetch('/api/saju', {

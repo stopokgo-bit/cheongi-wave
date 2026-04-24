@@ -886,11 +886,11 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
       <h1>천기 사운드 레미디</h1>
       <div style="font-size:11px;color:var(--t2);margin-left:auto;">실시간 처방</div>
     </div>
-    <div class="rx-hero fu">
-      <div style="font-size:11px;color:var(--t2);margin-bottom:.4rem;">관록궁 삼합일 · 오늘의 처방</div>
-      <div class="rx-hl">오늘은 <span>돌파의 에너지</span>가 흐릅니다</div>
-      <div style="font-size:12px;color:var(--t2);">직업운 88 · 이동운 91 · UrbanPulseMix 처방</div>
-      <div class="spills"><span class="spill e">직업운 88</span><span class="spill e">이동운 91</span><span class="spill g">재물운 74</span><span class="spill p">애정운 65</span></div>
+    <div class="rx-hero fu" id="rx-hero-section">
+      <div style="font-size:11px;color:var(--t2);margin-bottom:.4rem;" id="rx-hero-sub">오늘의 처방</div>
+      <div class="rx-hl">오늘은 <span id="rx-hero-mood">당신만의 에너지</span>가 흐릅니다</div>
+      <div style="font-size:12px;color:var(--t2);" id="rx-hero-desc">사주 분석 후 맞춤 음악이 추천됩니다</div>
+      <div class="spills" id="rx-spills"></div>
     </div>
     <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:.55rem;">채널 선택</div>
     <div class="ch-grid" id="chg"></div>
@@ -2532,7 +2532,7 @@ function showPg(pg, btn, sub) {
     }
     setTimeout(populateReport, 80);
   }
-  if (pg === 'scan') { setTimeout(function(){ startCamera(); }, 80); }
+  if (pg === 'sound') { setTimeout(updateSoundPage, 80); }
   else { stopCamera(); }
   if (pg === 'sound' && !chBuilt) { buildChannels(); chBuilt = true; }
   if (pg === 'saju') { setTimeout(function(){ drawWave(); }, 80); }
@@ -3497,6 +3497,104 @@ function showShareToast(msg) {
   t.textContent = msg;
   t.style.opacity = '1';
   setTimeout(function(){ t.style.opacity = '0'; }, 2500);
+}
+
+/* ── 음악 처방 동적 업데이트 ── */
+function updateSoundPage() {
+  var r = window.lastSajuResult;
+  var inp = window.lastSajuInput;
+
+  // 사주 결과 없으면 기본값
+  if (!r) {
+    document.getElementById('rx-hero-mood').textContent = '당신만의 에너지';
+    document.getElementById('rx-hero-desc').textContent = '사주 분석 후 맞춤 음악이 추천됩니다';
+    return;
+  }
+
+  var scores = r.scores || {};
+  var wealth = scores['재물운'] || 75;
+  var career = scores['직업운'] || 75;
+  var love   = scores['애정운'] || 75;
+  var health = scores['건강운'] || 75;
+  var avg = Math.round((wealth + career + love + health) / 4);
+
+  // 오늘의 에너지 키워드 - 사주 결과 기반
+  var mood = '', desc = '', recommendId = 'urban';
+
+  if (career >= 85) {
+    mood = '돌파와 성취의 에너지';
+    desc = '관록궁 활성화 · 직업운 최고조 · 추진력 음악 처방';
+    recommendId = 'urban';
+  } else if (wealth >= 85) {
+    mood = '재물이 흘러드는 에너지';
+    desc = '재백궁 화록 발동 · 풍요로운 진동수 · 풍요 음악 처방';
+    recommendId = 'luck';
+  } else if (love >= 85) {
+    mood = '인연과 감성의 에너지';
+    desc = '부처궁 활성 · 감정 교류 최적 · 감성 음악 처방';
+    recommendId = 'yeon';
+  } else if (avg >= 80) {
+    mood = '상승하는 긍정 에너지';
+    desc = '전반적 운세 양호 · 기운 증폭 · 활력 음악 처방';
+    recommendId = 'luckamp';
+  } else if (avg < 65) {
+    mood = '내면을 다스리는 에너지';
+    desc = '정화와 재충전 시기 · 명상 음악 처방';
+    recommendId = 'deep';
+  } else {
+    mood = '균형과 조화의 에너지';
+    desc = '안정적 흐름 유지 · 조화로운 음악 처방';
+    recommendId = 'ddak';
+  }
+
+  // daewoon 특성 반영
+  if (r.daewoon && r.daewoon.includes('화')) {
+    mood = '열정과 변화의 에너지';
+    recommendId = 'urban';
+  }
+  if (r.lucky_mindset && r.lucky_mindset.includes('기다')) {
+    recommendId = 'deep';
+  }
+
+  // UI 업데이트
+  var moodEl = document.getElementById('rx-hero-mood');
+  var descEl = document.getElementById('rx-hero-desc');
+  var subEl  = document.getElementById('rx-hero-sub');
+  var spillsEl = document.getElementById('rx-spills');
+
+  if (moodEl) moodEl.textContent = mood;
+  if (descEl) descEl.textContent = desc;
+  if (subEl && r.daewoon) subEl.textContent = r.daewoon + ' · 오늘의 처방';
+
+  // 운세 점수 태그
+  if (spillsEl) {
+    spillsEl.innerHTML =
+      '<span class="spill e">직업운 ' + career + '</span>' +
+      '<span class="spill g">재물운 ' + wealth + '</span>' +
+      '<span class="spill p">애정운 ' + love + '</span>' +
+      '<span class="spill" style="background:rgba(138,172,240,0.15);color:#8aacf0;">건강운 ' + health + '</span>';
+  }
+
+  // 추천 채널 자동 선택
+  var recCh = CH.find(function(c){ return c.id === recommendId; });
+  if (!recCh) recCh = CH[0];
+
+  // 기존 tag 초기화 후 추천 채널에만 '오늘 추천' 뱃지
+  CH.forEach(function(c) {
+    c.tag = c.id === recCh.id ? '오늘 추천' : (c.tag === '오늘 추천' ? '' : c.tag);
+    c.tBg = c.id === recCh.id ? 'rgba(255,215,0,0.18)' : c.tBg;
+    c.tC  = c.id === recCh.id ? '#FFD700' : c.tC;
+  });
+
+  selCh = recCh.id;
+  buildCh();
+
+  // 유튜브 링크 업데이트
+  var ytl = document.getElementById('ytl');
+  if (ytl) {
+    ytl.href = recCh.url;
+    ytl.innerHTML = '🎵 유튜브에서 ' + recCh.name + ' 열기 >';
+  }
 }
 
 function buildExperts() {

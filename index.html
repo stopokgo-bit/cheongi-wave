@@ -3753,177 +3753,142 @@ function renderReportHtml(inp, r, html) {
 async function generate50PReport() {
   var r = window.lastSajuResult;
   var inp = window.lastSajuInput;
-  if (!r || !inp) {
-    alert('먼저 사주 분석을 완료해주세요!');
-    showPg('main');
-    return;
-  }
+  if (!r || !inp) { alert('먼저 사주 분석을 완료해주세요!'); showPg('main'); return; }
 
   var btn = document.getElementById('report-generate-btn');
   var bodyEl = document.getElementById('report-full-body');
-  if (btn) { btn.style.display = 'none'; }
-  if (bodyEl) { bodyEl.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--t2)"><div style="font-size:32px;margin-bottom:1rem;">📜</div><div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:.4rem;">인생 지침서 생성 중...</div><div style="font-size:12px;">Sonnet AI가 3대 역학을 심층 분석합니다<br>약 60초 소요됩니다</div></div>'; }
+  if (btn) btn.style.display = 'none';
+  if (bodyEl) bodyEl.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--t2)"><div style="font-size:32px;margin-bottom:1rem;">📜</div><div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:.4rem;">인생 지침서 생성 중...</div><div id="report-progress" style="font-size:12px;">1단계: 명주·대운·재물·직업·애정운 분석 중... (1/2)</div></div>';
 
-  var prompt = '당신은 자미두수·매화역수·기문둔갑을 40년간 연구한 최고 명리학 대가입니다.\n' +
-    inp.name + '님의 인생 지침서를 아래 분석 데이터를 바탕으로 작성하세요.\n\n' +
-    '분석 데이터: ' + JSON.stringify(r) + '\n\n' +
-    // ✅ 관상·손금 스캔 결과 추가
-    (function() {
-      var scanExtra = '';
-      if (scanResults.face) {
-        scanExtra += '관상 스캔 결과:\n';
-        var f = scanResults.face;
-        if (f.lines) scanExtra += JSON.stringify(f.lines) + '\n';
-        if (f.overall) scanExtra += '관상 통합해석: ' + f.overall + '\n';
-      }
-      if (scanResults.palm_left) {
-        scanExtra += '\n왼손(선천운) 손금 결과:\n';
-        var pl = scanResults.palm_left;
-        if (pl.palmLines) pl.palmLines.forEach(function(l){ scanExtra += l.l + ': ' + l.desc + ' (점수:' + l.score + ')\n'; });
-        if (pl.overall) scanExtra += '왼손 통합해석: ' + pl.overall + '\n';
-        if (pl.warning) scanExtra += '주의: ' + pl.warning + '\n';
-      }
-      if (scanResults.palm_right) {
-        scanExtra += '\n오른손(후천운) 손금 결과:\n';
-        var pr = scanResults.palm_right;
-        if (pr.palmLines) pr.palmLines.forEach(function(l){ scanExtra += l.l + ': ' + l.desc + ' (점수:' + l.score + ')\n'; });
-        if (pr.overall) scanExtra += '오른손 통합해석: ' + pr.overall + '\n';
-        if (pr.warning) scanExtra += '주의: ' + pr.warning + '\n';
-      }
-      return scanExtra ? '스캔 데이터:\n' + scanExtra + '\n' : '(관상·손금 스캔 데이터 없음 - 사주만으로 분석)\n\n';
-    })() +
-    '=== 절대 원칙 ===\n' +
-    '• 입에 발린 말 금지. 약점·위험·흉한 시기도 반드시 솔직하게 서술.\n' +
-    '• 각 섹션 최소 12~15문장. 절대 짧게 쓰지 말 것.\n' +
-    '• 실제 연도·나이·구체적 사건명 반드시 포함.\n' +
-    '• 자미두수 14주성·보성·사화 이동 원리, 매화역수 체용 생극, 기문둔갑 팔문구성 전문 용어 실제 사용.\n' +
-    '• 각 섹션 마지막 문장 반드시 완성할 것.\n' +
-    '• 관상·손금 스캔 데이터가 있으면 반드시 해당 섹션에 언급하라:\n' +
-    '  - 관상 데이터 → 성격·기질·직업운 섹션에 반영\n' +
-    '  - 왼손(선천운) → 타고난 기질·재물·애정 섹션에 반영\n' +
-    '  - 오른손(후천운) → 현재 운세·커리어·건강 섹션에 반영\n\n' +
-    '=== 작성할 10개 섹션 ===\n\n' +
+  // 공통 데이터
+  var scanExtra = '';
+  if (scanResults.face) { var f=scanResults.face; if(f.overall) scanExtra+='관상: '+f.overall+'\n'; }
+  if (scanResults.palm_left) { var pl=scanResults.palm_left; if(pl.overall) scanExtra+='왼손: '+pl.overall+'\n'; if(pl.warning) scanExtra+='왼손주의: '+pl.warning+'\n'; }
+  if (scanResults.palm_right) { var pr=scanResults.palm_right; if(pr.overall) scanExtra+='오른손: '+pr.overall+'\n'; if(pr.warning) scanExtra+='오른손주의: '+pr.warning+'\n'; }
+
+  var baseData = '분석 데이터: ' + JSON.stringify(r) + '\n\n' +
+    (scanExtra ? '스캔 데이터:\n' + scanExtra + '\n' : '') +
+    '이름: ' + inp.name + ' · 생년월일: ' + inp.year + '.' + inp.month + '.' + inp.day + ' · ' + (inp.gender||'') + ' · 만 ' + (new Date().getFullYear()-parseInt(inp.year)) + '세\n\n';
+
+  var formatRules = '=== 규칙 ===\n' +
+    '1. HTML만 출력. <h3><h4><p><strong><em><br> 태그만 사용.\n' +
+    '2. h3=섹션제목(금색배경), h4=소제목(■ 기호), p=본문\n' +
+    '3. 각 섹션: h4 2~3개, 각 h4 아래 p 2~3개. 짧고 명확하게.\n' +
+    '4. ⚠️ 주의사항: <p>⚠️ 내용</p>  ✦ 기회/황금기: <p>✦ 내용</p>\n' +
+    '5. 마지막 문장 반드시 마침표로 끝낼 것.\n\n';
+
+  var systemPrompt = '당신은 자미두수·매화역수·기문둔갑 40년 경력 명리학 대가입니다. HTML만 출력하고 다른 텍스트는 절대 쓰지 마세요.';
+
+  // ── 1단계: 섹션 1~5 ──
+  var prompt1 = '당신은 자미두수·매화역수·기문둔갑을 40년간 연구한 최고 명리학 대가입니다.\n' +
+    inp.name + '님의 인생 지침서 1부를 작성하세요.\n\n' +
+    baseData + formatRules +
+    '아래 5개 섹션을 순서대로 완성하라:\n\n' +
     '1. <h3>🌟 ' + (r.star||'') + ' 명주(命主) 총평 — 당신은 어떤 사람인가</h3>\n' +
-    '주성의 근본 기질과 에너지, 강점 3가지와 약점 3가지를 솔직하게,\n' +
-    '보성 조합이 만드는 독특한 개성, 사화 배치가 인생 전반에 미치는 구조적 영향,\n' +
-    '타고난 재능 분야와 반드시 보완해야 할 결함, 이 명반 구조가 만드는 반복 패턴.\n\n' +
+    '주성 기질·강점3·약점3·보성조합·사화배치·반복패턴.\n\n' +
     '2. <h3>📊 생애 대운 완전 분석 — 20대부터 70대까지</h3>\n' +
-    '각 10년 대운의 성曜명과 그 기운, 현재 대운(' + (r.daewoon||'') + ')의 핵심 키워드,\n' +
-    '대운 전반기(1~5년)와 후반기(6~10년)의 차이, 인생 최고 황금기 시기와 이유,\n' +
-    '가장 조심해야 할 대운 시기, 각 시기별 해야 할 것과 하지 말아야 할 것.\n\n' +
+    '각 10년 대운 성曜·현재 대운(' + (r.daewoon||'') + ') 분석·황금기·주의 시기.\n\n' +
     '3. <h3>💰 재물·부동산·투자운 완전 분석</h3>\n' +
-    '재백궁 성曜 배치로 본 재물 취득 방식, 재물이 들어오는 시기와 나가는 시기 패턴,\n' +
-    '투자 적합 분야 3가지와 각각의 이유, 절대 손대지 말아야 할 투자 유형,\n' +
-    '부동산 운과 최적 매매 타이밍, 재물이 새는 구체적 패턴과 차단법,\n' +
-    '향후 5년 재물 흐름 예측, 사업 vs 직장 중 어떤 것이 더 유리한가.\n\n' +
+    '재백궁 배치·재물취득방식·투자적합3가지·절대금지투자·부동산운·향후5년재물흐름·사업vs직장.\n\n' +
     '4. <h3>🏆 직업·커리어·명예운 완전 분석</h3>\n' +
-    '관록궁 성曜로 본 최적 직군 3가지와 구체적 직업명, 현재 직장운의 실태(좋은 점+나쁜 점 둘 다),\n' +
-    '이직·창업 최적 타이밍과 그 이유, 절대 피해야 할 시기,\n' +
-    '상사와의 관계 패턴, 부하와의 관계, 동료와의 갈등 유형,\n' +
-    '명예운 발동 시기, 향후 3년 커리어 흐름 예측.\n\n' +
-    '5. <h3>❤️ 애정·결혼·가족운 완전 분석</h3>\n' +
-    '부처궁 성曜로 본 이상형 유형, 반복되는 연애 패턴과 그 명리학적 이유,\n' +
-    '현재 애정운의 실태, 결혼 적기와 결혼 후 부부 관계 패턴,\n' +
-    '반드시 피해야 할 인연 유형, 현재 파트너가 있다면 관계 진단,\n' +
-    '부모운·형제운·자녀운.\n\n' +
-    '6. <h3>🏥 건강·체질 완전 분석</h3>\n' +
-    '오행 체질 분석(강한 오행과 약한 오행), 주의해야 할 신체 부위 3곳과 명리학적 근거,\n' +
-    '시기별 건강 주의 연령대, 권장 식이·운동 유형, 정신건강 주의사항,\n' +
-    '의료·수술이 필요할 수 있는 시기 예측.\n\n' +
-    '7. <h3>🧭 기문둔갑 전략 나침반 — 당신의 길방(吉方)</h3>\n' +
-    '생문(生門) 방위와 그 의미, 사업장·거주지·이사 최적 방위,\n' +
-    '절대 피해야 할 흉방과 이유, 귀인이 오는 방향과 그것을 활용하는 법,\n' +
-    '계절별 길방 변화, 중요한 미팅·계약 시 유리한 방향.\n\n' +
-    '8. <h3>🌸 매화역수 — 이달부터 12개월 월별 운세</h3>\n' +
-    '각 월별 체용 관계와 운기 방향, 길한 달(행동해야 할 달)과 흉한 달(조용히 있어야 할 달) 명확히 구분,\n' +
-    '각 월에 집중해야 할 핵심 행동 1가지, 올해 가장 중요한 달 TOP3 집중 분석,\n' +
-    '월별 재물·애정·직업 소운 변화.\n\n' +
-    '9. <h3>✨ 개운법·주의사항 실전 가이드</h3>\n' +
-    '이 명반의 구조적 약점 3가지와 각각의 구체적 개운법, 오행 보완 방법(색깔·음식·방향·숫자·소재),\n' +
-    '매일 실천할 수 있는 개운 루틴, 매월 챙겨야 할 길일, 절대 하지 말아야 할 행동 5가지,\n' +
-    '이름·숫자·색깔의 에너지 활용법.\n\n' +
-    '10. <h3>📅 2025~2028 핵심 타임라인 — 중요한 변화의 지도</h3>\n' +
-    '연도별 가장 중요한 사건·기회·위험을 구체적으로 서술하라.\n' +
-    '생애 파동 데이터: ' + JSON.stringify(r.wave_data || WD) + '\n' +
-    '위 데이터의 w(웰빙)/c(커리어)/l(행운) 수치를 반드시 인용하며 설명하라.\n' +
-    '각 연도마다: 주요 변화 · 핵심 행동 지침 · 주의 시기를 <p> 태그로 분리해서 서술.\n\n' +
-    'HTML 형식으로 작성. 아래 태그만 사용: <h3>, <p>, <strong>, <em>, <br>. JSON 아님. 순수 HTML만 출력.\n\n' +
-    '=== 레이아웃 규칙 (반드시 준수) ===\n' +
-    '1. 큰 섹션 제목: <h3>💰 재물·부동산·투자운</h3>\n' +
-    '2. 섹션 안 소제목: <h4>■ 재물 취득 방식</h4> 형태로 h4 사용\n' +
-    '3. 각 항목: <p>첫째, 내용</p><p>둘째, 내용</p> 줄 분리\n' +
-    '4. 다른 소주제로 넘어갈 때: <p><br></p> 빈 줄 추가\n' +
-    '5. 중요한 기회·황금기: <p>✦ 내용 (황금기/화록/최고조 키워드 포함)</p>\n' +
-    '6. 주의·위험 사항: <p>⚠️ 내용 (조심/주의/피해야/흉 키워드 포함)</p>\n' +
-    '7. 예시 구조:\n' +
-    '   <h3>💰 재물·부동산·투자운</h3>\n' +
-    '   <h4>■ 재물 취득 방식</h4>\n' +
-    '   <p>재백궁 태음화록 배치로 중년 이후 안정적 수입 구조가 형성된다.</p>\n' +
-    '   <h4>■ 투자 적합 분야</h4>\n' +
-    '   <p>첫째, 부동산 — 전택궁 길성 배치로 부동산 매매 유리.</p>\n' +
-    '   <p>둘째, 금융 — 재백궁 화권 발동 시기 주식·채권 안정적.</p>\n' +
-    '   <p>⚠️ 절대 피해야 할 투자: 화기 충사 시기 암호화폐·레버리지 투자 금지.</p>\n' +
-    '   <p><br></p>\n' +
-    '   <h4>■ 향후 5년 재물 흐름</h4>\n' +
-    '   <p>✦ 2026~2027년 화록 발동 구간으로 재물 유입 최고조.</p>\n\n' +
-    '⚠️ 절대 중요: 마지막 섹션까지 반드시 완성하라. 분량보다 완성이 우선이다.';
+    '관록궁 최적직군3·현직장운실태·이직창업타이밍·상사동료관계·3년커리어전환점.\n\n' +
+    '5. <h3>💕 애정·결혼·인간관계 완전 분석</h3>\n' +
+    '부처궁으로 기혼/미혼 추정→맞춤분석·연애패턴·이상형·결혼/이혼/재혼운·인간관계 주의.\n\n';
 
-  try {
+  // ── 2단계: 섹션 6~10 ──
+  var prompt2 = '당신은 자미두수·매화역수·기문둔갑을 40년간 연구한 최고 명리학 대가입니다.\n' +
+    inp.name + '님의 인생 지침서 2부를 작성하세요.\n\n' +
+    baseData + formatRules +
+    '아래 5개 섹션을 순서대로 완성하라:\n\n' +
+    '6. <h3>🏥 건강·체질 완전 분석</h3>\n' +
+    '질액궁 오행체질·주의신체3곳·시기별건강주의·식습관운동·2026~2028건강관리법.\n\n' +
+    '7. <h3>🧭 기문둔갑 전략 — 방위·시기·귀인</h3>\n' +
+    '올해 최고 길방·흉방·사업이동방위·계약협상유리시간대·귀인방향·귀인특성.\n\n' +
+    '8. <h3>🌸 매화역수 — 이달부터 12개월 월별 운세</h3>\n' +
+    '각 월 2~3줄로만 작성. 형식: <h4>■ N월 — 제목</h4><p>운기방향</p><p>핵심행동</p>. TOP3월은 ✦ 표시.\n\n' +
+    '9. <h3>✨ 개운법·주의사항 실전 가이드</h3>\n' +
+    '구조적약점3·오행보완법·색깔음식방향숫자·매일실천개운법·이달주의사항3.\n\n' +
+    '10. <h3>📅 2025~2028 핵심 타임라인</h3>\n' +
+    '연도별 가장중요사건·기회·위험. 생애파동: ' + JSON.stringify(r.wave_data||[]) + '. 각연도 h4로 구분.\n\n';
+
+  var fullHtml = '';
+
+  async function fetchSection(prompt, part) {
+    var progEl = document.getElementById('report-progress');
+    if (progEl) progEl.textContent = part + '단계: 분석 중... (' + part + '/2)';
+
     var response = await fetch('/api/saju', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         model: 'claude-sonnet-4-6',
-        max_tokens: 16000,
+        max_tokens: 8000,
+        system: systemPrompt,
         messages: [{ role: 'user', content: prompt }]
       })
     });
 
-    if (!response.ok) throw new Error('API 오류: ' + response.status);
+    if (!response.ok) throw new Error('서버 오류 ' + response.status);
 
-    // ✅ 스트리밍으로 HTML 수집
     var reader = response.body.getReader();
     var decoder = new TextDecoder();
     var html = '';
-    var buffer = '';
+    var buf = '';
 
     while (true) {
       var chunk = await reader.read();
       if (chunk.done) break;
-      buffer += decoder.decode(chunk.value, { stream: true });
-      var lines = buffer.split('\n');
-      buffer = lines.pop() || '';
-      for (var li = 0; li < lines.length; li++) {
-        var line = lines[li].trim();
-        if (!line.startsWith('data: ')) continue;
-        var data = line.slice(6).trim();
-        if (data === '[DONE]') continue;
+      buf += decoder.decode(chunk.value, { stream: true });
+      var ls = buf.split('\n'); buf = ls.pop() || '';
+      for (var li = 0; li < ls.length; li++) {
+        var ln = ls[li].trim();
+        if (!ln.startsWith('data: ')) continue;
+        var dt = ln.slice(6).trim();
+        if (dt === '[DONE]') continue;
         try {
-          var parsed = JSON.parse(data);
-          if (parsed.type === 'content_block_delta' &&
-              parsed.delta && parsed.delta.type === 'text_delta' &&
-              parsed.delta.text) {
-            html += parsed.delta.text;
-            // ✅ 실시간으로 bodyEl 업데이트 (타이핑 효과)
-            if (bodyEl && html.length % 200 === 0) {
-              bodyEl.innerHTML = renderReportHtml(inp, r, html + '<span class="typing-cursor">|</span>');
+          var ev = JSON.parse(dt);
+          if (ev.type === 'content_block_delta' && ev.delta && ev.delta.text) {
+            html += ev.delta.text;
+            // 실시간 업데이트
+            if (bodyEl && html.length % 300 === 0) {
+              bodyEl.innerHTML = renderReportHtml(inp, r, fullHtml + html + '<span class="typing-cursor">|</span>');
             }
           }
         } catch(e) {}
       }
     }
+    return html;
+  }
+
+  try {
+    // 1단계
+    var html1 = await fetchSection(prompt1, '1');
+    fullHtml = html1;
+    if (bodyEl) bodyEl.innerHTML = renderReportHtml(inp, r, fullHtml + '<div style="text-align:center;padding:1rem;color:var(--t2);font-size:12px;">⏳ 2단계 분석 중...</div>');
+
+    // 2단계
+    var html2 = await fetchSection(prompt2, '2');
+    fullHtml = html1 + html2;
+
+    // 잘림 감지
+    var lastChar = fullHtml.trim().slice(-1);
+    if (lastChar !== '>' && lastChar !== '.' && lastChar !== '!' && lastChar !== '?') {
+      fullHtml += '<p style="color:#e74c3c;font-size:12px;margin-top:1rem;padding:.5rem .85rem;background:rgba(231,76,60,0.08);border-radius:6px;">⚠️ 일부 내용이 잘렸습니다. 다시 생성해보세요.</p>';
+    }
 
     if (bodyEl) {
-      bodyEl.innerHTML = renderReportHtml(inp, r, html);
+      bodyEl.innerHTML = renderReportHtml(inp, r, fullHtml);
       var actionBtns = document.getElementById('report-action-btns');
       if (actionBtns) actionBtns.style.display = 'block';
-      try { localStorage.setItem('cw_report_' + inp.name, JSON.stringify({html: html, date: new Date().toISOString()})); } catch(e) {}
+      try { localStorage.setItem('cw_report_' + inp.name, JSON.stringify({html: fullHtml, date: new Date().toISOString()})); } catch(e) {}
     }
+
   } catch(e) {
     if (bodyEl) bodyEl.innerHTML = '<div style="color:#e74c3c;padding:1rem;border-radius:8px;background:rgba(231,76,60,0.1);">오류: ' + e.message + '<br><button onclick="generate50PReport()" style="margin-top:.5rem;padding:8px 16px;background:var(--em);border:none;border-radius:6px;color:#fff;cursor:pointer;font-family:inherit;">다시 시도</button></div>';
     if (btn) btn.style.display = 'block';
   }
 }
+
 
 function fallbackCopy(text) {
   var ta = document.createElement('textarea');

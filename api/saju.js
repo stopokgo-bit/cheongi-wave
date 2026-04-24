@@ -1,47 +1,53 @@
-export default async function handler(req, res) {
-  // CORS 헤더
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+export const config = { runtime: 'edge' };  // ✅ Edge Runtime - 타임아웃 없음!
 
+export default async function handler(req) {
+  // CORS preflight
   if (req.method === 'OPTIONS') {
-    return res.status(200).end();
+    return new Response(null, {
+      status: 200,
+      headers: {
+        'Access-Control-Allow-Origin': '*',
+        'Access-Control-Allow-Methods': 'POST, OPTIONS',
+        'Access-Control-Allow-Headers': 'Content-Type',
+      },
+    });
   }
 
   if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Method not allowed' });
+    return new Response(JSON.stringify({ error: 'Method not allowed' }), {
+      status: 405,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+    });
   }
 
   const apiKey = process.env.ANTHROPIC_API_KEY;
   if (!apiKey) {
-    return res.status(500).json({ error: 'API 키가 설정되지 않았습니다.' });
+    return new Response(JSON.stringify({ error: 'API 키가 설정되지 않았습니다.' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+    });
   }
 
   try {
-    const body = req.body;
+    const body = await req.json();
 
-    // 모델 검증 - Sonnet 허용
     const allowedModels = [
       'claude-sonnet-4-6',
       'claude-haiku-4-5-20251001',
       'claude-opus-4-6',
     ];
-    const model = allowedModels.includes(body.model)
-      ? body.model
-      : 'claude-sonnet-4-6';
-
-    // 토큰 제한 - 최대 8000
+    const model = allowedModels.includes(body.model) ? body.model : 'claude-sonnet-4-6';
     const maxTokens = Math.min(body.max_tokens || 6000, 8000);
 
     const requestBody = {
       model: model,
       max_tokens: maxTokens,
+      stream: true,   // ✅ 스트리밍 활성화
       messages: body.messages,
     };
-    // system 프롬프트가 있으면 포함
     if (body.system) requestBody.system = body.system;
 
-    const response = await fetch('https://api.anthropic.com/v1/messages', {
+    const anthropicRes = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -51,20 +57,28 @@ export default async function handler(req, res) {
       body: JSON.stringify(requestBody),
     });
 
-    if (!response.ok) {
-      const errText = await response.text();
-      return res.status(response.status).json({
-        error: 'Anthropic API 오류',
-        detail: errText,
-        status: response.status,
+    if (!anthropicRes.ok) {
+      const errText = await anthropicRes.text();
+      return new Response(JSON.stringify({ error: 'Anthropic API 오류', detail: errText }), {
+        status: anthropicRes.status,
+        headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
       });
     }
 
-    const data = await response.json();
-    return res.status(200).json(data);
+    // ✅ 스트림을 그대로 클라이언트에 전달
+    return new Response(anthropicRes.body, {
+      status: 200,
+      headers: {
+        'Content-Type': 'text/event-stream',
+        'Cache-Control': 'no-cache',
+        'Access-Control-Allow-Origin': '*',
+      },
+    });
 
   } catch (err) {
-    console.error('saju.js error:', err);
-    return res.status(500).json({ error: err.message });
+    return new Response(JSON.stringify({ error: err.message }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json', 'Access-Control-Allow-Origin': '*' },
+    });
   }
 }

@@ -3,16 +3,50 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
-<script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js" integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4" crossorigin="anonymous"></script>
-<!-- EmailJS -->
 <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
+<!-- Firebase -->
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js';
+  import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged }
+    from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
+
+  // ✅ Firebase 설정 - 아래 값을 실제 Firebase 콘솔 값으로 교체하세요
+  const firebaseConfig = {
+    apiKey: "YOUR_FIREBASE_API_KEY",
+    authDomain: "YOUR_PROJECT.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    appId: "YOUR_APP_ID"
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const provider = new GoogleAuthProvider();
+  provider.setCustomParameters({ prompt: 'select_account', hl: 'ko' });
+
+  // 전역 노출
+  window._firebaseAuth = auth;
+  window._googleProvider = provider;
+  window._firebaseSignOut = signOut;
+
+  // 로그인 상태 감지
+  onAuthStateChanged(auth, function(user) {
+    if (user) {
+      loginSuccess({
+        name: user.displayName || user.email.split('@')[0],
+        email: user.email,
+        avatar: user.photoURL,
+        provider: 'google'
+      });
+    }
+  });
+</script>
 <title>천기 웨이브 — 천기 웨이브</title>
 <meta name="description" content="정통 자미두수, 기문둔갑, 매화역수 기반 프리미엄 명리 플랫폼">
 <!-- OG 태그 (카카오/SNS 공유 미리보기) -->
 <meta property="og:title" content="천기 웨이브 — AI 3대 역학 통합 분석">
 <meta property="og:description" content="자미두수·기문둔갑·매화역수 정통 AI 명리. 관상·손금 스캔으로 나만의 운세를 확인하세요.">
-<meta property="og:image" content="https://cheongi-wave.vercel.app/og-image.png">
-<meta property="og:url" content="https://cheongi-wave.vercel.app">
+<meta property="og:image" content="https://cheongi-wave-61pz.vercel.app/og-image.png">
+<meta property="og:url" content="https://cheongi-wave-61pz.vercel.app">
 <meta property="og:type" content="website">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><polygon points='12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26' fill='%23FFD700'/></svg>">
@@ -1078,55 +1112,65 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
     <div class="auth-modal" id="authModal">
       <div class="auth-head">
         <div class="auth-logo">
-          <div class="auth-logo-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#0f0f3a"/></svg></div>
-          <div class="auth-logo-txt">천기 웨이브</div>
+          <div class="auth-logo-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#FFD700"/></svg></div>
+          <span class="auth-logo-txt">천기 웨이브</span>
         </div>
-        <div class="auth-tabs">
-          <button class="auth-tab on" id="atab-login" onclick="switchAuthTab('login')">로그인</button>
-          <button class="auth-tab" id="atab-join" onclick="switchAuthTab('join')">회원가입</button>
+        <button class="auth-close" onclick="closeAuth()"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+      </div>
+
+      <!-- 탭 -->
+      <div class="auth-tabs">
+        <button class="atab on" id="atab-login" onclick="switchAuthTab('login')">로그인</button>
+        <button class="atab" id="atab-join" onclick="switchAuthTab('join')">회원가입</button>
+      </div>
+
+      <!-- 로그인 -->
+      <div id="abody-login">
+        <!-- 구글 로그인 -->
+        <button class="soc-btn" id="google-login-btn" onclick="doGoogleLogin()" style="background:#fff;color:#1a1a2e;border:1px solid #ddd;margin-bottom:12px;">
+          <div class="soc-ico" style="background:transparent;">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          </div>
+          <span>Google로 로그인</span>
+        </button>
+
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="flex:1;height:1px;background:rgba(255,255,255,0.1);"></div>
+          <span style="font-size:11px;color:var(--t2);">또는 이메일로</span>
+          <div style="flex:1;height:1px;background:rgba(255,255,255,0.1);"></div>
+        </div>
+
+        <div class="auth-field"><label>이메일</label><input type="email" id="li-email" placeholder="이메일 주소"></div>
+        <div class="auth-field"><label>비밀번호</label><input type="password" id="li-pw" placeholder="비밀번호"></div>
+        <button class="auth-submit-btn" onclick="doEmailLogin()">이메일로 로그인</button>
+        <div style="text-align:center;margin-top:.75rem;">
+          <span style="font-size:12px;color:var(--t2);">계정이 없으신가요? </span>
+          <button onclick="switchAuthTab('join')" style="background:none;border:none;color:var(--em);font-size:12px;cursor:pointer;font-family:inherit;font-weight:600;">회원가입</button>
         </div>
       </div>
-      <div class="auth-body" id="abody-login">
-        <div class="auth-sec">간편 로그인</div>
-        <div class="soc-btns">
-          <button class="soc-btn" id="kakao-login-btn" onclick="doKakaoLogin()">
-            <div class="soc-ico" style="background:#FEE500;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.72 1.6 5.12 4 6.56L5 21l4.28-2.56A12 12 0 0 0 12 18.6c5.52 0 10-3.48 10-7.8S17.52 3 12 3z" fill="#3C1E1E"/></svg></div>
-            <span class="soc-lbl">카카오톡으로 로그인</span><span class="kakao-badge">추천</span>
-          </button>
-          <button class="soc-btn" onclick="alertOauth('토스')"><div class="soc-ico" style="background:#0064FF;color:#fff;font-size:11px;font-weight:700;">T</div><span class="soc-lbl">토스로 로그인</span><svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg></button>
-          <button class="soc-btn" onclick="alertOauth('PASS')"><div class="soc-ico" style="background:#E8002D;color:#fff;font-size:9px;font-weight:700;">PASS</div><span class="soc-lbl">PASS로 로그인</span><svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg></button>
-          <button class="soc-btn" onclick="alertOauth('네이버')"><div class="soc-ico" style="background:#03C75A;color:#fff;font-size:12px;font-weight:700;">N</div><span class="soc-lbl">네이버로 로그인</span><svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg></button>
+
+      <!-- 회원가입 -->
+      <div id="abody-join" style="display:none;">
+        <!-- 구글로 시작 -->
+        <button class="soc-btn" onclick="doGoogleLogin()" style="background:#fff;color:#1a1a2e;border:1px solid #ddd;margin-bottom:12px;">
+          <div class="soc-ico" style="background:transparent;">
+            <svg width="18" height="18" viewBox="0 0 24 24"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z" fill="#4285F4"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z" fill="#34A853"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z" fill="#FBBC05"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z" fill="#EA4335"/></svg>
+          </div>
+          <span>Google로 시작하기</span>
+        </button>
+
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="flex:1;height:1px;background:rgba(255,255,255,0.1);"></div>
+          <span style="font-size:11px;color:var(--t2);">또는 이메일로</span>
+          <div style="flex:1;height:1px;background:rgba(255,255,255,0.1);"></div>
         </div>
-        <div class="auth-div"><div class="auth-div-line"></div><div class="auth-div-txt">또는 이메일로</div><div class="auth-div-line"></div></div>
-        <div class="auth-inp-grp">
-          <div class="auth-inp-row"><div class="auth-inp-lbl">이메일</div><input class="auth-inp" type="email" placeholder="example@email.com" id="li-email"></div>
-          <div class="auth-inp-row"><div class="auth-inp-lbl">비밀번호</div><input class="auth-inp" type="password" placeholder="비밀번호 입력" id="li-pw"></div>
-        </div>
-        <button class="auth-submit" onclick="doEmailLogin()">로그인</button>
-        <div class="auth-links">
-          <button class="auth-link">아이디 찾기</button>
-          <button class="auth-link">비밀번호 찾기</button>
-          <button class="auth-link" onclick="switchAuthTab('join')">회원가입</button>
-        </div>
+
+        <div class="auth-field"><label>이름</label><input type="text" id="ji-name" placeholder="이름"></div>
+        <div class="auth-field"><label>이메일</label><input type="email" id="ji-email" placeholder="이메일 주소"></div>
+        <div class="auth-field"><label>비밀번호</label><input type="password" id="ji-pw" placeholder="8자 이상"></div>
+        <button class="auth-submit-btn" onclick="doEmailJoin()">이메일로 가입</button>
       </div>
-      <div class="auth-body" id="abody-join" style="display:none;">
-        <div class="auth-sec">간편 회원가입 — 3초 완료</div>
-        <div class="soc-btns">
-          <button class="soc-btn" onclick="doKakaoLogin()"><div class="soc-ico" style="background:#FEE500;"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"><path d="M12 3C6.48 3 2 6.48 2 10.8c0 2.72 1.6 5.12 4 6.56L5 21l4.28-2.56A12 12 0 0 0 12 18.6c5.52 0 10-3.48 10-7.8S17.52 3 12 3z" fill="#3C1E1E"/></svg></div><span class="soc-lbl">카카오톡으로 시작하기</span><span class="kakao-badge">추천</span></button>
-          <button class="soc-btn" onclick="alertOauth('토스')"><div class="soc-ico" style="background:#0064FF;color:#fff;font-size:11px;font-weight:700;">T</div><span class="soc-lbl">토스로 시작하기</span><svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg></button>
-          <button class="soc-btn" onclick="alertOauth('PASS')"><div class="soc-ico" style="background:#E8002D;color:#fff;font-size:9px;font-weight:700;">PASS</div><span class="soc-lbl">PASS로 시작하기</span><svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg></button>
-          <button class="soc-btn" onclick="alertOauth('네이버')"><div class="soc-ico" style="background:#03C75A;color:#fff;font-size:12px;font-weight:700;">N</div><span class="soc-lbl">네이버로 시작하기</span><svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9,18 15,12 9,6"/></svg></button>
-        </div>
-        <div class="auth-div"><div class="auth-div-line"></div><div class="auth-div-txt">또는 이메일로</div><div class="auth-div-line"></div></div>
-        <div class="auth-inp-grp">
-          <div class="auth-inp-row"><div class="auth-inp-lbl">이름</div><input class="auth-inp" type="text" placeholder="홍길동" id="ji-name"></div>
-          <div class="auth-inp-row"><div class="auth-inp-lbl">이메일</div><input class="auth-inp" type="email" placeholder="example@email.com" id="ji-email"></div>
-          <div class="auth-inp-row"><div class="auth-inp-lbl">비밀번호</div><input class="auth-inp" type="password" placeholder="8자 이상" id="ji-pw"></div>
-        </div>
-        <button class="auth-submit" onclick="doEmailJoin()">가입하고 천기 스캔 시작</button>
-        <div class="auth-terms">가입 시 <a href="#">이용약관</a> 및 <a href="#">개인정보처리방침</a>에 동의합니다.</div>
-      </div>
-      <button class="auth-close" onclick="closeAuth()"><svg viewBox="0 0 24 24"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+
     </div>
   </div>
 </div>
@@ -1702,8 +1746,31 @@ function renderSajuResult(name, year, month, day, timeStr, age, r) {
 </script>
 
 <script>
-const KAKAO_JS_KEY = 'c67fa5fbeff62e7471a00b20a4eccae7';
+const KAKAO_JS_KEY = '';  // 카카오 미사용
 let currentUser = null;
+
+/* ── 구글 로그인 ── */
+async function doGoogleLogin() {
+  try {
+    if (!window._firebaseAuth) {
+      alert('Firebase가 초기화되지 않았습니다.\nFirebase 설정을 완료해주세요.');
+      return;
+    }
+    const { signInWithPopup } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
+    const result = await signInWithPopup(window._firebaseAuth, window._googleProvider);
+    const user = result.user;
+    loginSuccess({
+      name: user.displayName || user.email.split('@')[0],
+      email: user.email,
+      avatar: user.photoURL,
+      provider: 'google'
+    });
+  } catch(e) {
+    if (e.code !== 'auth/popup-closed-by-user') {
+      alert('구글 로그인 오류: ' + e.message);
+    }
+  }
+}
 
 /* ── 로그인 상태 localStorage 저장/복원 ── */
 function saveUserToStorage(user) {
@@ -1732,11 +1799,7 @@ function loadSajuFromStorage(key) {
   return null;
 }
 
-function initKakao() {
-  try { if (window.Kakao && !window.Kakao.isInitialized()) window.Kakao.init(KAKAO_JS_KEY); } catch(e) {}
-}
 function openAuth(tab) {
-  initKakao();
   document.getElementById('authOverlay').classList.add('show');
   switchAuthTab(tab || 'login');
   document.body.style.overflow = 'hidden';
@@ -1752,15 +1815,15 @@ function switchAuthTab(t) {
   document.getElementById('abody-login').style.display = t === 'login' ? 'block' : 'none';
   document.getElementById('abody-join').style.display = t === 'join' ? 'block' : 'none';
 }
-function doKakaoLogin() {
-  if (KAKAO_JS_KEY === 'YOUR_KAKAO_JS_KEY') { alert('카카오 JavaScript 키를 설정해 주세요.'); return; }
-  try { window.Kakao.Auth.authorize({ redirectUri: window.location.origin }); } catch(e) { alert('카카오 SDK 오류: ' + e.message); }
-}
 function doEmailLogin() {
   const email = document.getElementById('li-email').value.trim();
   const pw = document.getElementById('li-pw').value;
   if (!email || !email.includes('@')) { alert('올바른 이메일을 입력해 주세요.'); return; }
   if (!pw) { alert('비밀번호를 입력해 주세요.'); return; }
+  // 로컬 이메일 인증 (Firebase 미사용 시 폴백)
+  const storedPw = localStorage.getItem('cw_pw_' + email);
+  if (storedPw && storedPw !== pw) { alert('비밀번호가 일치하지 않습니다.'); return; }
+  if (!storedPw) localStorage.setItem('cw_pw_' + email, pw);
   loginSuccess({ name: email.split('@')[0], email: email, avatar: null, provider: 'email' });
 }
 function doEmailJoin() {
@@ -1770,6 +1833,7 @@ function doEmailJoin() {
   if (!name) { alert('이름을 입력해 주세요.'); return; }
   if (!email || !email.includes('@')) { alert('올바른 이메일을 입력해 주세요.'); return; }
   if (!pw || pw.length < 8) { alert('비밀번호를 8자 이상 입력해 주세요.'); return; }
+  localStorage.setItem('cw_pw_' + email, pw);
   loginSuccess({ name: name, email: email, avatar: null, provider: 'email' });
 }
 function alertOauth(p) { alert(p + ' 로그인은 해당 플랫폼의\n파트너/개발자 계약 후 연동 가능합니다.\n\n현재는 카카오 로그인과 이메일 로그인을\n사용해 주세요.'); }
@@ -1794,7 +1858,9 @@ function renderUserNav(user) {
 }
 
 function doLogout() {
-  if (currentUser && currentUser.provider === 'kakao') { try { window.Kakao.Auth.logout(); } catch(e) {} }
+  if (currentUser && currentUser.provider === 'google' && window._firebaseAuth) {
+    try { window._firebaseSignOut(window._firebaseAuth); } catch(e) {}
+  }
   currentUser = null;
   clearUserFromStorage(); // ✅ localStorage 삭제
   document.getElementById('nav-auth-area').innerHTML =
@@ -2962,7 +3028,7 @@ function downloadPDF() {
   win.document.write('<div class="sub">' + new Date().toLocaleDateString('ko-KR') + ' 발행</div>');
   win.document.write('<div class="badge">천기 웨이브 — 정통 자미두수·기문둔갑·매화역수 AI 분석</div></div>');
   win.document.write(reportBody.innerHTML);
-  win.document.write('<div class="footer">© 2026 천기 웨이브 | cheongi-wave.vercel.app</div>');
+  win.document.write('<div class="footer">© 2026 천기 웨이브 | cheongi-wave-61pz.vercel.app</div>');
   win.document.write('<div class="print-btn"><p style="color:#555;margin-bottom:12px;">📥 PDF로 저장하려면 아래 버튼을 눌러 "PDF로 저장"을 선택하세요</p>');
   win.document.write('<button onclick="window.print()" style="padding:12px 32px;background:#0f0f3a;color:#FFD700;border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;margin-right:8px;">🖨️ PDF 저장 / 인쇄</button>');
   win.document.write('<button onclick="window.close()" style="padding:12px 20px;background:#ddd;color:#333;border:none;border-radius:8px;font-size:13px;cursor:pointer;">닫기</button></div>');
@@ -2993,7 +3059,7 @@ function sendReportEmail() {
     '요약: ' + (r.summary||'') + '\n\n' +
     '━━━ 상세 리포트 ━━━\n\n' +
     plain.substring(0, 2000) + '\n\n...(전체 리포트는 앱에서 확인)\n\n' +
-    '🌊 https://cheongi-wave.vercel.app'
+    '🌊 https://cheongi-wave-61pz.vercel.app'
   );
 
   window.open('mailto:' + toEmail + '?subject=' + subject + '&body=' + bodyText);

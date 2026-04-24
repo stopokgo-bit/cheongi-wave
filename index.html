@@ -2060,20 +2060,56 @@ function startAlignCheck() {
   var bar = document.getElementById('align-bar');
   var hint = document.getElementById('align-hint');
 
+  // ✅ 3.2.1 카운트다운 자동촬영
+  var countdown = 3;
+  if (hint) hint.textContent = '';
+  if (bar) bar.style.width = '0%';
+
+  // 좌상단 카운트다운 오버레이 표시
+  var cdEl = document.getElementById('countdown-overlay');
+  if (!cdEl) {
+    cdEl = document.createElement('div');
+    cdEl.id = 'countdown-overlay';
+    cdEl.style.cssText = 'position:absolute;top:16px;left:16px;width:56px;height:56px;border-radius:50%;' +
+      'background:rgba(80,200,120,0.85);display:flex;align-items:center;justify-content:center;' +
+      'font-size:28px;font-weight:900;color:#fff;z-index:20;transition:all .2s;display:none;';
+    var camStage = document.querySelector('.cam-stage');
+    if (camStage) camStage.appendChild(cdEl);
+  }
+  cdEl.style.display = 'flex';
+  cdEl.textContent = countdown;
+
   autoCapTimer = setInterval(function() {
-    if (sState !== 'idle') { clearInterval(autoCapTimer); return; }
-    alignScore = Math.min(100, alignScore + Math.random() * 8 + 4);
+    if (sState !== 'idle') {
+      clearInterval(autoCapTimer);
+      cdEl.style.display = 'none';
+      return;
+    }
+
+    alignScore = Math.min(100, alignScore + 100/15);
     var pct = Math.round(alignScore);
     if (bar) bar.style.width = pct + '%';
-    if (hint) {
-      if (pct < 40) hint.textContent = sMode === 'face' ? '얼굴을 타원 안에 맞춰주세요' : '손바닥을 가이드 안에 펼쳐주세요';
-      else if (pct < 75) hint.textContent = '조금 더 가까이...';
-      else hint.textContent = '완벽해요! 잠시 후 자동 촬영됩니다 ✓';
+
+    // 카운트다운 업데이트 (3초 기준)
+    var newCount = Math.max(1, Math.ceil(3 - (pct / 100) * 3));
+    if (newCount !== countdown) {
+      countdown = newCount;
+      cdEl.textContent = countdown;
+      cdEl.style.transform = 'scale(1.3)';
+      setTimeout(function(){ cdEl.style.transform = 'scale(1)'; }, 150);
     }
+
     if (alignScore >= 100) {
       clearInterval(autoCapTimer);
+      cdEl.textContent = '✓';
+      cdEl.style.background = 'rgba(255,215,0,0.9)';
+      cdEl.style.color = '#0f0f3a';
+      if (hint) hint.textContent = '';
       if (sState === 'idle') {
-        setTimeout(function(){ doCapture(); }, 400);
+        setTimeout(function(){
+          cdEl.style.display = 'none';
+          doCapture();
+        }, 300);
       }
     }
   }, 200);
@@ -2140,81 +2176,59 @@ function drawCamLoop() {
 
 /* ── 손 모양 경로 (깔끔한 손 모양) ── */
 function drawHandPath(ctx, cx, cy, hw, hh) {
-  // ✅ 더 자연스러운 손 모양 - bezier 곡선 기반
+  // ✅ 완전 새로 그린 자연스러운 손 모양
+  // 오른손 기준 (엄지가 왼쪽), flipGuide로 좌우 반전
   var px = cx, py = cy;
-  var pw = hw * 0.42;
-  var ph = hh * 0.26;
-  var palmTop = py - ph * 0.15;
-  var palmBot = py + ph * 1.5;
-  var fw = pw * 0.28;
+  var pw = hw * 0.46;   // 손바닥 폭
+  var ph = hh * 0.30;   // 손바닥 높이
+  var palmTop = py - ph * 0.10;
+  var palmBot = py + ph * 1.55;
+  var fw = pw * 0.275;  // 손가락 폭
 
-  // 손가락 위치와 크기 (자연스러운 비율)
-  var fingers = [
-    { x: px - pw*0.52, w: fw*0.85, h: hh*0.25, br: fw*0.42 }, // 검지
-    { x: px - pw*0.17, w: fw*1.0,  h: hh*0.32, br: fw*0.50 }, // 중지 (가장 긺)
-    { x: px + pw*0.17, w: fw*0.95, h: hh*0.30, br: fw*0.47 }, // 약지
-    { x: px + pw*0.50, w: fw*0.80, h: hh*0.22, br: fw*0.40 }, // 새끼
+  // 손가락: x위치, 폭, 길이 (자연스러운 비율)
+  var F = [
+    { x: px - pw*0.50, w: fw*0.88, h: hh*0.355 }, // 검지
+    { x: px - pw*0.16, w: fw*1.02, h: hh*0.420 }, // 중지 (가장 긺)
+    { x: px + pw*0.18, w: fw*0.97, h: hh*0.400 }, // 약지
+    { x: px + pw*0.50, w: fw*0.78, h: hh*0.300 }, // 새끼
   ];
 
   ctx.beginPath();
+  // 검지 왼쪽 시작
+  ctx.moveTo(F[0].x - F[0].w/2, palmTop + ph*0.12);
 
-  // 검지 왼쪽에서 시작
-  ctx.moveTo(fingers[0].x - fingers[0].w/2, palmTop + ph*0.1);
+  // 검지
+  ctx.bezierCurveTo(F[0].x - F[0].w/2, palmTop - ph*0.1, F[0].x - F[0].w/2, palmTop - F[0].h + F[0].w*0.5, F[0].x - F[0].w/2, palmTop - F[0].h + F[0].w*0.5);
+  ctx.bezierCurveTo(F[0].x - F[0].w/2, palmTop - F[0].h - F[0].w*0.1, F[0].x + F[0].w/2, palmTop - F[0].h - F[0].w*0.1, F[0].x + F[0].w/2, palmTop - F[0].h + F[0].w*0.5);
+  ctx.lineTo(F[0].x + F[0].w/2, palmTop - ph*0.05);
 
-  // 4개 손가락 (베지어 곡선으로 자연스럽게)
-  fingers.forEach(function(f, idx) {
-    var top = palmTop - f.h;
-    // 손가락 왼쪽 올라감
-    if (idx === 0) {
-      ctx.lineTo(f.x - f.w/2, palmTop + ph*0.05);
-    } else {
-      ctx.bezierCurveTo(
-        fingers[idx-1].x + fingers[idx-1].w/2, palmTop - ph*0.05,
-        f.x - f.w/2, palmTop - ph*0.05,
-        f.x - f.w/2, palmTop + ph*0.05
-      );
-    }
-    ctx.lineTo(f.x - f.w/2, top + f.br);
-    // 손가락 끝 둥글게
-    ctx.bezierCurveTo(f.x - f.w/2, top, f.x + f.w/2, top, f.x + f.w/2, top + f.br);
-    ctx.lineTo(f.x + f.w/2, palmTop + ph*0.05);
-  });
+  // 중지
+  ctx.bezierCurveTo(F[0].x + F[0].w/2 + pw*0.04, palmTop - ph*0.15, F[1].x - F[1].w/2 - pw*0.02, palmTop - ph*0.15, F[1].x - F[1].w/2, palmTop - ph*0.08);
+  ctx.bezierCurveTo(F[1].x - F[1].w/2, palmTop - F[1].h + F[1].w*0.5, F[1].x - F[1].w/2, palmTop - F[1].h - F[1].w*0.1, F[1].x, palmTop - F[1].h - F[1].w*0.15);
+  ctx.bezierCurveTo(F[1].x + F[1].w/2, palmTop - F[1].h - F[1].w*0.1, F[1].x + F[1].w/2, palmTop - F[1].h + F[1].w*0.5, F[1].x + F[1].w/2, palmTop - ph*0.08);
 
-  // 새끼 → 오른쪽 손날
-  ctx.bezierCurveTo(
-    px + pw*1.0, palmTop + ph*0.3,
-    px + pw*1.05, palmBot - ph*0.5,
-    px + pw*0.85, palmBot
-  );
-  // 손목 아래
-  ctx.bezierCurveTo(
-    px + pw*0.5, palmBot + ph*0.35,
-    px - pw*0.5, palmBot + ph*0.35,
-    px - pw*0.85, palmBot
-  );
-  // 왼쪽 손날 → 엄지 밑
-  ctx.bezierCurveTo(
-    px - pw*1.05, palmBot - ph*0.5,
-    px - pw*1.08, palmTop + ph*0.7,
-    px - pw*1.0, palmTop + ph*0.2
-  );
+  // 약지
+  ctx.bezierCurveTo(F[1].x + F[1].w/2 + pw*0.02, palmTop - ph*0.15, F[2].x - F[2].w/2 - pw*0.02, palmTop - ph*0.15, F[2].x - F[2].w/2, palmTop - ph*0.06);
+  ctx.bezierCurveTo(F[2].x - F[2].w/2, palmTop - F[2].h + F[2].w*0.5, F[2].x - F[2].w/2, palmTop - F[2].h - F[2].w*0.1, F[2].x, palmTop - F[2].h - F[2].w*0.12);
+  ctx.bezierCurveTo(F[2].x + F[2].w/2, palmTop - F[2].h - F[2].w*0.1, F[2].x + F[2].w/2, palmTop - F[2].h + F[2].w*0.5, F[2].x + F[2].w/2, palmTop - ph*0.06);
 
-  // 엄지 (왼쪽에 붙어서 자연스럽게)
-  ctx.bezierCurveTo(
-    px - pw*1.1, palmTop - ph*0.05,
-    px - pw*1.25, palmTop - ph*0.3,
-    px - pw*1.15, palmTop - ph*0.55
-  );
-  ctx.bezierCurveTo(
-    px - pw*1.05, palmTop - ph*0.78,
-    px - pw*0.82, palmTop - ph*0.72,
-    px - pw*0.72, palmTop - ph*0.42
-  );
-  ctx.bezierCurveTo(
-    px - pw*0.62, palmTop - ph*0.18,
-    px - pw*0.56, palmTop + ph*0.0,
-    fingers[0].x - fingers[0].w/2, palmTop + ph*0.1
-  );
+  // 새끼
+  ctx.bezierCurveTo(F[2].x + F[2].w/2 + pw*0.03, palmTop - ph*0.12, F[3].x - F[3].w/2 - pw*0.01, palmTop - ph*0.05, F[3].x - F[3].w/2, palmTop + ph*0.05);
+  ctx.bezierCurveTo(F[3].x - F[3].w/2, palmTop - F[3].h + F[3].w*0.5, F[3].x - F[3].w/2, palmTop - F[3].h - F[3].w*0.08, F[3].x, palmTop - F[3].h - F[3].w*0.1);
+  ctx.bezierCurveTo(F[3].x + F[3].w/2, palmTop - F[3].h - F[3].w*0.08, F[3].x + F[3].w/2, palmTop - F[3].h + F[3].w*0.5, F[3].x + F[3].w/2, palmTop + ph*0.05);
+
+  // 새끼 오른쪽 → 손날 → 손목
+  ctx.bezierCurveTo(px + pw*0.98, palmTop + ph*0.25, px + pw*1.08, palmBot - ph*0.6, px + pw*0.88, palmBot - ph*0.1);
+  ctx.bezierCurveTo(px + pw*0.65, palmBot + ph*0.22, px + pw*0.25, palmBot + ph*0.38, px, palmBot + ph*0.42);
+  ctx.bezierCurveTo(px - pw*0.25, palmBot + ph*0.38, px - pw*0.65, palmBot + ph*0.22, px - pw*0.88, palmBot - ph*0.1);
+  // 왼쪽 손날
+  ctx.bezierCurveTo(px - pw*1.08, palmBot - ph*0.6, px - pw*1.05, palmTop + ph*0.55, px - pw*1.02, palmTop + ph*0.22);
+
+  // 엄지 (자연스럽게)
+  ctx.bezierCurveTo(px - pw*1.10, palmTop + ph*0.05, px - pw*1.22, palmTop - ph*0.18, px - pw*1.20, palmTop - ph*0.45);
+  ctx.bezierCurveTo(px - pw*1.18, palmTop - ph*0.72, px - pw*0.95, palmTop - ph*0.78, px - pw*0.82, palmTop - ph*0.62);
+  ctx.bezierCurveTo(px - pw*0.70, palmTop - ph*0.48, px - pw*0.64, palmTop - ph*0.22, px - pw*0.60, palmTop + ph*0.0);
+  ctx.bezierCurveTo(px - pw*0.57, palmTop + ph*0.10, F[0].x - F[0].w/2 - pw*0.04, palmTop + ph*0.12, F[0].x - F[0].w/2, palmTop + ph*0.12);
 
   ctx.closePath();
 }
@@ -2257,10 +2271,10 @@ function drawGuideOverlay(ctx, w, h) {
 
   } else {
     var cx2 = w/2, cy2 = h/2;
-    var hw = w * 0.54;
-    var hh = h * 0.78;
+    var hw = w * 0.68;   // 더 크게
+    var hh = h * 0.88;   // 더 크게
     var hx = cx2;
-    var hy = cy2;
+    var hy = cy2 - h*0.05; // 위로
     var isLeft = sMode === 'palm_left';
 
     // ✅ 카메라 방향에 따른 가이드 방향 결정
@@ -2275,15 +2289,18 @@ function drawGuideOverlay(ctx, w, h) {
     ctx.save();
     if (flipGuide) { ctx.translate(w, 0); ctx.scale(-1, 1); }
     drawHandPath(ctx, hx, hy, hw, hh);
-    ctx.fillStyle = handBg;
-    ctx.fill();
-    // 손 테두리 - 부드러운 실선
+    // ✅ 채우기 없음 - 선만 (이미지처럼 윤곽선만)
+    ctx.fillStyle = 'rgba(0,0,0,0)';
+    // 윤곽선 - 점선
     ctx.strokeStyle = handColor;
-    ctx.lineWidth = 2.5;
-    ctx.setLineDash([8, 5]);
+    ctx.lineWidth = 2;
+    ctx.setLineDash([12, 7]);
+    ctx.shadowColor = handColor;
+    ctx.shadowBlur = 8;
     drawHandPath(ctx, hx, hy, hw, hh);
     ctx.stroke();
     ctx.setLineDash([]);
+    ctx.shadowBlur = 0;
     ctx.restore();
 
     // 손금 라인
@@ -2303,11 +2320,19 @@ function drawGuideOverlay(ctx, w, h) {
       if (!flipGuide) return l;
       return { x1: w-l.x1, y1: l.y1, x2: w-l.x2, y2: l.y2 };
     });
+    // ✅ 손금선 색상 - 이미지처럼 각각 다른 색
+    var lineColors = ['#a78bfa', '#22d3ee', '#ef4444', '#fbbf24'];
     lineCoords.forEach(function(l, i) {
+      var col = lineColors[i] || '#80ff80';
+      ctx.save();
+      ctx.shadowColor = col; ctx.shadowBlur = 14;
       ctx.beginPath(); ctx.moveTo(l.x1,l.y1); ctx.lineTo(l.x2,l.y2);
-      ctx.strokeStyle = 'rgba(80,220,120,0.8)'; ctx.lineWidth = 3; ctx.stroke();
-      ctx.fillStyle = 'rgba(255,240,80,0.98)'; ctx.font = 'bold 22px system-ui'; ctx.textAlign = 'center';
-      ctx.fillText(lines[i].l, (l.x1+l.x2)/2, (l.y1+l.y2)/2 - 12);
+      ctx.strokeStyle = col; ctx.lineWidth = 3.5;
+      ctx.lineCap = 'round'; ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.fillStyle = '#fff'; ctx.font = 'bold 18px system-ui'; ctx.textAlign = 'center';
+      ctx.fillText(lines[i].l, (l.x1+l.x2)/2 + 4, (l.y1+l.y2)/2 - 10);
+      ctx.restore();
     });
 
     // 상단 뱃지
@@ -3210,11 +3235,31 @@ function setFB(state) {
   var dot = document.getElementById('fd'), txt = document.getElementById('ft'), sub = document.getElementById('fs');
   if (!dot) return;
   dot.className = 'fb-dot';
-  if (state === 'idle') { dot.classList.add('warn'); txt.textContent = sMode === 'face' ? '카메라를 눈높이에 맞춰 주세요' : '손바닥을 카메라 앞에 펼쳐 주세요'; sub.textContent = '가이드 라인에 맞춰주세요'; }
-  else if (state === 'aligning') { dot.classList.add('warn'); txt.textContent = '정렬 중... 조금 더 가까이'; sub.textContent = '얼굴을 타원 가이드 중앙에 맞춰주세요'; }
-  else if (state === 'ready') { dot.classList.add('ok'); txt.textContent = '준비 완료 - 셔터를 눌러주세요'; sub.textContent = '3초간 정지 후 촬영'; }
-  else if (state === 'scanning') { dot.classList.add('sc'); txt.textContent = '스캔 중... 움직이지 마세요'; sub.textContent = 'AI 분석 진행 중'; }
-  else if (state === 'nocam') { dot.classList.add('warn'); txt.textContent = '카메라 권한을 허용해 주세요'; sub.textContent = '브라우저 주소창 자물쇠 → 카메라 허용'; }
+  if (state === 'idle') {
+    dot.classList.add('warn');
+    txt.textContent = sMode === 'face' ? '얼굴을 타원 안에 맞춰주세요' : '손바닥을 가이드 안에 펼쳐주세요';
+    sub.textContent = sMode === 'face' ? '정면을 바라봐 주세요' : '손금이 잘 보이게 펼쳐주세요';
+  }
+  else if (state === 'aligning') {
+    dot.classList.add('warn');
+    txt.textContent = '조금 더 가까이...';
+    sub.textContent = '';
+  }
+  else if (state === 'scanning') {
+    dot.classList.add('sc');
+    txt.textContent = '스캔 중... 움직이지 마세요';
+    sub.textContent = '';
+  }
+  else if (state === 'done') {
+    dot.classList.add('ok');
+    txt.textContent = '✓ 스캔 완료!';
+    sub.textContent = '아래 결과를 확인해보세요';
+  }
+  else if (state === 'nocam') {
+    dot.classList.add('warn');
+    txt.textContent = '카메라 권한을 허용해 주세요';
+    sub.textContent = '브라우저 설정에서 카메라를 허용해 주세요';
+  }
 }
 
 function setMode(m, btn) {
@@ -3283,7 +3328,7 @@ function runStep(i) {
 }
 function showResult() {
   if (camAnimFr) { cancelAnimationFrame(camAnimFr); camAnimFr = null; }
-  sState = 'done'; setFB('ready');
+  sState = 'done'; setFB('done');
 
   // ✅ 현재 모드의 캔버스 스냅샷 저장
   var sc = document.getElementById('sc');

@@ -345,6 +345,9 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
 .sico.act{background:rgba(80,200,120,0.2);border:1px solid var(--em);}
 .sico.act svg{width:12px;height:12px;stroke:var(--em);animation:spin .8s linear infinite;}
 @keyframes spin{to{transform:rotate(360deg);}}
+@keyframes twinkle{from{opacity:.1;transform:scale(.8)}to{opacity:.6;transform:scale(1.2)}}
+@keyframes fadeInUp{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pulse{0%,100%{opacity:.4;transform:scale(1)}50%{opacity:1;transform:scale(1.05)}}
 .sico.wait{background:rgba(255,255,255,0.07);color:var(--t2);}
 .slbl{font-size:12px;color:var(--t3);flex:1;}
 .slbl.act{color:var(--em);font-weight:600;}
@@ -593,89 +596,39 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
         </div>
       </div>
 
-      <!-- ✅ 출생지 + 현재 거주지 -->
+            <!-- ✅ 출생지 + 현재 거주지 -->
       <div class="form-row r2" style="margin-bottom:10px;">
         <div class="ig">
-          <label>태어난 곳 (출생지)
-            <span style="color:var(--em);font-size:10px;" title="시차 보정 및 기문둔갑 포국에 사용">ⓘ</span>
-          </label>
-          <select id="inp-birthplace" style="width:100%;padding:clamp(8px,1vw,13px) clamp(10px,1.2vw,16px);background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:clamp(12px,1.2vw,16px);font-family:inherit;outline:none;">
-            <option value="">출생지 선택</option>
-            <optgroup label="🇰🇷 서울/경기">
-              <option value="서울">서울특별시</option>
-              <option value="인천">인천광역시</option>
-              <option value="경기 수원">경기 수원</option>
-              <option value="경기 성남">경기 성남</option>
-              <option value="경기 고양">경기 고양</option>
-              <option value="경기 기타">경기 기타</option>
-            </optgroup>
-            <optgroup label="🇰🇷 충청/강원">
-              <option value="대전">대전광역시</option>
-              <option value="충남">충청남도</option>
-              <option value="충북">충청북도</option>
-              <option value="강원">강원도</option>
-            </optgroup>
-            <optgroup label="🇰🇷 영남">
-              <option value="부산">부산광역시</option>
-              <option value="대구">대구광역시</option>
-              <option value="울산">울산광역시</option>
-              <option value="경북">경상북도</option>
-              <option value="경남">경상남도</option>
-            </optgroup>
-            <optgroup label="🇰🇷 호남/제주">
-              <option value="광주">광주광역시</option>
-              <option value="전남">전라남도</option>
-              <option value="전북">전라북도</option>
-              <option value="제주">제주특별자치도</option>
-            </optgroup>
-            <optgroup label="🌏 해외">
-              <option value="미국 동부">미국 동부 (뉴욕/워싱턴)</option>
-              <option value="미국 서부">미국 서부 (LA/샌프란시스코)</option>
-              <option value="캐나다">캐나다</option>
-              <option value="일본">일본</option>
-              <option value="중국">중국</option>
-              <option value="유럽">유럽</option>
-              <option value="동남아">동남아시아</option>
-              <option value="기타 해외">기타 해외</option>
-            </optgroup>
-          </select>
+          <label>태어난 곳 (출생지) <span style="color:var(--em);font-size:10px;" title="시차 보정 및 기문둔갑 포국에 사용">ⓘ</span></label>
+          <div style="display:flex;gap:4px;">
+            <select id="inp-birthplace-sido" onchange="updateSigungu('birth')"
+              style="flex:1;padding:clamp(8px,1vw,11px) 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:clamp(11px,1.1vw,13px);font-family:inherit;outline:none;">
+              <option value="">시/도</option>
+            </select>
+            <select id="inp-birthplace-sigungu" onchange="updateBirthplace()"
+              style="flex:1.2;padding:clamp(8px,1vw,11px) 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:clamp(11px,1.1vw,13px);font-family:inherit;outline:none;">
+              <option value="">시/군/구</option>
+            </select>
+          </div>
+          <input type="hidden" id="inp-birthplace" value="">
         </div>
         <div class="ig">
-          <label>현재 거주지
-            <span style="color:var(--em);font-size:10px;" title="기문둔갑 길방·흉방 계산 기준">ⓘ</span>
-          </label>
-          <select id="inp-location" style="width:100%;padding:clamp(8px,1vw,13px) clamp(10px,1.2vw,16px);background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:clamp(12px,1.2vw,16px);font-family:inherit;outline:none;">
-            <option value="">거주지 선택</option>
-            <optgroup label="🇰🇷 서울/경기">
-              <option value="서울">서울특별시</option>
-              <option value="인천">인천광역시</option>
-              <option value="경기">경기도</option>
-            </optgroup>
-            <optgroup label="🇰🇷 지방">
-              <option value="부산">부산광역시</option>
-              <option value="대구">대구광역시</option>
-              <option value="대전">대전광역시</option>
-              <option value="광주">광주광역시</option>
-              <option value="울산">울산광역시</option>
-              <option value="강원">강원도</option>
-              <option value="충청">충청도</option>
-              <option value="경상">경상도</option>
-              <option value="전라">전라도</option>
-              <option value="제주">제주도</option>
-            </optgroup>
-            <optgroup label="🌏 해외">
-              <option value="미국">미국</option>
-              <option value="일본">일본</option>
-              <option value="중국">중국</option>
-              <option value="유럽">유럽</option>
-              <option value="동남아">동남아시아</option>
-              <option value="기타 해외">기타 해외</option>
-            </optgroup>
-          </select>
+          <label>현재 거주지 <span style="color:var(--em);font-size:10px;" title="기문둔갑 길방·흉방 계산 기준">ⓘ</span></label>
+          <div style="display:flex;gap:4px;">
+            <select id="inp-location-sido" onchange="updateSigungu('location')"
+              style="flex:1;padding:clamp(8px,1vw,11px) 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:clamp(11px,1.1vw,13px);font-family:inherit;outline:none;">
+              <option value="">시/도</option>
+            </select>
+            <select id="inp-location-sigungu" onchange="updateLocation()"
+              style="flex:1.2;padding:clamp(8px,1vw,11px) 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:clamp(11px,1.1vw,13px);font-family:inherit;outline:none;">
+              <option value="">시/군/구</option>
+            </select>
+          </div>
+          <input type="hidden" id="inp-location" value="">
         </div>
       </div>
 
-      <div class="form-row r2" style="margin-bottom:10px;">
+<div class="form-row r2" style="margin-bottom:10px;">
         <div class="ig">
           <label>태어난 시간 (생시) <span style="color:var(--em);font-size:10px;" title="시간 미입력 시 성격/기질 위주 분석">ⓘ</span></label>
           <select id="inp-time">
@@ -1420,11 +1373,45 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
 </div>
 
 <!-- LOADING OVERLAY -->
-<div id="sajuLoading" style="display:none;position:fixed;inset:0;background:rgba(10,10,40,0.88);z-index:998;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;">
-  <div style="width:64px;height:64px;border-radius:50%;border:3px solid rgba(80,200,120,0.2);border-top-color:#50C878;animation:spin 1s linear infinite;"></div>
-  <div style="text-align:center;">
-    <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:.4rem;" id="loading-msg">천기(天機)를 읽는 중...</div>
-    <div style="font-size:12px;color:var(--t2);" id="loading-sub">자미두수 12궁 배치 연산 중</div>
+<div <div id="sajuLoading" style="display:none;position:fixed;inset:0;background:rgba(10,10,40,0.93);z-index:998;flex-direction:column;align-items:center;justify-content:center;gap:0;padding:2rem;">
+
+  <!-- 별빛 애니메이션 -->
+  <div id="loading-stars" style="position:absolute;inset:0;overflow:hidden;pointer-events:none;"></div>
+
+  <!-- 메인 아이콘 -->
+  <div style="position:relative;margin-bottom:1.5rem;">
+    <div style="width:80px;height:80px;border-radius:50%;border:2px solid rgba(255,215,0,0.15);border-top-color:#FFD700;animation:spin 1.2s linear infinite;position:absolute;inset:-8px;"></div>
+    <div style="width:64px;height:64px;border-radius:50%;background:rgba(255,215,0,0.1);display:flex;align-items:center;justify-content:center;font-size:28px;" id="loading-icon">☆</div>
+  </div>
+
+  <!-- 진행 단계 -->
+  <div style="text-align:center;margin-bottom:1.25rem;">
+    <div id="loading-msg" style="font-size:17px;font-weight:700;color:#fff;margin-bottom:.35rem;"></div>
+    <div id="loading-sub" style="font-size:12px;color:rgba(255,255,255,0.5);"></div>
+  </div>
+
+  <!-- 프로그레스 바 -->
+  <div style="width:240px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;margin-bottom:1rem;">
+    <div id="loading-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--em),#FFD700);border-radius:2px;transition:width .4s ease;"></div>
+  </div>
+
+  <!-- 단계 인디케이터 -->
+  <div style="display:flex;gap:6px;margin-bottom:1.25rem;" id="loading-dots">
+    <div class="ldot" style="width:7px;height:7px;border-radius:50%;background:var(--em);"></div>
+    <div class="ldot" style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.2);"></div>
+    <div class="ldot" style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.2);"></div>
+    <div class="ldot" style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.2);"></div>
+    <div class="ldot" style="width:7px;height:7px;border-radius:50%;background:rgba(255,255,255,0.2);"></div>
+  </div>
+
+  <!-- 실시간 분석 텍스트 스트림 -->
+  <div style="max-width:320px;text-align:center;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:.75rem 1rem;">
+    <div id="loading-stream" style="font-size:11px;color:rgba(255,255,255,0.4);line-height:1.7;min-height:42px;">3대 역학 AI 분석을 시작합니다...</div>
+  </div>
+
+  <!-- 소요 시간 -->
+  <div style="margin-top:.75rem;font-size:11px;color:rgba(255,255,255,0.25);">
+    평균 소요시간: <span id="loading-timer" style="color:rgba(255,255,255,0.4);">0</span>초 / 약 15초
   </div>
 </div>
 
@@ -1544,11 +1531,79 @@ function setCal(c) {
 }
 
 function showLoading(show) {
-  const el = document.getElementById('sajuLoading');
+  var el = document.getElementById('sajuLoading');
+  if (!el) return;
   el.style.display = show ? 'flex' : 'none';
+
   if (show) {
-    document.getElementById('loading-msg').textContent = SAJU_LOADING_MSGS[0][0];
-    document.getElementById('loading-sub').textContent = SAJU_LOADING_MSGS[0][1];
+    // 초기화
+    var bar = document.getElementById('loading-bar');
+    var timer = document.getElementById('loading-timer');
+    var icon = document.getElementById('loading-icon');
+    var stream = document.getElementById('loading-stream');
+    if (bar) bar.style.width = '0%';
+
+    // 별빛 생성
+    var starsEl = document.getElementById('loading-stars');
+    if (starsEl) {
+      starsEl.innerHTML = '';
+      for (var s = 0; s < 30; s++) {
+        var star = document.createElement('div');
+        var sz = Math.random() * 3 + 1;
+        star.style.cssText = 'position:absolute;border-radius:50%;background:#fff;opacity:' + (Math.random()*0.4+0.1) + ';' +
+          'width:' + sz + 'px;height:' + sz + 'px;' +
+          'left:' + Math.random()*100 + '%;top:' + Math.random()*100 + '%;' +
+          'animation:twinkle ' + (Math.random()*2+1) + 's ease-in-out infinite alternate;';
+        starsEl.appendChild(star);
+      }
+    }
+
+    // 타이머
+    var startTime = Date.now();
+    window._loadingTimer = setInterval(function() {
+      var elapsed = Math.round((Date.now() - startTime) / 1000);
+      if (timer) timer.textContent = elapsed;
+    }, 1000);
+
+    // 메시지 + 프로그레스 순차 진행
+    var msgs = SAJU_LOADING_MSGS;
+    var icons = ['☆', '🔭', '⚡', '🌊', '✦'];
+    var streams = [
+      '생년월일 → 간지(干支) 변환 처리 중...',
+      '자미두수 12궁 포국 배치 연산 중...',
+      '주성·보성·사화 배치 확인 중...',
+      '대운 10년 주기 + 소운 흐름 계산 중...',
+      'AI 명리 해석 생성 중... 거의 다 됐어요!'
+    ];
+    var step = 0;
+    var dots = document.querySelectorAll('.ldot');
+
+    function nextStep() {
+      if (step >= msgs.length) return;
+      var pct = Math.round((step + 1) / msgs.length * 85);
+      if (bar) bar.style.width = pct + '%';
+      if (icon) icon.textContent = icons[step] || '✦';
+      var msgEl = document.getElementById('loading-msg');
+      var subEl = document.getElementById('loading-sub');
+      if (msgEl) msgEl.textContent = msgs[step][0];
+      if (subEl) subEl.textContent = msgs[step][1];
+      if (stream) stream.textContent = streams[step];
+      dots.forEach(function(d, i) {
+        d.style.background = i <= step ? 'var(--em)' : 'rgba(255,255,255,0.2)';
+        d.style.transform = i === step ? 'scale(1.3)' : 'scale(1)';
+      });
+      step++;
+    }
+
+    nextStep();
+    window._loadingMsgTimer = setInterval(nextStep, 2800);
+
+  } else {
+    // 완료
+    clearInterval(window._loadingTimer);
+    clearInterval(window._loadingMsgTimer);
+    var bar = document.getElementById('loading-bar');
+    if (bar) bar.style.width = '100%';
   }
 }
 
@@ -2313,8 +2368,12 @@ function toggleMirror() {
 
 function isMirrorOn() {
   if (mirrorOverride !== null) return mirrorOverride;
-  // 자동: 모든 경우 미러ON (셀카처럼)
-  return true;
+  var isMob = /Mobi|Android|iPhone/i.test(navigator.userAgent);
+  // 관상(전면카메라) → 미러 ON (셀카처럼)
+  // 손금(모바일 후면) → 미러 OFF / PC → 미러 ON
+  if (sMode === 'face') return true;
+  if (isMob) return false; // 모바일 손금: 후면카메라라 미러 불필요
+  return true; // PC 손금: 전면카메라라 미러 ON
 }
 
 // 스캔 결과 저장 (관상/왼손/오른손 독립)
@@ -2846,7 +2905,16 @@ function showPg(pg, btn, sub) {
     }
     setTimeout(populateReport, 80);
   }
-  if (pg === 'scan') { setTimeout(function(){ startCamera(); }, 80); }
+  if (pg === 'scan') {
+    setTimeout(function(){
+      startCamera();
+      // 아직 아무것도 안 찍었으면 자동 순차 촬영 시작
+      var hasAny = capturedImages.face || capturedImages.palm_left || capturedImages.palm_right;
+      if (!hasAny && !seqAutoCapture) {
+        setTimeout(function(){ startAutoSequence(); }, 600);
+      }
+    }, 80);
+  }
   if (pg === 'my') { setTimeout(renderMyDashboard, 80); }
   if (pg === 'sound') { setTimeout(updateSoundPage, 80); }
   if (pg !== 'scan') { stopCamera(); }
@@ -2986,8 +3054,8 @@ function loadProfile(idx) {
   document.getElementById('inp-day').value   = p.day   || '';
   document.getElementById('inp-time').value  = p.time  || '';
   document.getElementById('unk').checked     = p.unk   || false;
-  if (document.getElementById('inp-birthplace')) document.getElementById('inp-birthplace').value = p.birthplace || '';
-  if (document.getElementById('inp-location'))   document.getElementById('inp-location').value   = p.location   || '';
+  if (document.getElementById('inp-birthplace')) restorePlaceSelects('birth', p.birthplace || '');
+  if (document.getElementById('inp-location'))   restorePlaceSelects('location', p.location || '');
 
   setGender(p.gender || '남');
   setCal(p.cal || '양력');
@@ -3063,8 +3131,8 @@ function renderProfileBar() {
         if (p.unk)   document.getElementById('unk').checked     = p.unk;
         if (p.gender) setGender(p.gender);
         if (p.cal)    setCal(p.cal);
-        if (p.birthplace && document.getElementById('inp-birthplace')) document.getElementById('inp-birthplace').value = p.birthplace;
-        if (p.location   && document.getElementById('inp-location'))   document.getElementById('inp-location').value   = p.location;
+        if (p.birthplace && document.getElementById('inp-birthplace')) restorePlaceSelects('birth', p.birthplace);
+        if (p.location   && document.getElementById('inp-location'))   restorePlaceSelects('location', p.location);
       }, 100);
     }
   } catch(e) {}
@@ -4062,7 +4130,15 @@ async function generate50PReport() {
   var btn = document.getElementById('report-generate-btn');
   var bodyEl = document.getElementById('report-full-body');
   if (btn) btn.style.display = 'none';
-  if (bodyEl) bodyEl.innerHTML = '<div style="text-align:center;padding:2rem;color:var(--t2)"><div style="font-size:32px;margin-bottom:1rem;">📜</div><div style="font-size:14px;font-weight:600;color:#fff;margin-bottom:.4rem;">인생 지침서 생성 중...</div><div id="report-progress" style="font-size:12px;">1단계: 명주·대운·재물·직업·애정운 분석 중... (1/2)</div></div>';
+  if (bodyEl) bodyEl.innerHTML = '<div style="text-align:center;padding:2.5rem 1rem;animation:fadeInUp .4s ease;">' +
+    '<div style="font-size:40px;margin-bottom:1rem;animation:pulse 1.5s ease-in-out infinite;">📜</div>' +
+    '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:.4rem;">인생 지침서 생성 중...</div>' +
+    '<div id="report-progress" style="font-size:12px;color:var(--t2);margin-bottom:1.25rem;">1단계: 명주·대운·재물·직업·애정운 분석 중...</div>' +
+    '<div style="width:200px;height:4px;background:rgba(255,255,255,0.1);border-radius:2px;overflow:hidden;margin:0 auto .75rem;">' +
+      '<div id="report-bar" style="height:100%;width:15%;background:linear-gradient(90deg,var(--em),#FFD700);border-radius:2px;transition:width 1s ease;"></div>' +
+    '</div>' +
+    '<div id="report-stream" style="font-size:11px;color:rgba(255,255,255,0.35);max-width:280px;margin:0 auto;line-height:1.6;min-height:36px;"></div>' +
+    '</div>';
 
   // 공통 데이터
   var scanExtra = '';
@@ -4138,7 +4214,48 @@ async function generate50PReport() {
 
   var fullHtml = '';
 
+  // 리포트 생성 중 진행 멘트
+  var reportMsgs1 = [
+    ['명주(命主) 총평 분석 중...', 15],
+    ['생애 대운 흐름 계산 중...', 30],
+    ['재물·투자운 분석 중...', 45],
+    ['직업·커리어운 분석 중...', 60],
+    ['애정·인간관계 분석 중...', 75],
+  ];
+  var reportMsgs2 = [
+    ['건강·체질 분석 중...', 15],
+    ['기문둔갑 전략 계산 중...', 30],
+    ['월별 운세 분석 중...', 50],
+    ['개운법 정리 중...', 70],
+    ['타임라인 작성 중...', 85],
+  ];
+
+  function startReportProgress(msgs) {
+    var i = 0;
+    clearInterval(window._reportTimer);
+    window._reportTimer = setInterval(function() {
+      if (i >= msgs.length) { clearInterval(window._reportTimer); return; }
+      var prog = document.getElementById('report-progress');
+      var bar = document.getElementById('report-bar');
+      var stream = document.getElementById('report-stream');
+      if (prog) prog.textContent = msgs[i][0];
+      if (bar) bar.style.width = msgs[i][1] + '%';
+      if (stream) {
+        var tips = [
+          '자미두수 14주성 배치 분석 중...',
+          '기문둔갑 팔문·구성 포국 계산 중...',
+          '매화역수 체용 관계 해석 중...',
+          '3대 역학 통합 해석 생성 중...',
+          '개인 맞춤 지침 작성 중...'
+        ];
+        stream.textContent = tips[i % tips.length];
+      }
+      i++;
+    }, 3000);
+  }
+
   async function fetchSection(prompt, part) {
+    startReportProgress(part === '1' ? reportMsgs1 : reportMsgs2);
     var progEl = document.getElementById('report-progress');
     if (progEl) progEl.textContent = part + '단계: 분석 중... (' + part + '/2)';
 
@@ -5037,7 +5154,105 @@ window.addEventListener('beforeunload', saveSessionTime);
 // 30초마다 저장
 setInterval(function() { if (currentUser) saveSessionTime(); }, 30000);
 
-/* ── 자동 순차 촬영 ── */
+/* ── 시/도 → 시/군/구 연동 ── */
+var SIDO_DATA = {
+  '서울특별시': ['강남구','강동구','강북구','강서구','관악구','광진구','구로구','금천구','노원구','도봉구','동대문구','동작구','마포구','서대문구','서초구','성동구','성북구','송파구','양천구','영등포구','용산구','은평구','종로구','중구','중랑구'],
+  '부산광역시': ['강서구','금정구','기장군','남구','동구','동래구','부산진구','북구','사상구','사하구','서구','수영구','연제구','영도구','중구','해운대구'],
+  '대구광역시': ['군위군','남구','달서구','달성군','동구','북구','서구','수성구','중구'],
+  '인천광역시': ['강화군','계양구','남동구','동구','미추홀구','부평구','서구','연수구','옹진군','중구'],
+  '광주광역시': ['광산구','남구','동구','북구','서구'],
+  '대전광역시': ['대덕구','동구','서구','유성구','중구'],
+  '울산광역시': ['남구','동구','북구','울주군','중구'],
+  '세종특별자치시': ['세종시'],
+  '경기도': ['가평군','고양시 덕양구','고양시 일산동구','고양시 일산서구','과천시','광명시','광주시','구리시','군포시','김포시','남양주시','동두천시','부천시','성남시 분당구','성남시 수정구','성남시 중원구','수원시 권선구','수원시 영통구','수원시 장안구','수원시 팔달구','시흥시','안산시 단원구','안산시 상록구','안성시','안양시 동안구','안양시 만안구','양주시','양평군','여주시','연천군','오산시','용인시 기흥구','용인시 수지구','용인시 처인구','의왕시','의정부시','이천시','파주시','평택시','포천시','하남시','화성시'],
+  '강원특별자치도': ['강릉시','고성군','동해시','삼척시','속초시','양구군','양양군','영월군','원주시','인제군','정선군','철원군','춘천시','태백시','평창군','홍천군','화천군','횡성군'],
+  '충청북도': ['괴산군','단양군','보은군','영동군','옥천군','음성군','제천시','진천군','청원군','청주시 상당구','청주시 서원구','청주시 청원구','청주시 흥덕구','충주시'],
+  '충청남도': ['계룡시','공주시','금산군','논산시','당진시','보령시','부여군','서산시','서천군','아산시','예산군','천안시 동남구','천안시 서북구','청양군','태안군','홍성군'],
+  '전라북도': ['고창군','군산시','김제시','남원시','무주군','부안군','순창군','완주군','익산시','임실군','장수군','전주시 덕진구','전주시 완산구','정읍시','진안군'],
+  '전라남도': ['강진군','고흥군','곡성군','광양시','구례군','나주시','담양군','목포시','무안군','보성군','순천시','신안군','여수시','영광군','영암군','완도군','장성군','장흥군','진도군','함평군','해남군','화순군'],
+  '경상북도': ['경산시','경주시','고령군','구미시','군위군','김천시','문경시','봉화군','상주시','성주군','안동시','영덕군','영양군','영주시','영천시','예천군','울릉군','울진군','의성군','청도군','청송군','칠곡군','포항시 남구','포항시 북구'],
+  '경상남도': ['거제시','거창군','고성군','김해시','남해군','밀양시','사천시','산청군','양산시','의령군','진주시','창녕군','창원시 마산합포구','창원시 마산회원구','창원시 성산구','창원시 의창구','창원시 진해구','통영시','하동군','함안군','함양군','합천군'],
+  '제주특별자치도': ['서귀포시','제주시'],
+  '해외': ['미국 동부(뉴욕/워싱턴)','미국 서부(LA/샌프란시스코)','미국 중부','캐나다','일본 도쿄','일본 오사카','중국 베이징','중국 상하이','영국','독일','프랑스','호주','싱가포르','태국','베트남','필리핀','기타 해외']
+};
+
+function initSidoSelects() {
+  var sidos = Object.keys(SIDO_DATA);
+  ['inp-birthplace-sido','inp-location-sido'].forEach(function(id) {
+    var sel = document.getElementById(id);
+    if (!sel) return;
+    sel.innerHTML = '<option value="">시/도 선택</option>';
+    sidos.forEach(function(sido) {
+      var opt = document.createElement('option');
+      opt.value = sido; opt.textContent = sido;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+function updateSigungu(type) {
+  var sidoId = type === 'birth' ? 'inp-birthplace-sido' : 'inp-location-sido';
+  var sigunguId = type === 'birth' ? 'inp-birthplace-sigungu' : 'inp-location-sigungu';
+  var sido = (document.getElementById(sidoId)||{}).value || '';
+  var sigunguSel = document.getElementById(sigunguId);
+  if (!sigunguSel) return;
+  sigunguSel.innerHTML = '<option value="">시/군/구 선택</option>';
+  if (sido && SIDO_DATA[sido]) {
+    SIDO_DATA[sido].forEach(function(sg) {
+      var opt = document.createElement('option');
+      opt.value = sg; opt.textContent = sg;
+      sigunguSel.appendChild(opt);
+    });
+  }
+  // hidden input 초기화
+  var hiddenId = type === 'birth' ? 'inp-birthplace' : 'inp-location';
+  var hidden = document.getElementById(hiddenId);
+  if (hidden) hidden.value = sido;
+}
+
+function updateBirthplace() {
+  var sido = (document.getElementById('inp-birthplace-sido')||{}).value || '';
+  var sigungu = (document.getElementById('inp-birthplace-sigungu')||{}).value || '';
+  var hidden = document.getElementById('inp-birthplace');
+  if (hidden) hidden.value = sigungu ? sido + ' ' + sigungu : sido;
+}
+
+function updateLocation() {
+  var sido = (document.getElementById('inp-location-sido')||{}).value || '';
+  var sigungu = (document.getElementById('inp-location-sigungu')||{}).value || '';
+  var hidden = document.getElementById('inp-location');
+  if (hidden) hidden.value = sigungu ? sido + ' ' + sigungu : sido;
+}
+
+// 프로필 불러올 때 시/도, 시/군/구 복원
+function restorePlaceSelects(type, fullValue) {
+  if (!fullValue) return;
+  var sidoId = type === 'birth' ? 'inp-birthplace-sido' : 'inp-location-sido';
+  var sigunguId = type === 'birth' ? 'inp-birthplace-sigungu' : 'inp-location-sigungu';
+  var hiddenId = type === 'birth' ? 'inp-birthplace' : 'inp-location';
+
+  // "충청남도 금산군" → sido="충청남도", sigungu="금산군"
+  var parts = fullValue.split(' ');
+  var sido = parts[0] || '';
+  var sigungu = parts.slice(1).join(' ') || '';
+
+  var sidoSel = document.getElementById(sidoId);
+  if (sidoSel) {
+    sidoSel.value = sido;
+    updateSigungu(type);
+    setTimeout(function() {
+      var sgSel = document.getElementById(sigunguId);
+      if (sgSel) sgSel.value = sigungu;
+      var hidden = document.getElementById(hiddenId);
+      if (hidden) hidden.value = fullValue;
+    }, 50);
+  }
+}
+
+// 초기화
+(function() { setTimeout(initSidoSelects, 100); })();
+
+
 var seqStep = 0;
 var seqAutoCapture = false;
 
@@ -5063,22 +5278,48 @@ function showSeqOverlay(step) {
   document.getElementById('seq-countdown').style.display = 'none';
   var readyBtn = document.getElementById('seq-ready-btn');
   var skipBtn = document.getElementById('seq-skip-btn');
-  if (readyBtn) { readyBtn.style.display = 'inline-block'; readyBtn.textContent = '준비됐어요! →'; readyBtn.onclick = seqReady; }
+  if (readyBtn) {
+    readyBtn.style.display = 'inline-block';
+    readyBtn.textContent = '준비됐어요! →';
+    readyBtn.style.background = 'var(--em)';
+    readyBtn.style.color = '#fff';
+    readyBtn.onclick = seqReady;
+  }
   if (skipBtn) skipBtn.style.display = step > 0 ? 'inline-block' : 'none';
   overlay.style.display = 'flex';
+
+  // ✅ 3초 후 자동 진행 카운트다운
+  var countdown = document.getElementById('seq-countdown');
+  var autoSecs = 3;
+  if (countdown) {
+    countdown.style.display = 'block';
+    countdown.textContent = autoSecs + '초 후 자동 시작...';
+    countdown.style.fontSize = '14px';
+    countdown.style.color = 'rgba(255,255,255,0.4)';
+  }
+  clearInterval(window._seqAutoTimer);
+  window._seqAutoTimer = setInterval(function() {
+    autoSecs--;
+    if (countdown) countdown.textContent = autoSecs > 0 ? autoSecs + '초 후 자동 시작...' : '시작!';
+    if (autoSecs <= 0) {
+      clearInterval(window._seqAutoTimer);
+      seqReady();
+    }
+  }, 1000);
 }
 
 function seqReady() {
+  clearInterval(window._seqAutoTimer); // 자동 타이머 취소
   var overlay = document.getElementById('seq-overlay');
   if (overlay) overlay.style.display = 'none';
   var s = SEQ_STEPS[seqStep];
   var modeBtn = document.getElementById(s.mode === 'face' ? 'mf' : (s.mode === 'palm_left' ? 'mp' : 'mp2'));
   setMode(s.mode, modeBtn);
-  // 카메라 준비 후 자동 정렬+카운트다운 시작
   setTimeout(function() { startAlignCheck(); }, 800);
 }
 
 function seqSkip() {
+  clearInterval(window._seqAutoTimer);
   var overlay = document.getElementById('seq-overlay');
   if (overlay) overlay.style.display = 'none';
   seqStep++;
@@ -5129,8 +5370,13 @@ function showResult() {
   sState = 'done'; setFB('done');
   // ✅ 스캔 CTA 버튼 상태 업데이트
   setTimeout(updateScanCTA, 100);
-  // ✅ 자동 순차 촬영 중이면 다음 단계로
-  if (seqAutoCapture) setTimeout(seqNextStep, 1500);
+  // ✅ 자동 순차 촬영 중이면 다음 단계로 (1.5초 후)
+  if (seqAutoCapture) {
+    // 완료 토스트 표시
+    var modeNames = { face: '관상', palm_left: '왼손', palm_right: '오른손' };
+    showShareToast('✅ ' + (modeNames[sMode]||'') + ' 촬영 완료!');
+    setTimeout(seqNextStep, 1500);
+  }
 
   // ✅ 현재 모드의 캔버스 스냅샷 저장
   var sc = document.getElementById('sc');

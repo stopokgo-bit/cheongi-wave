@@ -507,15 +507,15 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
   <!-- ✅ 이벤트 배너 -->
   <div id="event-banner" style="display:none;padding:10px 1rem;text-align:center;font-size:13px;font-weight:700;background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,165,0,0.15));border-bottom:1px solid rgba(255,215,0,0.2);color:var(--gold);"></div>
   <nav class="nav">
-      <div class="logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#0f0f3a"/></svg></div>
-      <div>
+      <div class="logo-icon" onclick="showPg('main')" style="cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#0f0f3a"/></svg></div>
+      <div onclick="showPg('main')" style="cursor:pointer;">
         <div class="logo-text">천기 웨이브</div>
         <div class="logo-sub">CHEON-GI WAVE</div>
       </div>
     </a>
     <div class="nav-btns">
       <!-- 천기 분석 버튼 -->
-      <button class="nbtn on" id="bn-user" onclick="showPg('main',this,'user')" title="천기 분석">
+      <button class="nbtn on" id="bn-user" onclick="showMyDashboard()" title="천기 분석">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
         <span class="nav-label">천기 분석</span>
       </button>
@@ -771,9 +771,41 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
       </div>
     </div>
 
-    <div class="exsec fu4">
-      <div class="exhdr"><h2>실시간 매칭 전문가</h2><a href="#">전체 보기 &gt;</a></div>
-      <div class="exgrid" id="eg"></div>
+    <!-- ✅ 커뮤니티: 리뷰 + QnA -->
+    <div class="hero fu3" style="margin-bottom:1.25rem;">
+      <!-- 탭 -->
+      <div style="display:flex;gap:8px;margin-bottom:1rem;">
+        <button id="comm-tab-review" onclick="switchCommTab('review')" style="flex:1;padding:9px;border-radius:8px;border:1px solid var(--em);background:var(--em);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">⭐ 이용 후기</button>
+        <button id="comm-tab-qna" onclick="switchCommTab('qna')" style="flex:1;padding:9px;border-radius:8px;border:1px solid var(--bd);background:none;color:var(--t2);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">💬 Q&A</button>
+      </div>
+
+      <!-- 리뷰 목록 -->
+      <div id="comm-review" style="">
+        <div id="review-list" style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:.75rem;max-height:320px;overflow-y:auto;"></div>
+        <div style="border-top:1px solid var(--bd);padding-top:.75rem;">
+          <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:.5rem;">✍️ 후기 작성</div>
+          <div style="display:flex;gap:4px;margin-bottom:.5rem;" id="review-stars">
+            <span onclick="setReviewStar(1)" style="font-size:20px;cursor:pointer;">☆</span>
+            <span onclick="setReviewStar(2)" style="font-size:20px;cursor:pointer;">☆</span>
+            <span onclick="setReviewStar(3)" style="font-size:20px;cursor:pointer;">☆</span>
+            <span onclick="setReviewStar(4)" style="font-size:20px;cursor:pointer;">☆</span>
+            <span onclick="setReviewStar(5)" style="font-size:20px;cursor:pointer;">☆</span>
+          </div>
+          <textarea id="review-text" placeholder="분석 후기를 남겨주세요..." style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;resize:none;height:70px;box-sizing:border-box;"></textarea>
+          <button onclick="submitReview()" style="width:100%;margin-top:6px;padding:9px;background:var(--em);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">후기 등록</button>
+        </div>
+      </div>
+
+      <!-- QnA 목록 -->
+      <div id="comm-qna" style="display:none;">
+        <div id="qna-list" style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:.75rem;max-height:320px;overflow-y:auto;"></div>
+        <div style="border-top:1px solid var(--bd);padding-top:.75rem;">
+          <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:.5rem;">❓ 질문 작성</div>
+          <input id="qna-title" type="text" placeholder="제목 (예: 자미두수 명궁이 뭔가요?)" style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;margin-bottom:6px;box-sizing:border-box;">
+          <textarea id="qna-text" placeholder="질문 내용을 입력해주세요..." style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;resize:none;height:70px;box-sizing:border-box;"></textarea>
+          <button onclick="submitQnA()" style="width:100%;margin-top:6px;padding:9px;background:rgba(138,172,240,0.2);border:1px solid rgba(138,172,240,0.3);border-radius:8px;color:#8aacf0;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">질문 등록</button>
+        </div>
+      </div>
     </div>
 
     <div class="bgrid fu4">
@@ -914,16 +946,101 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
     </div>
   </div>
 
+  <!-- MY DASHBOARD -->
+  <div id="pg-my" class="pg">
+    <div class="pgtop">
+      <div class="back-btn" onclick="showPg('main')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--t)" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg></div>
+      <h1>나의 천기 분석</h1>
+    </div>
+
+    <!-- 미로그인 -->
+    <div id="my-login-prompt" style="display:none;text-align:center;padding:3rem 1rem;">
+      <div style="font-size:36px;margin-bottom:1rem;">🔐</div>
+      <div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:.5rem;">로그인이 필요합니다</div>
+      <div style="font-size:13px;color:var(--t2);margin-bottom:1.5rem;">나의 분석 기록을 보려면 로그인해주세요</div>
+      <button onclick="openAuth('login')" style="padding:12px 28px;background:var(--em);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">로그인하기</button>
+    </div>
+
+    <!-- 대시보드 콘텐츠 -->
+    <div id="my-dashboard-content">
+      <!-- 유저 프로필 카드 -->
+      <div id="my-profile-card" style="background:linear-gradient(135deg,rgba(255,215,0,0.1),rgba(80,200,120,0.08));border:1px solid rgba(255,215,0,0.2);border-radius:16px;padding:1.25rem;margin-bottom:1rem;display:flex;align-items:center;gap:1rem;">
+        <div id="my-avatar" style="width:52px;height:52px;border-radius:50%;background:var(--gold);display:flex;align-items:center;justify-content:center;font-size:22px;font-weight:700;color:#0f0f3a;flex-shrink:0;"></div>
+        <div style="flex:1;">
+          <div id="my-name" style="font-size:16px;font-weight:700;color:#fff;"></div>
+          <div id="my-email" style="font-size:11px;color:var(--t2);margin-top:2px;"></div>
+          <div id="my-stats-row" style="display:flex;gap:12px;margin-top:.5rem;"></div>
+        </div>
+      </div>
+
+      <!-- 최근 분석 결과 -->
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:12px;padding:1rem;margin-bottom:.75rem;">
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.75rem;display:flex;align-items:center;gap:6px;">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
+          최근 분석 결과
+        </div>
+        <div id="my-last-result" style="font-size:12px;color:var(--t2);">아직 분석 기록이 없습니다</div>
+      </div>
+
+      <!-- 인생 지침서 -->
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:12px;padding:1rem;margin-bottom:.75rem;">
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.75rem;display:flex;align-items:center;justify-content:space-between;">
+          <span>📜 나의 인생 지침서</span>
+          <span id="my-report-date" style="font-size:10px;color:var(--t2);"></span>
+        </div>
+        <div id="my-report-preview" style="font-size:12px;color:var(--t2);">발급된 인생 지침서가 없습니다</div>
+        <button id="my-report-btn" onclick="viewMyReport()" style="display:none;width:100%;margin-top:.6rem;padding:9px;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);border-radius:8px;color:var(--gold);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📜 인생 지침서 보기</button>
+      </div>
+
+      <!-- 방문 기록 -->
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:12px;padding:1rem;margin-bottom:.75rem;">
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.75rem;">📅 방문 기록</div>
+        <div id="my-visit-log" style="font-size:12px;color:var(--t2);"></div>
+      </div>
+
+      <!-- 내가 작성한 리뷰 -->
+      <div style="background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:12px;padding:1rem;margin-bottom:.75rem;">
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.75rem;">⭐ 내가 작성한 리뷰</div>
+        <div id="my-reviews" style="font-size:12px;color:var(--t2);">작성한 리뷰가 없습니다</div>
+      </div>
+
+      <!-- 버튼들 -->
+      <div class="cta-row">
+        <button class="btn-gold" onclick="showPg('main')">🔮 새 분석 시작</button>
+        <button class="btn-out" onclick="doLogout()">로그아웃</button>
+      </div>
+    </div>
+  </div>
+
   <!-- SCAN -->
   <div id="pg-scan" class="pg">
     <div class="pgtop">
       <div class="back-btn" onclick="showPg('main')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--t)" stroke-width="2.5"><polyline points="15,18 9,12 15,6"/></svg></div>
-      <h1>AI 관상 스캔</h1>
+      <h1>AI 관상·손금 스캔</h1>
       <div class="mode-toggle">
         <button class="mtbtn on" id="mf" onclick="setMode('face',this)">관상</button>
         <button class="mtbtn" id="mp" onclick="setMode('palm_left',this)">왼손<span style="font-size:9px;display:block;color:rgba(255,255,255,0.5);">선천운</span></button>
         <button class="mtbtn" id="mp2" onclick="setMode('palm_right',this)">오른손<span style="font-size:9px;display:block;color:rgba(255,255,255,0.5);">후천운</span></button>
       </div>
+    </div>
+
+    <!-- ✅ 자동 순차 촬영 배너 -->
+    <div id="auto-scan-banner" style="margin-bottom:.75rem;background:linear-gradient(135deg,rgba(80,200,120,0.12),rgba(255,215,0,0.08));border:1px solid rgba(80,200,120,0.25);border-radius:12px;padding:.75rem 1rem;display:flex;align-items:center;justify-content:space-between;gap:.75rem;">
+      <div>
+        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:2px;">📸 자동 순차 촬영</div>
+        <div style="font-size:11px;color:var(--t2);">관상 → 왼손 → 오른손 자동 안내</div>
+      </div>
+      <button onclick="startAutoSequence()" style="padding:8px 18px;background:var(--em);border:none;border-radius:8px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;white-space:nowrap;">▶ 순차 촬영 시작</button>
+    </div>
+
+    <!-- 순차 촬영 안내 오버레이 -->
+    <div id="seq-overlay" style="display:none;position:fixed;inset:0;background:rgba(10,10,40,0.92);z-index:8000;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:2rem;">
+      <div id="seq-icon" style="font-size:56px;margin-bottom:1rem;">👁</div>
+      <div id="seq-title" style="font-size:22px;font-weight:800;color:#fff;margin-bottom:.5rem;"></div>
+      <div id="seq-desc" style="font-size:14px;color:var(--t2);line-height:1.8;margin-bottom:1.5rem;max-width:320px;"></div>
+      <div id="seq-countdown" style="font-size:48px;font-weight:900;color:var(--em);margin-bottom:1.5rem;display:none;"></div>
+      <button id="seq-ready-btn" onclick="seqReady()" style="padding:14px 36px;background:var(--em);border:none;border-radius:12px;color:#fff;font-size:15px;font-weight:700;cursor:pointer;font-family:inherit;">준비됐어요!</button>
+      <button id="seq-skip-btn" onclick="seqSkip()" style="margin-top:.75rem;padding:8px 20px;background:none;border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:var(--t2);font-size:12px;cursor:pointer;font-family:inherit;display:none;">이 단계 건너뛰기</button>
     </div>
 
     <!-- 카메라/사진 전환 -->
@@ -2730,6 +2847,7 @@ function showPg(pg, btn, sub) {
     setTimeout(populateReport, 80);
   }
   if (pg === 'scan') { setTimeout(function(){ startCamera(); }, 80); }
+  if (pg === 'my') { setTimeout(renderMyDashboard, 80); }
   if (pg === 'sound') { setTimeout(updateSoundPage, 80); }
   if (pg !== 'scan') { stopCamera(); }
   if (pg === 'sound' && !chBuilt) { buildChannels(); chBuilt = true; }
@@ -2920,6 +3038,14 @@ function renderProfileBar() {
 }
 
 // 페이지 로드 시 프로필바 렌더링 + 마지막 입력값 복원
+// 커뮤니티 초기화
+(function initCommunity() {
+  setTimeout(function() {
+    renderReviews();
+    renderQnAs();
+  }, 200);
+})();
+
 (function initProfileBar() {
   renderProfileBar();
 
@@ -4612,11 +4738,397 @@ function runStep(i) {
     }
   }, 50);
 }
+/* ══════════════════════════════════════
+   커뮤니티 (리뷰/QnA)
+══════════════════════════════════════ */
+var reviewStar = 5;
+
+function switchCommTab(tab) {
+  document.getElementById('comm-review').style.display = tab === 'review' ? 'block' : 'none';
+  document.getElementById('comm-qna').style.display = tab === 'qna' ? 'block' : 'none';
+  var rb = document.getElementById('comm-tab-review');
+  var qb = document.getElementById('comm-tab-qna');
+  if (rb) { rb.style.background = tab==='review'?'var(--em)':'none'; rb.style.color = tab==='review'?'#fff':'var(--t2)'; rb.style.borderColor = tab==='review'?'var(--em)':'var(--bd)'; }
+  if (qb) { qb.style.background = tab==='qna'?'rgba(138,172,240,0.2)':'none'; qb.style.color = tab==='qna'?'#8aacf0':'var(--t2)'; qb.style.borderColor = tab==='qna'?'rgba(138,172,240,0.4)':'var(--bd)'; }
+}
+
+function setReviewStar(n) {
+  reviewStar = n;
+  var stars = document.getElementById('review-stars');
+  if (!stars) return;
+  Array.from(stars.children).forEach(function(el, i) {
+    el.textContent = i < n ? '★' : '☆';
+    el.style.color = i < n ? '#FFD700' : 'var(--t2)';
+  });
+}
+
+function submitReview() {
+  if (!currentUser) { openAuth('login'); return; }
+  var text = (document.getElementById('review-text')||{}).value || '';
+  if (!text.trim()) { showShareToast('⚠️ 후기 내용을 입력해주세요'); return; }
+  var reviews = getReviews();
+  reviews.unshift({
+    id: 'r_' + Date.now(),
+    user: currentUser.name || currentUser.email.split('@')[0],
+    email: currentUser.email,
+    star: reviewStar,
+    text: text.trim(),
+    date: new Date().toLocaleDateString('ko-KR'),
+    result: window.lastSajuResult ? (window.lastSajuResult.star || '') : ''
+  });
+  localStorage.setItem('cw_reviews', JSON.stringify(reviews.slice(0, 100)));
+  document.getElementById('review-text').value = '';
+  setReviewStar(5);
+  renderReviews();
+  showShareToast('✅ 후기가 등록됐습니다!');
+}
+
+function getReviews() {
+  try { return JSON.parse(localStorage.getItem('cw_reviews') || '[]'); } catch(e) { return []; }
+}
+
+function renderReviews() {
+  var list = document.getElementById('review-list');
+  if (!list) return;
+  var reviews = getReviews();
+  if (!reviews.length) { list.innerHTML = '<div style="font-size:12px;color:var(--t2);padding:.5rem 0;">아직 후기가 없습니다. 첫 번째 후기를 남겨보세요!</div>'; return; }
+  list.innerHTML = reviews.slice(0, 10).map(function(r) {
+    var stars = '★'.repeat(r.star) + '☆'.repeat(5-r.star);
+    return '<div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:.65rem .85rem;border:1px solid var(--bd);">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem;">' +
+        '<span style="font-size:12px;font-weight:700;color:#fff;">' + r.user + '</span>' +
+        '<span style="font-size:11px;color:#FFD700;">' + stars + '</span>' +
+      '</div>' +
+      (r.result ? '<div style="font-size:10px;color:var(--em);margin-bottom:.25rem;">' + r.result + ' 명주</div>' : '') +
+      '<div style="font-size:12px;color:var(--t2);line-height:1.7;">' + r.text + '</div>' +
+      '<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:.25rem;">' + r.date + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+function submitQnA() {
+  if (!currentUser) { openAuth('login'); return; }
+  var title = (document.getElementById('qna-title')||{}).value || '';
+  var text = (document.getElementById('qna-text')||{}).value || '';
+  if (!title.trim()) { showShareToast('⚠️ 제목을 입력해주세요'); return; }
+  var qnas = getQnAs();
+  qnas.unshift({
+    id: 'q_' + Date.now(),
+    user: currentUser.name || currentUser.email.split('@')[0],
+    email: currentUser.email,
+    title: title.trim(),
+    text: text.trim(),
+    date: new Date().toLocaleDateString('ko-KR'),
+    answered: false
+  });
+  localStorage.setItem('cw_qnas', JSON.stringify(qnas.slice(0, 100)));
+  document.getElementById('qna-title').value = '';
+  document.getElementById('qna-text').value = '';
+  renderQnAs();
+  showShareToast('✅ 질문이 등록됐습니다!');
+}
+
+function getQnAs() {
+  try { return JSON.parse(localStorage.getItem('cw_qnas') || '[]'); } catch(e) { return []; }
+}
+
+function renderQnAs() {
+  var list = document.getElementById('qna-list');
+  if (!list) return;
+  var qnas = getQnAs();
+  if (!qnas.length) { list.innerHTML = '<div style="font-size:12px;color:var(--t2);padding:.5rem 0;">아직 질문이 없습니다.</div>'; return; }
+  list.innerHTML = qnas.slice(0, 10).map(function(q) {
+    return '<div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:.65rem .85rem;border:1px solid var(--bd);">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem;">' +
+        '<span style="font-size:12px;font-weight:700;color:#fff;">' + q.title + '</span>' +
+        '<span style="font-size:10px;padding:2px 7px;border-radius:10px;' + (q.answered?'background:rgba(80,200,120,0.15);color:var(--em)':'background:rgba(255,255,255,0.07);color:var(--t2)') + ';">' + (q.answered?'답변완료':'대기중') + '</span>' +
+      '</div>' +
+      (q.text ? '<div style="font-size:11px;color:var(--t2);line-height:1.6;">' + q.text + '</div>' : '') +
+      '<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:.25rem;">' + q.user + ' · ' + q.date + '</div>' +
+    '</div>';
+  }).join('');
+}
+
+/* ══════════════════════════════════════
+   나의 대시보드
+══════════════════════════════════════ */
+function showMyDashboard() {
+  if (!currentUser) {
+    // 미로그인이면 분석 입력창으로
+    showPg('main', document.getElementById('bn-user'), 'user');
+    return;
+  }
+  showPg('my');
+  renderMyDashboard();
+}
+
+function renderMyDashboard() {
+  if (!currentUser) {
+    var lp = document.getElementById('my-login-prompt');
+    var dc = document.getElementById('my-dashboard-content');
+    if (lp) lp.style.display = 'block';
+    if (dc) dc.style.display = 'none';
+    return;
+  }
+
+  var lp = document.getElementById('my-login-prompt');
+  var dc = document.getElementById('my-dashboard-content');
+  if (lp) lp.style.display = 'none';
+  if (dc) dc.style.display = 'block';
+
+  // 프로필
+  var avatarEl = document.getElementById('my-avatar');
+  var nameEl = document.getElementById('my-name');
+  var emailEl = document.getElementById('my-email');
+  if (avatarEl) {
+    if (currentUser.avatar) {
+      avatarEl.innerHTML = '<img src="'+currentUser.avatar+'" style="width:52px;height:52px;border-radius:50%;object-fit:cover;">';
+    } else {
+      avatarEl.textContent = (currentUser.name||'?').slice(0,1).toUpperCase();
+    }
+  }
+  if (nameEl) nameEl.textContent = currentUser.name || currentUser.email;
+  if (emailEl) emailEl.textContent = currentUser.email || '';
+
+  // 방문 통계
+  var visits = trackVisit();
+  var statsRow = document.getElementById('my-stats-row');
+  if (statsRow) {
+    statsRow.innerHTML =
+      '<div style="font-size:10px;color:var(--t2);">방문 <strong style="color:#fff;">' + visits.count + '회</strong></div>' +
+      '<div style="font-size:10px;color:var(--t2);">체류 <strong style="color:#fff;">' + formatTime(visits.totalTime) + '</strong></div>' +
+      '<div style="font-size:10px;color:var(--t2);">첫 방문 <strong style="color:#fff;">' + (visits.first||'-') + '</strong></div>';
+  }
+
+  // 최근 분석 결과
+  var r = window.lastSajuResult;
+  var inp = window.lastSajuInput;
+  var lastResultEl = document.getElementById('my-last-result');
+  if (lastResultEl) {
+    if (r && inp) {
+      var scores = r.scores || {};
+      lastResultEl.innerHTML =
+        '<div style="display:flex;align-items:center;gap:8px;margin-bottom:.5rem;">' +
+          '<span style="font-size:14px;font-weight:700;color:#fff;">' + inp.name + ' · ' + (r.star||'') + ' 명주</span>' +
+          '<span style="font-size:11px;color:var(--t2);">' + inp.year + '.' + inp.month + '.' + inp.day + '</span>' +
+        '</div>' +
+        '<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;">' +
+          ['재물운','직업운','애정운','건강운'].map(function(k) {
+            var v = scores[k] || 75;
+            var c = v>=85?'var(--em)':v>=75?'var(--gold)':'#cc88bb';
+            return '<div style="text-align:center;background:rgba(255,255,255,0.05);border-radius:8px;padding:6px 4px;">' +
+              '<div style="font-size:10px;color:var(--t2);">' + k + '</div>' +
+              '<div style="font-size:18px;font-weight:700;color:' + c + ';">' + v + '</div>' +
+            '</div>';
+          }).join('') +
+        '</div>' +
+        '<div style="margin-top:.5rem;font-size:11px;color:var(--t2);">' + (r.summary||'') + '</div>';
+    } else {
+      lastResultEl.innerHTML = '<div style="color:var(--t2);">아직 분석 기록이 없습니다. <button onclick="showPg(\'main\')" style="background:none;border:none;color:var(--em);font-size:12px;cursor:pointer;font-family:inherit;font-weight:700;">분석 시작하기 →</button></div>';
+    }
+  }
+
+  // 인생 지침서
+  var savedReport = null;
+  if (inp) {
+    try { savedReport = JSON.parse(localStorage.getItem('cw_report_' + inp.name) || 'null'); } catch(e) {}
+  }
+  var reportPreview = document.getElementById('my-report-preview');
+  var reportBtn = document.getElementById('my-report-btn');
+  var reportDate = document.getElementById('my-report-date');
+  if (reportPreview) {
+    if (savedReport && savedReport.html) {
+      var tmp = document.createElement('div'); tmp.innerHTML = savedReport.html;
+      var preview = tmp.textContent.slice(0, 100) + '...';
+      reportPreview.textContent = preview;
+      if (reportBtn) reportBtn.style.display = 'block';
+      if (reportDate) reportDate.textContent = savedReport.date ? new Date(savedReport.date).toLocaleDateString('ko-KR') : '';
+    } else {
+      reportPreview.textContent = '발급된 인생 지침서가 없습니다';
+      if (reportBtn) reportBtn.style.display = 'none';
+    }
+  }
+
+  // 방문 기록
+  var visitLog = document.getElementById('my-visit-log');
+  if (visitLog) {
+    var logs = visits.logs || [];
+    if (logs.length) {
+      visitLog.innerHTML = logs.slice(0,5).map(function(l) {
+        return '<div style="display:flex;justify-content:space-between;padding:4px 0;border-bottom:1px solid rgba(255,255,255,0.05);">' +
+          '<span>' + l.date + '</span><span style="color:var(--em);">' + formatTime(l.duration) + '</span></div>';
+      }).join('');
+    } else {
+      visitLog.textContent = '방문 기록이 없습니다';
+    }
+  }
+
+  // 내 리뷰
+  var myReviewsEl = document.getElementById('my-reviews');
+  if (myReviewsEl && currentUser) {
+    var allReviews = getReviews().filter(function(r){ return r.email === currentUser.email; });
+    if (allReviews.length) {
+      myReviewsEl.innerHTML = allReviews.map(function(r) {
+        return '<div style="padding:.5rem 0;border-bottom:1px solid rgba(255,255,255,0.05);">' +
+          '<div style="color:#FFD700;font-size:12px;">' + '★'.repeat(r.star) + '</div>' +
+          '<div style="font-size:12px;color:var(--t2);">' + r.text + '</div>' +
+          '<div style="font-size:10px;color:rgba(255,255,255,0.3);">' + r.date + '</div>' +
+        '</div>';
+      }).join('');
+    } else {
+      myReviewsEl.textContent = '작성한 리뷰가 없습니다';
+    }
+  }
+}
+
+function viewMyReport() {
+  showPg('report');
+}
+
+// ── 방문 시간 추적 ──
+var sessionStart = Date.now();
+
+function trackVisit() {
+  if (!currentUser) return { count:0, totalTime:0, logs:[], first:'-' };
+  var key = 'cw_visits_' + currentUser.email;
+  var data = {};
+  try { data = JSON.parse(localStorage.getItem(key) || '{}'); } catch(e) {}
+  if (!data.logs) data.logs = [];
+  if (!data.count) data.count = 0;
+  if (!data.totalTime) data.totalTime = 0;
+  // 오늘 방문 기록 추가
+  var today = new Date().toLocaleDateString('ko-KR');
+  if (!data.lastVisit || data.lastVisit !== today) {
+    data.count++;
+    data.lastVisit = today;
+    data.first = data.first || today;
+    data.logs.unshift({ date: today, duration: 0 });
+    data.logs = data.logs.slice(0, 30);
+    localStorage.setItem(key, JSON.stringify(data));
+  }
+  return data;
+}
+
+function saveSessionTime() {
+  if (!currentUser) return;
+  var elapsed = Math.round((Date.now() - sessionStart) / 1000);
+  var key = 'cw_visits_' + currentUser.email;
+  var data = {};
+  try { data = JSON.parse(localStorage.getItem(key) || '{}'); } catch(e) {}
+  if (!data.logs) data.logs = [];
+  if (!data.totalTime) data.totalTime = 0;
+  data.totalTime += elapsed;
+  if (data.logs.length > 0) data.logs[0].duration = elapsed;
+  localStorage.setItem(key, JSON.stringify(data));
+}
+
+function formatTime(secs) {
+  if (!secs) return '0분';
+  var m = Math.floor(secs / 60);
+  var h = Math.floor(m / 60);
+  if (h > 0) return h + '시간 ' + (m%60) + '분';
+  return m + '분 ' + (secs%60) + '초';
+}
+
+// 페이지 닫힐 때 체류 시간 저장
+window.addEventListener('beforeunload', saveSessionTime);
+// 30초마다 저장
+setInterval(function() { if (currentUser) saveSessionTime(); }, 30000);
+
+/* ── 자동 순차 촬영 ── */
+var seqStep = 0;
+var seqAutoCapture = false;
+
+var SEQ_STEPS = [
+  { mode:'face', icon:'👁', title:'1단계: 관상 촬영', desc:'카메라를 눈높이에 맞추고 얼굴이 타원 안에 들어오도록 해주세요.\n자연스러운 표정으로 정면을 봐주세요.' },
+  { mode:'palm_left', icon:'✋', title:'2단계: 왼손 (선천운) 촬영', desc:'왼손 손바닥이 카메라를 향하도록 들어주세요.\n손금이 선명하게 보이도록 손을 쭉 펴주세요.' },
+  { mode:'palm_right', icon:'🤚', title:'3단계: 오른손 (후천운) 촬영', desc:'오른손 손바닥이 카메라를 향하도록 들어주세요.\n손금이 선명하게 보이도록 손을 쭉 펴주세요.' }
+];
+
+function startAutoSequence() {
+  seqStep = 0;
+  seqAutoCapture = true;
+  showSeqOverlay(0);
+}
+
+function showSeqOverlay(step) {
+  var overlay = document.getElementById('seq-overlay');
+  if (!overlay) return;
+  var s = SEQ_STEPS[step];
+  document.getElementById('seq-icon').textContent = s.icon;
+  document.getElementById('seq-title').textContent = s.title;
+  document.getElementById('seq-desc').textContent = s.desc;
+  document.getElementById('seq-countdown').style.display = 'none';
+  var readyBtn = document.getElementById('seq-ready-btn');
+  var skipBtn = document.getElementById('seq-skip-btn');
+  if (readyBtn) { readyBtn.style.display = 'inline-block'; readyBtn.textContent = '준비됐어요! →'; readyBtn.onclick = seqReady; }
+  if (skipBtn) skipBtn.style.display = step > 0 ? 'inline-block' : 'none';
+  overlay.style.display = 'flex';
+}
+
+function seqReady() {
+  var overlay = document.getElementById('seq-overlay');
+  if (overlay) overlay.style.display = 'none';
+  var s = SEQ_STEPS[seqStep];
+  var modeBtn = document.getElementById(s.mode === 'face' ? 'mf' : (s.mode === 'palm_left' ? 'mp' : 'mp2'));
+  setMode(s.mode, modeBtn);
+  // 카메라 준비 후 자동 정렬+카운트다운 시작
+  setTimeout(function() { startAlignCheck(); }, 800);
+}
+
+function seqSkip() {
+  var overlay = document.getElementById('seq-overlay');
+  if (overlay) overlay.style.display = 'none';
+  seqStep++;
+  if (seqStep < SEQ_STEPS.length) {
+    setTimeout(function() { showSeqOverlay(seqStep); }, 300);
+  } else {
+    seqAutoCapture = false;
+    showSeqComplete();
+  }
+}
+
+function seqNextStep() {
+  if (!seqAutoCapture) return;
+  seqStep++;
+  if (seqStep < SEQ_STEPS.length) {
+    setTimeout(function() { showSeqOverlay(seqStep); }, 1200);
+  } else {
+    seqAutoCapture = false;
+    setTimeout(showSeqComplete, 800);
+  }
+}
+
+function showSeqComplete() {
+  var overlay = document.getElementById('seq-overlay');
+  if (!overlay) return;
+  document.getElementById('seq-icon').textContent = '🎉';
+  document.getElementById('seq-title').textContent = '3단계 스캔 완료!';
+  document.getElementById('seq-desc').textContent = '관상·왼손·오른손\n모든 촬영이 완료됐습니다!\n이제 인생 지침서를 생성할 수 있어요.';
+  document.getElementById('seq-countdown').style.display = 'none';
+  var readyBtn = document.getElementById('seq-ready-btn');
+  var skipBtn = document.getElementById('seq-skip-btn');
+  if (readyBtn) {
+    readyBtn.textContent = '✦ 인생 지침서 생성하기';
+    readyBtn.style.background = 'var(--gold)';
+    readyBtn.style.color = '#0f0f3a';
+    readyBtn.onclick = function() { overlay.style.display='none'; checkScanBeforeReport(); };
+  }
+  if (skipBtn) {
+    skipBtn.style.display = 'inline-block';
+    skipBtn.textContent = '메인으로';
+    skipBtn.onclick = function() { overlay.style.display='none'; showPg('main'); };
+  }
+  overlay.style.display = 'flex';
+}
+
 function showResult() {
   if (camAnimFr) { cancelAnimationFrame(camAnimFr); camAnimFr = null; }
   sState = 'done'; setFB('done');
   // ✅ 스캔 CTA 버튼 상태 업데이트
   setTimeout(updateScanCTA, 100);
+  // ✅ 자동 순차 촬영 중이면 다음 단계로
+  if (seqAutoCapture) setTimeout(seqNextStep, 1500);
 
   // ✅ 현재 모드의 캔버스 스냅샷 저장
   var sc = document.getElementById('sc');

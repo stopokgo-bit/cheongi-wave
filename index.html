@@ -2532,8 +2532,9 @@ function showPg(pg, btn, sub) {
     }
     setTimeout(populateReport, 80);
   }
+  if (pg === 'scan') { setTimeout(function(){ startCamera(); }, 80); }
   if (pg === 'sound') { setTimeout(updateSoundPage, 80); }
-  else { stopCamera(); }
+  if (pg !== 'scan') { stopCamera(); }
   if (pg === 'sound' && !chBuilt) { buildChannels(); chBuilt = true; }
   if (pg === 'saju') { setTimeout(function(){ drawWave(); }, 80); }
   window.scrollTo(0, 0);

@@ -10,12 +10,14 @@
   import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged }
     from 'https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js';
 
-  // ✅ Firebase 설정 - 아래 값을 실제 Firebase 콘솔 값으로 교체하세요
+  // ✅ Firebase 설정
   const firebaseConfig = {
-    apiKey: "YOUR_FIREBASE_API_KEY",
-    authDomain: "YOUR_PROJECT.firebaseapp.com",
-    projectId: "YOUR_PROJECT_ID",
-    appId: "YOUR_APP_ID"
+    apiKey: "AIzaSyAXfwX8n6YApMxOvvbUaux5C7eMWCa_zqo",
+    authDomain: "cheongi-wave.firebaseapp.com",
+    projectId: "cheongi-wave",
+    storageBucket: "cheongi-wave.firebasestorage.app",
+    messagingSenderId: "153076320941",
+    appId: "1:153076320941:web:35b8cf75f27872ac231424"
   };
 
   const app = initializeApp(firebaseConfig);

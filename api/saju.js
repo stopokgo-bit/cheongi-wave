@@ -37,7 +37,7 @@ export default async function handler(req) {
       'claude-opus-4-6',
     ];
     const model = allowedModels.includes(body.model) ? body.model : 'claude-sonnet-4-6';
-    const maxTokens = Math.min(body.max_tokens || 6000, 8000);
+    const maxTokens = Math.min(body.max_tokens || 6000, 16000);
 
     const requestBody = {
       model: model,

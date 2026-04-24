@@ -938,7 +938,25 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
         <div id="tab-right" style="flex:1;padding:6px 10px;border-radius:8px;background:rgba(96,130,220,0.1);border:1px solid rgba(96,130,220,0.25);font-size:11px;color:#8aacf0;font-weight:700;text-align:center;cursor:pointer;opacity:0.35;" onclick="if(capturedImages.palm_right){sMode='palm_right';showResult()}">✋ 오른손</div>
       </div>
       <div class="res-hero">
-        <div class="face-thumb"><canvas id="tc" width="64" height="80" style="width:64px;height:80px;"></canvas><div class="face-tag">스캔 완료</div></div>
+        <div class="face-thumb" id="scan-thumb-wrap">
+          <!-- 모드별 이미지 각각 표시 -->
+          <div id="thumb-face" style="display:none;position:relative;">
+            <canvas id="tc-face" width="64" height="80" style="width:64px;height:80px;border-radius:6px;object-fit:cover;"></canvas>
+            <div class="face-tag">관상</div>
+          </div>
+          <div id="thumb-left" style="display:none;position:relative;">
+            <canvas id="tc-left" width="64" height="80" style="width:64px;height:80px;border-radius:6px;object-fit:cover;"></canvas>
+            <div class="face-tag" style="background:rgba(255,200,0,0.8);">왼손</div>
+          </div>
+          <div id="thumb-right" style="display:none;position:relative;">
+            <canvas id="tc-right" width="64" height="80" style="width:64px;height:80px;border-radius:6px;object-fit:cover;"></canvas>
+            <div class="face-tag" style="background:rgba(80,160,255,0.8);">오른손</div>
+          </div>
+          <!-- 빈 상태 -->
+          <div id="thumb-empty" style="width:64px;height:80px;background:rgba(255,255,255,0.07);border-radius:6px;display:flex;align-items:center;justify-content:center;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.3)" stroke-width="1.5"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+          </div>
+        </div>
         <div><div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:3px;">스캔 완료</div><div style="font-size:11px;color:var(--t2);margin-bottom:.5rem;">분석 완료 · 3대 역술 동기화</div><div class="match-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>명반 일치도 87%</div></div>
       </div>
       <div class="feat-grid" id="fg"></div>
@@ -4320,6 +4338,18 @@ function setMode(m, btn) {
   if (dotLeft) dotLeft.style.background = capturedImages.palm_left ? 'var(--gold)' : 'rgba(255,255,255,0.3)';
   if (dotRight) dotRight.style.background = capturedImages.palm_right ? '#8aacf0' : 'rgba(255,255,255,0.3)';
 
+  // ✅ 썸네일 활성화 표시
+  ['thumb-face','thumb-left','thumb-right'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (el && el.style.display !== 'none') el.style.outline = '';
+  });
+  var activeThumbId = m === 'face' ? 'thumb-face' : (m === 'palm_left' ? 'thumb-left' : 'thumb-right');
+  var activeThumbEl = document.getElementById(activeThumbId);
+  if (activeThumbEl && activeThumbEl.style.display !== 'none') {
+    activeThumbEl.style.outline = '2px solid var(--em)';
+    activeThumbEl.style.borderRadius = '6px';
+  }
+
   stopCamera();
   sState = 'idle';
   alignScore = 0;
@@ -4388,7 +4418,10 @@ function showResult() {
   var sc = document.getElementById('sc');
   if (sc) { capturedImages[sMode] = sc.toDataURL('image/jpeg', 0.8); }
 
-  var tc = document.getElementById('tc');
+  // ✅ 모드별 썸네일 저장
+  var tcId = sMode === 'face' ? 'tc-face' : (sMode === 'palm_left' ? 'tc-left' : 'tc-right');
+  var thumbId = sMode === 'face' ? 'thumb-face' : (sMode === 'palm_left' ? 'thumb-left' : 'thumb-right');
+  var tc = document.getElementById(tcId);
   if (tc) {
     var tctx = tc.getContext('2d');
     if (capturedImages[sMode]) {
@@ -4398,6 +4431,12 @@ function showResult() {
     } else {
       tctx.fillStyle = '#111'; tctx.fillRect(0,0,64,80);
     }
+    // 해당 썸네일 표시
+    var thumbEl = document.getElementById(thumbId);
+    if (thumbEl) thumbEl.style.display = 'block';
+    // 빈 상태 숨기기
+    var emptyEl = document.getElementById('thumb-empty');
+    if (emptyEl) emptyEl.style.display = 'none';
   }
 
   document.getElementById('rs').classList.add('show');

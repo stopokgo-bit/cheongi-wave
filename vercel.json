@@ -7,7 +7,6 @@
   },
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
-    { "src": "/og-image.png", "dest": "/api/og-image" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }

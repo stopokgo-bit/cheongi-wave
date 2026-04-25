@@ -2218,139 +2218,6 @@ ${sMode === 'palm_left' ? '이것은 왼손(선천운)입니다. 타고난 기�
     setTimeout(() => { drawWave(); drawCompass(); }, 80);
  
 </script>
-
-
-/* ── 추가 핵심 함수 ── */
-function doShare() {
-  var url = 'https://cheongi-wave-61pz.vercel.app';
-  if (navigator.share) {
-    navigator.share({ title: '천기 웨이브', url: url }).catch(function(){});
-  } else {
-    navigator.clipboard.writeText(url).then(function(){
-      showShareToast('🔗 링크가 복사됐습니다!');
-    }).catch(function(){
-      var ta = document.createElement('textarea');
-      ta.value = url; document.body.appendChild(ta); ta.select();
-      document.execCommand('copy'); document.body.removeChild(ta);
-      showShareToast('🔗 링크가 복사됐습니다!');
-    });
-  }
-}
-
-function clearAllCache() {
-  var keys = [];
-  for (var i = 0; i < localStorage.length; i++) {
-    var k = localStorage.key(i);
-    if (k && (k.startsWith('saju_v') || k.startsWith('cw_report_') || k.startsWith('cw_last'))) keys.push(k);
-  }
-  keys.forEach(function(k){ localStorage.removeItem(k); });
-  sessionStorage.clear();
-  showShareToast('✅ 캐시 초기화 완료! (' + keys.length + '개)');
-}
-
-function renderUserNav(user) {
-  var authArea = document.getElementById('nav-auth-area');
-  if (!authArea) return;
-  authArea.innerHTML =
-    '<div style="display:flex;align-items:center;gap:6px;cursor:pointer;" onclick="showMyDashboard()">' +
-      (user.avatar ? '<img src="'+user.avatar+'" style="width:26px;height:26px;border-radius:50%;object-fit:cover;" onerror="this.style.display='none'">' : '') +
-      '<span style="font-size:11px;color:var(--t2);max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + (user.name||user.email||'').split('@')[0] + '</span>' +
-      '<button onclick="event.stopPropagation();doLogout()" style="font-size:11px;color:var(--t2);cursor:pointer;background:none;border:none;font-family:inherit;padding:0;">로그아웃</button>' +
-    '</div>';
-  var adminBtn = document.getElementById('bn-admin');
-  var cacheBtn = document.getElementById('admin-cache-btn');
-  var isAdmin = user.email === 'stop.ok.go@gmail.com' || user.email.startsWith('admin') || localStorage.getItem('cw_admin_' + user.email) === '1';
-  console.log('[천기웨이브] 로그인:', user.email, '| 관리자:', isAdmin);
-  if (adminBtn) adminBtn.style.display = isAdmin ? 'flex' : 'none';
-  if (cacheBtn) cacheBtn.style.display = isAdmin ? 'inline-flex' : 'none';
-  var profileBar = document.getElementById('profile-bar');
-  if (profileBar) profileBar.style.display = 'block';
-}
-
-function saveProfile() {
-  var name   = (document.getElementById('inp-name')  ||{}).value||'';
-  var year   = (document.getElementById('inp-year')  ||{}).value||'';
-  var month  = (document.getElementById('inp-month') ||{}).value||'';
-  var day    = (document.getElementById('inp-day')   ||{}).value||'';
-  var time   = (document.getElementById('inp-time')  ||{}).value||'';
-  var unk    = (document.getElementById('unk')       ||{}).checked||false;
-  var birthplace = (document.getElementById('inp-birthplace')||{}).value||'';
-  var location   = (document.getElementById('inp-location')  ||{}).value||'';
-  if (!name||!year||!month||!day) { showShareToast('⚠️ 이름과 생년월일을 입력해주세요'); return; }
-  var profiles = [];
-  try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
-  if (profiles.find(function(p){ return p.name===name&&p.year===year&&p.month===month&&p.day===day; })) {
-    showShareToast('이미 저장된 프로필입니다'); return;
-  }
-  profiles.push({ name:name, year:year, month:month, day:day, time:time, unk:unk,
-    gender:selectedGender, cal:selectedCal, birthplace:birthplace, location:location,
-    savedAt:new Date().toLocaleDateString('ko-KR') });
-  localStorage.setItem('cw_profiles', JSON.stringify(profiles.slice(0,10)));
-  showShareToast('✅ 프로필이 저장됐습니다!');
-  renderProfileBar();
-}
-
-function renderProfileBar() {
-  var bar = document.getElementById('profile-chips');
-  if (!bar) return;
-  var profiles = [];
-  try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
-  if (!profiles.length) {
-    bar.innerHTML = '<div style="font-size:11px;color:var(--t2);">저장된 프로필이 없습니다</div>';
-    return;
-  }
-  bar.innerHTML = profiles.map(function(p, i) {
-    return '<div style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;cursor:pointer;font-size:12px;color:#fff;white-space:nowrap;" onclick="loadProfile('+i+')">' +
-      p.name + ' <span style="font-size:10px;color:var(--t2);">' + p.year.slice(2) + '.' + p.month + '.' + p.day + '</span>' +
-      '<span onclick="event.stopPropagation();deleteProfile('+i+')" style="color:rgba(255,255,255,0.3);font-size:14px;line-height:1;margin-left:2px;">×</span>' +
-    '</div>';
-  }).join('');
-}
-
-function loadProfile(i) {
-  var profiles = [];
-  try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
-  var p = profiles[i]; if (!p) return;
-  var el;
-  el=document.getElementById('inp-name');  if(el) el.value=p.name||'';
-  el=document.getElementById('inp-year');  if(el) el.value=p.year||'';
-  el=document.getElementById('inp-month'); if(el) el.value=p.month||'';
-  el=document.getElementById('inp-day');   if(el) el.value=p.day||'';
-  el=document.getElementById('inp-time');  if(el) el.value=p.time||'';
-  el=document.getElementById('unk');       if(el) el.checked=p.unk||false;
-  if(p.gender) setGender(p.gender);
-  if(p.cal)    setCal(p.cal);
-  if(typeof restorePlaceSelects === 'function') {
-    restorePlaceSelects('birth', p.birthplace||'');
-    restorePlaceSelects('location', p.location||'');
-  }
-  showShareToast('✅ ' + p.name + '님 프로필 불러왔습니다');
-}
-
-function deleteProfile(i) {
-  var profiles = [];
-  try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
-  profiles.splice(i, 1);
-  localStorage.setItem('cw_profiles', JSON.stringify(profiles));
-  renderProfileBar();
-}
-
-/* ── 세션 복원 ── */
-(function restoreSession() {
-  var profileBar = document.getElementById('profile-bar');
-  if (profileBar) profileBar.style.display = 'none';
-  var saved = null;
-  try { saved = JSON.parse(localStorage.getItem('cw_user')||'null'); } catch(e) {}
-  if (saved) {
-    window.currentUser = saved;
-    renderUserNav(saved);
-    if (typeof trackVisit === 'function') trackVisit();
-    if (typeof updateAdminNotifBadge === 'function') updateAdminNotifBadge();
-  }
-  if (typeof renderProfileBar === 'function') renderProfileBar();
-  if (typeof renderReviews === 'function') setTimeout(function(){ renderReviews(); renderBoardList && renderBoardList(); }, 300);
-})();
-
 <script>
 /* =====================================================
    천기 웨이브 - 자미두수 AI 분석 엔진
@@ -6191,6 +6058,138 @@ window.addEventListener('resize', function() {
 
 buildExperts();
 setTimeout(function(){ drawWave(); drawCompass(); }, 80);
+/* ── 추가 핵심 함수 ── */
+function doShare() {
+  var url = 'https://cheongi-wave-61pz.vercel.app';
+  if (navigator.share) {
+    navigator.share({ title: '천기 웨이브', url: url }).catch(function(){});
+  } else {
+    navigator.clipboard.writeText(url).then(function(){
+      showShareToast('🔗 링크가 복사됐습니다!');
+    }).catch(function(){
+      var ta = document.createElement('textarea');
+      ta.value = url; document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta);
+      showShareToast('🔗 링크가 복사됐습니다!');
+    });
+  }
+}
+
+function clearAllCache() {
+  var keys = [];
+  for (var i = 0; i < localStorage.length; i++) {
+    var k = localStorage.key(i);
+    if (k && (k.startsWith('saju_v') || k.startsWith('cw_report_') || k.startsWith('cw_last'))) keys.push(k);
+  }
+  keys.forEach(function(k){ localStorage.removeItem(k); });
+  sessionStorage.clear();
+  showShareToast('✅ 캐시 초기화 완료! (' + keys.length + '개)');
+}
+
+function renderUserNav(user) {
+  var authArea = document.getElementById('nav-auth-area');
+  if (!authArea) return;
+  var avatarHtml = user.avatar ? '<img src="' + user.avatar + '" style="width:26px;height:26px;border-radius:50%;object-fit:cover;">' : '';
+  authArea.innerHTML =
+    '<div style="display:flex;align-items:center;gap:6px;cursor:pointer;" onclick="showMyDashboard()">' +
+      avatarHtml +
+      '<span style="font-size:11px;color:var(--t2);max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">' + (user.name||user.email||'').split('@')[0] + '</span>' +
+      '<button onclick="event.stopPropagation();doLogout()" style="font-size:11px;color:var(--t2);cursor:pointer;background:none;border:none;font-family:inherit;padding:0;">로그아웃</button>' +
+    '</div>';
+  var adminBtn = document.getElementById('bn-admin');
+  var cacheBtn = document.getElementById('admin-cache-btn');
+  var isAdmin = user.email === 'stop.ok.go@gmail.com' || user.email.startsWith('admin') || localStorage.getItem('cw_admin_' + user.email) === '1';
+  console.log('[천기웨이브] 로그인:', user.email, '| 관리자:', isAdmin);
+  if (adminBtn) adminBtn.style.display = isAdmin ? 'flex' : 'none';
+  if (cacheBtn) cacheBtn.style.display = isAdmin ? 'inline-flex' : 'none';
+  var profileBar = document.getElementById('profile-bar');
+  if (profileBar) profileBar.style.display = 'block';
+}
+
+function saveProfile() {
+  var name   = (document.getElementById('inp-name')  ||{}).value||'';
+  var year   = (document.getElementById('inp-year')  ||{}).value||'';
+  var month  = (document.getElementById('inp-month') ||{}).value||'';
+  var day    = (document.getElementById('inp-day')   ||{}).value||'';
+  var time   = (document.getElementById('inp-time')  ||{}).value||'';
+  var unk    = (document.getElementById('unk')       ||{}).checked||false;
+  var birthplace = (document.getElementById('inp-birthplace')||{}).value||'';
+  var location   = (document.getElementById('inp-location')  ||{}).value||'';
+  if (!name||!year||!month||!day) { showShareToast('⚠️ 이름과 생년월일을 입력해주세요'); return; }
+  var profiles = [];
+  try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
+  if (profiles.find(function(p){ return p.name===name&&p.year===year&&p.month===month&&p.day===day; })) {
+    showShareToast('이미 저장된 프로필입니다'); return;
+  }
+  profiles.push({ name:name, year:year, month:month, day:day, time:time, unk:unk,
+    gender:selectedGender, cal:selectedCal, birthplace:birthplace, location:location,
+    savedAt:new Date().toLocaleDateString('ko-KR') });
+  localStorage.setItem('cw_profiles', JSON.stringify(profiles.slice(0,10)));
+  showShareToast('✅ 프로필이 저장됐습니다!');
+  renderProfileBar();
+}
+
+function renderProfileBar() {
+  var bar = document.getElementById('profile-chips');
+  if (!bar) return;
+  var profiles = [];
+  try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
+  if (!profiles.length) {
+    bar.innerHTML = '<div style="font-size:11px;color:var(--t2);">저장된 프로필이 없습니다</div>';
+    return;
+  }
+  bar.innerHTML = profiles.map(function(p, i) {
+    return '<div style="display:inline-flex;align-items:center;gap:6px;padding:5px 11px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:20px;cursor:pointer;font-size:12px;color:#fff;white-space:nowrap;" onclick="loadProfile('+i+')">' +
+      p.name + ' <span style="font-size:10px;color:var(--t2);">' + p.year.slice(2) + '.' + p.month + '.' + p.day + '</span>' +
+      '<span onclick="event.stopPropagation();deleteProfile('+i+')" style="color:rgba(255,255,255,0.3);font-size:14px;line-height:1;margin-left:2px;">×</span>' +
+    '</div>';
+  }).join('');
+}
+
+function loadProfile(i) {
+  var profiles = [];
+  try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
+  var p = profiles[i]; if (!p) return;
+  var el;
+  el=document.getElementById('inp-name');  if(el) el.value=p.name||'';
+  el=document.getElementById('inp-year');  if(el) el.value=p.year||'';
+  el=document.getElementById('inp-month'); if(el) el.value=p.month||'';
+  el=document.getElementById('inp-day');   if(el) el.value=p.day||'';
+  el=document.getElementById('inp-time');  if(el) el.value=p.time||'';
+  el=document.getElementById('unk');       if(el) el.checked=p.unk||false;
+  if(p.gender) setGender(p.gender);
+  if(p.cal)    setCal(p.cal);
+  if(typeof restorePlaceSelects === 'function') {
+    restorePlaceSelects('birth', p.birthplace||'');
+    restorePlaceSelects('location', p.location||'');
+  }
+  showShareToast('✅ ' + p.name + '님 프로필 불러왔습니다');
+}
+
+function deleteProfile(i) {
+  var profiles = [];
+  try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
+  profiles.splice(i, 1);
+  localStorage.setItem('cw_profiles', JSON.stringify(profiles));
+  renderProfileBar();
+}
+
+/* ── 세션 복원 ── */
+(function restoreSession() {
+  var profileBar = document.getElementById('profile-bar');
+  if (profileBar) profileBar.style.display = 'none';
+  var saved = null;
+  try { saved = JSON.parse(localStorage.getItem('cw_user')||'null'); } catch(e) {}
+  if (saved) {
+    window.currentUser = saved;
+    renderUserNav(saved);
+    if (typeof trackVisit === 'function') trackVisit();
+    if (typeof updateAdminNotifBadge === 'function') updateAdminNotifBadge();
+  }
+  if (typeof renderProfileBar === 'function') renderProfileBar();
+  if (typeof renderReviews === 'function') setTimeout(function(){ renderReviews(); renderBoardList && renderBoardList(); }, 300);
+})();
+
 </script>
 </body>
 </html>

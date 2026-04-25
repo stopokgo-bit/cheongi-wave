@@ -2124,7 +2124,7 @@ const EX = [
           }
         }
 
-        const clean = text.replace(/```json?\s*/gi,'').replace(/```\s*/g,'').trim();
+        const clean = text.replace(/```json?\s*/gi,'').replace(/```/g,'').trim();
         return JSON.parse(clean);
       } catch(e) {
         console.error('AI 분석 오류:', e);
@@ -2358,53 +2358,55 @@ async function doSajuScan() {
       const birthplace = (document.getElementById('inp-birthplace') || {}).value || '';
       const location = (document.getElementById('inp-location') || {}).value || '';
 
-      const prompt = `당신은 '천기 웨이브'의 수석 명리학 AI 분석가입니다.
-반드시 아래 [엄격한 분석 규칙]을 준수하여 일관성 있는 결과를 도출하세요.
+      const sajuSummary = sajuCalcData ? sajuCalcData.summary : '';
+      const birthplaceStr = birthplace ? '출생지: ' + birthplace : '';
+      const locationStr = location ? '현재거주지: ' + location : '';
 
-[자미두수 포국 계산 결과 - 반드시 사용]
-${sajuCalcData ? sajuCalcData.summary : ''}
-명궁 주성: ${calcedStar}
-⚠️ star 필드에 반드시 위 [${calcedStar}]을 그대로 써라.
-${birthplace ? '출생지: ' + birthplace : ''}
-${location ? '현재거주지: ' + location : ''}
-
-[엄격한 분석 규칙]
-1. star 필드: 위 계산된 [${calcedStar}] 그대로 사용. 절대 변경 금지.
-2. 점수: 40~95 범위에서 명반 기반으로 각기 다르게 산출.
-3. 비슷한 결과 금지 - 이 사람만의 고유한 분석.
-
-아래 JSON으로만 응답:
-{
-"star":"${calcedStar}",
-"star_detail":"명궁 주성 기질·강점2·약점2·반복패턴 (5문장)",
-"palace_desc":"보성·화록·화기·삼합궁 분석 (5문장)",
-"daewoon":"현재대운명과 기간",
-"daewoon_detail":"현재 대운 분석 (5문장)",
-"base_score":85,
-"scores":{"재물운":실제값,"직업운":실제값,"애정운":실제값,"건강운":실제값},
-"score_trends":{"재물운":"상승중또는안정또는하락중","직업운":"실제","애정운":"실제","건강운":"실제"},
-"score_sources":{"재물운":"명반근거","직업운":"명반근거","애정운":"명반근거","건강운":"명반근거"},
-"wave_data":[{"age":"20대","w":실제,"c":실제,"l":실제},{"age":"30대","w":실제,"c":실제,"l":실제},{"age":"현재","w":실제,"c":실제,"l":실제},{"age":"50대","w":실제,"c":실제,"l":실제},{"age":"60대","w":실제,"c":실제,"l":실제}],
-"compass_angle":45,
-"compass_desc":"오늘 기문둔갑 길방",
-"ziwei":"자미두수 분석 (5문장)",
-"meihua":"매화역수 분석 (5문장)",
-"qimen":"기문둔갑 분석 (5문장)",
-"hybrid_msg":"3대 역학 통합 (5문장)",
-"career":"직업 분석 (5문장)",
-"wealth":"재물 분석 (5문장)",
-"love":"애정 분석 (5문장)",
-"luck_period":"대운 흐름 (5문장)",
-"caution":"주의사항 (5문장)",
-"lucky_direction":"북동",
-"lucky_color":"색깔",
-"lucky_number":"숫자",
-"lucky_mindset":"마음가짐 한 문장",
-"life_direction":"인생 방향 한 문장",
-"lucky_items":["색깔","숫자","요일","방향","음식"],
-"lucky_days":[{"date":"YYYY-MM-DD","type":"대길","reason":"근거"},{"date":"YYYY-MM-DD","type":"길","reason":"근거"},{"date":"YYYY-MM-DD","type":"흉","reason":"근거"},{"date":"YYYY-MM-DD","type":"대길","reason":"근거"},{"date":"YYYY-MM-DD","type":"길","reason":"근거"}],
-"summary":"핵심요약 25자이내"
-}`
+      const prompt =
+        "당신은 '천기 웨이브'의 수석 명리학 AI 분석가입니다.\n" +
+        "반드시 아래 [엄격한 분석 규칙]을 준수하세요.\n\n" +
+        "[자미두수 포국 계산 결과 - 반드시 사용]\n" +
+        sajuSummary + "\n" +
+        "명궁 주성: " + calcedStar + "\n" +
+        "⚠️ star 필드에 반드시 위 [" + calcedStar + "]을 그대로 써라.\n" +
+        (birthplaceStr ? birthplaceStr + "\n" : "") +
+        (locationStr ? locationStr + "\n" : "") +
+        "\n[엄격한 분석 규칙]\n" +
+        "1. star 필드: 위 계산된 [" + calcedStar + "] 그대로 사용. 절대 변경 금지.\n" +
+        "2. 점수: 40~95 범위에서 명반 기반으로 각기 다르게 산출.\n" +
+        "3. 비슷한 결과 금지 - 이 사람만의 고유한 분석.\n\n" +
+        "아래 JSON으로만 응답:\n" +
+        "{\n" +
+        '"star":"' + calcedStar + '",\n' +
+        '"star_detail":"명궁 주성 기질·강점2·약점2·반복패턴 (5문장)",\n' +
+        '"palace_desc":"보성·화록·화기·삼합궁 분석 (5문장)",\n' +
+        '"daewoon":"현재대운명과 기간",\n' +
+        '"daewoon_detail":"현재 대운 분석 (5문장)",\n' +
+        '"base_score":85,\n' +
+        '"scores":{"재물운":실제값,"직업운":실제값,"애정운":실제값,"건강운":실제값},\n' +
+        '"score_trends":{"재물운":"상승중또는안정또는하락중","직업운":"실제","애정운":"실제","건강운":"실제"},\n' +
+        '"score_sources":{"재물운":"명반근거","직업운":"명반근거","애정운":"명반근거","건강운":"명반근거"},\n' +
+        '"wave_data":[{"age":"20대","w":실제,"c":실제,"l":실제},{"age":"30대","w":실제,"c":실제,"l":실제},{"age":"현재","w":실제,"c":실제,"l":실제},{"age":"50대","w":실제,"c":실제,"l":실제},{"age":"60대","w":실제,"c":실제,"l":실제}],\n' +
+        '"compass_angle":45,\n' +
+        '"compass_desc":"오늘 기문둔갑 길방",\n' +
+        '"ziwei":"자미두수 분석 (5문장)",\n' +
+        '"meihua":"매화역수 분석 (5문장)",\n' +
+        '"qimen":"기문둔갑 분석 (5문장)",\n' +
+        '"hybrid_msg":"3대 역학 통합 (5문장)",\n' +
+        '"career":"직업 분석 (5문장)",\n' +
+        '"wealth":"재물 분석 (5문장)",\n' +
+        '"love":"애정 분석 (5문장)",\n' +
+        '"luck_period":"대운 흐름 (5문장)",\n' +
+        '"caution":"주의사항 (5문장)",\n' +
+        '"lucky_direction":"북동",\n' +
+        '"lucky_color":"색깔",\n' +
+        '"lucky_number":"숫자",\n' +
+        '"lucky_mindset":"마음가짐 한 문장",\n' +
+        '"life_direction":"인생 방향 한 문장",\n' +
+        '"lucky_items":["색깔","숫자","요일","방향","음식"],\n' +
+        '"lucky_days":[{"date":"YYYY-MM-DD","type":"대길","reason":"근거"},{"date":"YYYY-MM-DD","type":"길","reason":"근거"},{"date":"YYYY-MM-DD","type":"흉","reason":"근거"},{"date":"YYYY-MM-DD","type":"대길","reason":"근거"},{"date":"YYYY-MM-DD","type":"길","reason":"근거"}],\n' +
+        '"summary":"핵심요약 25자이내"\n' +
+        "}";
 
       try {
                 let response;
@@ -2450,7 +2452,7 @@ ${location ? '현재거주지: ' + location : ''}
           }
         }
 
-        let clean = text.replace(/```json[\s\S]*?```|```/g, '').trim();
+        let clean = text.replace(/```json[\s\S]*?/g, '').replace(/```/g, '').trim();
         // JSON이 잘린 경우 복구 시도
         if (!clean.endsWith('}')) {
           const lastBrace = clean.lastIndexOf('}');

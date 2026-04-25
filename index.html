@@ -2303,157 +2303,153 @@ function showLoading(show) {
 }
 
 async function doSajuScan() {
-  const name = document.getElementById('inp-name').value.trim();
-  const time = document.getElementById('inp-time').value;
-  const unknownTime = document.getElementById('unk').checked;
-  const gender = selectedGender;
-  const cal = selectedCal;
+      const name = document.getElementById('inp-name').value.trim();
+      const yearVal = document.getElementById('inp-year').value;
+      const monthVal = document.getElementById('inp-month').value;
+      const dayVal = document.getElementById('inp-day').value;
+      const unknownTime = document.getElementById('unk').checked;
+      const gender = selectedGender;
+      const cal = selectedCal;
+      const timeEl = document.getElementById('inp-time');
+      const time = timeEl ? timeEl.value : '';
 
-  const yearVal = document.getElementById('inp-year').value;
-  const monthVal = document.getElementById('inp-month').value;
-  const dayVal = document.getElementById('inp-day').value;
+      if (!name) { alert('이름을 입력해 주세요.'); return; }
+      if (!yearVal || !monthVal || !dayVal) { alert('생년월일을 입력해 주세요.'); return; }
+      if (!time && !unknownTime) { alert('태어난 시간을 선택하거나\n"시간을 모릅니다"에 체크해 주세요.'); return; }
 
-  if (!name) { alert('이름을 입력해 주세요.'); return; }
-  if (!yearVal || !monthVal || !dayVal) { alert('생년월일을 입력해 주세요.'); return; }
-  if (!time && !unknownTime) { alert('태어난 시간을 선택하거나\n"시간을 모릅니다"에 체크해 주세요.'); return; }
+      // 캐시 확인 - 동일 입력이면 저장된 결과 즉시 표시
+      const cacheKey = `${name}_${yearVal}_${monthVal}_${dayVal}_${gender}_${cal}_${time || 'unknown'}`;
+      if (_resultCache[cacheKey]) {
+        const cached = _resultCache[cacheKey];
+        renderSajuResult(name, yearVal, monthVal, dayVal, cached.timeStr, cached.age, cached.result);
+        return;
+      }
 
-  const year = yearVal;
-  const month = monthVal;
-  const day = dayVal;
-  const timeStr = unknownTime ? '미상 (삼주 분석)' : time;
-  const today = new Date();
-  const todayStr = today.getFullYear() + '년 ' + (today.getMonth()+1) + '월 ' + today.getDate() + '일';
-  const age = today.getFullYear() - parseInt(yearVal);
+      showLoading(true);
+      let msgIdx = 0;
+      const msgTimer = setInterval(() => {
+        msgIdx = Math.min(msgIdx + 1, SAJU_LOADING_MSGS.length - 1);
+        document.getElementById('loading-msg').textContent = SAJU_LOADING_MSGS[msgIdx][0];
+        document.getElementById('loading-sub').textContent = SAJU_LOADING_MSGS[msgIdx][1];
+      }, 1800);
 
-  const birthplace = (document.getElementById('inp-birthplace') || {}).value || '';
-  const location = (document.getElementById('inp-location') || {}).value || '';
+      const birthDate = new Date(birth);
+      const year = birthDate.getFullYear();
+      const month = birthDate.getMonth() + 1;
+      const day = birthDate.getDate();
+      const timeStr = unknownTime ? '미상 (삼주 분석)' : time;
+      const today = new Date();
+      const age = today.getFullYear() - year;
 
-  // ✅ 마지막 입력값 자동 저장
-  try {
-    localStorage.setItem('cw_last_input', JSON.stringify({
-      name: name, year: year, month: month, day: day,
-      time: timeStr, unk: unknownTime,
-      gender: gender, cal: cal,
-      birthplace: birthplace, location: location
-    }));
-  } catch(e) {}
+      // 주성 기본 점수 미리 계산 (AI가 숫자를 만들지 못하게 고정)
+      const analysisTime = formatAnalysisTime();
+      const baseScoreHint = getBaseScore('');  // 주성 확정 전 기본값
 
-  // ✅ localStorage 캐시 체크
-  const cacheKey = 'saju_v3_' + name + '_' + year + '_' + month + '_' + day + '_' + gender + '_' + cal + '_' + timeStr.replace(/[^0-9]/g,'') + '_' + (birthplace||'').slice(0,4);
-  const cached = localStorage.getItem(cacheKey) || sessionStorage.getItem(cacheKey);
-  if (cached) {
-    try {
-      const r = JSON.parse(cached);
-      renderSajuResult(name, year, month, day, timeStr, age, r);
-      return;
-    } catch(e) {
-      localStorage.removeItem(cacheKey);
-      sessionStorage.removeItem(cacheKey);
-    }
-  }
+      // 자미두수 포국 계산
+      var sajuCalcData = null;
+      var calcedStar = '미상';
+      try {
+        sajuCalcData = getSajuString(yearVal, monthVal, dayVal, timeStr, cal);
+        if (sajuCalcData.ziwei) {
+          calcedStar = sajuCalcData.ziwei.mainStar;
+        }
+      } catch(e) { console.log('포국 계산 오류:', e); }
 
-  // ✅ 캐시 없을 때 API 호출
-  // ✅ 분석 시작 시 자동 프로필 저장
-  (function autoSaveProfile() {
-    var profiles = [];
-    try { profiles = JSON.parse(localStorage.getItem('cw_profiles') || '[]'); } catch(e) {}
-    var exists = profiles.find(function(p) {
-      return p.name === name && p.year === year && p.month === month && p.day === day;
-    });
-    if (!exists) {
-      profiles.unshift({
-        name: name, year: year, month: month, day: day,
-        time: timeStr, unk: unknownTime,
-        gender: gender, cal: cal,
-        birthplace: birthplace || '', location: location || '',
-        savedAt: new Date().toLocaleDateString('ko-KR')
-      });
-      localStorage.setItem('cw_profiles', JSON.stringify(profiles.slice(0, 10)));
-      setTimeout(renderProfileBar, 100);
-    }
-  })();
+      const birthplace = (document.getElementById('inp-birthplace') || {}).value || '';
+      const location = (document.getElementById('inp-location') || {}).value || '';
 
-  showLoading(true);
-  let msgIdx = 0;
-  const msgTimer = setInterval(() => {
-    msgIdx = Math.min(msgIdx + 1, SAJU_LOADING_MSGS.length - 1);
-    document.getElementById('loading-msg').textContent = SAJU_LOADING_MSGS[msgIdx][0];
-    document.getElementById('loading-sub').textContent = SAJU_LOADING_MSGS[msgIdx][1];
-  }, 1800);
+      const prompt = `당신은 '천기 웨이브'의 수석 명리학 AI 분석가입니다.
+반드시 아래 [엄격한 분석 규칙]을 준수하여 일관성 있는 결과를 도출하세요.
 
-  // ✅ 자미두수 포국 먼저 계산
-  var sajuCalcPre = getSajuString(year, month, day, timeStr, cal);
-  var ziweiPre = sajuCalcPre.ziwei;
-  var calcedStar = ziweiPre ? ziweiPre.mainStar : '미상';
-  var calcedMingung = ziweiPre ? ziweiPre.mingung.kor : '미상';
-  var calcedStrength = ziweiPre ? ziweiPre.strengthName : '';
-  var isKongGung = ziweiPre ? ziweiPre.isKongGung : false;
+[자미두수 포국 계산 결과 - 반드시 사용]
+${sajuCalcData ? sajuCalcData.summary : ''}
+명궁 주성: ${calcedStar}
+⚠️ star 필드에 반드시 위 [${calcedStar}]을 그대로 써라.
+${birthplace ? '출생지: ' + birthplace : ''}
+${location ? '현재거주지: ' + location : ''}
 
-  const prompt =
-    '사주 분석 대상:\n' +
-    '이름: ' + name + ' | 성별: ' + gender + ' | 생년월일: ' + year + '년 ' + month + '월 ' + day + '일(' + cal + ') | 생시: ' + timeStr + ' | 나이: ' + age + '세 | 오늘: ' + todayStr + '\n' +
-    (birthplace ? '출생지: ' + birthplace + ' | ' : '') +
-    (location ? '현재거주지: ' + location + '\n' : '\n') +
-    '\n=== 자미두수 포국 계산결과 (코드로 직접 계산됨) ===\n' +
-    '명궁 위치: ' + calcedMingung + '\n' +
-    '명궁 주성: ' + calcedStar + (calcedStrength ? ' (' + calcedStrength + ')' : '') + (isKongGung ? ' [선천공궁-대궁참조]' : '') + '\n' +
-    '⛔ 아래 JSON의 star 필드는 반드시 위의 [' + calcedStar + ']을 그대로 써라. 절대 바꾸지 마라.\n\n' +
-    '아래 JSON 형식으로만 응답하세요:\n\n' +
-    '{\n' +
-    '"star":"' + calcedStar + '",\n' +
-    '"star_detail":"이 별의 핵심 기질(2문장). 강점 2가지(1문장). 반드시 극복할 약점 2가지(1문장). 이 별이 만드는 인생 반복 패턴(1문장). 총 5문장.",\n' +
-    '"palace_desc":"명궁에 동반하는 보성 이름과 그 의미(1문장). 화록이 어느 궁에 있고 어떤 복을 주는지(1문장). 화기가 어느 궁을 공격하고 어떤 주의가 필요한지(1문장). 삼합궁 형성 여부와 그 힘(1문장). 이 명반 구조의 핵심 특징 한 줄 요약(1문장). 총 5문장.",\n' +
-    '"daewoon":"대운명과 기간(예:庚午대운 2020-2030)",\n' +
-    '"daewoon_detail":"현재 대운 성曜의 기운과 특성(1문장). 이 대운이 명주에게 유리한 점(1문장). 이 대운에서 조심할 점(1문장). 대운 전반기와 후반기 차이(1문장). 이 대운이 끝날 때까지 반드시 이뤄야 할 것(1문장). 총 5문장.",\n' +
-    '"base_score":85,\n' +
-    '"scores":{"재물운":실제값,"직업운":실제값,"애정운":실제값,"건강운":실제값},\n' +
-    '"score_trends":{"재물운":"상승중또는안정또는하락중","직업운":"실제판단","애정운":"실제판단","건강운":"실제판단"},\n' +
-    '"score_sources":{"재물운":"명반근거","직업운":"명반근거","애정운":"명반근거","건강운":"명반근거"},\n' +
-    '"wave_data":[{"age":"20대","w":실제값,"c":실제값,"l":실제값},{"age":"30대","w":실제값,"c":실제값,"l":실제값},{"age":"현재","w":실제값,"c":실제값,"l":실제값},{"age":"50대","w":실제값,"c":실제값,"l":실제값},{"age":"60대","w":실제값,"c":실제값,"l":실제값}],\n' +
-    '"compass_angle":45,\n' +
-    '"compass_desc":"오늘 기문둔갑 길방 방위와 그 이유",\n' +
-    '"ziwei":"자미두수 명궁주성 ' + calcedStar + ' 기반 분석(1문장). 사화 이동이 재물·직업·애정에 미치는 구체적 영향(1문장). 삼합궁 형성 여부와 힘(1문장). 현재 대운성曜가 올해 운세에 미치는 영향(1문장). 올해 가장 중요한 변화 시점과 대응법(1문장). 총 5문장.",\n' +
-    '"meihua":"매화역수: 생년월일로 도출된 체괘명과 용괘명(1문장). 체용 생극 관계로 본 현재 운기 방향(1문장). 오늘 날짜 기준 동효가 암시하는 변화(1문장). 앞으로 3개월 내 가장 중요한 행동(1문장). 이달 반드시 피해야 할 일(1문장). 총 5문장.",\n' +
-    '"qimen":"기문둔갑: 오늘 포국의 주요 문(門)과 성(星) 이름(1문장). 오늘 길방과 흉방 구체적 방위(1문장). 오늘 취해야 할 가장 중요한 행동(1문장). 사업·계약에 유리한 시간대(1문장). 이달 귀인 방향과 귀인 특성(1문장). 총 5문장.",\n' +
-    '"hybrid_msg":"3대 역학 통합: 공통으로 가리키는 올해 핵심 흐름(1문장). 지금 반드시 잡아야 할 기회(1문장). 반드시 피해야 할 위험(1문장). 내년과 비교해 올해가 특별한 이유(1문장). 지금 이 순간 가장 중요한 행동 한 가지(1문장). 총 5문장.",\n' +
-    '"career":"최적 직군 2가지와 명리학적 근거(1문장). 현재 직장운 실태 좋은 점(1문장). 현재 직장운 나쁜 점(1문장). 이직·창업 최적 타이밍 구체적 연도(1문장). 향후 3년 커리어 핵심 전환점(1문장). 총 5문장.",\n' +
-    '"wealth":"재물 취득 주요 경로와 시기(1문장). 투자 적합 분야와 절대 피해야 할 투자(1문장). 부동산운과 최적 타이밍(1문장). 올해 재물 흐름(1문장). 돈이 새는 패턴과 차단법(1문장). 총 5문장.",\n' +
-    '"love":"부처궁 성曜 배치로 현재 결혼 여부를 먼저 판단하라. 기혼이면 부부관계 현황과 개선법. 미혼이면 인연 시기와 이상형. 나이와 대운 반드시 고려. 총 5문장.",\n' +
-    '"luck_period":"현재 대운 핵심 키워드와 올해 소운(1문장). 상반기와 하반기 중 유리한 쪽(1문장). 내년과 내후년 주요 변화(1문장). 인생 황금기 시기(1문장). 가장 조심할 시기와 이유(1문장). 총 5문장.",\n' +
-    '"caution":"명반 구조적 약점 2가지(1문장). 삶에서 반복되는 실수 패턴(1문장). 보완해야 할 오행과 구체적 방법(1문장). 이달 반드시 주의할 행동 2가지(1문장). 오늘부터 실천할 개운 행동(1문장). 총 5문장.",\n' +
-    '"lucky_direction":"북동",\n' +
-    '"lucky_color":"구체적 색깔과 오행 보완 이유",\n' +
-    '"lucky_number":"구체적 숫자와 이유",\n' +
-    '"lucky_mindset":"지금 이 시기에 필요한 마음가짐 한 문장",\n' +
-    '"life_direction":"명반이 가리키는 인생 방향 한 문장",\n' +
-    '"lucky_items":["색깔","숫자","요일","방향","음식"],\n' +
-    '"lucky_days":[{"date":"YYYY-MM-DD길일1","type":"대길","reason":"관록궁 길일"},{"date":"YYYY-MM-DD길일2","type":"길","reason":"재물운 상승"},{"date":"YYYY-MM-DD흉일","type":"흉","reason":"구설수 주의"},{"date":"YYYY-MM-DD길일3","type":"대길","reason":"귀인 만남"},{"date":"YYYY-MM-DD길일4","type":"길","reason":"계약 적합"}],"summary":"3줄요약",' +
-    '"scores":{"재물운":숫자,"직업운":숫자,"애정운":숫자,"건강운":숫자},' +
-    '"score_trends":{"재물운":"상승중","직업운":"안정","애정운":"하락중","건강운":"안정"},' +
-    '"score_sources":{"재물운":"근거","직업운":"근거","애정운":"근거","건강운":"근거"},' +
-    '"lucky_mindset":"개운법","wave_data":[{"age":"20대","w":70,"c":75,"l":65}]}';
+[엄격한 분석 규칙]
+1. star 필드: 위 계산된 [${calcedStar}] 그대로 사용. 절대 변경 금지.
+2. 점수: 40~95 범위에서 명반 기반으로 각기 다르게 산출.
+3. 비슷한 결과 금지 - 이 사람만의 고유한 분석.
 
-  var res = await fetch('/api/saju', {
-    method: 'POST', headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ model: 'claude-sonnet-4-6', max_tokens: 3000,
-      system: '명리학 AI. 유효한 JSON만 출력.',
-      messages: [{ role: 'user', content: prompt }] })
-  });
-  var reader = res.body.getReader(), decoder = new TextDecoder(), text = '', buf = '';
-  while (true) {
-    var ch = await reader.read(); if (ch.done) break;
-    buf += decoder.decode(ch.value, { stream: true });
-    var ls = buf.split('\n'); buf = ls.pop() || '';
-    for (var i = 0; i < ls.length; i++) {
-      var ln = ls[i].trim();
-      if (!ln.startsWith('data: ')) continue;
-      var dt = ln.slice(6).trim(); if (dt === '[DONE]') continue;
-      try { var ev = JSON.parse(dt); if (ev.type === 'content_block_delta' && ev.delta && ev.delta.text) text += ev.delta.text; } catch(e) {}
-    }
-  }
-  try { return JSON.parse(text.replace(/```json?\s*/gi,'').replace(/```\s*/g,'').trim()); }
-  catch(e) { var m = text.match(/\{[\s\S]*\}/); if (m) try { return JSON.parse(m[0]); } catch(e2) {} return {}; }
-}
+아래 JSON으로만 응답:
+{
+"star":"${calcedStar}",
+"star_detail":"명궁 주성 기질·강점2·약점2·반복패턴 (5문장)",
+"palace_desc":"보성·화록·화기·삼합궁 분석 (5문장)",
+"daewoon":"현재대운명과 기간",
+"daewoon_detail":"현재 대운 분석 (5문장)",
+"base_score":85,
+"scores":{"재물운":실제값,"직업운":실제값,"애정운":실제값,"건강운":실제값},
+"score_trends":{"재물운":"상승중또는안정또는하락중","직업운":"실제","애정운":"실제","건강운":"실제"},
+"score_sources":{"재물운":"명반근거","직업운":"명반근거","애정운":"명반근거","건강운":"명반근거"},
+"wave_data":[{"age":"20대","w":실제,"c":실제,"l":실제},{"age":"30대","w":실제,"c":실제,"l":실제},{"age":"현재","w":실제,"c":실제,"l":실제},{"age":"50대","w":실제,"c":실제,"l":실제},{"age":"60대","w":실제,"c":실제,"l":실제}],
+"compass_angle":45,
+"compass_desc":"오늘 기문둔갑 길방",
+"ziwei":"자미두수 분석 (5문장)",
+"meihua":"매화역수 분석 (5문장)",
+"qimen":"기문둔갑 분석 (5문장)",
+"hybrid_msg":"3대 역학 통합 (5문장)",
+"career":"직업 분석 (5문장)",
+"wealth":"재물 분석 (5문장)",
+"love":"애정 분석 (5문장)",
+"luck_period":"대운 흐름 (5문장)",
+"caution":"주의사항 (5문장)",
+"lucky_direction":"북동",
+"lucky_color":"색깔",
+"lucky_number":"숫자",
+"lucky_mindset":"마음가짐 한 문장",
+"life_direction":"인생 방향 한 문장",
+"lucky_items":["색깔","숫자","요일","방향","음식"],
+"lucky_days":[{"date":"YYYY-MM-DD","type":"대길","reason":"근거"},{"date":"YYYY-MM-DD","type":"길","reason":"근거"},{"date":"YYYY-MM-DD","type":"흉","reason":"근거"},{"date":"YYYY-MM-DD","type":"대길","reason":"근거"},{"date":"YYYY-MM-DD","type":"길","reason":"근거"}],
+"summary":"핵심요약 25자이내"
+}`
+
+      try {
+        // CORS 우회: 로컬에서는 프록시 없이 직접 호출 시도
+        // 배포 후에는 Vercel Edge Function 사용
+        const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+          ? 'https://api.anthropic.com/v1/messages'
+          : '/api/saju';
+
+        let response;
+        try {
+          response = await fetch(apiUrl, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'anthropic-dangerous-direct-browser-access': 'true',
+              'x-api-key': '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',
+              'anthropic-version': '2023-06-01'
+            },
+            body: JSON.stringify({
+              model: 'claude-haiku-4-5-20251001',
+              max_tokens: 4000,
+              messages: [{ role: 'user', content: prompt }]
+            })
+          });
+        } catch (fetchErr) {
+          throw new Error('Failed to fetch');
+        }
+
+        clearInterval(msgTimer);
+
+        if (!response.ok) {
+          throw new Error('API 응답 오류: ' + response.status);
+        }
+
+        const data = await response.json();
+        const text = data.content?.map(c => c.text || '').join('') || '';
+        let clean = text.replace(/```json|```/g, '').trim();
+        // JSON이 잘린 경우 복구 시도
+        if (!clean.endsWith('}')) {
+          const lastBrace = clean.lastIndexOf('}');
+          if (lastBrace > 0) clean = clean.substring(0, lastBrace + 1);
+          // 중괄호 닫기 보완
+          let opens = (clean.match(/{/g) || []).length;
+          let closes = (clean.match(/}/g) || []).length;
+          while (closes < opens) { clean += '}'; closes++; }
 
 // 인생 지침서 생성
 async function batchGenerateReport(inp, r) {
@@ -4495,53 +4491,6 @@ function bulkSetStatus(msg, color) {
   var el = document.getElementById('bulk-status');
   if (el) { el.textContent = msg; el.style.color = color || 'var(--t2)'; }
 }
-async function bulkGenerate() {
-  var inp = bulkGetInput();
-  if (!inp.name || !inp.year || !inp.month || !inp.day) {
-    bulkSetStatus('⚠️ 이름·생년월일 필수', '#e74c3c'); return;
-  }
-  document.getElementById('inp-name').value  = inp.name;
-  document.getElementById('inp-year').value  = inp.year;
-  document.getElementById('inp-month').value = inp.month;
-  document.getElementById('inp-day').value   = inp.day;
-  if (inp.time) document.getElementById('inp-time').value = inp.time;
-  selectedGender = inp.gender; selectedCal = '양력';
-  bulkSetStatus('⏳ 사주 분석 중... 약 15초', 'var(--gold)');
-  try {
-    await doSajuScan();
-    var wc = 0;
-    var wi = setInterval(function() {
-      wc++;
-      if (window.lastSajuResult || wc > 30) {
-        clearInterval(wi);
-        bulkSetStatus('✅ 분석 완료! 인생 지침서 생성 중...', 'var(--em)');
-        showPg('report');
-        setTimeout(function() {
-          var btn = document.getElementById('report-generate-btn');
-          if (btn && btn.style.display !== 'none') btn.click();
-        }, 500);
-      }
-    }, 1000);
-  } catch(e) { bulkSetStatus('❌ 오류: ' + e.message, '#e74c3c'); }
-}
-async function bulkSendEmail() {
-  var inp = bulkGetInput();
-  if (!inp.email) { bulkSetStatus('⚠️ 이메일 입력 필수', '#e74c3c'); return; }
-  await bulkGenerate();
-  var wc = 0;
-  var wi = setInterval(function() {
-    wc++;
-    var rb = document.getElementById('report-full-body');
-    if ((rb && rb.innerHTML.length > 500) || wc > 120) {
-      clearInterval(wi);
-      if (rb && rb.innerHTML.length > 500) {
-        bulkSetStatus('✅ 완성! 이메일 발송 창 열기...', 'var(--em)');
-        setTimeout(function() { sendReportEmail(inp.email); }, 500);
-      }
-    }
-  }, 1000);
-}
-
 /* ══════════════════════════════════════
    궁합 분석
 ══════════════════════════════════════ */

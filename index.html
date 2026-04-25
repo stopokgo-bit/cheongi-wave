@@ -2407,25 +2407,15 @@ ${location ? '현재거주지: ' + location : ''}
 }`
 
       try {
-        // CORS 우회: 로컬에서는 프록시 없이 직접 호출 시도
-        // 배포 후에는 Vercel Edge Function 사용
-        const apiUrl = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
-          ? 'https://api.anthropic.com/v1/messages'
-          : '/api/saju';
-
-        let response;
+                let response;
         try {
-          response = await fetch(apiUrl, {
+          response = await fetch('/api/saju', {
             method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'anthropic-dangerous-direct-browser-access': 'true',
-              'x-api-key': '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',
-              'anthropic-version': '2023-06-01'
-            },
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-              model: 'claude-haiku-4-5-20251001',
-              max_tokens: 4000,
+              model: 'claude-sonnet-4-6',
+              max_tokens: 6000,
+              system: '당신은 자미두수·매화역수·기문둔갑 전문 명리학 AI입니다. 반드시 유효한 JSON만 출력하세요.',
               messages: [{ role: 'user', content: prompt }]
             })
           });
@@ -2436,17 +2426,35 @@ ${location ? '현재거주지: ' + location : ''}
         clearInterval(msgTimer);
 
         if (!response.ok) {
-          throw new Error('API 응답 오류: ' + response.status);
+          const errText = await response.text();
+          throw new Error('API 오류: ' + response.status + ' ' + errText);
         }
 
-        const data = await response.json();
-        const text = data.content?.map(c => c.text || '').join('') || '';
-        let clean = text.replace(/```json|```/g, '').trim();
+        // 스트리밍 응답 파싱
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let text = '', buf = '';
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+          const lines = buf.split('\n'); buf = lines.pop() || '';
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            const d = line.slice(6).trim();
+            if (d === '[DONE]') continue;
+            try {
+              const ev = JSON.parse(d);
+              if (ev.type === 'content_block_delta' && ev.delta?.text) text += ev.delta.text;
+            } catch(e) {}
+          }
+        }
+
+        let clean = text.replace(/```json[\s\S]*?```|```/g, '').trim();
         // JSON이 잘린 경우 복구 시도
         if (!clean.endsWith('}')) {
           const lastBrace = clean.lastIndexOf('}');
           if (lastBrace > 0) clean = clean.substring(0, lastBrace + 1);
-          // 중괄호 닫기 보완
           let opens = (clean.match(/{/g) || []).length;
           let closes = (clean.match(/}/g) || []).length;
           while (closes < opens) { clean += '}'; closes++; }

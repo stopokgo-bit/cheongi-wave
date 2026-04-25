@@ -3,9 +3,6 @@
   "functions": {
     "api/saju.js": {
       "maxDuration": 60
-    },
-    "api/og-image.js": {
-      "maxDuration": 10
     }
   },
   "routes": [

@@ -512,30 +512,24 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
   <div id="notice-banner" style="display:none;padding:10px 1rem;text-align:center;font-size:13px;font-weight:600;"></div>
   <!-- ✅ 이벤트 배너 -->
   <div id="event-banner" style="display:none;padding:10px 1rem;text-align:center;font-size:13px;font-weight:700;background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,165,0,0.15));border-bottom:1px solid rgba(255,215,0,0.2);color:var(--gold);"></div>
-  <nav class="nav">
-      <div class="logo-icon" onclick="showPg('main')" style="cursor:pointer;"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#0f0f3a"/></svg></div>
-      <div onclick="showPg('main')" style="cursor:pointer;">
-        <div class="logo-text">천기 웨이브</div>
-        <div class="logo-sub">CHEON-GI WAVE</div>
+  <nav class="nav" style="justify-content:space-between;">
+    <!-- 로고 왼쪽 정렬 -->
+    <div style="display:flex;align-items:center;gap:10px;cursor:pointer;" onclick="showPg('main')">
+      <div class="logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" fill="#0f0f3a"/></svg></div>
+      <div>
+        <div style="font-size:clamp(14px,1.6vw,18px);font-weight:700;color:#fff;line-height:1.2;">천기 웨이브</div>
+        <div style="font-size:9px;color:rgba(255,215,0,0.7);letter-spacing:.5px;line-height:1.2;">天機 — 하늘의 기운을 읽다</div>
       </div>
-    </a>
-    <div class="nav-btns">
-      <!-- 천기 분석 버튼 -->
+    </div>
+
+    <!-- 오른쪽 버튼들 -->
+    <div class="nav-btns" style="gap:4px;">
+      <!-- 천기 분석 -->
       <button class="nbtn on" id="bn-user" onclick="showMyDashboard()" title="천기 분석">
         <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
         <span class="nav-label">천기 분석</span>
       </button>
-      <!-- 관리 버튼 (로그인 시에만 표시) -->
-      <button class="nbtn nav-cms-btn" id="bn-admin" onclick="showAdminPage()" title="회원 관리" style="display:none;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M18 13v6M21 16h-6"/></svg>
-        <span class="nav-label">관리</span>
-      </button>
-      <!-- 궁합 버튼 -->
-      <button class="nbtn" onclick="showCompatibility()" title="궁합 분석">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
-        <span class="nav-label">궁합</span>
-      </button>
-      <!-- 로그인 -->
+      <!-- 로그인/프로필 -->
       <div id="nav-auth-area">
         <button class="nbtn" onclick="openAuth('login')" title="로그인">
           <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
@@ -546,6 +540,10 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
       <button class="nbtn" onclick="doShare()" title="공유하기">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"/><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"/></svg>
         <span class="nav-label">공유</span>
+      </button>
+      <!-- 관리 버튼 (관리자만, 아이콘만) -->
+      <button id="bn-admin" onclick="showAdminPage()" title="관리자" style="display:none;padding:5px 8px;background:rgba(255,255,255,0.06);border:1px solid rgba(255,255,255,0.1);border-radius:8px;color:rgba(255,255,255,0.4);cursor:pointer;font-size:11px;font-family:inherit;">
+        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/><path d="M18 13v6M21 16h-6"/></svg>
       </button>
     </div>
   </nav>
@@ -732,47 +730,85 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
       </div>
     </div>
 
-    <!-- ✅ 커뮤니티: 리뷰 + QnA -->
+    <!-- ✅ 커뮤니티: 이용후기 + 게시판 + QnA -->
     <div class="hero fu3" style="margin-bottom:1.25rem;">
-      <!-- 탭 -->
-      <div style="display:flex;gap:8px;margin-bottom:1rem;">
-        <button id="comm-tab-review" onclick="switchCommTab('review')" style="flex:1;padding:9px;border-radius:8px;border:1px solid var(--em);background:var(--em);color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">⭐ 이용 후기</button>
-        <button id="comm-tab-qna" onclick="switchCommTab('qna')" style="flex:1;padding:9px;border-radius:8px;border:1px solid var(--bd);background:none;color:var(--t2);font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">💬 Q&A</button>
+      <!-- 탭 3개 -->
+      <div style="display:flex;gap:6px;margin-bottom:1rem;">
+        <button id="comm-tab-review" onclick="switchCommTab('review')" style="flex:1;padding:8px 4px;border-radius:8px;border:1px solid var(--em);background:var(--em);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">⭐ 이용후기</button>
+        <button id="comm-tab-board" onclick="switchCommTab('board')" style="flex:1;padding:8px 4px;border-radius:8px;border:1px solid var(--bd);background:none;color:var(--t2);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📌 게시판</button>
+        <button id="comm-tab-qna" onclick="switchCommTab('qna')" style="flex:1;padding:8px 4px;border-radius:8px;border:1px solid var(--bd);background:none;color:var(--t2);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">💬 Q&A</button>
       </div>
 
-      <!-- 리뷰 목록 -->
-      <div id="comm-review" style="">
+      <!-- ① 이용후기 -->
+      <div id="comm-review">
         <div id="review-list" style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:.75rem;max-height:320px;overflow-y:auto;"></div>
         <div style="border-top:1px solid var(--bd);padding-top:.75rem;">
           <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:.5rem;">✍️ 후기 작성</div>
           <div style="display:flex;gap:4px;margin-bottom:.5rem;" id="review-stars">
-            <span onclick="setReviewStar(1)" style="font-size:20px;cursor:pointer;">☆</span>
-            <span onclick="setReviewStar(2)" style="font-size:20px;cursor:pointer;">☆</span>
-            <span onclick="setReviewStar(3)" style="font-size:20px;cursor:pointer;">☆</span>
-            <span onclick="setReviewStar(4)" style="font-size:20px;cursor:pointer;">☆</span>
-            <span onclick="setReviewStar(5)" style="font-size:20px;cursor:pointer;">☆</span>
+            <span onclick="setReviewStar(1)" style="font-size:20px;cursor:pointer;color:var(--t2);">☆</span>
+            <span onclick="setReviewStar(2)" style="font-size:20px;cursor:pointer;color:var(--t2);">☆</span>
+            <span onclick="setReviewStar(3)" style="font-size:20px;cursor:pointer;color:var(--t2);">☆</span>
+            <span onclick="setReviewStar(4)" style="font-size:20px;cursor:pointer;color:var(--t2);">☆</span>
+            <span onclick="setReviewStar(5)" style="font-size:20px;cursor:pointer;color:var(--t2);">☆</span>
+          </div>
+          <div style="display:flex;gap:6px;margin-bottom:.5rem;">
+            <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--t2);cursor:pointer;"><input type="radio" name="review-anon" id="review-real" checked style="accent-color:var(--em);">실명</label>
+            <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--t2);cursor:pointer;"><input type="radio" name="review-anon" id="review-anon" style="accent-color:var(--em);">익명</label>
           </div>
           <textarea id="review-text" placeholder="분석 후기를 남겨주세요..." style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;resize:none;height:70px;box-sizing:border-box;"></textarea>
           <button onclick="submitReview()" style="width:100%;margin-top:6px;padding:9px;background:var(--em);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">후기 등록</button>
         </div>
       </div>
 
-      <!-- QnA 목록 -->
-      <div id="comm-qna" style="display:none;">
-        <div id="qna-list" style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:.75rem;max-height:320px;overflow-y:auto;"></div>
+      <!-- ② 게시판 (관리자만 읽기) -->
+      <div id="comm-board" style="display:none;">
+        <div style="font-size:11px;color:var(--t2);margin-bottom:.5rem;padding:.5rem .75rem;background:rgba(255,215,0,0.06);border-radius:8px;border-left:3px solid rgba(255,215,0,0.3);">📌 게시글은 관리자에게만 전달됩니다</div>
+        <div id="board-list" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:.75rem;max-height:280px;overflow-y:auto;"></div>
         <div style="border-top:1px solid var(--bd);padding-top:.75rem;">
-          <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:.5rem;">❓ 질문 작성</div>
-          <input id="qna-title" type="text" placeholder="제목 (예: 자미두수 명궁이 뭔가요?)" style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;margin-bottom:6px;box-sizing:border-box;">
-          <textarea id="qna-text" placeholder="질문 내용을 입력해주세요..." style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;resize:none;height:70px;box-sizing:border-box;"></textarea>
-          <button onclick="submitQnA()" style="width:100%;margin-top:6px;padding:9px;background:rgba(138,172,240,0.2);border:1px solid rgba(138,172,240,0.3);border-radius:8px;color:#8aacf0;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">질문 등록</button>
+          <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:.5rem;">✍️ 글쓰기</div>
+          <input id="board-title" type="text" placeholder="제목" style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;margin-bottom:6px;box-sizing:border-box;">
+          <textarea id="board-text" placeholder="내용을 입력해주세요..." style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;resize:none;height:70px;box-sizing:border-box;margin-bottom:6px;"></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;gap:10px;">
+              <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--t2);cursor:pointer;"><input type="radio" name="board-anon" id="board-real" checked style="accent-color:var(--em);">실명</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--t2);cursor:pointer;"><input type="radio" name="board-anon" id="board-anon" style="accent-color:var(--em);">익명</label>
+            </div>
+            <button onclick="submitBoard()" style="padding:8px 20px;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);border-radius:8px;color:var(--gold);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">등록</button>
+          </div>
         </div>
       </div>
+
+      <!-- ③ Q&A 고정 자문자답 + 질문하기 -->
+      <div id="comm-qna" style="display:none;">
+        <div id="qna-fixed-list" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:.75rem;"></div>
+        <div style="border-top:1px solid var(--bd);padding-top:.75rem;">
+          <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:.5rem;">❓ 질문하기</div>
+          <input id="qna-title" type="text" placeholder="질문 제목" style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;margin-bottom:6px;box-sizing:border-box;">
+          <textarea id="qna-text" placeholder="궁금한 내용을 입력해주세요..." style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;resize:none;height:65px;box-sizing:border-box;margin-bottom:6px;"></textarea>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <div style="display:flex;gap:10px;">
+              <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--t2);cursor:pointer;"><input type="radio" name="qna-anon" id="qna-real" checked style="accent-color:var(--em);">실명</label>
+              <label style="display:flex;align-items:center;gap:4px;font-size:11px;color:var(--t2);cursor:pointer;"><input type="radio" name="qna-anon" id="qna-anon" style="accent-color:var(--em);">익명</label>
+            </div>
+            <button onclick="submitQnA()" style="padding:8px 20px;background:rgba(138,172,240,0.15);border:1px solid rgba(138,172,240,0.3);border-radius:8px;color:#8aacf0;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">질문 등록</button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <!-- ✅ 궁합 분석 카드 (메인 하단) -->
+    <div class="hero fu4" onclick="showCompatibility()" style="cursor:pointer;background:linear-gradient(135deg,rgba(233,30,140,0.08),rgba(138,172,240,0.08));border:1px solid rgba(233,30,140,0.2);border-radius:16px;padding:1.1rem;display:flex;align-items:center;gap:1rem;margin-bottom:.75rem;">
+      <div style="font-size:32px;">💑</div>
+      <div style="flex:1;">
+        <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:3px;">궁합 분석</div>
+        <div style="font-size:11px;color:var(--t2);line-height:1.6;">자미두수·매화역수·기문둔갑 3대 역학으로<br>두 사람의 운명적 궁합을 심층 분석</div>
+      </div>
+      <div style="font-size:11px;color:rgba(233,30,140,0.8);font-weight:700;white-space:nowrap;">✦ 프리미엄 →</div>
     </div>
 
     <div class="bgrid fu4">
       <div class="bc" onclick="showPg('report')">
         <div class="bci" style="background:rgba(255,215,0,0.15);"><svg viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg></div>
-        <div class="bct">50P '인생 지침서' 리포트</div>
+        <div class="bct">'인생 지침서' 리포트</div>
         <div class="bcd">20세부터 80세까지 재물, 커리어, 사랑의 파동을 5,000개 이상의 정교한 텍스트로 분석합니다.</div>
         <button class="bcb gold">샘플 리포트 확인하기</button>
       </div>
@@ -1769,1980 +1805,7 @@ async function doSajuScan() {
     '"lucky_mindset":"지금 이 시기에 필요한 마음가짐 한 문장",\n' +
     '"life_direction":"명반이 가리키는 인생 방향 한 문장",\n' +
     '"lucky_items":["색깔","숫자","요일","방향","음식"],\n' +
-    '"lucky_days":[{"date":"' + year + '-' + (parseInt(month)<10?'0'+month:month) + '-25","type":"대길","reason":"관록궁 길일"},{"date":"' + year + '-' + (parseInt(month)<10?'0'+month:month) + '-28","type":"길","reason":"재물운 상승"},{"date":"' + (parseInt(month)<12?year+'-'+(parseInt(month)+1<10?'0'+(parseInt(month)+1):(parseInt(month)+1)):year+'-01') + '-03","type":"대길","reason":"귀인 만남"},{"date":"' + (parseInt(month)<12?year+'-'+(parseInt(month)+1<10?'0'+(parseInt(month)+1):(parseInt(month)+1)):year+'-01') + '-07","type":"흉","reason":"구설수 주의"},{"date":"' + (parseInt(month)<12?year+'-'+(parseInt(month)+1<10?'0'+(parseInt(month)+1):(parseInt(month)+1)):year+'-01') + '-12","type":"길","reason":"계약 적합"}],\n' +
-    '"summary":"25자 이내 핵심 요약"\n' +
-    '}';
-
-  const systemPrompt =
-    '당신은 자미두수·매화역수·기문둔갑 40년 경력 명리학 대가입니다.\n' +
-    '규칙:\n' +
-    '1. JSON만 출력. 다른 텍스트 일절 금지.\n' +
-    '2. 각 텍스트 필드는 지시된 문장 수를 반드시 지켜라. 1~2문장으로 줄이면 틀린 답이다.\n' +
-    '3. 입에 발린 말 금지. 약점·흉한 부분도 솔직하게.\n' +
-    '4. 구체적 연도, 궁위 이름, 성曜 이름을 반드시 포함하라.\n' +
-    '5. 마지막 문장을 완성하라.\n' +
-    '6. 나이와 명반으로 인생단계를 파악하라. 부처궁으로 기혼/미혼 추정 후 애정운 방향 결정. 20~30대=연애·결혼적기, 40~50대=부부관계·자녀·커리어전환, 60대+=건강·노후. 나이와 맞지 않는 형식적 조언 절대 금지.' +
-    '7. 출생지가 있으면 시차 보정과 지역 특성 반영. 현재 거주지가 있으면 기문둔갑 길방을 거주지 기준으로 계산(예: 서울 거주자의 동쪽=강원 방향, 서쪽=서해 방향).\\n' +
-    '=== 자미두수 분석 기준 ===\n' +
-    '- 명궁 주성(14주성: 자미·천기·태양·무곡·천동·염정·천부·태음·탐랑·거문·천상·천량·칠살·파군) 파악\n' +
-    '- 보성(문창·문곡·좌보·우필·천괴·천월·록존·천마 등) 조합 분석\n' +
-    '- 사화(화록·화권·화과·화기) 어느 궁에 떨어지는지\n' +
-    '- 삼합궁(명궁·재백궁·관록궁) / 대궁(對宮) 관계\n' +
-    '- 현재 대운성曜와 유년(流年) 영향\n' +
-    '- 사화의 이동: 화록이 재백궁 → 재물 유입, 화기가 부처궁 → 배우자 갈등 등\n\n' +
-    '=== 매화역수 분석 기준 ===\n' +
-    '- 생년월일시로 체괘(體卦)·용괘(用卦) 도출\n' +
-    '- 체용의 생극(生剋) 관계로 현재 운기 방향 판단\n' +
-    '- 오늘 날짜 기준 동효(動爻) 분석\n' +
-    '- 호괘(互卦)·변괘(變卦) 추가 해석\n' +
-    '- 현재 상황의 "파도": 상승파·하강파·전환점 중 어디인지\n\n' +
-    '=== 기문둔갑 분석 기준 ===\n' +
-    '- 오늘 날짜 기준 시반(時盤) 또는 일반(日盤) 포국\n' +
-    '- 팔문(八門): 생문·상문·두문·경문·사문·경문(驚門)·개문·휴문 배치\n' +
-    '- 구성(九星): 천봉·천예·천충·천보·천금·천심·천주·천임·천영 위치\n' +
-    '- 오늘 길방(吉方)·흉방(凶方) 구체적 방위\n' +
-    '- 사업·이동·계약에 유리한 시간대\n\n' +
-    '=== 출력 형식 ===\n' +
-    'JSON만 출력. 각 텍스트 필드는 반드시 완성된 문장으로 끝낼 것.\n\n' +
-    '{\n' +
-    '"star":"명궁 주성명(예:천기성 갑급)",\n' +
-    '"star_detail":"이 별의 근본 기질, 타고난 강점 2가지, 반드시 극복해야 할 약점 2가지, 이 별이 만드는 인생 테마, 삶에서 반복되는 패턴. 반드시 5문장 이상.",\n' +
-    '"palace_desc":"명궁에 어떤 보성이 동반하는지, 화록은 어느 궁에 있는지, 화기는 어느 궁을 공격하는지, 이 배치가 성격과 운명에 미치는 영향, 이 명반 구조의 핵심 특징. 반드시 5문장 이상.",\n' +
-    '"daewoon":"현재 대운명과 기간(예: 甲子대운 2023-2032)",\n' +
-    '"daewoon_detail":"이 대운의 성曜가 가진 기운, 현재 대운이 명주에게 유리한 점과 불리한 점, 대운 전반기와 후반기의 차이, 이 대운에서 반드시 해야 할 일과 피해야 할 일, 이 대운이 끝날 때 남길 성과. 반드시 5문장 이상.",\n' +
-    '"base_score":85,\n' +
-    '"scores":{"재물운":실제분석값0-100,"직업운":실제분석값,"애정운":실제분석값,"건강운":실제분석값},\n' +
-    '"score_trends":{"재물운":"상승중|안정|하락중중실제판단","직업운":"실제판단","애정운":"실제판단","건강운":"실제판단"},\n' +
-    '"score_sources":{"재물운":"재백궁 태음화록 입묘로 중년 이후 재물 유입 활발하나 초년 재물 불안정","직업운":"관록궁 자미천상 삼합 형성으로 전문직·관직 안정적","애정운":"부처궁 염정화기 충사로 배우자와 갈등·이별 주의 시기","건강운":"질액궁 천동 안정 배치로 큰 질병은 없으나 과로 주의"},\n' +
-    '"wave_data":[{"age":"20대","w":나이대별실제값,"c":실제값,"l":실제값},...],\n' +
-    '"compass_angle":45,\n' +
-    '"compass_desc":"기문둔갑 생문(生門) 방위 기준 길방. 이 방향으로 출근·미팅·이동 시 귀인 만남 가능.",\n' +
-    '"ziwei":"【자미두수】명궁 주성과 보성 조합이 만드는 핵심 기질, 사화 이동이 재물·직업·애정에 미치는 구체적 영향, 삼합궁 형성 여부와 그 의미, 현재 대운성曜가 올해 운세에 미치는 작용, 올해 유년 기준 가장 중요한 변화 시점. 반드시 5문장 이상 완성.",\n' +
-    '"meihua":"【매화역수】생년월일로 도출된 체괘명과 용괘명, 체용의 생극 관계로 본 현재 운기 방향(상승/하강/전환), 오늘 날짜 기준 동효가 암시하는 변화, 앞으로 3개월 내 가장 중요한 행동 지침, 이달 안에 반드시 해야 할 일과 피해야 할 일. 반드시 5문장 이상 완성.",\n' +
-    '"qimen":"【기문둔갑】오늘 포국에서 명주에게 작용하는 주요 문(門)과 성(星) 이름, 오늘 길방과 흉방 구체적 방위(동서남북 명시), 오늘 취해야 할 가장 중요한 행동 1가지, 사업·계약·만남 시 유리한 시간대, 이달 귀인이 오는 방향과 그 귀인의 특성. 반드시 5문장 이상 완성.",\n' +
-    '"hybrid_msg":"【3대 역학 통합】자미두수·매화역수·기문둔갑이 공통으로 가리키는 올해의 핵심 흐름, 세 역학 간 서로 충돌하거나 일치하는 부분, 지금 이 시점 반드시 잡아야 할 기회 1가지, 반드시 피해야 할 위험 1가지, 내년과 비교해 올해가 특별한 이유. 반드시 5문장 이상 완성.",\n' +
-    '"career":"명반이 가리키는 최적 직군 2~3가지와 명리학적 근거, 현재 직장운 실태(좋은 점과 나쁜 점 모두), 이직이나 창업의 최적 타이밍(구체적 연도·월), 현재 상사·동료와의 관계 패턴, 향후 3년 커리어에서 가장 중요한 전환점. 반드시 5문장 이상 완성.",\n' +
-    '"wealth":"재물이 들어오는 주요 경로와 시기, 투자 적합 분야와 절대 피해야 할 투자 유형, 부동산운과 최적 매매 타이밍, 올해 재물 흐름과 돈이 가장 많이 새는 시기, 재물을 지키기 위해 지금 당장 해야 할 행동. 반드시 5문장 이상 완성.",\n' +
-    '"love":"이성에게 매력적으로 보이는 부분과 반복되는 연애 패턴, 현재 애정운 실태와 올해 인연 가능성, 이상형 유형과 잘 맞는 상대의 특성, 결혼 적기와 현재 파트너가 있다면 관계 발전 여부, 반드시 피해야 할 인연 유형과 그 이유. 반드시 5문장 이상 완성.",\n' +
-    '"luck_period":"현재 대운의 핵심 키워드와 올해 소운 흐름, 올해 상반기와 하반기 중 어느 쪽이 더 유리한지, 내년과 내후년의 주요 변화 예고, 인생 전체에서 황금기가 언제인지, 가장 조심해야 할 시기와 그 이유. 반드시 5문장 이상 완성.",\n' +
-    '"caution":"이 명반의 구조적 약점 2가지, 삶에서 반복되는 실수 패턴, 지금 당장 보완해야 할 오행과 구체적 방법(색깔·음식·방향 명시), 이달 반드시 주의해야 할 행동 3가지, 개운을 위해 오늘부터 실천할 수 있는 구체적 행동. 반드시 5문장 이상 완성.",\n' +
-    '"lucky_direction":"북동",\n' +
-    '"lucky_color":"빨간색(화기 보완)과 금색(재백궁 활성화)",\n' +
-    '"lucky_number":"3과 8(생문 기수)",\n' +
-    '"lucky_mindset":"흐름을 읽고 때를 기다리는 자세 — 억지로 밀기보다 열린 문을 찾는 전략적 기다림",\n' +
-    '"life_direction":"분석·전략·기획 분야에서 전문성 축적 후 40대 독립 — 명반상 관록궁 화록 발동 시기와 일치",\n' +
-    '"lucky_items":["빨간색","금색","숫자3","숫자8","북동쪽","매운음식","수요일·금요일"],\n' +
-    '"lucky_days":[{"date":"' + year + '-' + (parseInt(month)<10?'0'+month:month) + '-25","type":"대길","reason":"관록궁 길일, 계약·승진 적합"},{"date":"' + year + '-' + (parseInt(month)<10?'0'+month:month) + '-28","type":"길","reason":"재백궁 활성, 재물 유입"},{"date":"' + (parseInt(month)<12?year+'-'+(parseInt(month)+1<10?'0'+(parseInt(month)+1):(parseInt(month)+1)):year+'-01') + '-03","type":"대길","reason":"생문 개방, 귀인 만남"},{"date":"' + (parseInt(month)<12?year+'-'+(parseInt(month)+1<10?'0'+(parseInt(month)+1):(parseInt(month)+1)):year+'-01') + '-07","type":"흉","reason":"화기 충사, 구설수·분쟁 주의"},{"date":"' + (parseInt(month)<12?year+'-'+(parseInt(month)+1<10?'0'+(parseInt(month)+1):(parseInt(month)+1)):year+'-01') + '-12","type":"길","reason":"천마 발동, 이동·계약 적합"}],\n' +
-    '"summary":"핵심 한줄 요약 25자 이내 — 반드시 완성된 문장"\n' +
-    '}';
-
-  try {
-    // ✅ 90초 타임아웃 (Vercel 60초 + 여유)
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), 90000);
-
-    const response = await fetch('/api/saju', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      signal: controller.signal,
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 6000,
-        system: systemPrompt,
-        messages: [{ role: 'user', content: prompt }]
-      })
-    });
-
-    clearTimeout(timeoutId);
-    clearInterval(msgTimer);
-
-    if (!response.ok) {
-      const errBody = await response.text().catch(() => '');
-      throw new Error('서버 오류 ' + response.status + (errBody ? ': ' + errBody.slice(0, 200) : ''));
-    }
-
-    // ✅ 스트리밍 응답 처리
-    const reader = response.body.getReader();
-    const decoder = new TextDecoder();
-    let fullText = '';
-    let buffer = '';
-
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
-
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split('\n');
-      // 마지막 불완전한 줄은 버퍼에 남김
-      buffer = lines.pop() || '';
-
-      for (const line of lines) {
-        const trimmed = line.trim();
-        if (!trimmed || !trimmed.startsWith('data: ')) continue;
-        const data = trimmed.slice(6).trim();
-        if (data === '[DONE]') continue;
-        try {
-          const parsed = JSON.parse(data);
-          if (parsed.type === 'content_block_delta' &&
-              parsed.delta && parsed.delta.type === 'text_delta' &&
-              parsed.delta.text) {
-            fullText += parsed.delta.text;
-          }
-        } catch(e) { /* 무시 */ }
-      }
-    }
-
-    // 버퍼 잔여분 처리
-    if (buffer.trim().startsWith('data: ')) {
-      try {
-        const parsed = JSON.parse(buffer.trim().slice(6));
-        if (parsed.type === 'content_block_delta' && parsed.delta && parsed.delta.text) {
-          fullText += parsed.delta.text;
-        }
-      } catch(e) {}
-    }
-
-    if (!fullText) throw new Error('AI 응답이 비어있습니다. 다시 시도해주세요.');
-
-    // ✅ JSON 파싱 - 다단계 복구
-    let result;
-
-    // 1단계: 정상 파싱 시도
-    const tryParse = (str) => {
-      try { return JSON.parse(str); } catch(e) { return null; }
-    };
-
-    // JSON 전처리: 제어문자 제거, 잘못된 이스케이프 수정
-    const sanitize = (str) => {
-      return str
-        .replace(/[\x00-\x08\x0B\x0C\x0E-\x1F]/g, '')  // 제어문자 제거
-        .replace(/\n/g, '\\n')   // 줄바꿈 이스케이프
-        .replace(/\r/g, '\\r')
-        .replace(/\t/g, '\\t');
-    };
-
-    // 코드블록 제거
-    let clean = fullText.replace(/```json\s*/gi, '').replace(/```\s*/g, '').trim();
-    const jsonMatch = clean.match(/\{[\s\S]*\}/);
-    if (jsonMatch) clean = jsonMatch[0];
-
-    result = tryParse(clean) || tryParse(sanitize(clean));
-
-    // 2단계: 필드별 정규식 추출 (JSON 파싱 실패시)
-    if (!result) {
-      const extract = (key) => {
-        // "key":"value" 패턴 추출
-        const m = fullText.match(new RegExp('"' + key + '"\\s*:\\s*"((?:[^"\\\\]|\\\\.)*)"'));
-        return m ? m[1].replace(/\\n/g, '\n').replace(/\\"/g, '"') : '';
-      };
-      const extractNum = (key) => {
-        const m = fullText.match(new RegExp('"' + key + '"\\s*:\\s*(\\d+)'));
-        return m ? parseInt(m[1]) : 75;
-      };
-      const extractObj = (key) => {
-        const m = fullText.match(new RegExp('"' + key + '"\\s*:\\s*(\\{[^}]+\\})'));
-        if (!m) return null;
-        try { return JSON.parse(m[1]); } catch(e) { return null; }
-      };
-
-      result = {
-        star: extract('star') || '분석 완료',
-        star_detail: extract('star_detail'),
-        palace_desc: extract('palace_desc'),
-        daewoon: extract('daewoon'),
-        daewoon_detail: extract('daewoon_detail'),
-        base_score: extractNum('base_score'),
-        scores: extractObj('scores') || {재물운:75, 직업운:75, 애정운:75, 건강운:75},
-        score_trends: extractObj('score_trends') || {재물운:'안정', 직업운:'안정', 애정운:'안정', 건강운:'안정'},
-        score_sources: extractObj('score_sources') || {재물운:'', 직업운:'', 애정운:'', 건강운:''},
-        ziwei: extract('ziwei'),
-        meihua: extract('meihua'),
-        qimen: extract('qimen'),
-        hybrid_msg: extract('hybrid_msg'),
-        career: extract('career'),
-        wealth: extract('wealth'),
-        love: extract('love'),
-        luck_period: extract('luck_period'),
-        caution: extract('caution'),
-        lucky_direction: extract('lucky_direction'),
-        lucky_color: extract('lucky_color'),
-        lucky_number: extract('lucky_number'),
-        lucky_mindset: extract('lucky_mindset'),
-        life_direction: extract('life_direction'),
-        compass_angle: extractNum('compass_angle') || 45,
-        compass_desc: extract('compass_desc'),
-        summary: extract('summary') || '분석이 완료됐습니다.',
-      };
-
-      // lucky_items 배열 추출
-      const itemsMatch = fullText.match(/"lucky_items"\s*:\s*\[([^\]]*)\]/);
-      if (itemsMatch) {
-        try {
-          result.lucky_items = JSON.parse('[' + itemsMatch[1] + ']');
-        } catch(e) {
-          result.lucky_items = itemsMatch[1].split(',').map(s => s.trim().replace(/"/g, ''));
-        }
-      }
-
-      // wave_data 배열 추출
-      const waveMatch = fullText.match(/"wave_data"\s*:\s*(\[[\s\S]*?\])/);
-      if (waveMatch) {
-        try { result.wave_data = JSON.parse(waveMatch[1]); } catch(e) {}
-      }
-
-      // lucky_days 배열 추출
-      const daysMatch = fullText.match(/"lucky_days"\s*:\s*(\[[\s\S]*?\])/);
-      if (daysMatch) {
-        try { result.lucky_days = JSON.parse(daysMatch[1]); } catch(e) {}
-      }
-    }
-
-    showLoading(false);
-    try { localStorage.setItem(cacheKey, JSON.stringify(result)); } catch(e) {}
-    try { sessionStorage.setItem(cacheKey, JSON.stringify(result)); } catch(e) {}
-    renderSajuResult(name, year, month, day, timeStr, age, result);
-
-  } catch (e) {
-    clearInterval(msgTimer);
-    showLoading(false);
-    const msg = e.name === 'AbortError'
-      ? '분석 시간이 초과됐습니다.\n\nSonnet AI가 바쁜 시간대입니다.\n잠시 후 다시 시도해 주세요.\n\n(보통 오전 시간대가 빠릅니다)'
-      : '분석 중 오류가 발생했습니다.\n\n' + e.message + '\n\n잠시 후 다시 시도해 주세요.';
-    alert(msg);
-  }
-}
-
-function renderSajuResult(name, year, month, day, timeStr, age, r) {
-  document.getElementById('saju-page-title').textContent = name + '님의 천기 분석';
-  document.getElementById('saju-date-tag').textContent = new Date().toLocaleDateString('ko-KR');
-
-  document.getElementById('saju-profile-name').textContent =
-    name + ' · ' + (r.star || '') + ' 명주';
-  document.getElementById('saju-profile-info').innerHTML =
-    year + '년 ' + month + '월 ' + day + '일 · ' + timeStr +
-    ' · ' + age + '세 · <em style="color:var(--em);">' + (r.summary || '') + '</em>';
-
-  const scoreColors = { '재물운': '#FFD700', '직업운': '#50C878', '애정운': '#cc88bb', '건강운': '#8aacf0' };
-  const trendIcon = { '상승중': '↑', '하락중': '↓', '안정': '→' };
-  const trendColor = { '상승중': '#50C878', '하락중': '#e74c3c', '안정': '#9999cc' };
-
-  const scoreRow = document.getElementById('saju-score-row');
-  scoreRow.innerHTML = '';
-
-  if (r.scores) {
-    Object.entries(r.scores).forEach(function(entry) {
-      var k = entry[0];
-      var v = entry[1];
-      var trend = (r.score_trends && r.score_trends[k]) ? r.score_trends[k] : '안정';
-      var src = (r.score_sources && r.score_sources[k]) ? r.score_sources[k] : '';
-      var color = scoreColors[k] || '#fff';
-      var tColor = trendColor[trend] || '#9999cc';
-      var tIcon = trendIcon[trend] || '→';
-      var srcHtml = src ? ('<div style="font-size:9px;color:rgba(153,153,204,0.7);margin-top:3px;line-height:1.3;">' + src + '</div>') : '';
-
-      scoreRow.innerHTML +=
-        '<div class="saju-score-card">' +
-          '<div class="saju-score-label">' + k + '</div>' +
-          '<div class="saju-score-val" style="color:' + color + '">' + Math.round(v) + '</div>' +
-          '<div class="saju-score-trend" style="color:' + tColor + '">' + tIcon + ' ' + trend + '</div>' +
-          srcHtml +
-        '</div>';
-    });
-  }
-
-  // ✅ 길방 카드 - dirCard 정상 처리
-  const body = document.getElementById('saju-result-body');
-  body.innerHTML = '';
-
-  if (r.lucky_direction) {
-    const dirCard = document.createElement('div');
-    dirCard.style.cssText = 'background:rgba(96,130,220,0.08);border:1px solid rgba(96,130,220,0.2);border-radius:10px;padding:.7rem 1rem;display:flex;align-items:center;gap:12px;margin-bottom:.85rem;';
-    dirCard.innerHTML =
-      '<div style="width:40px;height:40px;border-radius:50%;background:rgba(96,130,220,0.15);border:1px solid rgba(96,130,220,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">' +
-        '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8aacf0" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24,7.76 11.29,11.29 7.76,16.24 12.71,12.71"/></svg>' +
-      '</div>' +
-      '<div>' +
-        '<div style="font-size:11px;color:#8aacf0;font-weight:700;margin-bottom:2px;">기문둔갑 오늘의 길방</div>' +
-        '<div style="font-size:15px;font-weight:700;color:#fff;">' + r.lucky_direction + '</div>' +
-      '</div>';
-    body.appendChild(dirCard);
-  }
-
-  const sections = [
-    { icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>', color: '#FFD700',
-      title: '자미두수 — 명궁 주성: ' + (r.star || '') + ' · ' + (r.daewoon || ''),
-      body: (r.star_detail || '') + (r.palace_desc ? '<br>' + r.palace_desc : '') },
-    { icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>', color: '#FFD700',
-      title: '자미두수 — 대운 심층 분석: ' + (r.daewoon || ''),
-      body: (r.daewoon_detail || '') + (r.ziwei ? '<br>' + r.ziwei : '') },
-    { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#50C878',
-      title: '매화역수 — 오늘의 파도 · 운기 방향',
-      body: r.meihua || '' },
-    { icon: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>', color: '#8aacf0',
-      title: '기문둔갑 — 포국 분석 · 오늘의 전략',
-      body: r.qimen || '' },
-    { icon: '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>', color: '#FFD700',
-      title: '3대 역학 통합 메시지',
-      body: r.hybrid_msg || '' },
-    { icon: '<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', color: '#FFD700',
-      title: '재물·금전운',
-      body: r.wealth || '' },
-    { icon: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/>', color: '#50C878',
-      title: '직업·커리어운',
-      body: r.career || '' },
-    { icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>', color: '#cc88bb',
-      title: '애정·인간관계',
-      body: r.love || '' },
-    { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#8aacf0',
-      title: '대운 흐름 · 향후 3년',
-      body: r.luck_period || '' },
-    { icon: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', color: '#EF9F27',
-      title: '주의사항 · 개운법',
-      body: r.caution || '' },
-  ];
-
-  sections.forEach(function(s) {
-    if (!s.body) return;
-    const div = document.createElement('div');
-    div.className = 'saju-section';
-    div.innerHTML =
-      '<div class="saju-section-title" style="color:' + s.color + '">' +
-        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="' + s.color + '" stroke-width="2">' + s.icon + '</svg>' +
-        s.title +
-      '</div>' +
-      '<div class="saju-section-body saju-streaming">' + s.body + '</div>';
-    body.appendChild(div);
-  });
-
-  if (r.lucky_items && r.lucky_items.length) {
-    const luckDiv = document.createElement('div');
-    luckDiv.className = 'saju-section';
-
-    var extraCards = '';
-    if (r.lucky_color) extraCards +=
-      '<div style="padding:.6rem .85rem;background:rgba(255,215,0,0.07);border:1px solid rgba(255,215,0,0.2);border-radius:8px;margin-bottom:.5rem;">' +
-      '<div style="font-size:10px;color:var(--t2);margin-bottom:3px;">🎨 행운의 색깔</div>' +
-      '<div style="font-size:12px;color:var(--gold);font-weight:600;">' + r.lucky_color + '</div></div>';
-    if (r.lucky_number) extraCards +=
-      '<div style="padding:.6rem .85rem;background:rgba(80,200,120,0.07);border:1px solid rgba(80,200,120,0.2);border-radius:8px;margin-bottom:.5rem;">' +
-      '<div style="font-size:10px;color:var(--t2);margin-bottom:3px;">🔢 행운의 숫자</div>' +
-      '<div style="font-size:12px;color:var(--em);font-weight:600;">' + r.lucky_number + '</div></div>';
-    if (r.lucky_mindset) extraCards +=
-      '<div style="padding:.6rem .85rem;background:rgba(96,130,220,0.07);border:1px solid rgba(96,130,220,0.2);border-radius:8px;margin-bottom:.5rem;">' +
-      '<div style="font-size:10px;color:var(--t2);margin-bottom:3px;">🧘 마음가짐</div>' +
-      '<div style="font-size:12px;color:#8aacf0;font-weight:600;line-height:1.6;">' + r.lucky_mindset + '</div></div>';
-    if (r.life_direction) extraCards +=
-      '<div style="padding:.6rem .85rem;background:rgba(204,136,187,0.07);border:1px solid rgba(204,136,187,0.2);border-radius:8px;margin-bottom:.5rem;">' +
-      '<div style="font-size:10px;color:var(--t2);margin-bottom:3px;">🧭 인생 방향</div>' +
-      '<div style="font-size:12px;color:#cc88bb;font-weight:600;line-height:1.6;">' + r.life_direction + '</div></div>';
-
-    var itemsHtml = r.lucky_items.map(function(i) {
-      return '<span class="saju-tag" style="background:rgba(255,215,0,0.12);color:var(--gold);border:1px solid rgba(255,215,0,0.25);">✦ ' + i + '</span>';
-    }).join('');
-
-    luckDiv.innerHTML =
-      '<div class="saju-section-title" style="color:var(--gold)">' +
-        '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>' +
-        '오늘의 행운 가이드' +
-      '</div>' +
-      extraCards +
-      '<div style="font-size:10px;color:var(--t2);margin-bottom:.4rem;">오늘의 길한 아이템</div>' +
-      '<div style="display:flex;flex-wrap:wrap;gap:6px;">' + itemsHtml + '</div>';
-    body.appendChild(luckDiv);
-  }
-
-  // ✅ 길일 캘린더 렌더링
-  if (r.lucky_days && r.lucky_days.length) {
-    var calSec = document.getElementById('lucky-calendar-section');
-    var calBody = document.getElementById('lucky-calendar-body');
-    if (calSec && calBody) {
-      calSec.style.display = 'block';
-      var typeColor = { '대길': '#FFD700', '길': '#50C878', '흉': '#e74c3c', '주의': '#FFA500' };
-      var typeBg = { '대길': 'rgba(255,215,0,0.15)', '길': 'rgba(80,200,120,0.12)', '흉': 'rgba(231,76,60,0.12)', '주의': 'rgba(255,165,0,0.12)' };
-      calBody.innerHTML =
-        '<div style="display:flex;flex-direction:column;gap:8px;margin-top:.5rem;">' +
-        r.lucky_days.map(function(d) {
-          var col = typeColor[d.type] || '#fff';
-          var bg = typeBg[d.type] || 'rgba(255,255,255,0.05)';
-          var dateObj = new Date(d.date);
-          var dateStr = (dateObj.getMonth()+1) + '/' + dateObj.getDate() + ' (' + ['일','월','화','수','목','금','토'][dateObj.getDay()] + ')';
-          return '<div style="display:flex;align-items:center;gap:10px;padding:.6rem .85rem;background:' + bg + ';border-radius:8px;border:1px solid ' + col + '33;">' +
-            '<div style="font-size:13px;font-weight:700;color:' + col + ';min-width:32px;">' + dateStr + '</div>' +
-            '<div style="width:1px;height:20px;background:' + col + '44;flex-shrink:0;"></div>' +
-            '<span style="font-size:11px;font-weight:700;color:' + col + ';padding:2px 8px;border-radius:10px;background:' + bg + ';border:1px solid ' + col + '55;flex-shrink:0;">' + d.type + '</span>' +
-            '<div style="font-size:12px;color:var(--t2);">' + d.reason + '</div>' +
-            '</div>';
-        }).join('') +
-        '</div>' +
-        '<div style="font-size:10px;color:var(--t2);margin-top:.5rem;text-align:right;">* 자미두수 길흉 기준 · 개인 명반 반영</div>';
-    }
-  }
-
-  // ✅ 분석 결과 전역 저장 (리포트에서 재사용)
-  window.lastSajuResult = r;
-  window.lastSajuInput = { name: name, year: year, month: month, day: day, timeStr: timeStr, age: age };
-
-  // ✅ 생애길흉파동 개인 데이터로 업데이트
-  if (r.wave_data && r.wave_data.length) {
-    WD.length = 0;
-    r.wave_data.forEach(function(d) { WD.push(d); });
-    // 메인 점수 뱃지도 업데이트
-    var wEl = document.querySelector('.sb.e span, .sb span.e');
-    var cEl = document.querySelector('.sb.g span, .sb span.g');
-    var lEl = document.querySelector('.sb.p span, .sb span.p');
-    var midIdx = Math.floor(WD.length / 2);
-    if (WD[midIdx]) {
-      var sbEls = document.querySelectorAll('.sbdg .sb span');
-      if (sbEls[0]) sbEls[0].textContent = WD[midIdx].w + '점';
-      if (sbEls[1]) sbEls[1].textContent = WD[midIdx].c + '점';
-      if (sbEls[2]) sbEls[2].textContent = WD[midIdx].l + '점';
-    }
-  }
-
-  // ✅ 나침반 개인 방향으로 업데이트
-  if (r.compass_angle !== undefined) {
-    window.sajuCompassAngle = r.compass_angle;
-    window.sajuCompassDesc = r.compass_desc || '';
-    // 나침반 텍스트 업데이트
-    var cdirEl = document.getElementById('compass-dir-text');
-    if (cdirEl) cdirEl.textContent = r.lucky_direction || '';
-    var cdescEl = document.getElementById('compass-desc-text');
-    if (cdescEl && r.compass_desc) cdescEl.innerHTML = r.compass_desc + '<br><span style="font-size:10px;color:var(--em);">기문둔갑 실시간 길방</span>';
-  }
-
-  showPg('saju');
-  window.scrollTo(0, 0);
-}
-</script>
-
-<script>
-const KAKAO_JS_KEY = '';  // 카카오 미사용
-let currentUser = null;
-
-/* ── 구글 로그인 ── */
-async function doGoogleLogin() {
-  try {
-    if (!window._firebaseAuth) {
-      alert('Firebase가 초기화되지 않았습니다.\nFirebase 설정을 완료해주세요.');
-      return;
-    }
-    const { signInWithPopup } = await import('https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js');
-    const result = await signInWithPopup(window._firebaseAuth, window._googleProvider);
-    const user = result.user;
-    loginSuccess({
-      name: user.displayName || user.email.split('@')[0],
-      email: user.email,
-      avatar: user.photoURL,
-      provider: 'google'
-    });
-  } catch(e) {
-    if (e.code !== 'auth/popup-closed-by-user') {
-      alert('구글 로그인 오류: ' + e.message);
-    }
-  }
-}
-
-/* ── 로그인 상태 localStorage 저장/복원 ── */
-function saveUserToStorage(user) {
-  try { localStorage.setItem('cw_user', JSON.stringify(user)); } catch(e) {}
-}
-function loadUserFromStorage() {
-  try {
-    var saved = localStorage.getItem('cw_user');
-    if (saved) return JSON.parse(saved);
-  } catch(e) {}
-  return null;
-}
-function clearUserFromStorage() {
-  try { localStorage.removeItem('cw_user'); } catch(e) {}
-}
-
-/* ── 사주 결과 localStorage 저장/복원 ── */
-function saveSajuToStorage(key, result) {
-  try { localStorage.setItem('cw_saju_' + key, JSON.stringify(result)); } catch(e) {}
-}
-function loadSajuFromStorage(key) {
-  try {
-    var saved = localStorage.getItem('cw_saju_' + key);
-    if (saved) return JSON.parse(saved);
-  } catch(e) {}
-  return null;
-}
-
-function openAuth(tab) {
-  document.getElementById('authOverlay').classList.add('show');
-  switchAuthTab(tab || 'login');
-  document.body.style.overflow = 'hidden';
-}
-function closeAuth() {
-  document.getElementById('authOverlay').classList.remove('show');
-  document.body.style.overflow = '';
-}
-function overlayClose(e) { if (e.target === document.getElementById('authOverlay')) closeAuth(); }
-function switchAuthTab(t) {
-  var loginTab = document.getElementById('atab-login');
-  var joinTab = document.getElementById('atab-join');
-  if (loginTab) {
-    loginTab.style.background = t === 'login' ? 'var(--em)' : 'none';
-    loginTab.style.color = t === 'login' ? '#fff' : 'var(--t2)';
-    loginTab.style.fontWeight = t === 'login' ? '700' : '600';
-  }
-  if (joinTab) {
-    joinTab.style.background = t === 'join' ? 'var(--em)' : 'none';
-    joinTab.style.color = t === 'join' ? '#fff' : 'var(--t2)';
-    joinTab.style.fontWeight = t === 'join' ? '700' : '600';
-  }
-  var loginBody = document.getElementById('abody-login');
-  var joinBody = document.getElementById('abody-join');
-  if (loginBody) loginBody.style.display = t === 'login' ? 'block' : 'none';
-  if (joinBody) joinBody.style.display = t === 'join' ? 'block' : 'none';
-}
-function doEmailLogin() {
-  const email = document.getElementById('li-email').value.trim();
-  const pw = document.getElementById('li-pw').value;
-  if (!email || !email.includes('@')) { alert('올바른 이메일을 입력해 주세요.'); return; }
-  if (!pw) { alert('비밀번호를 입력해 주세요.'); return; }
-  // 로컬 이메일 인증 (Firebase 미사용 시 폴백)
-  const storedPw = localStorage.getItem('cw_pw_' + email);
-  if (storedPw && storedPw !== pw) { alert('비밀번호가 일치하지 않습니다.'); return; }
-  if (!storedPw) localStorage.setItem('cw_pw_' + email, pw);
-  loginSuccess({ name: email.split('@')[0], email: email, avatar: null, provider: 'email' });
-}
-function doEmailJoin() {
-  const name = document.getElementById('ji-name').value.trim();
-  const email = document.getElementById('ji-email').value.trim();
-  const pw = document.getElementById('ji-pw').value;
-  if (!name) { alert('이름을 입력해 주세요.'); return; }
-  if (!email || !email.includes('@')) { alert('올바른 이메일을 입력해 주세요.'); return; }
-  if (!pw || pw.length < 8) { alert('비밀번호를 8자 이상 입력해 주세요.'); return; }
-  localStorage.setItem('cw_pw_' + email, pw);
-  loginSuccess({ name: name, email: email, avatar: null, provider: 'email' });
-}
-function alertOauth(p) { alert(p + ' 로그인은 해당 플랫폼의\n파트너/개발자 계약 후 연동 가능합니다.\n\n현재는 카카오 로그인과 이메일 로그인을\n사용해 주세요.'); }
-
-function loginSuccess(user) {
-  currentUser = user;
-  saveUserToStorage(user); // ✅ localStorage 저장
-  closeAuth();
-  renderUserNav(user);
-}
-
-function renderUserNav(user) {
-  const area = document.getElementById('nav-auth-area');
-  if (!area) return;
-  const initials = (user.name || user.email || '?').slice(0, 1).toUpperCase();
-  const avatarHtml = user.avatar
-    ? '<img src="' + user.avatar + '" style="width:22px;height:22px;border-radius:50%;object-fit:cover;">'
-    : '<div class="nav-user-avatar">' + initials + '</div>';
-  area.innerHTML =
-    '<div class="nav-user-pill">' +
-      avatarHtml +
-      '<span class="nav-user-name">' + (user.name || user.email) + '</span>' +
-      '<button class="nav-logout" onclick="doLogout()" style="font-size:11px;color:var(--t2);cursor:pointer;background:none;border:none;font-family:inherit;padding:0;margin-left:2px;">로그아웃</button>' +
-    '</div>';
-  // 관리자면 관리 버튼 + 캐시 초기화 버튼 표시
-  var adminBtn = document.getElementById('bn-admin');
-  var cacheBtn = document.getElementById('admin-cache-btn');
-  if (user.email) {
-    var isAdmin = user.email === 'stop.ok.go@gmail.com' ||
-                  user.email === 'stop.ok.go@gmail.com'.toLowerCase() ||
-                  user.email.toLowerCase() === 'stop.ok.go@gmail.com' ||
-                  user.email.startsWith('admin') ||
-                  localStorage.getItem('cw_admin_' + user.email) === '1';
-    console.log('[천기웨이브] 로그인:', user.email, '| 관리자:', isAdmin);
-    if (adminBtn) adminBtn.style.display = isAdmin ? 'flex' : 'none';
-    if (cacheBtn) cacheBtn.style.display = isAdmin ? 'inline-flex' : 'none';
-  }
-  // ✅ 로그인 시 프로필 바 표시
-  var profileBar = document.getElementById('profile-bar');
-  if (profileBar) profileBar.style.display = 'block';
-}
-
-function doLogout() {
-  if (currentUser && currentUser.provider === 'google' && window._firebaseAuth) {
-    try { window._firebaseSignOut(window._firebaseAuth); } catch(e) {}
-  }
-  currentUser = null;
-  clearUserFromStorage();
-  // 관리자 전용 버튼 숨기기
-  var adminBtn = document.getElementById('bn-admin');
-  var cacheBtn = document.getElementById('admin-cache-btn');
-  if (adminBtn) adminBtn.style.display = 'none';
-  if (cacheBtn) cacheBtn.style.display = 'none';
-  // ✅ 저장된 프로필 섹션 숨기기
-  var profileBar = document.getElementById('profile-bar');
-  if (profileBar) profileBar.style.display = 'none';
-  document.getElementById('nav-auth-area').innerHTML =
-    '<button class="nav-login-btn" onclick="openAuth(\'login\')">' +
-      '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>로그인' +
-    '</button>';
-}
-document.addEventListener('keydown', function(e) { if (e.key === 'Escape') closeAuth(); });
-
-// ✅ 페이지 로드 시 로그인 상태 복원
-(function restoreSession() {
-  var profileBar = document.getElementById('profile-bar');
-  if (profileBar) profileBar.style.display = 'none';
-  var saved = loadUserFromStorage();
-  if (saved) {
-    currentUser = saved;
-    renderUserNav(saved);
-    if (profileBar) profileBar.style.display = 'block';
-  }
-})();
-</script>
-
-<script>
-const EX = [
-  {name:'천명 도사', spec:'자미두수·기문둔갑', rat:'4.9', tags:['#비즈니스','#승진운'], top:false},
-  {name:'연화 선생', spec:'매화역수·심리상담', rat:'4.8', tags:['#연애','#재회부적'], top:false},
-  {name:'자미 광인', spec:'정통 자미두수', rat:'5.0', tags:['#평생총운','#인생지침서'], top:true},
-];
-
-const CH = [
-  {id:'urban',name:'UrbanPulseMix',handle:'@urbanpulsemix',url:'https://youtube.com/@urbanpulsemix?si=QdYFCZR-weLTTQe0',mood:'팝·팝트랩·힙합팝 · 트렌디 여성 보컬',tag:'오늘 추천',tBg:'rgba(255,215,0,0.18)',tC:'#FFD700',iBg:'rgba(255,215,0,0.15)',iC:'#FFD700',btn:'#e74c3c',sb:'#FFD700',icon:'<polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>',coming:false,why:{bg:'rgba(255,215,0,0.05)',bd:'rgba(255,215,0,0.2)',tc:'#FFD700',title:'UrbanPulseMix - 오전·활동 처방',body:'직업운 <em>88점</em>, 이동운 <em>91점</em> - 오늘은 활동과 추진의 날. 도시적 팝·힙합팝이 <b>관록궁 삼합 기운</b>을 극대화합니다.'}},
-  {id:'yeoni',name:'YeoniWave',handle:'@YeoniWave',url:'https://youtube.com/@yeoniwave?si=5sJ_CeJywBoLV193',mood:'재즈·올드팝 · 허스키 여성 보컬 · 따뜻한 감정선',tag:'저녁 처방',tBg:'rgba(80,200,120,0.15)',tC:'#50C878',iBg:'rgba(80,200,120,0.15)',iC:'#50C878',btn:'#1e6e40',sb:'#50C878',icon:'<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>',coming:false,why:{bg:'rgba(80,200,120,0.05)',bd:'rgba(80,200,120,0.2)',tc:'#50C878',title:'YeoniWave - 저녁 감정 회복 처방',body:'지친 마음에 부드럽게 닿는 <em>따뜻한 음악의 파도</em>. 재즈와 올드팝 기반 허스키 보컬이 내면 풍요를 자극합니다.'}},
-  {id:'luck1',name:'행운곱하기',handle:'@luckmultipy',url:'https://youtube.com/@luckmultipy?si=9lmI5iyq7YXDBHNO',mood:'미스터리 앰비언트 · 반복 청취형 · 정서적 의식감',tag:'긍정 흐름',tBg:'rgba(255,165,0,0.15)',tC:'#FFA500',iBg:'rgba(255,165,0,0.15)',iC:'#FFA500',btn:'#7a4800',sb:'#FFA500',icon:'<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>',coming:false,why:{bg:'rgba(255,165,0,0.05)',bd:'rgba(255,165,0,0.2)',tc:'#FFA500',title:'행운곱하기 - 마인드셋 정렬',body:'좋은 기운을 <em>믿고 머무르게 하는</em> 몰입형 사운드. 오후 마인드셋을 <b>풍요로운 방향</b>으로 정렬할 때 활용하십시오.'}},
-  {id:'luck2',name:'행운증폭',handle:'@luckamplify',url:'https://youtube.com/@luckamplify?si=N9zLq4MaAtxGSipB',mood:'상징적 키워드 반복 · 밝고 몰입감 있는 분위기',tag:'기분 상승',tBg:'rgba(255,200,0,0.12)',tC:'#ccaa00',iBg:'rgba(255,200,0,0.12)',iC:'#ccaa00',btn:'#5a4a00',sb:'#ccaa00',icon:'<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>',coming:true,why:{bg:'rgba(255,200,0,0.04)',bd:'rgba(255,200,0,0.18)',tc:'#ccaa00',title:'행운증폭 - 셀프 암시·기분 환기',body:'상징적 키워드의 반복 노출로 <em>긍정 인식을 강화</em>합니다. 채널 준비 중 - 곧 콘텐츠가 업로드됩니다.'}},
-  {id:'luck3',name:'행운배수',handle:'@luckamplify',url:'https://youtube.com/@luckamplify?si=3Bz7_XjNs55vpKpt',mood:'강한 확장감 · 동기 부여 · 긍정 루프 강화',tag:'동기 부여',tBg:'rgba(255,100,50,0.13)',tC:'#e07050',iBg:'rgba(255,100,50,0.13)',iC:'#e07050',btn:'#6a2510',sb:'#e07050',icon:'<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>',coming:true,why:{bg:'rgba(255,100,50,0.04)',bd:'rgba(255,100,50,0.18)',tc:'#e07050',title:'행운배수 - 확장·가속 에너지',body:'좋은 흐름을 <em>더 크게, 더 멀리</em> 이어가게 하는 채널. 채널 준비 중 - 곧 콘텐츠가 업로드됩니다.'}},
-  {id:'ddak',name:'딱적당',handle:'@ddakjeokdang',url:'https://youtube.com/@ddakjeokdang?si=rwTGbsOpjuytSOo6',mood:'MBTI · 사람 심리 · 쉽고 재미있는 설명',tag:'인간관계',tBg:'rgba(160,110,200,0.18)',tC:'#c088e0',iBg:'rgba(160,110,200,0.15)',iC:'#c088e0',btn:'#5a3080',sb:'#c088e0',icon:'<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>',coming:false,why:{bg:'rgba(160,110,200,0.05)',bd:'rgba(160,110,200,0.2)',tc:'#c088e0',title:'딱적당 - 인간관계·심리 처방',body:'오늘 만난 사람의 마음을 <em>쉽게 읽고 이해</em>하는 시간. MBTI와 사람 심리를 재미있게 풀어주는 콘텐츠로 <b>인간관계 피로</b>를 녹입니다.'}},
-  {id:'deep',name:'Deep Rest Mode',handle:'@cloud9modeon',url:'https://youtube.com/@cloud9modeon?si=E1VgoSb-A9gVUJxh',mood:'앰비언트 · 블랙스크린 · 저자극 · 느린 호흡 음장',tag:'취침 전',tBg:'rgba(96,130,220,0.15)',tC:'#8aacf0',iBg:'rgba(96,130,220,0.15)',iC:'#8aacf0',btn:'#253070',sb:'#6082dc',icon:'<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>',coming:false,why:{bg:'rgba(96,130,220,0.05)',bd:'rgba(96,130,220,0.2)',tc:'#8aacf0',title:'Deep Rest Mode - 수면·뇌 완전 휴식',body:'블랙 스크린 기반 앰비언트로 <em>완전히 내려놓는</em> 밤의 공간. <b>뇌를 알파-세타-델타</b>로 자연 전환합니다.'}},
-];
-
-const FEATS = [
-  {name:'이마 (관록궁)',score:88,color:'#50C878',desc:'넓고 둥근 형태. 직업운 강함.',tag:'명반 일치',tBg:'rgba(80,200,120,0.18)',tC:'#3db866'},
-  {name:'눈빛 (명궁)',score:92,color:'#50C878',desc:'예리하고 깊은 눈빛. 천기성 직관력.',tag:'강력 일치',tBg:'rgba(80,200,120,0.18)',tC:'#3db866'},
-  {name:'코 (재백궁)',score:79,color:'#FFD700',desc:'우뚝하고 안정적. 태음 화권 일치.',tag:'일치',tBg:'rgba(255,215,0,0.15)',tC:'#B8860B'},
-  {name:'인중 (천이궁)',score:85,color:'#50C878',desc:'인중이 길고 선명. 이동운 91점 상응.',tag:'명반 일치',tBg:'rgba(80,200,120,0.18)',tC:'#3db866'},
-  {name:'입술 (부처궁)',score:62,color:'#cc88bb',desc:'부드러운 곡선. 애정운 주의.',tag:'보통',tBg:'rgba(204,136,187,0.15)',tC:'#8a4870'},
-  {name:'턱선 (전택궁)',score:70,color:'#EF9F27',desc:'안정적 턱선. 40대 이후 부동산.',tag:'일치',tBg:'rgba(255,215,0,0.15)',tC:'#B8860B'},
-];
-const PALACES = [
-  {name:'명궁',pct:92,color:'#50C878',c:'강력 확인'},{name:'관록궁',pct:88,color:'#50C878',c:'확인'},
-  {name:'천이궁',pct:85,color:'#50C878',c:'확인'},{name:'재백궁',pct:79,color:'#FFD700',c:'확인'},
-  {name:'전택궁',pct:70,color:'#EF9F27',c:'일치'},{name:'부처궁',pct:62,color:'#cc88bb',c:'보통'},
-];
-const STEPS = [
-  {label:'얼굴 감지 및 정렬 확인',dur:600},{label:'3D 랜드마크 68점 추출',dur:900},
-  {label:'골격 구조 분석',dur:700},{label:'12궁 명반 좌표 동기화',dur:1000},
-  {label:'관상·사주 통합 해석 생성',dur:800},
-];
-const WD = [{age:'20대',w:72,c:80,l:65},{age:'30대',w:65,c:85,l:70},{age:'45세',w:88,c:92,l:75,ev:'황금기'},{age:'50대',w:78,c:80,l:68},{age:'60대',w:55,c:60,l:74},{age:'70대',w:70,c:75,l:80}];
-
-let selCh = 'urban', sMode = 'face', gOn = false, lOn = false, sState = 'idle', aFr = null, sLY = 0, sLD = 1, chBuilt = false;
-let camStream = null, camVideoEl = null, camAnimFr = null;
-let mirrorOverride = null; // null=자동, true=강제미러, false=강제노미러
-
-/* ── 미러 수동 전환 ── */
-function toggleMirror() {
-  var isMob = /Mobi|Android|iPhone/i.test(navigator.userAgent);
-  var defaultMirror = true; // 기본값: 미러ON
-  if (mirrorOverride === null) mirrorOverride = !defaultMirror;
-  else mirrorOverride = !mirrorOverride;
-
-  var btn = document.getElementById('mirror-btn');
-  if (btn) {
-    btn.style.borderColor = mirrorOverride ? 'var(--em)' : 'var(--bd)';
-    btn.style.color = mirrorOverride ? 'var(--em)' : 'var(--t)';
-    btn.textContent = mirrorOverride ? '🪞 미러 ON' : '🪞 미러 OFF';
-  }
-  showShareToast(mirrorOverride ? '🪞 미러 모드 켜짐' : '🪞 미러 모드 꺼짐');
-}
-
-function isMirrorOn() {
-  if (mirrorOverride !== null) return mirrorOverride;
-  var isMob = /Mobi|Android|iPhone/i.test(navigator.userAgent);
-  // 관상(전면카메라) → 미러 ON (셀카처럼)
-  // 손금(모바일 후면) → 미러 OFF / PC → 미러 ON
-  if (sMode === 'face') return true;
-  if (isMob) return false; // 모바일 손금: 후면카메라라 미러 불필요
-  return true; // PC 손금: 전면카메라라 미러 ON
-}
-
-// 스캔 결과 저장 (관상/왼손/오른손 독립)
-var scanResults = { face: null, palm_left: null, palm_right: null };
-var capturedImages = { face: null, palm_left: null, palm_right: null };
-
-// 자동 촬영 관련
-var autoCapTimer = null, alignScore = 0;
-
-// 손금 기본 구조 (AI 분석 전 placeholder)
-var PALM_LINES_LEFT = [
-  {l:'감정선', desc:'분석 중...', score:0},
-  {l:'두뇌선', desc:'분석 중...', score:0},
-  {l:'생명선', desc:'분석 중...', score:0},
-  {l:'운명선', desc:'분석 중...', score:0}
-];
-var PALM_LINES_RIGHT = [
-  {l:'감정선', desc:'분석 중...', score:0},
-  {l:'두뇌선', desc:'분석 중...', score:0},
-  {l:'생명선', desc:'분석 중...', score:0},
-  {l:'운명선', desc:'분석 중...', score:0}
-];
-
-// ✅ AI 손금 분석 함수
-async function analyzePalmWithAI(isLeft, capturedImageData) {
-  var saju = window.lastSajuResult;
-  var sajuInp = window.lastSajuInput;
-  var side = isLeft ? '왼손(선천운)' : '오른손(후천운)';
-
-  var prompt =
-    '당신은 30년 경력 손금 전문가이자 자미두수·매화역수·기문둔갑 명리학 대가입니다.\n' +
-    '아래 이미지는 ' + side + ' 손바닥 사진입니다.\n\n' +
-    (sajuInp ? '사주 정보: ' + sajuInp.name + ' · ' + sajuInp.year + '년생 · ' + (saju&&saju.star||'') + ' 명주 · ' + (saju&&saju.daewoon||'') + '\n\n' : '') +
-    '손금 4대 선을 분석하고 사주 명반과 교차 분석하여 JSON으로만 응답하세요:\n' +
-    '{\n' +
-    '"heart_line": {"score":82, "grade":"보통", "desc":"감정선 상세 분석 3~4문장. 애정 패턴, 대인관계, 사주 부처궁과 연결 포함."},\n' +
-    '"head_line": {"score":78, "grade":"보통", "desc":"두뇌선 상세 분석 3~4문장. 사고방식, 직업적성, 사주 관록궁과 연결 포함."},\n' +
-    '"life_line": {"score":88, "grade":"강함", "desc":"생명선 상세 분석 3~4문장. 체력·건강·생명력, 사주 질액궁과 연결 포함."},\n' +
-    '"fate_line": {"score":74, "grade":"약함", "desc":"운명선 상세 분석 3~4문장. 인생 방향, 성공 시기, 사주 대운과 연결 포함."},\n' +
-    '"overall": "4선 종합 해석 4~5문장. ' + side + ' 특성, 3대 역학 교차 분석, 앞으로 3년 운기 포함.",\n' +
-    '"lucky_finger": "가장 강한 손가락과 그 의미",\n' +
-    '"warning": "가장 주의해야 할 손금 특징과 대처법"\n' +
-    '}';
-
-  try {
-    var messages = [{
-      role: 'user',
-      content: [
-        { type: 'image', source: { type: 'base64', media_type: 'image/jpeg',
-            data: capturedImageData.replace(/^data:image\/\w+;base64,/, '') } },
-        { type: 'text', text: prompt }
-      ]
-    }];
-
-    var response = await fetch('/api/saju', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        model: 'claude-sonnet-4-6',
-        max_tokens: 2000,
-        messages: messages
-      })
-    });
-
-    if (!response.ok) throw new Error('API ' + response.status);
-
-    // 스트리밍으로 수집
-    var reader = response.body.getReader();
-    var decoder = new TextDecoder();
-    var fullText = '';
-    var buf = '';
-    while (true) {
-      var chunk = await reader.read();
-      if (chunk.done) break;
-      buf += decoder.decode(chunk.value, { stream: true });
-      var ls = buf.split('\n'); buf = ls.pop() || '';
-      for (var li = 0; li < ls.length; li++) {
-        var ln = ls[li].trim();
-        if (!ln.startsWith('data: ')) continue;
-        var dt = ln.slice(6).trim();
-        if (dt === '[DONE]') continue;
-        try {
-          var ev = JSON.parse(dt);
-          if (ev.type === 'content_block_delta' && ev.delta && ev.delta.text)
-            fullText += ev.delta.text;
-        } catch(e) {}
-      }
-    }
-
-    // JSON 파싱
-    var clean = fullText.replace(/```json\s*/gi,'').replace(/```\s*/g,'').trim();
-    var jm = clean.match(/\{[\s\S]*\}/);
-    if (jm) clean = jm[0];
-    var res = JSON.parse(clean);
-
-    // PALM_LINES 업데이트
-    var palmLines = [
-      {l:'감정선', desc: res.heart_line.desc, score: res.heart_line.score, tag: res.heart_line.grade},
-      {l:'두뇌선', desc: res.head_line.desc,  score: res.head_line.score,  tag: res.head_line.grade},
-      {l:'생명선', desc: res.life_line.desc,  score: res.life_line.score,  tag: res.life_line.grade},
-      {l:'운명선', desc: res.fate_line.desc,  score: res.fate_line.score,  tag: res.fate_line.grade},
-    ];
-    if (isLeft) PALM_LINES_LEFT = palmLines;
-    else PALM_LINES_RIGHT = palmLines;
-
-    // ✅ scanResults에도 저장 (리포트에서 활용)
-    var key = isLeft ? 'palm_left' : 'palm_right';
-    scanResults[key] = { palmLines: palmLines, overall: res.overall, warning: res.warning, lucky_finger: res.lucky_finger };
-
-    return scanResults[key];
-  } catch(e) {
-    console.error('손금 AI 분석 실패:', e);
-    return null;
-  }
-}
-
-/* ── 손금선 렌더링 헬퍼 ── */
-function renderPalmLines(fg, linesData) {
-  linesData.forEach(function(line) {
-    var col = line.score >= 85 ? '#50C878' : line.score >= 75 ? '#FFD700' : '#cc88bb';
-    var tag = line.tag || (line.score >= 85 ? '강함' : line.score >= 75 ? '보통' : '약함');
-    var d = document.createElement('div'); d.className = 'feat-card';
-    d.innerHTML =
-      '<div class="feat-head"><div class="feat-name">' + line.l + '</div>' +
-      '<div style="color:' + col + ';font-size:18px;font-weight:700;">' + (line.score||0) + '</div></div>' +
-      '<div class="feat-bar"><div class="feat-fill" style="width:0%;background:' + col + ';" data-w="' + (line.score||0) + '"></div></div>' +
-      '<div class="feat-desc" style="font-size:12px;color:var(--t2);line-height:1.75;margin-top:.35rem;">' + line.desc + '</div>' +
-      '<span class="feat-tag" style="background:' + col + '22;color:' + col + ';margin-top:.3rem;display:inline-block;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;">' + tag + '</span>';
-    fg.appendChild(d);
-  });
-  setTimeout(function(){
-    document.querySelectorAll('.feat-fill').forEach(function(f){
-      f.style.transition = 'width .6s ease';
-      f.style.width = f.getAttribute('data-w') + '%';
-    });
-  }, 100);
-}
-
-/* ── 카메라 시작 ── */
-function startCamera() {
-  var cv = document.getElementById('sc'); if (!cv) return;
-
-  if (!camVideoEl) {
-    camVideoEl = document.createElement('video');
-    camVideoEl.setAttribute('autoplay', '');
-    camVideoEl.setAttribute('playsinline', '');
-    camVideoEl.setAttribute('muted', '');
-    camVideoEl.style.display = 'none';
-    document.body.appendChild(camVideoEl);
-  }
-
-  if (camStream) { drawCamLoop(); return; }
-
-  setFB('idle');
-
-  // 모바일: environment(후면), PC: user(전면)
-  var isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
-  var constraints = {
-    video: {
-      facingMode: sMode === 'face' ? 'user' : (isMobile ? 'environment' : 'user'),
-      width: { ideal: 720 },
-      height: { ideal: 720 }  // ✅ 정사각형 요청 → 모바일 가로 늘어남 방지
-    }
-  };
-
-  navigator.mediaDevices.getUserMedia(constraints)
-    .then(function(stream) {
-      camStream = stream;
-      camVideoEl.srcObject = stream;
-      camVideoEl.play();
-      camVideoEl.onloadedmetadata = function() {
-        drawCamLoop();
-        setTimeout(function(){ setFB('aligning'); setTimeout(function(){ setFB('ready'); startAlignCheck(); }, 1500); }, 600);
-      };
-    })
-    .catch(function(err) {
-      console.warn('카메라 접근 실패:', err);
-      setFB('nocam');
-      drawScanFallback();
-    });
-}
-
-/* ── 얼굴/손 정렬 자동 감지 (타이머 기반) ── */
-function startAlignCheck() {
-  if (autoCapTimer) clearInterval(autoCapTimer);
-  alignScore = 0;
-  var bar = document.getElementById('align-bar');
-  var hint = document.getElementById('align-hint');
-
-  // ✅ 3.2.1 카운트다운 자동촬영
-  var countdown = 3;
-  if (hint) hint.textContent = '';
-  if (bar) bar.style.width = '0%';
-
-  // 좌상단 카운트다운 오버레이 표시
-  var cdEl = document.getElementById('countdown-overlay');
-  if (!cdEl) {
-    cdEl = document.createElement('div');
-    cdEl.id = 'countdown-overlay';
-    cdEl.style.cssText = 'position:absolute;top:16px;left:16px;width:56px;height:56px;border-radius:50%;' +
-      'background:rgba(80,200,120,0.85);display:flex;align-items:center;justify-content:center;' +
-      'font-size:28px;font-weight:900;color:#fff;z-index:20;transition:all .2s;display:none;';
-    var camStage = document.querySelector('.cam-stage');
-    if (camStage) camStage.appendChild(cdEl);
-  }
-  cdEl.style.display = 'flex';
-  cdEl.textContent = countdown;
-
-  autoCapTimer = setInterval(function() {
-    if (sState !== 'idle') {
-      clearInterval(autoCapTimer);
-      cdEl.style.display = 'none';
-      return;
-    }
-
-    alignScore = Math.min(100, alignScore + 100/15);
-    var pct = Math.round(alignScore);
-    if (bar) bar.style.width = pct + '%';
-
-    // 카운트다운 업데이트 (3초 기준)
-    var newCount = Math.max(1, Math.ceil(3 - (pct / 100) * 3));
-    if (newCount !== countdown) {
-      countdown = newCount;
-      cdEl.textContent = countdown;
-      cdEl.style.transform = 'scale(1.3)';
-      setTimeout(function(){ cdEl.style.transform = 'scale(1)'; }, 150);
-    }
-
-    if (alignScore >= 100) {
-      clearInterval(autoCapTimer);
-      cdEl.textContent = '✓';
-      cdEl.style.background = 'rgba(255,215,0,0.9)';
-      cdEl.style.color = '#0f0f3a';
-      if (hint) hint.textContent = '';
-      if (sState === 'idle') {
-        setTimeout(function(){
-          cdEl.style.display = 'none';
-          doCapture();
-        }, 300);
-      }
-    }
-  }, 200);
-}
-
-/* ── 카메라 캔버스 루프 ── */
-function drawCamLoop() {
-  var cv = document.getElementById('sc'); if (!cv || !camVideoEl) return;
-  if (camAnimFr) cancelAnimationFrame(camAnimFr);
-
-  var W = cv.offsetWidth || 640;
-  // ✅ 모바일 비율 고정: 항상 4:3
-  cv.width = W * 2;
-  cv.height = Math.round(W * 2 * 0.75);
-  cv.style.height = Math.round(W * 0.75) + 'px';
-
-  function loop() {
-    var ctx = cv.getContext('2d');
-    var w = cv.width, h = cv.height;
-
-    // ✅ 카메라 비디오 비율 유지하며 중앙 크롭
-    var vw = camVideoEl.videoWidth || w, vh = camVideoEl.videoHeight || h;
-    var scale = Math.max(w / vw, h / vh);
-    var dw = vw * scale, dh = vh * scale;
-    var dx = (w - dw) / 2, dy = (h - dh) / 2;
-
-    ctx.save();
-    // ✅ 미러 상태에 따라 좌우 반전
-    if (isMirrorOn()) {
-      ctx.scale(-1, 1);
-      ctx.drawImage(camVideoEl, -dx-dw, dy, dw, dh);
-    } else {
-      ctx.drawImage(camVideoEl, dx, dy, dw, dh);
-    }
-    ctx.restore();
-
-    if (lOn) { ctx.fillStyle = 'rgba(255,255,200,0.06)'; ctx.fillRect(0, 0, w, h); }
-
-    drawGuideOverlay(ctx, w, h);
-
-    // 스캔라인
-    if (sState === 'scanning') {
-      sLY += 4 * sLD;
-      if (sLY > h || sLY < 0) sLD *= -1;
-      ctx.save();
-      if (sMode === 'face') {
-        ctx.beginPath(); ctx.ellipse(w/2, h/2, w*0.24, h*0.38, 0, 0, Math.PI*2); ctx.clip();
-      } else {
-        var px2=w*0.15,py2=h*0.08,pw2=w*0.7,ph2=h*0.84;
-        ctx.beginPath(); ctx.rect(px2,py2,pw2,ph2); ctx.clip();
-      }
-      ctx.beginPath(); ctx.moveTo(0, sLY); ctx.lineTo(w, sLY);
-      ctx.strokeStyle = 'rgba(80,200,120,0.7)'; ctx.lineWidth = 3; ctx.stroke();
-      var grd = ctx.createLinearGradient(0, sLY-40, 0, sLY+40);
-      grd.addColorStop(0,'rgba(80,200,120,0)'); grd.addColorStop(0.5,'rgba(80,200,120,0.18)'); grd.addColorStop(1,'rgba(80,200,120,0)');
-      ctx.fillStyle = grd; ctx.fillRect(0, sLY-40, w, 80);
-      ctx.restore();
-    }
-
-    camAnimFr = requestAnimationFrame(loop);
-  }
-  loop();
-}
-
-/* ── 손 모양 경로 (깔끔한 손 모양) ── */
-function drawHandPath(ctx, cx, cy, hw, hh) {
-  // ✅ 완전 새로 그린 자연스러운 손 모양
-  // 오른손 기준 (엄지가 왼쪽), flipGuide로 좌우 반전
-  var px = cx, py = cy;
-  var pw = hw * 0.46;   // 손바닥 폭
-  var ph = hh * 0.30;   // 손바닥 높이
-  var palmTop = py - ph * 0.10;
-  var palmBot = py + ph * 1.55;
-  var fw = pw * 0.275;  // 손가락 폭
-
-  // 손가락: x위치, 폭, 길이 (자연스러운 비율)
-  var F = [
-    { x: px - pw*0.50, w: fw*0.88, h: hh*0.355 }, // 검지
-    { x: px - pw*0.16, w: fw*1.02, h: hh*0.420 }, // 중지 (가장 긺)
-    { x: px + pw*0.18, w: fw*0.97, h: hh*0.400 }, // 약지
-    { x: px + pw*0.50, w: fw*0.78, h: hh*0.300 }, // 새끼
-  ];
-
-  ctx.beginPath();
-  // 검지 왼쪽 시작
-  ctx.moveTo(F[0].x - F[0].w/2, palmTop + ph*0.12);
-
-  // 검지
-  ctx.bezierCurveTo(F[0].x - F[0].w/2, palmTop - ph*0.1, F[0].x - F[0].w/2, palmTop - F[0].h + F[0].w*0.5, F[0].x - F[0].w/2, palmTop - F[0].h + F[0].w*0.5);
-  ctx.bezierCurveTo(F[0].x - F[0].w/2, palmTop - F[0].h - F[0].w*0.1, F[0].x + F[0].w/2, palmTop - F[0].h - F[0].w*0.1, F[0].x + F[0].w/2, palmTop - F[0].h + F[0].w*0.5);
-  ctx.lineTo(F[0].x + F[0].w/2, palmTop - ph*0.05);
-
-  // 중지
-  ctx.bezierCurveTo(F[0].x + F[0].w/2 + pw*0.04, palmTop - ph*0.15, F[1].x - F[1].w/2 - pw*0.02, palmTop - ph*0.15, F[1].x - F[1].w/2, palmTop - ph*0.08);
-  ctx.bezierCurveTo(F[1].x - F[1].w/2, palmTop - F[1].h + F[1].w*0.5, F[1].x - F[1].w/2, palmTop - F[1].h - F[1].w*0.1, F[1].x, palmTop - F[1].h - F[1].w*0.15);
-  ctx.bezierCurveTo(F[1].x + F[1].w/2, palmTop - F[1].h - F[1].w*0.1, F[1].x + F[1].w/2, palmTop - F[1].h + F[1].w*0.5, F[1].x + F[1].w/2, palmTop - ph*0.08);
-
-  // 약지
-  ctx.bezierCurveTo(F[1].x + F[1].w/2 + pw*0.02, palmTop - ph*0.15, F[2].x - F[2].w/2 - pw*0.02, palmTop - ph*0.15, F[2].x - F[2].w/2, palmTop - ph*0.06);
-  ctx.bezierCurveTo(F[2].x - F[2].w/2, palmTop - F[2].h + F[2].w*0.5, F[2].x - F[2].w/2, palmTop - F[2].h - F[2].w*0.1, F[2].x, palmTop - F[2].h - F[2].w*0.12);
-  ctx.bezierCurveTo(F[2].x + F[2].w/2, palmTop - F[2].h - F[2].w*0.1, F[2].x + F[2].w/2, palmTop - F[2].h + F[2].w*0.5, F[2].x + F[2].w/2, palmTop - ph*0.06);
-
-  // 새끼
-  ctx.bezierCurveTo(F[2].x + F[2].w/2 + pw*0.03, palmTop - ph*0.12, F[3].x - F[3].w/2 - pw*0.01, palmTop - ph*0.05, F[3].x - F[3].w/2, palmTop + ph*0.05);
-  ctx.bezierCurveTo(F[3].x - F[3].w/2, palmTop - F[3].h + F[3].w*0.5, F[3].x - F[3].w/2, palmTop - F[3].h - F[3].w*0.08, F[3].x, palmTop - F[3].h - F[3].w*0.1);
-  ctx.bezierCurveTo(F[3].x + F[3].w/2, palmTop - F[3].h - F[3].w*0.08, F[3].x + F[3].w/2, palmTop - F[3].h + F[3].w*0.5, F[3].x + F[3].w/2, palmTop + ph*0.05);
-
-  // 새끼 오른쪽 → 손날 → 손목
-  ctx.bezierCurveTo(px + pw*0.98, palmTop + ph*0.25, px + pw*1.08, palmBot - ph*0.6, px + pw*0.88, palmBot - ph*0.1);
-  ctx.bezierCurveTo(px + pw*0.65, palmBot + ph*0.22, px + pw*0.25, palmBot + ph*0.38, px, palmBot + ph*0.42);
-  ctx.bezierCurveTo(px - pw*0.25, palmBot + ph*0.38, px - pw*0.65, palmBot + ph*0.22, px - pw*0.88, palmBot - ph*0.1);
-  // 왼쪽 손날
-  ctx.bezierCurveTo(px - pw*1.08, palmBot - ph*0.6, px - pw*1.05, palmTop + ph*0.55, px - pw*1.02, palmTop + ph*0.22);
-
-  // 엄지 (자연스럽게)
-  ctx.bezierCurveTo(px - pw*1.10, palmTop + ph*0.05, px - pw*1.22, palmTop - ph*0.18, px - pw*1.20, palmTop - ph*0.45);
-  ctx.bezierCurveTo(px - pw*1.18, palmTop - ph*0.72, px - pw*0.95, palmTop - ph*0.78, px - pw*0.82, palmTop - ph*0.62);
-  ctx.bezierCurveTo(px - pw*0.70, palmTop - ph*0.48, px - pw*0.64, palmTop - ph*0.22, px - pw*0.60, palmTop + ph*0.0);
-  ctx.bezierCurveTo(px - pw*0.57, palmTop + ph*0.10, F[0].x - F[0].w/2 - pw*0.04, palmTop + ph*0.12, F[0].x - F[0].w/2, palmTop + ph*0.12);
-
-  ctx.closePath();
-}
-
-/* ── 가이드 오버레이 ── */
-function drawGuideOverlay(ctx, w, h) {
-  if (sMode === 'face') {
-    var cx2 = w/2, cy2 = h/2;
-    var rx = w * 0.24;
-    var ry = h * 0.38;
-
-    ctx.save();
-    ctx.fillStyle = 'rgba(0,0,0,0.45)';
-    ctx.fillRect(0, 0, w, h);
-    ctx.globalCompositeOperation = 'destination-out';
-    ctx.beginPath(); ctx.ellipse(cx2, cy2, rx, ry, 0, 0, Math.PI*2); ctx.fill();
-    ctx.restore();
-
-    ctx.beginPath(); ctx.ellipse(cx2, cy2, rx, ry, 0, 0, Math.PI*2);
-    ctx.strokeStyle = 'rgba(80,200,120,0.9)'; ctx.lineWidth = 3; ctx.setLineDash([10,6]); ctx.stroke(); ctx.setLineDash([]);
-
-    if (gOn) {
-      ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 1;
-      [w/3,w*2/3].forEach(function(x){ ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,h); ctx.stroke(); });
-      [h/3,h*2/3].forEach(function(y){ ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(w,y); ctx.stroke(); });
-    }
-
-    [{x:cx2,y:cy2-ry*0.58,l:'이마'},
-     {x:cx2-rx*0.52,y:cy2-ry*0.15,l:'눈(좌)'},
-     {x:cx2+rx*0.52,y:cy2-ry*0.15,l:'눈(우)'},
-     {x:cx2,y:cy2+ry*0.08,l:'코'},
-     {x:cx2,y:cy2+ry*0.38,l:'입'},
-     {x:cx2,y:cy2+ry*0.68,l:'턱'}
-    ].forEach(function(p) {
-      ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI*2);
-      ctx.fillStyle = 'rgba(80,200,120,0.9)'; ctx.fill();
-      ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.font = 'bold 20px system-ui'; ctx.textAlign = 'center';
-      ctx.fillText(p.l, p.x, p.y + (p.y < cy2 ? -12 : 20));
-    });
-
-  } else {
-    var cx2 = w/2, cy2 = h/2;
-    var hw = w * 0.68;   // 더 크게
-    var hh = h * 0.88;   // 더 크게
-    var hx = cx2;
-    var hy = cy2 - h*0.05; // 위로
-    var isLeft = sMode === 'palm_left';
-
-    // ✅ 카메라 방향에 따른 가이드 방향 결정
-    // - 전면카메라(미러ON): 왼손 올리면 화면 우측에 엄지 → 오른손 모양 가이드(flipGuide=false)
-    // - 후면카메라(미러OFF): 왼손 올리면 화면 좌측에 엄지 → 왼손 모양 가이드(flipGuide=true)
-    var mirror = isMirrorOn();
-    var flipGuide = mirror ? isLeft : !isLeft;
-    var handColor = isLeft ? 'rgba(255,200,0,0.95)' : 'rgba(80,160,255,0.95)';
-    var handBg   = isLeft ? 'rgba(255,200,0,0.07)'  : 'rgba(80,160,255,0.07)';
-
-    // ✅ 반투명 손 실루엣 (카메라 영상 위에 겹쳐 보임)
-    ctx.save();
-    if (flipGuide) { ctx.translate(w, 0); ctx.scale(-1, 1); }
-    drawHandPath(ctx, hx, hy, hw, hh);
-    // ✅ 채우기 없음 - 선만 (이미지처럼 윤곽선만)
-    ctx.fillStyle = 'rgba(0,0,0,0)';
-    // 윤곽선 - 점선
-    ctx.strokeStyle = handColor;
-    ctx.lineWidth = 2;
-    ctx.setLineDash([12, 7]);
-    ctx.shadowColor = handColor;
-    ctx.shadowBlur = 8;
-    drawHandPath(ctx, hx, hy, hw, hh);
-    ctx.stroke();
-    ctx.setLineDash([]);
-    ctx.shadowBlur = 0;
-    ctx.restore();
-
-    // 손금 라인
-    var lines = isLeft ? PALM_LINES_LEFT : PALM_LINES_RIGHT;
-    var palmCX = hx, palmCY = hy + hh*0.10;
-    var pw2 = hw*0.40, ph2 = hh*0.32;
-
-    // 오른손 기준 좌표
-    var rawCoords = [
-      {x1: palmCX-pw2*0.75, y1: palmCY-ph2*0.55, x2: palmCX+pw2*0.65, y2: palmCY-ph2*0.65},
-      {x1: palmCX-pw2*0.80, y1: palmCY-ph2*0.05, x2: palmCX+pw2*0.55, y2: palmCY-ph2*0.20},
-      {x1: palmCX-pw2*0.55, y1: palmCY-ph2*0.90, x2: palmCX-pw2*0.30, y2: palmCY+ph2*0.85},
-      {x1: palmCX+pw2*0.05, y1: palmCY+ph2*0.80, x2: palmCX+pw2*0.02, y2: palmCY-ph2*0.90}
-    ];
-    // flipGuide면 X 반전
-    var lineCoords = rawCoords.map(function(l) {
-      if (!flipGuide) return l;
-      return { x1: w-l.x1, y1: l.y1, x2: w-l.x2, y2: l.y2 };
-    });
-    // ✅ 손금선 색상 - 이미지처럼 각각 다른 색
-    var lineColors = ['#a78bfa', '#22d3ee', '#ef4444', '#fbbf24'];
-    lineCoords.forEach(function(l, i) {
-      var col = lineColors[i] || '#80ff80';
-      ctx.save();
-      ctx.shadowColor = col; ctx.shadowBlur = 14;
-      ctx.beginPath(); ctx.moveTo(l.x1,l.y1); ctx.lineTo(l.x2,l.y2);
-      ctx.strokeStyle = col; ctx.lineWidth = 3.5;
-      ctx.lineCap = 'round'; ctx.stroke();
-      ctx.shadowBlur = 0;
-      ctx.fillStyle = '#fff'; ctx.font = 'bold 18px system-ui'; ctx.textAlign = 'center';
-      ctx.fillText(lines[i].l, (l.x1+l.x2)/2 + 4, (l.y1+l.y2)/2 - 10);
-      ctx.restore();
-    });
-
-    // 상단 뱃지
-    var badgeLabel = isLeft ? '✋ 왼손 — 선천운' : '🤚 오른손 — 후천운';
-    var badgeBg = isLeft ? 'rgba(200,140,0,0.88)' : 'rgba(50,120,240,0.88)';
-    var bw2 = 280, bh2 = 40, bx2 = w/2-bw2/2, by2 = 14;
-    ctx.fillStyle = badgeBg;
-    if (ctx.roundRect) { ctx.beginPath(); ctx.roundRect(bx2,by2,bw2,bh2,20); ctx.fill(); }
-    else { ctx.fillRect(bx2,by2,bw2,bh2); }
-    ctx.fillStyle = '#fff'; ctx.font = 'bold 20px system-ui'; ctx.textAlign = 'center';
-    ctx.fillText(badgeLabel, w/2, by2+27);
-    // 하단 안내
-    var guideMsg = mirror
-      ? (isLeft ? '왼손 손바닥이 보이도록 카메라 앞에 들어주세요' : '오른손 손바닥이 보이도록 카메라 앞에 들어주세요')
-      : (isLeft ? '왼손 손바닥을 카메라 쪽으로 향하게 들어주세요' : '오른손 손바닥을 카메라 쪽으로 향하게 들어주세요');
-    ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(0, h-40, w, 40);
-    ctx.fillStyle = 'rgba(255,255,255,0.85)'; ctx.font = '15px system-ui'; ctx.textAlign = 'center';
-    ctx.fillText(guideMsg, w/2, h - 14);
-  }
-}
-
-/* ── 폴백 ── */
-function drawScanFallback() {
-  var cv = document.getElementById('sc'); if (!cv) return;
-  var W = cv.offsetWidth || 640;
-  cv.width = W*2; cv.height = Math.round(W*1.5); cv.style.height = Math.round(W*0.75)+'px';
-  var ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
-  ctx.fillStyle = '#0a0a20'; ctx.fillRect(0,0,w,h);
-  ctx.fillStyle = 'rgba(255,255,255,0.3)'; ctx.font = 'bold 26px system-ui'; ctx.textAlign = 'center';
-  ctx.fillText('📷 카메라 권한을 허용해 주세요', w/2, h/2-18);
-  ctx.font = '18px system-ui'; ctx.fillStyle = 'rgba(153,153,204,0.7)';
-  ctx.fillText('주소창 옆 자물쇠 아이콘 → 카메라 허용', w/2, h/2+22);
-}
-
-/* ── 카메라 정지 ── */
-function stopCamera() {
-  if (autoCapTimer) { clearInterval(autoCapTimer); autoCapTimer = null; }
-  if (camAnimFr) { cancelAnimationFrame(camAnimFr); camAnimFr = null; }
-  if (camStream) { camStream.getTracks().forEach(function(t){ t.stop(); }); camStream = null; }
-}
-
-function drawScan() { startCamera(); }
-
-function showPg(pg, btn, sub) {
-  document.querySelectorAll('.pg').forEach(function(p) { p.classList.remove('on'); });
-  var id = pg === 'main' ? 'pg-main-' + (sub || 'user') : 'pg-' + pg;
-  var el = document.getElementById(id);
-  if (el) el.classList.add('on');
-  if (pg === 'main') {
-    document.querySelectorAll('.nbtn').forEach(function(b) { b.classList.remove('on','gon'); });
-    if (sub === 'cms') { document.getElementById('bn-cms').classList.add('gon'); animCMS(); }
-    else { document.getElementById('bn-user').classList.add('on'); setTimeout(function(){ drawWave(); drawCompass(); }, 80); }
-  }
-  if (pg === 'report') {
-    // ✅ 결제 상태 확인 - 미결제면 결제 섹션 표시
-    var paid = localStorage.getItem('cw_paid');
-    var paySection = document.getElementById('payment-section');
-    var reportSection = document.getElementById('report-paid-section');
-    if (paySection && reportSection) {
-      if (paid) {
-        paySection.style.display = 'none';
-        reportSection.style.display = 'block';
-      } else {
-        paySection.style.display = 'block';
-        reportSection.style.display = 'none';
-      }
-    }
-    setTimeout(populateReport, 80);
-  }
-  if (pg === 'scan') {
-    setTimeout(function(){
-      startCamera();
-      // 아직 아무것도 안 찍었으면 자동 순차 촬영 시작
-      var hasAny = capturedImages.face || capturedImages.palm_left || capturedImages.palm_right;
-      if (!hasAny && !seqAutoCapture) {
-        setTimeout(function(){ startAutoSequence(); }, 600);
-      }
-    }, 80);
-  }
-  if (pg === 'my') { setTimeout(renderMyDashboard, 80); }
-  if (pg === 'sound') { setTimeout(updateSoundPage, 80); }
-  if (pg !== 'scan') { stopCamera(); }
-  if (pg === 'sound' && !chBuilt) { buildChannels(); chBuilt = true; }
-  if (pg === 'saju') { setTimeout(function(){ drawWave(); }, 80); }
-  window.scrollTo(0, 0);
-}
-
-/* ── 리포트 페이지 기존 데이터 자동 채우기 ── */
-function populateReport() {
-  var r = window.lastSajuResult;
-  var inp = window.lastSajuInput;
-  if (!r || !inp) return;
-
-  // 제목 업데이트
-  var titleEl = document.getElementById('report-title');
-  if (titleEl) titleEl.textContent = inp.name + '님의 천기 리포트 — 열람 가능';
-
-  // 핵심 해석 업데이트
-  var ibtEl = document.getElementById('report-ib-title');
-  var ibbEl = document.getElementById('report-ib-body');
-  if (ibtEl) ibtEl.textContent = (r.star || '') + ' 명주 핵심 해석';
-  if (ibbEl) {
-    ibbEl.innerHTML =
-      '<em>' + (r.star || '') + '</em>은 ' + (r.palace_desc || '') + '<br><br>' +
-      '<b>' + (r.daewoon || '') + '</b> — ' + (r.hybrid_msg || '') + '<br><br>' +
-      (r.luck_period || '');
-  }
-
-  // 스캔 데이터 태그 표시
-  var tagsEl = document.getElementById('report-data-tags');
-  var summaryEl = document.getElementById('report-scan-summary');
-  if (tagsEl && summaryEl) {
-    var tags = [
-      { label: '✦ 사주 분석', done: true, color: 'var(--gold)' },
-      { label: '👁 관상 스캔', done: !!capturedImages.face, color: 'var(--em)' },
-      { label: '✋ 왼손 스캔', done: !!capturedImages.palm_left, color: 'var(--em)' },
-      { label: '🤚 오른손 스캔', done: !!capturedImages.palm_right, color: 'var(--em)' },
-    ];
-    tagsEl.innerHTML = tags.map(function(t) {
-      return '<span style="padding:4px 10px;border-radius:12px;font-size:11px;font-weight:700;' +
-        'background:' + (t.done ? 'rgba(80,200,120,0.15)' : 'rgba(255,255,255,0.05)') + ';' +
-        'color:' + (t.done ? t.color : 'rgba(153,153,204,0.5)') + ';' +
-        'border:1px solid ' + (t.done ? 'rgba(80,200,120,0.3)' : 'rgba(255,255,255,0.08)') + ';">' +
-        t.label + (t.done ? ' ✓' : ' —') + '</span>';
-    }).join('');
-    summaryEl.style.display = 'block';
-
-    // 스캔 안 한 게 있으면 버튼 강조
-    var btnEl = document.getElementById('report-scan-btn');
-    var allDone = capturedImages.face && capturedImages.palm_left && capturedImages.palm_right;
-    if (btnEl) {
-      btnEl.textContent = allDone ? '✓ 스캔 완료' : '📷 관상·손금 스캔 추가하기';
-      btnEl.style.background = allDone ? 'var(--em)' : 'var(--gold)';
-    }
-  }
-}
-
-/* ══════════════════════════════════════
-   사용자 프로필 저장/불러오기
-══════════════════════════════════════ */
-var MAX_PROFILES = 5;
-
-function getProfiles() {
-  try { return JSON.parse(localStorage.getItem('cw_profiles') || '[]'); } catch(e) { return []; }
-}
-function saveProfiles(arr) {
-  try { localStorage.setItem('cw_profiles', JSON.stringify(arr)); } catch(e) {}
-}
-
-function clearAllCache() {
-  if (!confirm('분석 캐시를 초기화할까요?\n저장된 프로필은 유지됩니다.')) return;
-  try {
-    // saju 캐시만 삭제 (프로필/로그인은 유지)
-    var keysToDelete = [];
-    for (var i = 0; i < localStorage.length; i++) {
-      var k = localStorage.key(i);
-      if (k && k.startsWith('saju_')) keysToDelete.push(k);
-    }
-    keysToDelete.forEach(function(k){ localStorage.removeItem(k); });
-    sessionStorage.clear();
-    showShareToast('✅ 캐시 초기화 완료! 다시 분석해주세요.');
-  } catch(e) {
-    showShareToast('❌ 초기화 실패: ' + e.message);
-  }
-}
-
-function saveCurrentProfile() {
-  var name  = (document.getElementById('inp-name')  || {}).value || '';
-  var year  = (document.getElementById('inp-year')  || {}).value || '';
-  var month = (document.getElementById('inp-month') || {}).value || '';
-  var day   = (document.getElementById('inp-day')   || {}).value || '';
-  var time  = (document.getElementById('inp-time')  || {}).value || '';
-  var unk   = (document.getElementById('unk')       || {}).checked || false;
-  var birthplace = (document.getElementById('inp-birthplace') || {}).value || '';
-  var location   = (document.getElementById('inp-location')   || {}).value || '';
-
-  if (!name || !year || !month || !day) {
-    showShareToast('⚠️ 이름과 생년월일을 먼저 입력해주세요'); return;
-  }
-
-  var profiles = getProfiles();
-
-  // 같은 이름이 있으면 덮어쓰기 확인
-  var existing = profiles.findIndex(function(p){ return p.name === name; });
-  if (existing >= 0) {
-    if (!confirm('"' + name + '" 프로필을 덮어쓸까요?')) return;
-    profiles.splice(existing, 1);
-  }
-
-  // 최대 5개 제한
-  if (profiles.length >= MAX_PROFILES) {
-    showShareToast('⚠️ 최대 5개까지 저장 가능합니다. 기존 프로필을 먼저 삭제해주세요.');
-    return;
-  }
-
-  profiles.push({
-    name: name, year: year, month: month, day: day,
-    time: time, unk: unk,
-    gender: selectedGender, cal: selectedCal,
-    birthplace: birthplace, location: location,
-    savedAt: new Date().toLocaleDateString('ko-KR')
-  });
-  saveProfiles(profiles);
-  renderProfileBar();
-  showShareToast('✅ ' + name + ' 프로필이 저장됐습니다!');
-}
-
-function loadProfile(idx) {
-  var profiles = getProfiles();
-  var p = profiles[idx];
-  if (!p) return;
-
-  document.getElementById('inp-name').value  = p.name  || '';
-  document.getElementById('inp-year').value  = p.year  || '';
-  document.getElementById('inp-month').value = p.month || '';
-  document.getElementById('inp-day').value   = p.day   || '';
-  document.getElementById('inp-time').value  = p.time  || '';
-  document.getElementById('unk').checked     = p.unk   || false;
-  if (document.getElementById('inp-birthplace')) restorePlaceSelects('birth', p.birthplace || '');
-  if (document.getElementById('inp-location'))   restorePlaceSelects('location', p.location || '');
-
-  setGender(p.gender || '남');
-  setCal(p.cal || '양력');
-
-  // 활성 프로필 하이라이트
-  document.querySelectorAll('.profile-chip').forEach(function(el, i) {
-    el.style.borderColor = i === idx ? 'var(--em)' : 'var(--bd)';
-    el.style.background  = i === idx ? 'rgba(80,200,120,0.15)' : 'rgba(255,255,255,0.05)';
-    el.querySelector('.pname').style.color = i === idx ? 'var(--em)' : '#fff';
-  });
-
-  showShareToast('📂 ' + p.name + ' 불러왔습니다!');
-}
-
-function deleteProfile(idx) {
-  var profiles = getProfiles();
-  var p = profiles[idx];
-  if (!p) return;
-  if (!confirm('"' + p.name + '" 프로필을 삭제할까요?')) return;
-  profiles.splice(idx, 1);
-  saveProfiles(profiles);
-  renderProfileBar();
-  showShareToast('🗑️ 삭제됐습니다');
-}
-
-function renderProfileBar() {
-  var list = document.getElementById('profile-list');
-  if (!list) return;
-  var profiles = getProfiles();
-
-  if (!profiles.length) {
-    list.innerHTML = '<div style="font-size:11px;color:rgba(153,153,204,0.5);padding:4px 0;">저장된 프로필이 없습니다</div>';
-    return;
-  }
-
-  list.innerHTML = profiles.map(function(p, i) {
-    var initial = (p.name || '?').slice(0, 1);
-    var gColor = p.gender === '여' ? '#cc88bb' : '#8aacf0';
-    return '<div class="profile-chip" style="display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:10px;border:1px solid var(--bd);background:rgba(255,255,255,0.05);cursor:pointer;transition:all .15s;" onclick="loadProfile(' + i + ')">' +
-      '<div style="width:26px;height:26px;border-radius:50%;background:' + gColor + '33;border:1px solid ' + gColor + '55;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:' + gColor + ';flex-shrink:0;">' + initial + '</div>' +
-      '<div>' +
-        '<div class="pname" style="font-size:12px;font-weight:700;color:#fff;line-height:1.2;">' + p.name + '</div>' +
-        '<div style="font-size:10px;color:var(--t2);">' + p.year + '.' + p.month + '.' + p.day + ' · ' + p.gender + '</div>' +
-      '</div>' +
-      '<button onclick="event.stopPropagation();deleteProfile(' + i + ')" style="margin-left:2px;width:18px;height:18px;border-radius:50%;background:rgba(231,76,60,0.15);border:1px solid rgba(231,76,60,0.3);color:#e74c3c;font-size:11px;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;line-height:1;">×</button>' +
-    '</div>';
-  }).join('');
-}
-
-// 페이지 로드 시 프로필바 렌더링 + 마지막 입력값 복원
-// 커뮤니티 초기화
-(function initCommunity() {
-  setTimeout(function() {
-    renderReviews();
-    renderQnAs();
-  }, 200);
-})();
-
-(function initProfileBar() {
-  renderProfileBar();
-
-  // 마지막 입력값 자동 복원
-  try {
-    var last = localStorage.getItem('cw_last_input');
-    if (last) {
-      var p = JSON.parse(last);
-      setTimeout(function() {
-        if (p.name)  document.getElementById('inp-name').value  = p.name;
-        if (p.year)  document.getElementById('inp-year').value  = p.year;
-        if (p.month) document.getElementById('inp-month').value = p.month;
-        if (p.day)   document.getElementById('inp-day').value   = p.day;
-        if (p.time)  document.getElementById('inp-time').value  = p.time;
-        if (p.unk)   document.getElementById('unk').checked     = p.unk;
-        if (p.gender) setGender(p.gender);
-        if (p.cal)    setCal(p.cal);
-        if (p.birthplace && document.getElementById('inp-birthplace')) restorePlaceSelects('birth', p.birthplace);
-        if (p.location   && document.getElementById('inp-location'))   restorePlaceSelects('location', p.location);
-      }, 100);
-    }
-  } catch(e) {}
-})();
-var currentInputMode = 'camera';
-function setInputMode(mode) {
-  currentInputMode = mode;
-  var camBtn = document.getElementById('input-cam-btn');
-  var photoBtn = document.getElementById('input-photo-btn');
-  var camArea = document.getElementById('camera-area');
-  var photoArea = document.getElementById('photo-upload-area');
-  if (mode === 'camera') {
-    camBtn.style.cssText += ';border-color:var(--em);background:rgba(80,200,120,0.15);color:var(--em);';
-    photoBtn.style.cssText += ';border-color:var(--bd);background:var(--bg2);color:var(--t2);';
-    if(camArea) camArea.style.display = 'block';
-    if(photoArea) photoArea.style.display = 'none';
-    startCamera();
-  } else {
-    photoBtn.style.cssText += ';border-color:var(--em);background:rgba(80,200,120,0.15);color:var(--em);';
-    camBtn.style.cssText += ';border-color:var(--bd);background:var(--bg2);color:var(--t2);';
-    if(camArea) camArea.style.display = 'none';
-    if(photoArea) photoArea.style.display = 'block';
-    stopCamera();
-    var lbl = document.getElementById('upload-label');
-    var sub = document.getElementById('upload-sublabel');
-    if (sMode === 'face') {
-      if(lbl) lbl.textContent = '얼굴 정면 사진을 업로드하세요';
-      if(sub) sub.textContent = '밝은 곳에서 찍은 정면 사진 권장';
-    } else if (sMode === 'palm_left') {
-      if(lbl) lbl.textContent = '왼손 손바닥 사진을 업로드하세요';
-      if(sub) sub.textContent = '손바닥이 잘 보이게 펼쳐서 찍은 사진';
-    } else {
-      if(lbl) lbl.textContent = '오른손 손바닥 사진을 업로드하세요';
-      if(sub) sub.textContent = '손바닥이 잘 보이게 펼쳐서 찍은 사진';
-    }
-  }
-}
-
-function handlePhotoUpload(event) {
-  var file = event.target.files[0]; if (!file) return;
-  var reader = new FileReader();
-  reader.onload = function(e) {
-    var imgEl = document.getElementById('preview-img');
-    var previewEl = document.getElementById('photo-preview');
-    var dropZone = document.getElementById('upload-drop-zone');
-    var hintEl = document.getElementById('photo-quality-hint');
-    imgEl.src = e.target.result;
-    previewEl.style.display = 'block';
-    dropZone.style.display = 'none';
-    var hints = {
-      face: '✅ 얼굴 사진 업로드 완료! 분석을 시작하세요.<br><span style="color:var(--t2);">💡 눈·코·입이 모두 보이는 정면 사진이 가장 정확해요</span>',
-      palm_left: '✅ 왼손 사진 업로드 완료! 분석을 시작하세요.<br><span style="color:var(--t2);">💡 손금이 선명하게 보이는 밝은 사진이 좋아요</span>',
-      palm_right: '✅ 오른손 사진 업로드 완료! 분석을 시작하세요.<br><span style="color:var(--t2);">💡 손가락 쭉 펴고 손바닥 정면으로 찍으세요</span>'
-    };
-    hintEl.style.cssText = 'background:rgba(80,200,120,0.1);border:1px solid rgba(80,200,120,0.25);border-radius:8px;padding:.6rem .85rem;font-size:11px;color:var(--em);margin-top:.5rem;';
-    hintEl.innerHTML = hints[sMode] || hints.face;
-    window.uploadedPhotoData = e.target.result;
-  };
-  reader.readAsDataURL(file);
-}
-
-function analyzePhoto() {
-  if (!window.uploadedPhotoData) return;
-  var cv = document.getElementById('sc'); if (!cv) return;
-  var W = cv.offsetWidth || 640;
-  cv.width = W*2; cv.height = Math.round(W*0.75)*2; cv.style.height = Math.round(W*0.75)+'px';
-  var ctx = cv.getContext('2d');
-  var img = new Image();
-  img.onload = function() {
-    var scale = Math.max(cv.width/img.width, cv.height/img.height);
-    var dw = img.width*scale, dh = img.height*scale;
-    ctx.drawImage(img, (cv.width-dw)/2, (cv.height-dh)/2, dw, dh);
-    capturedImages[sMode] = cv.toDataURL('image/jpeg', 0.8);
-    window.uploadedPhotoData = null;
-    document.getElementById('photo-upload-area').style.display = 'none';
-    document.getElementById('camera-area').style.display = 'block';
-    document.getElementById('ps').classList.add('show');
-    document.getElementById('rs').classList.remove('show');
-    sState = 'scanning';
-    var c = document.getElementById('psteps'); c.innerHTML = '';
-    var photoSteps = [
-      {label:'사진 화질 및 선명도 확인', dur:500},
-      {label: sMode==='face' ? '얼굴 랜드마크 68점 추출' : '손금선 패턴 분석', dur:800},
-      {label: sMode==='face' ? '12궁 명반 동기화' : '3대 역술 손금 분석', dur:700},
-      {label:'통합 해석 생성', dur:600}
-    ];
-    photoSteps.forEach(function(s, i) {
-      var d = document.createElement('div'); d.className = 'prog-step';
-      d.innerHTML = '<div class="sico wait" id="si'+i+'">'+(i+1)+'</div><div class="slbl" id="sl'+i+'">'+s.label+'</div><div class="spct" id="sp'+i+'"></div>';
-      c.appendChild(d);
-    });
-    var origSteps = STEPS.splice(0);
-    photoSteps.forEach(function(s){ STEPS.push(s); });
-    runStep(0);
-    setTimeout(function(){ STEPS.length=0; origSteps.forEach(function(s){ STEPS.push(s); }); }, 5000);
-  };
-  img.src = capturedImages[sMode];
-}
-
-/* ── 결제 시스템 ── */
-var selectedPlan = 'early';
-var PRICES = { early: 19900, full: 89000 };
-
-function selectPlan(plan) {
-  selectedPlan = plan;
-  document.getElementById('price-early').style.opacity = plan === 'early' ? '1' : '0.6';
-  document.getElementById('price-early').style.borderWidth = plan === 'early' ? '2px' : '1px';
-  document.getElementById('price-full').style.opacity = plan === 'full' ? '1' : '0.6';
-  document.getElementById('price-full').style.borderWidth = plan === 'full' ? '2px' : '1px';
-  var price = '₩' + PRICES[plan].toLocaleString();
-  ['kakao','toss','bank'].forEach(function(id) {
-    var el = document.getElementById('pay-price-' + id);
-    if (el) el.textContent = price;
-  });
-  var ba = document.getElementById('bank-amount');
-  if (ba) ba.textContent = price;
-}
-
-function doPayment(method) {
-  var inp = window.lastSajuInput;
-  if (!inp) { alert('먼저 사주 분석을 완료해주세요!'); showPg('main'); return; }
-  var price = PRICES[selectedPlan];
-  var priceStr = '₩' + price.toLocaleString();
-  var isMobile = /Mobi|Android|iPhone/i.test(navigator.userAgent);
-
-  if (method === 'bank') {
-    var bi = document.getElementById('bank-info');
-    bi.style.display = bi.style.display === 'none' ? 'block' : 'none';
-    return;
-  }
-
-  if (method === 'kakao') {
-    // 카카오페이는 준비 중
-    showPaymentModal('kakao', price, priceStr, isMobile);
-    return;
-  }
-
-  if (method === 'toss') {
-    showPaymentModal('toss', price, priceStr, isMobile);
-    return;
-  }
-}
-
-function showPaymentModal(method, price, priceStr, isMobile) {
-  var modal = document.getElementById('pay-modal');
-  if (!modal) {
-    modal = document.createElement('div');
-    modal.id = 'pay-modal';
-    modal.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1rem;';
-    document.body.appendChild(modal);
-  }
-
-  var content = '';
-  if (method === 'toss') {
-    if (isMobile) {
-      // 모바일: 토스 앱 딥링크
-      content =
-        '<div style="text-align:center;margin-bottom:1rem;">' +
-        '<div style="font-size:28px;margin-bottom:.5rem;">toss</div>' +
-        '<div style="font-size:14px;color:var(--t2);">토스 앱으로 송금</div></div>' +
-        '<a href="supertoss://send?amount=' + price + '" style="display:block;width:100%;padding:14px;background:#0064FF;border:none;border-radius:10px;color:#fff;font-size:15px;font-weight:700;text-align:center;text-decoration:none;margin-bottom:.75rem;">토스 앱 열기 →</a>' +
-        '<div style="font-size:12px;color:var(--t2);text-align:center;margin-bottom:1rem;">송금 완료 후 아래 버튼을 눌러주세요</div>' +
-        '<button id="pay-confirm-btn" style="width:100%;padding:12px;background:var(--em);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">✓ 송금 완료했어요</button>';
-    } else {
-      // PC: 계좌이체 안내 + QR 대안
-      content =
-        '<div style="text-align:center;margin-bottom:1rem;">' +
-        '<div style="font-size:24px;font-weight:900;color:#0064FF;margin-bottom:.35rem;">toss</div>' +
-        '<div style="font-size:13px;color:var(--t2);">PC에서는 아래 방법을 이용해주세요</div></div>' +
-        '<div style="background:rgba(0,100,255,0.1);border:1px solid rgba(0,100,255,0.3);border-radius:10px;padding:1rem;margin-bottom:.75rem;">' +
-        '<div style="font-size:12px;font-weight:700;color:#6bb3ff;margin-bottom:.5rem;">📱 방법 1 — 핸드폰 토스 앱</div>' +
-        '<div style="font-size:12px;color:var(--t2);line-height:1.8;">토스 앱 → 송금 → 계좌번호 입력<br>' +
-        '<strong style="color:#fff;">카카오뱅크 3333-00-0000000</strong><br>' +
-        '금액: <strong style="color:#0064FF;">' + price.toLocaleString() + '원</strong></div></div>' +
-        '<div style="background:rgba(255,255,255,0.05);border:1px solid var(--bd);border-radius:10px;padding:1rem;margin-bottom:.75rem;">' +
-        '<div style="font-size:12px;font-weight:700;color:var(--t2);margin-bottom:.5rem;">🏦 방법 2 — 계좌이체</div>' +
-        '<div style="font-size:12px;color:var(--t2);line-height:1.8;">은행: 카카오뱅크<br>' +
-        '계좌: <strong style="color:#fff;">3333-00-0000000</strong><br>' +
-        '예금주: <strong style="color:#fff;">천기웨이브</strong><br>' +
-        '금액: <strong style="color:var(--gold);">' + price.toLocaleString() + '원</strong></div></div>' +
-        '<button id="pay-confirm-btn" style="width:100%;padding:12px;background:var(--em);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">✓ 입금 완료했어요</button>';
-    }
-  } else if (method === 'kakao') {
-    content =
-      '<div style="text-align:center;margin-bottom:1rem;">' +
-      '<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:.35rem;">카카오페이</div>' +
-      '<div style="font-size:12px;color:var(--t2);">현재 준비 중입니다</div></div>' +
-      '<div style="background:rgba(255,255,255,0.05);border:1px solid var(--bd);border-radius:10px;padding:1rem;margin-bottom:.75rem;">' +
-      '<div style="font-size:12px;color:var(--t2);line-height:1.8;">계좌이체를 이용해 주세요<br>' +
-      '은행: 카카오뱅크<br>' +
-      '계좌: <strong style="color:#fff;">3333-00-0000000</strong><br>' +
-      '금액: <strong style="color:var(--gold);">' + price.toLocaleString() + '원</strong></div></div>' +
-      '<button id="pay-confirm-btn" style="width:100%;padding:12px;background:var(--em);border:none;border-radius:10px;color:#fff;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;">✓ 입금 완료했어요</button>';
-  }
-
-  modal.innerHTML =
-    '<div style="background:#1a1a4e;border:1px solid rgba(255,255,255,0.15);border-radius:20px;padding:1.75rem;max-width:380px;width:100%;position:relative;">' +
-    '<button onclick="document.getElementById(\'pay-modal\').style.display=\'none\'" style="position:absolute;top:1rem;right:1rem;background:none;border:none;color:rgba(255,255,255,0.4);font-size:20px;cursor:pointer;">×</button>' +
-    '<div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:1rem;">💳 결제 안내 — ' + priceStr + '</div>' +
-    content +
-    '</div>';
-
-  modal.style.display = 'flex';
-
-  // 완료 버튼 이벤트
-  setTimeout(function() {
-    var confirmBtn = document.getElementById('pay-confirm-btn');
-    if (confirmBtn) {
-      confirmBtn.onclick = function() {
-        var name = prompt('입금자명을 입력해주세요 (확인용):', inp.name || '');
-        if (name) {
-          modal.style.display = 'none';
-          paymentSuccess(priceStr);
-          showShareToast('🎉 결제 확인 중! 잠시 후 리포트를 이용해주세요.');
-        }
-      };
-    }
-  }, 100);
-}
-
-function confirmBankTransfer() {
-  var inp = window.lastSajuInput;
-  var name = prompt('입금자명을 입력해주세요:', inp ? inp.name : '');
-  if (name) {
-    alert('✓ 입금 확인 요청 접수!\n\n입금자명: ' + name + '\n확인 후 24시간 내 발송됩니다.\n문의: 스레드 DM');
-    paymentSuccess('₩' + PRICES[selectedPlan].toLocaleString());
-  }
-}
-
-function paymentSuccess(priceStr) {
-  localStorage.setItem('cw_paid', '1');
-  document.getElementById('payment-section').style.display = 'none';
-  document.getElementById('report-paid-section').style.display = 'block';
-  var ptag = document.getElementById('report-price-tag');
-  if (ptag) ptag.textContent = priceStr + ' · ' + (selectedPlan === 'early' ? '얼리버드' : '정가');
-  populateReport();
-  showShareToast('🎉 결제 완료! 리포트를 생성하세요');
-}
-
-
-/* ══════════════════════════════════════
-   사주팔자 실제 계산
-══════════════════════════════════════ */
-var HEAVENLY_KOR = ['갑(甲)','을(乙)','병(丙)','정(丁)','무(戊)','기(己)','경(庚)','신(辛)','임(壬)','계(癸)'];
-var EARTHLY_KOR  = ['자(子)','축(丑)','인(寅)','묘(卯)','진(辰)','사(巳)','오(午)','미(未)','신(申)','유(酉)','술(戌)','해(亥)'];
-var ANIMALS = ['쥐','소','호랑이','토끼','용','뱀','말','양','원숭이','닭','개','돼지'];
-var OHAENG = ['목(木)','목(木)','화(火)','화(火)','토(土)','토(土)','금(金)','금(金)','수(水)','수(水)'];
-var OHAENG_E = ['수(水)','토(土)','목(木)','목(木)','토(土)','화(火)','화(火)','토(土)','금(金)','금(金)','토(土)','수(水)'];
-
-function calcSajuPillar(year, month, day) {
-  // 연주
-  var yh = (year - 4) % 10;
-  var ye = (year - 4) % 12;
-  if (yh < 0) yh += 10;
-  if (ye < 0) ye += 12;
-
-  // 월주 (연간 기준 월간 계산)
-  var baseH = (yh % 5) * 2;
-  var mh = (baseH + month - 1) % 10;
-  var me = (month + 1) % 12;
-
-  // 일주 (율리우스일 기반)
-  var y = year, m = month, d = day;
-  if (m < 3) { m += 12; y -= 1; }
-  var A = Math.floor(y / 100);
-  var B = 2 - A + Math.floor(A / 4);
-  var jd = Math.floor(365.25 * (y + 4716)) + Math.floor(30.6001 * (m + 1)) + d + B - 1524;
-  var dh = ((jd - 11) % 10 + 10) % 10;
-  var de = ((jd - 11) % 12 + 12) % 12;
-
-  return {
-    year:  { h: yh, e: ye, str: HEAVENLY_KOR[yh] + ' ' + EARTHLY_KOR[ye], animal: ANIMALS[ye], ohaeng: OHAENG[yh] + '·' + OHAENG_E[ye] },
-    month: { h: mh, e: me, str: HEAVENLY_KOR[mh] + ' ' + EARTHLY_KOR[me] },
-    day:   { h: dh, e: de, str: HEAVENLY_KOR[dh] + ' ' + EARTHLY_KOR[de] },
-    // 일간(日干) - 본인의 핵심
-    daegan: HEAVENLY_KOR[dh],
-    // 오행 강약 분석
-    ohaengCount: calcOhaengBalance(yh, ye, mh, me, dh, de)
-  };
-}
-
-function calcOhaengBalance(yh, ye, mh, me, dh, de) {
-  var counts = {목:0, 화:0, 토:0, 금:0, 수:0};
-  var oMap = {0:'목',1:'목',2:'화',3:'화',4:'토',5:'토',6:'금',7:'금',8:'수',9:'수'};
-  var eMap = {0:'수',1:'토',2:'목',3:'목',4:'토',5:'화',6:'화',7:'토',8:'금',9:'금',10:'토',11:'수'};
-  [yh,mh,dh].forEach(function(h){ counts[oMap[h]]++; });
-  [ye,me,de].forEach(function(e){ counts[eMap[e]]++; });
-  var max='목', min='목';
-  Object.keys(counts).forEach(function(k){ if(counts[k]>counts[max]) max=k; if(counts[k]<counts[min]) min=k; });
-  return { counts: counts, strongest: max, weakest: min };
-}
-
-function getSajuString(year, month, day, time, cal) {
-  var p = calcSajuPillar(parseInt(year), parseInt(month), parseInt(day));
-  var timeH = '미상';
-  if (time) {
-    var timeMap = {'자시':0,'축시':1,'인시':2,'묘시':3,'진시':4,'사시':5,'오시':6,'미시':7,'신시':8,'유시':9,'술시':10,'해시':11};
-    if (timeMap[time] !== undefined) {
-      var th = (p.day.h % 5 * 2 + timeMap[time]) % 10;
-      timeH = HEAVENLY_KOR[th] + ' ' + EARTHLY_KOR[timeMap[time]];
-    }
-  }
-
-  // ✅ 자미두수 포국 계산 (음력 변환 포함)
-  var ziwei = calcZiweiChart(year, month, day, time || '', cal || '양력');
-
-  return {
-    pillars: p,
-    timeStr: timeH,
-    ziwei: ziwei,
-    summary: '사주팔자 — 연주: ' + p.year.str + '(' + p.year.animal + '띠) | 월주: ' + p.month.str + ' | 일주: ' + p.day.str + (timeH!=='미상' ? ' | 시주: ' + timeH : ' | 시주: 미상') + '\n' +
-             '일간(日干): ' + p.daegan + ' | 강한 오행: ' + p.ohaengCount.strongest + ' | 약한 오행: ' + p.ohaengCount.weakest + '\n' +
-             '자미두수 포국 — ' + ziwei.summary
-  };
-}
-
-/* ══════════════════════════════════════
-   UI/UX 설정 관리
-══════════════════════════════════════ */
-var SETTINGS_KEY = 'cw_ui_settings';
-
-function getUISettings() {
-  try { return JSON.parse(localStorage.getItem(SETTINGS_KEY) || '{}'); } catch(e) { return {}; }
-}
-
-function applyUISettings() {
-  var s = getUISettings();
-  var nb = document.getElementById('notice-banner');
-  if (nb) {
-    if (s.noticeOn && s.noticeText) {
-      var bgMap = { info:'rgba(80,160,255,0.12)', event:'rgba(80,200,120,0.12)', warn:'rgba(231,76,60,0.12)', gold:'rgba(255,215,0,0.10)' };
-      var colMap = { info:'#8aacf0', event:'#50C878', warn:'#e74c3c', gold:'#FFD700' };
-      var t = s.noticeType || 'info';
-      nb.style.cssText = 'display:block;padding:10px 1rem;text-align:center;font-size:13px;font-weight:600;background:' + bgMap[t] + ';color:' + colMap[t] + ';border-bottom:1px solid ' + bgMap[t] + ';';
-      nb.textContent = s.noticeText;
-    } else { nb.style.display = 'none'; }
-  }
-  var eb = document.getElementById('event-banner');
-  if (eb) {
-    if (s.eventOn && s.eventText) {
-      eb.style.display = 'block';
-      eb.textContent = '🎉 ' + s.eventText;
-    } else { eb.style.display = 'none'; }
-  }
-  if (s.priceEarly && window.PRICES) window.PRICES.early = parseInt(s.priceEarly);
-  if (s.priceNormal && window.PRICES) window.PRICES.normal = parseInt(s.priceNormal);
-}
-
-function applySettings() {
-  var noticeOn   = (document.getElementById('notice-on')   ||{}).checked||false;
-  var noticeText = (document.getElementById('notice-text') ||{}).value  ||'';
-  var eventOn    = (document.getElementById('event-on')    ||{}).checked||false;
-  var eventText  = (document.getElementById('event-text')  ||{}).value  ||'';
-  var priceEarly = (document.getElementById('price-early') ||{}).value  ||'19900';
-  var priceNormal= (document.getElementById('price-normal')||{}).value  ||'49000';
-  var lines = [];
-  if (noticeOn && noticeText)  lines.push('📢 공지: "' + noticeText + '"');
-  if (eventOn && eventText)    lines.push('🎉 이벤트: "' + eventText + '"');
-  lines.push('💰 얼리버드 ₩' + parseInt(priceEarly).toLocaleString() + ' / 정가 ₩' + parseInt(priceNormal).toLocaleString());
-  var pv = document.getElementById('settings-preview');
-  if (pv) pv.innerHTML = lines.join('<br>');
-}
-
-function saveSettings() {
-  var s = {
-    noticeOn:   (document.getElementById('notice-on')   ||{}).checked||false,
-    noticeText: (document.getElementById('notice-text') ||{}).value  ||'',
-    noticeType: (document.getElementById('notice-type') ||{}).value  ||'info',
-    eventOn:    (document.getElementById('event-on')    ||{}).checked||false,
-    eventText:  (document.getElementById('event-text')  ||{}).value  ||'',
-    priceEarly: (document.getElementById('price-early') ||{}).value  ||'19900',
-    priceNormal:(document.getElementById('price-normal')||{}).value  ||'49000',
-  };
-  localStorage.setItem(SETTINGS_KEY, JSON.stringify(s));
-  applyUISettings();
-  showShareToast('✅ 설정 저장 완료! 즉시 반영됩니다.');
-}
-
-function resetSettings() {
-  if (!confirm('모든 UI 설정을 초기화할까요?')) return;
-  localStorage.removeItem(SETTINGS_KEY);
-  ['notice-text','event-text'].forEach(function(id){ var el=document.getElementById(id); if(el) el.value=''; });
-  ['notice-on','event-on'].forEach(function(id){ var el=document.getElementById(id); if(el) el.checked=false; });
-  var ep=document.getElementById('price-early');   if(ep) ep.value='19900';
-  var np=document.getElementById('price-normal');  if(np) np.value='49000';
-  applyUISettings();
-  showShareToast('🔄 설정이 초기화됐습니다.');
-}
-
-function loadSettingsToAdmin() {
-  var s = getUISettings();
-  var el;
-  el=document.getElementById('notice-on');    if(el) el.checked=!!s.noticeOn;
-  el=document.getElementById('notice-text');  if(el) el.value=s.noticeText||'';
-  el=document.getElementById('notice-type');  if(el) el.value=s.noticeType||'info';
-  el=document.getElementById('event-on');     if(el) el.checked=!!s.eventOn;
-  el=document.getElementById('event-text');   if(el) el.value=s.eventText||'';
-  el=document.getElementById('price-early');  if(el) el.value=s.priceEarly||'19900';
-  el=document.getElementById('price-normal'); if(el) el.value=s.priceNormal||'49000';
-  applySettings();
-}
-
-(function(){ setTimeout(applyUISettings, 150); })();
-
-/* ══════════════════════════════════════
-   관리자 탭 전환
-══════════════════════════════════════ */
-function switchAdminTab(tab) {
-  var tabs = ['batch','members','settings'];
-  tabs.forEach(function(t) {
-    var el = document.getElementById('admin-tab-' + t);
-    var btn = document.getElementById('atab-' + t);
-    if (el) el.style.display = (t === tab) ? 'block' : 'none';
-    if (btn) {
-      btn.classList.remove('on');
-      if (t === tab) btn.classList.add('on');
-    }
-  });
-  if (tab === 'members') { setTimeout(renderAdminPage, 50); }
-  if (tab === 'settings') { setTimeout(loadSettingsToAdmin, 50); }
-}
-
-/* ══════════════════════════════════════
-   대량 생성·발송 시스템
-══════════════════════════════════════ */
-var batchList = [];
-var BATCH_MAX = 10;
-
-function addBatchRow() {
-  if (batchList.length >= BATCH_MAX) {
-    showShareToast('최대 ' + BATCH_MAX + '명까지 가능합니다');
-    return;
-  }
-  var uid = 'b' + Date.now() + Math.floor(Math.random()*1000);
-  batchList.push({ id: uid });
-  renderBatchRows();
-}
-
-function removeBatchRow(uid) {
-  batchList = batchList.filter(function(b) { return b.id !== uid; });
-  renderBatchRows();
-}
-
-var TIMES = [
-  ['','생시 모름'],['자시','자시(23:30~01:29)'],['축시','축시(01:30~03:29)'],
-  ['인시','인시(03:30~05:29)'],['묘시','묘시(05:30~07:29)'],['진시','진시(07:30~09:29)'],
-  ['사시','사시(09:30~11:29)'],['오시','오시(11:30~13:29)'],['미시','미시(13:30~15:29)'],
-  ['신시','신시(15:30~17:29)'],['유시','유시(17:30~19:29)'],['술시','술시(19:30~21:29)'],['해시','해시(21:30~23:29)']
-];
-
-function renderBatchRows() {
-  var cnt = document.getElementById('batch-count');
-  var box = document.getElementById('batch-rows');
-  if (!box) return;
-  if (cnt) cnt.textContent = '(' + batchList.length + '/' + BATCH_MAX + '명)';
-
-  if (!batchList.length) {
-    box.innerHTML = '<div style="text-align:center;padding:1.5rem;color:var(--t2);font-size:12px;border:1px dashed rgba(255,255,255,0.1);border-radius:10px;">+ 추가 버튼으로 고객을 입력하세요</div>';
-    return;
-  }
-
-  var timeOpts = TIMES.map(function(t) {
-    return '<option value="' + t[0] + '">' + t[1] + '</option>';
-  }).join('');
-
-  box.innerHTML = batchList.map(function(b, i) {
-    var uid = b.id;
-    return [
-      '<div id="brow-' + uid + '" style="background:rgba(255,255,255,0.04);border:1px solid var(--bd);border-radius:10px;padding:.75rem;">',
-        '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.5rem;">',
-          '<span style="font-size:12px;font-weight:700;color:var(--gold);">고객 ' + (i+1) + '번</span>',
-          '<button onclick="removeBatchRow(\'' + uid + '\')" style="background:none;border:none;color:rgba(255,255,255,0.35);font-size:18px;cursor:pointer;line-height:1;padding:0 4px;">×</button>',
-        '</div>',
-        '<div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:6px;">',
-          '<input id="bname-' + uid + '" type="text" placeholder="이름 *"',
-            ' style="padding:8px 10px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:7px;color:#fff;font-size:12px;font-family:inherit;outline:none;">',
-          '<input id="bemail-' + uid + '" type="email" placeholder="이메일 *"',
-            ' style="padding:8px 10px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:7px;color:#fff;font-size:12px;font-family:inherit;outline:none;">',
-        '</div>',
-        '<div style="display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:5px;margin-bottom:5px;">',
-          '<input id="byear-' + uid + '" type="number" placeholder="년도 *"',
-            ' style="padding:7px 6px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:7px;color:#fff;font-size:11px;font-family:inherit;outline:none;text-align:center;">',
-          '<input id="bmonth-' + uid + '" type="number" placeholder="월" min="1" max="12"',
-            ' style="padding:7px 4px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:7px;color:#fff;font-size:11px;font-family:inherit;outline:none;text-align:center;">',
-          '<input id="bday-' + uid + '" type="number" placeholder="일" min="1" max="31"',
-            ' style="padding:7px 4px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:7px;color:#fff;font-size:11px;font-family:inherit;outline:none;text-align:center;">',
-          '<select id="bgender-' + uid + '" style="padding:7px 2px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:7px;color:#fff;font-size:11px;font-family:inherit;outline:none;">',
-            '<option value="여">여</option><option value="남">남</option>',
-          '</select>',
-        '</div>',
-        '<select id="btime-' + uid + '" style="width:100%;padding:7px 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:7px;color:#fff;font-size:11px;font-family:inherit;outline:none;margin-bottom:4px;">',
-          timeOpts,
-        '</select>',
-        '<div id="bstatus-' + uid + '" style="font-size:11px;color:var(--t2);min-height:14px;"></div>',
-      '</div>'
-    ].join('');
-  }).join('');
-}
-
-function getBatchData() {
-  return batchList.map(function(b) {
-    var uid = b.id;
-    return {
-      id:     uid,
-      name:   (document.getElementById('bname-'  + uid) || {}).value || '',
-      email:  (document.getElementById('bemail-' + uid) || {}).value || '',
-      year:   (document.getElementById('byear-'  + uid) || {}).value || '',
-      month:  (document.getElementById('bmonth-' + uid) || {}).value || '',
-      day:    (document.getElementById('bday-'   + uid) || {}).value || '',
-      gender: (document.getElementById('bgender-'+ uid) || {}).value || '여',
-      time:   (document.getElementById('btime-'  + uid) || {}).value || ''
-    };
-  });
-}
-
-function setBatchStatus(uid, msg, color) {
-  var el = document.getElementById('bstatus-' + uid);
-  if (el) { el.textContent = msg; el.style.color = color || 'var(--t2)'; }
-}
-
-// 사주 분석 API 호출
-async function batchAnalyzeSaju(inp) {
-  var age = new Date().getFullYear() - parseInt(inp.year);
-  var calc = getSajuString(inp.year, inp.month, inp.day, inp.time, inp.cal||'양력');
-  var prompt = '사주 분석:\n이름:' + inp.name + ' 성별:' + inp.gender + ' 만' + age + '세\n' +
-    calc.summary + '\n' + (calc.ziwei ? '명궁주성:' + calc.ziwei.mainStar + ' ' + calc.ziwei.strengthName + '\n' : '') +
-    '\nJSON만 응답:{"star":"주성명","daewoon":"현재대운","summary":"3줄요약",' +
+    '"lucky_days":[{"date":"YYYY-MM-DD길일1","type":"대길","reason":"관록궁 길일"},{"date":"YYYY-MM-DD길일2","type":"길","reason":"재물운 상승"},{"date":"YYYY-MM-DD흉일","type":"흉","reason":"구설수 주의"},{"date":"YYYY-MM-DD길일3","type":"대길","reason":"귀인 만남"},{"date":"YYYY-MM-DD길일4","type":"길","reason":"계약 적합"}],"summary":"3줄요약",' +
     '"scores":{"재물운":숫자,"직업운":숫자,"애정운":숫자,"건강운":숫자},' +
     '"score_trends":{"재물운":"상승중","직업운":"안정","애정운":"하락중","건강운":"안정"},' +
     '"score_sources":{"재물운":"근거","직업운":"근거","애정운":"근거","건강운":"근거"},' +
@@ -5257,17 +3320,150 @@ function runStep(i) {
   }, 50);
 }
 /* ══════════════════════════════════════
-   커뮤니티 (리뷰/QnA)
+   커뮤니티 3탭 (리뷰 / 게시판 / QnA)
 ══════════════════════════════════════ */
 var reviewStar = 5;
 
 function switchCommTab(tab) {
-  document.getElementById('comm-review').style.display = tab === 'review' ? 'block' : 'none';
-  document.getElementById('comm-qna').style.display = tab === 'qna' ? 'block' : 'none';
-  var rb = document.getElementById('comm-tab-review');
-  var qb = document.getElementById('comm-tab-qna');
-  if (rb) { rb.style.background = tab==='review'?'var(--em)':'none'; rb.style.color = tab==='review'?'#fff':'var(--t2)'; rb.style.borderColor = tab==='review'?'var(--em)':'var(--bd)'; }
-  if (qb) { qb.style.background = tab==='qna'?'rgba(138,172,240,0.2)':'none'; qb.style.color = tab==='qna'?'#8aacf0':'var(--t2)'; qb.style.borderColor = tab==='qna'?'rgba(138,172,240,0.4)':'var(--bd)'; }
+  ['review','board','qna'].forEach(function(t) {
+    var el = document.getElementById('comm-' + t);
+    var btn = document.getElementById('comm-tab-' + t);
+    if (el) el.style.display = (t === tab) ? 'block' : 'none';
+    if (btn) {
+      if (t === tab) {
+        btn.style.background = t==='review' ? 'var(--em)' : t==='board' ? 'rgba(255,215,0,0.2)' : 'rgba(138,172,240,0.2)';
+        btn.style.color = t==='review' ? '#fff' : t==='board' ? 'var(--gold)' : '#8aacf0';
+        btn.style.borderColor = t==='review' ? 'var(--em)' : t==='board' ? 'rgba(255,215,0,0.4)' : 'rgba(138,172,240,0.4)';
+      } else {
+        btn.style.background = 'none'; btn.style.color = 'var(--t2)'; btn.style.borderColor = 'var(--bd)';
+      }
+    }
+  });
+  if (tab === 'qna') renderFixedQnA();
+  if (tab === 'board') renderBoardList();
+}
+
+var ADMIN_EMAIL = 'stop.ok.go@gmail.com';
+
+function sendAdminNotification(type, data) {
+  var notifs = [];
+  try { notifs = JSON.parse(localStorage.getItem('cw_admin_notifs') || '[]'); } catch(e) {}
+  notifs.unshift({ id:'n_'+Date.now(), type:type, data:data, date:new Date().toLocaleString('ko-KR'), read:false });
+  localStorage.setItem('cw_admin_notifs', JSON.stringify(notifs.slice(0,100)));
+  updateAdminNotifBadge();
+}
+
+function updateAdminNotifBadge() {
+  if (!currentUser || currentUser.email !== ADMIN_EMAIL) return;
+  var notifs = [];
+  try { notifs = JSON.parse(localStorage.getItem('cw_admin_notifs') || '[]'); } catch(e) {}
+  var unread = notifs.filter(function(n){ return !n.read; }).length;
+  var btn = document.getElementById('bn-admin');
+  if (!btn) return;
+  var badge = btn.querySelector('.notif-badge');
+  if (unread > 0) {
+    if (!badge) {
+      badge = document.createElement('span'); badge.className = 'notif-badge';
+      badge.style.cssText = 'position:absolute;top:-4px;right:-4px;background:#e74c3c;color:#fff;font-size:9px;font-weight:700;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;';
+      btn.style.position = 'relative'; btn.appendChild(badge);
+    }
+    badge.textContent = unread > 9 ? '9+' : unread;
+  } else if (badge) { badge.remove(); }
+}
+
+function notifyAdminEmail(subject, body) {
+  if (currentUser && currentUser.email === ADMIN_EMAIL) showShareToast('🔔 ' + subject);
+  var link = 'https://mail.google.com/mail/?view=cm&fs=1&to=' + encodeURIComponent(ADMIN_EMAIL) +
+    '&su=' + encodeURIComponent('[천기웨이브] ' + subject) + '&body=' + encodeURIComponent(body + '\n\n🌊 https://cheongi-wave-61pz.vercel.app');
+  var p = []; try { p = JSON.parse(localStorage.getItem('cw_pending_emails')||'[]'); } catch(e) {}
+  p.unshift({subject:subject, link:link, date:new Date().toLocaleString('ko-KR')});
+  localStorage.setItem('cw_pending_emails', JSON.stringify(p.slice(0,50)));
+}
+
+// ── 게시판 ──
+function getBoards() { try { return JSON.parse(localStorage.getItem('cw_boards')||'[]'); } catch(e) { return []; } }
+
+function submitBoard() {
+  var title = (document.getElementById('board-title')||{}).value||'';
+  var text = (document.getElementById('board-text')||{}).value||'';
+  if (!title.trim()) { showShareToast('⚠️ 제목을 입력해주세요'); return; }
+  var isAnon = document.getElementById('board-anon') && document.getElementById('board-anon').checked;
+  var userName = isAnon ? '익명' : (currentUser ? (currentUser.name||currentUser.email.split('@')[0]) : '방문자');
+  var item = { id:'b_'+Date.now(), user:userName, email:currentUser?(currentUser.email||''):'', anon:isAnon, title:title.trim(), text:text.trim(), date:new Date().toLocaleDateString('ko-KR') };
+  var boards = getBoards(); boards.unshift(item);
+  localStorage.setItem('cw_boards', JSON.stringify(boards.slice(0,200)));
+  document.getElementById('board-title').value = '';
+  document.getElementById('board-text').value = '';
+  renderBoardList();
+  sendAdminNotification('board', item);
+  notifyAdminEmail('[게시판] '+title, userName+'님:\n'+text);
+  showShareToast('✅ 등록됐습니다!');
+}
+
+function renderBoardList() {
+  var list = document.getElementById('board-list'); if (!list) return;
+  var boards = getBoards();
+  var isAdmin = currentUser && currentUser.email === ADMIN_EMAIL;
+  if (!boards.length) { list.innerHTML = '<div style="font-size:12px;color:var(--t2);padding:.5rem;">아직 게시글이 없습니다.</div>'; return; }
+  list.innerHTML = boards.slice(0,20).map(function(b) {
+    return '<div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:.65rem .85rem;border:1px solid var(--bd);">' +
+      '<div style="display:flex;justify-content:space-between;margin-bottom:.25rem;"><span style="font-size:12px;font-weight:700;color:#fff;">'+b.title+'</span><span style="font-size:10px;color:var(--t2);">'+b.date+'</span></div>' +
+      '<div style="font-size:11px;color:'+(isAdmin?'var(--t2)':'rgba(255,255,255,0.3)')+';">'+(isAdmin?b.text:'🔒 관리자만 확인 가능')+'</div>' +
+      '<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:.25rem;">'+(b.anon?'익명':b.user)+'</div>' +
+    '</div>';
+  }).join('');
+}
+
+// ── 고정 Q&A ──
+var FIXED_QNA = [
+  { q:'천기 웨이브는 어떤 서비스인가요?', a:'자미두수·매화역수·기문둔갑 3대 정통 역학을 AI와 결합한 프리미엄 명리 분석 플랫폼입니다. 생년월일시 기반으로 사주팔자를 분석하고, 재물·직업·애정·건강운과 인생 지침서를 생성합니다.' },
+  { q:'자미두수가 일반 사주와 다른 점은?', a:'일반 사주(4기둥)와 달리 자미두수는 14주성과 12궁위로 포국하여 훨씬 세밀하게 분석합니다. 명궁 주성에 따라 완전히 다른 인생 패턴이 도출되며, 대만·홍콩에서 현대 명리학의 표준으로 자리잡고 있습니다.' },
+  { q:'생시(태어난 시간)를 모르면 분석이 안 되나요?', a:'생시 없이도 분석 가능합니다. 다만 생시가 있으면 명궁·시주까지 포함한 완전한 포국이 가능해 정확도가 높아집니다. 생시 미입력 시 성격·기질 위주 분석으로 진행됩니다.' },
+  { q:'음력/양력 구분이 중요한가요?', a:'매우 중요합니다. 자미두수는 음력 날짜로 자미성 위치를 계산합니다. 천기 웨이브는 양력 입력 시 자동으로 음력 변환하여 정확한 포국을 진행합니다.' },
+  { q:'관상·손금 스캔은 어떻게 활용되나요?', a:'관상과 손금을 AI가 분석하여 사주 명반과 교차 검증합니다. 명반 재물운이 강하고 손금 재물선도 발달했다면 더 확실한 신호로 해석합니다. 3단계 촬영(관상·왼손·오른손)을 권장합니다.' },
+  { q:'인생 지침서에는 무엇이 포함되나요?', a:'10개 섹션으로 구성됩니다: ①명주 총평 ②생애 대운 ③재물·투자 ④직업·커리어 ⑤애정·인간관계 ⑥건강·체질 ⑦기문둔갑 전략 ⑧월별 운세 ⑨개운법 ⑩2025~2028 타임라인. PDF 저장 및 이메일 발송이 가능합니다.' },
+  { q:'궁합 분석은 어떻게 진행되나요?', a:'두 사람의 자미두수 명반을 각각 포국한 후 12궁 대조 분석을 진행합니다. 오행 상생·상극, 부처궁 상호 영향, 대운 교차점 등 10개 항목을 분석하며 궁합 점수(100점)와 관계 발전 조언을 제공합니다.' },
+  { q:'분석 결과가 매번 달라지는 이유는?', a:'자미두수 포국값과 점수는 계산으로 고정되지만 AI 해석 텍스트는 매번 다르게 생성될 수 있습니다. 명궁주성·점수·대운 등 핵심 수치를 기준으로 해석하시길 권장합니다.' },
+];
+
+function renderFixedQnA() {
+  var list = document.getElementById('qna-fixed-list'); if (!list) return;
+  list.innerHTML = FIXED_QNA.map(function(item, i) {
+    return '<div style="border:1px solid var(--bd);border-radius:10px;overflow:hidden;margin-bottom:.35rem;">' +
+      '<div onclick="toggleQnA('+i+')" style="padding:.65rem .85rem;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:.5rem;">' +
+        '<span style="font-size:12px;font-weight:600;color:#fff;flex:1;">'+item.q+'</span>' +
+        '<span id="qna-arrow-'+i+'" style="color:var(--t2);font-size:14px;flex-shrink:0;">▾</span>' +
+      '</div>' +
+      '<div id="qna-ans-'+i+'" style="display:none;padding:.6rem .85rem .85rem;background:rgba(255,255,255,0.03);font-size:12px;color:var(--t2);line-height:1.8;border-top:1px solid var(--bd);">'+item.a+'</div>' +
+    '</div>';
+  }).join('');
+}
+
+function toggleQnA(i) {
+  var el = document.getElementById('qna-ans-'+i);
+  var arrow = document.getElementById('qna-arrow-'+i);
+  if (!el) return;
+  var isOpen = el.style.display !== 'none';
+  el.style.display = isOpen ? 'none' : 'block';
+  if (arrow) arrow.textContent = isOpen ? '▾' : '▴';
+}
+
+function getQnAs() { try { return JSON.parse(localStorage.getItem('cw_qnas')||'[]'); } catch(e) { return []; } }
+
+function submitQnA() {
+  var title = (document.getElementById('qna-title')||{}).value||'';
+  var text = (document.getElementById('qna-text')||{}).value||'';
+  if (!title.trim()) { showShareToast('⚠️ 질문 제목을 입력해주세요'); return; }
+  var isAnon = document.getElementById('qna-anon') && document.getElementById('qna-anon').checked;
+  var userName = isAnon ? '익명' : (currentUser ? (currentUser.name||currentUser.email.split('@')[0]) : '방문자');
+  var item = { id:'q_'+Date.now(), user:userName, anon:isAnon, title:title.trim(), text:text.trim(), date:new Date().toLocaleDateString('ko-KR'), answered:false };
+  var qnas = getQnAs(); qnas.unshift(item);
+  localStorage.setItem('cw_qnas', JSON.stringify(qnas.slice(0,100)));
+  document.getElementById('qna-title').value = '';
+  if (document.getElementById('qna-text')) document.getElementById('qna-text').value = '';
+  sendAdminNotification('qna', item);
+  notifyAdminEmail('[Q&A] '+title, userName+'님:\n'+text);
+  showShareToast('✅ 질문이 등록됐습니다!');
 }
 
 function setReviewStar(n) {
@@ -5280,89 +3476,38 @@ function setReviewStar(n) {
   });
 }
 
+function getReviews() { try { return JSON.parse(localStorage.getItem('cw_reviews')||'[]'); } catch(e) { return []; } }
+
 function submitReview() {
   if (!currentUser) { openAuth('login'); return; }
-  var text = (document.getElementById('review-text')||{}).value || '';
+  var text = (document.getElementById('review-text')||{}).value||'';
   if (!text.trim()) { showShareToast('⚠️ 후기 내용을 입력해주세요'); return; }
-  var reviews = getReviews();
-  reviews.unshift({
-    id: 'r_' + Date.now(),
-    user: currentUser.name || currentUser.email.split('@')[0],
-    email: currentUser.email,
-    star: reviewStar,
-    text: text.trim(),
-    date: new Date().toLocaleDateString('ko-KR'),
-    result: window.lastSajuResult ? (window.lastSajuResult.star || '') : ''
-  });
-  localStorage.setItem('cw_reviews', JSON.stringify(reviews.slice(0, 100)));
+  var isAnon = document.getElementById('review-anon') && document.getElementById('review-anon').checked;
+  var userName = isAnon ? '익명' : (currentUser.name||currentUser.email.split('@')[0]);
+  var item = { id:'r_'+Date.now(), user:userName, email:currentUser.email, anon:isAnon, star:reviewStar, text:text.trim(), date:new Date().toLocaleDateString('ko-KR'), result:window.lastSajuResult?(window.lastSajuResult.star||''):'' };
+  var reviews = getReviews(); reviews.unshift(item);
+  localStorage.setItem('cw_reviews', JSON.stringify(reviews.slice(0,100)));
   document.getElementById('review-text').value = '';
   setReviewStar(5);
   renderReviews();
+  sendAdminNotification('review', item);
+  notifyAdminEmail('[이용후기] ⭐x'+reviewStar, userName+'님:\n'+text);
   showShareToast('✅ 후기가 등록됐습니다!');
 }
 
-function getReviews() {
-  try { return JSON.parse(localStorage.getItem('cw_reviews') || '[]'); } catch(e) { return []; }
-}
-
 function renderReviews() {
-  var list = document.getElementById('review-list');
-  if (!list) return;
+  var list = document.getElementById('review-list'); if (!list) return;
   var reviews = getReviews();
-  if (!reviews.length) { list.innerHTML = '<div style="font-size:12px;color:var(--t2);padding:.5rem 0;">아직 후기가 없습니다. 첫 번째 후기를 남겨보세요!</div>'; return; }
-  list.innerHTML = reviews.slice(0, 10).map(function(r) {
-    var stars = '★'.repeat(r.star) + '☆'.repeat(5-r.star);
+  if (!reviews.length) { list.innerHTML = '<div style="font-size:12px;color:var(--t2);padding:.5rem;">아직 후기가 없습니다. 첫 번째 후기를 남겨보세요!</div>'; return; }
+  list.innerHTML = reviews.slice(0,10).map(function(r) {
     return '<div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:.65rem .85rem;border:1px solid var(--bd);">' +
       '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem;">' +
-        '<span style="font-size:12px;font-weight:700;color:#fff;">' + r.user + '</span>' +
-        '<span style="font-size:11px;color:#FFD700;">' + stars + '</span>' +
+        '<span style="font-size:12px;font-weight:700;color:#fff;">'+(r.anon?'익명':r.user)+'</span>' +
+        '<span style="font-size:11px;color:#FFD700;">' + '★'.repeat(r.star||5) + '</span>' +
       '</div>' +
-      (r.result ? '<div style="font-size:10px;color:var(--em);margin-bottom:.25rem;">' + r.result + ' 명주</div>' : '') +
-      '<div style="font-size:12px;color:var(--t2);line-height:1.7;">' + r.text + '</div>' +
-      '<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:.25rem;">' + r.date + '</div>' +
-    '</div>';
-  }).join('');
-}
-
-function submitQnA() {
-  if (!currentUser) { openAuth('login'); return; }
-  var title = (document.getElementById('qna-title')||{}).value || '';
-  var text = (document.getElementById('qna-text')||{}).value || '';
-  if (!title.trim()) { showShareToast('⚠️ 제목을 입력해주세요'); return; }
-  var qnas = getQnAs();
-  qnas.unshift({
-    id: 'q_' + Date.now(),
-    user: currentUser.name || currentUser.email.split('@')[0],
-    email: currentUser.email,
-    title: title.trim(),
-    text: text.trim(),
-    date: new Date().toLocaleDateString('ko-KR'),
-    answered: false
-  });
-  localStorage.setItem('cw_qnas', JSON.stringify(qnas.slice(0, 100)));
-  document.getElementById('qna-title').value = '';
-  document.getElementById('qna-text').value = '';
-  renderQnAs();
-  showShareToast('✅ 질문이 등록됐습니다!');
-}
-
-function getQnAs() {
-  try { return JSON.parse(localStorage.getItem('cw_qnas') || '[]'); } catch(e) { return []; }
-}
-
-function renderQnAs() {
-  var list = document.getElementById('qna-list');
-  if (!list) return;
-  var qnas = getQnAs();
-  if (!qnas.length) { list.innerHTML = '<div style="font-size:12px;color:var(--t2);padding:.5rem 0;">아직 질문이 없습니다.</div>'; return; }
-  list.innerHTML = qnas.slice(0, 10).map(function(q) {
-    return '<div style="background:rgba(255,255,255,0.04);border-radius:8px;padding:.65rem .85rem;border:1px solid var(--bd);">' +
-      '<div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:.3rem;">' +
-        '<span style="font-size:12px;font-weight:700;color:#fff;">' + q.title + '</span>' +
-        '<span style="font-size:10px;padding:2px 7px;border-radius:10px;' + (q.answered?'background:rgba(80,200,120,0.15);color:var(--em)':'background:rgba(255,255,255,0.07);color:var(--t2)') + ';">' + (q.answered?'답변완료':'대기중') + '</span>' +
-      '</div>' +
-      (q.text ? '<div style="font-size:11px;color:var(--t2);line-height:1.6;">' + q.text + '</div>' : '') +
-      '<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:.25rem;">' + q.user + ' · ' + q.date + '</div>' +
+      (r.result ? '<div style="font-size:10px;color:var(--em);margin-bottom:.25rem;">'+r.result+' 명주</div>' : '') +
+      '<div style="font-size:12px;color:var(--t2);line-height:1.7;">'+r.text+'</div>' +
+      '<div style="font-size:10px;color:rgba(255,255,255,0.3);margin-top:.25rem;">'+r.date+'</div>' +
     '</div>';
   }).join('');
 }
@@ -5372,7 +3517,6 @@ function renderQnAs() {
 ══════════════════════════════════════ */
 function showMyDashboard() {
   if (!currentUser) {
-    // 미로그인이면 분석 입력창으로
     showPg('main', document.getElementById('bn-user'), 'user');
     return;
   }

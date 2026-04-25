@@ -4340,6 +4340,74 @@ var STAR_STRENGTH = {
   '파군성':[3,2,1,3,2,1,3,2,1,3,2,1]
 };
 
+/* ── 사주팔자 계산 ── */
+var HEAVENLY = ['甲','乙','丙','丁','戊','己','庚','辛','壬','癸'];
+var EARTHLY  = ['子','丑','寅','卯','辰','巳','午','未','申','酉','戌','亥'];
+var HEAVENLY_KOR = ['갑','을','병','정','무','기','경','신','임','계'];
+var EARTHLY_KOR  = ['자','축','인','묘','진','사','오','미','신','유','술','해'];
+var ANIMALS = ['쥐','소','호랑이','토끼','용','뱀','말','양','원숭이','닭','개','돼지'];
+var OHAENG_H = ['木','木','火','火','土','土','金','金','水','水'];
+var OHAENG_E = ['水','土','木','木','土','火','火','土','金','金','土','水'];
+
+function calcSajuPillar(year, month, day) {
+  var baseYear = 1864; // 甲子년 기준
+  var yIdx = (year - baseYear) % 60;
+  if (yIdx < 0) yIdx += 60;
+  var yH = yIdx % 10, yE = yIdx % 12;
+
+  // 월주: 년간 기준 인월(寅月) 시작
+  var mOffset = (yH % 5) * 2;
+  var mE = (month + 1) % 12; // 인월=0
+  var mH = (mOffset + month - 1) % 10;
+
+  // 일주: 기준일로부터 계산
+  var base = new Date(1900, 0, 1); // 1900.1.1 = 庚子일
+  var target = new Date(year, month-1, day);
+  var diff = Math.round((target - base) / 86400000);
+  var dIdx = ((diff % 60) + 60) % 60;
+  var dH = dIdx % 10, dE = dIdx % 12;
+
+  function pillarStr(h, e) {
+    return HEAVENLY[h] + EARTHLY[e];
+  }
+
+  var strongest = '木', weakest = '金';
+  var counts = {'木':0,'火':0,'土':0,'金':0,'水':0};
+  [OHAENG_H[yH], OHAENG_E[yE], OHAENG_H[mH], OHAENG_E[mE], OHAENG_H[dH], OHAENG_E[dE]].forEach(function(o){ if(counts[o]!==undefined) counts[o]++; });
+  var max=0, min=99;
+  for(var k in counts){ if(counts[k]>max){max=counts[k];strongest=k;} if(counts[k]<min){min=counts[k];weakest=k;} }
+
+  return {
+    year:  { h:yH, e:yE, str:pillarStr(yH,yE), animal:ANIMALS[yE] },
+    month: { h:mH, e:mE, str:pillarStr(mH,mE) },
+    day:   { h:dH, e:dE, str:pillarStr(dH,dE) },
+    daegan: HEAVENLY_KOR[dH] + '(' + HEAVENLY[dH] + ')',
+    ohaengCount: { strongest: strongest, weakest: weakest, counts: counts }
+  };
+}
+
+function getSajuString(year, month, day, time, cal) {
+  var p = calcSajuPillar(parseInt(year), parseInt(month), parseInt(day));
+  var timeH = '미상';
+  if (time && time !== '미상 (삼주 분석)') {
+    var timeMap = {'자시':0,'축시':1,'인시':2,'묘시':3,'진시':4,'사시':5,'오시':6,'미시':7,'신시':8,'유시':9,'술시':10,'해시':11};
+    for (var t in timeMap) {
+      if (time.startsWith(t.slice(0,2))) {
+        var th = (p.day.h % 5 * 2 + timeMap[t]) % 10;
+        timeH = HEAVENLY_KOR[th] + EARTHLY_KOR[timeMap[t]];
+        break;
+      }
+    }
+  }
+  var ziwei = calcZiweiChart(year, month, day, time || '', cal || '양력');
+  return {
+    pillars: p,
+    timeStr: timeH,
+    ziwei: ziwei,
+    summary: '연주:' + p.year.str + '(' + p.year.animal + '띠) 월주:' + p.month.str + ' 일주:' + p.day.str + (timeH!=='미상'?' 시주:'+timeH:'') + '\n일간:' + p.daegan + ' 강한오행:' + p.ohaengCount.strongest + ' 약한오행:' + p.ohaengCount.weakest + (ziwei ? '\n명궁:' + ziwei.mingung.kor + ' 주성:' + ziwei.mainStar + ' ' + ziwei.strengthName : '')
+  };
+}
+
 function calcZiweiChart(year, month, day, timeStr, cal) {
   var mg = calcMingong(month, timeStr);
 

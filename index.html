@@ -563,7 +563,7 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
           <span style="font-size:11px;color:var(--t2);font-weight:600;">💾 저장된 프로필</span>
           <div style="display:flex;gap:6px;">
             <button id="admin-cache-btn" onclick="clearAllCache()" style="display:none;font-size:11px;padding:4px 10px;border-radius:6px;background:rgba(231,76,60,0.1);border:1px solid rgba(231,76,60,0.25);color:#e74c3c;cursor:pointer;font-family:inherit;font-weight:600;" title="분석 캐시 초기화">🗑️ 캐시 초기화</button>
-            <button onclick="saveCurrentProfile()" style="font-size:11px;padding:4px 12px;border-radius:6px;background:rgba(80,200,120,0.15);border:1px solid rgba(80,200,120,0.3);color:var(--em);cursor:pointer;font-family:inherit;font-weight:600;">+ 현재 정보 저장</button>
+            <button onclick="saveProfile()" style="font-size:11px;padding:4px 12px;border-radius:6px;background:rgba(80,200,120,0.15);border:1px solid rgba(80,200,120,0.3);color:var(--em);cursor:pointer;font-family:inherit;font-weight:600;">+ 현재 정보 저장</button>
           </div>
         </div>
         <div id="profile-chips" style="display:flex;gap:6px;flex-wrap:wrap;">
@@ -683,6 +683,20 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         3대 정밀 역학 통합 분석 시작 🌊
       </button>
+
+      <!-- 무료 / 유료 버튼 -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:8px;">
+        <!-- 무료: 분석 결과 바로 보기 -->
+        <button onclick="doSajuScan()" style="padding:12px 8px;background:rgba(80,200,120,0.1);border:1px solid rgba(80,200,120,0.3);border-radius:12px;color:var(--em);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;line-height:1.4;text-align:center;">
+          <div style="font-size:10px;color:rgba(80,200,120,0.7);margin-bottom:2px;">무료</div>
+          🔮 천기 분석 들여다보기
+        </button>
+        <!-- 유료: 인생 지침서 -->
+        <button onclick="showPg('report')" style="padding:12px 8px;background:linear-gradient(135deg,rgba(255,215,0,0.15),rgba(255,165,0,0.1));border:1px solid rgba(255,215,0,0.35);border-radius:12px;color:var(--gold);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;line-height:1.4;text-align:center;">
+          <div style="font-size:10px;color:rgba(255,215,0,0.7);margin-bottom:2px;">✦ 프리미엄</div>
+          📜 인생 지침서 받기
+        </button>
+      </div>
     </div>
 
     <div class="two-col fu2">

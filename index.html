@@ -4694,26 +4694,7 @@ async function runBatchProcess(doSend) {
 
 /* ── 결제 함수 ── */
 function doPayment(method) {
-  var price = 19900;
-  var name = currentUser ? currentUser.name : '고객';
-
-  if (method === 'kakao') {
-    // 카카오페이 링크 (실제 연동 전 안내)
-    var bankDiv = document.getElementById('bank-info-div');
-    if (bankDiv) bankDiv.style.display = 'none';
-    alert('카카오페이 결제\n\n' + name + '님, 아래 계좌로 ' + price.toLocaleString() + '원 이체 후\n입금자명을 알려주시면 확인 후 활성화됩니다.\n\n계좌: 신한 110-123-456789\n예금주: 천기웨이브');
-  } else if (method === 'toss') {
-    // 토스 링크
-    var bankDiv = document.getElementById('bank-info-div');
-    if (bankDiv) bankDiv.style.display = 'none';
-    alert('토스 결제\n\n' + name + '님, 아래 계좌로 ' + price.toLocaleString() + '원 이체 후\n입금자명을 알려주시면 확인 후 활성화됩니다.\n\n계좌: 신한 110-123-456789\n예금주: 천기웨이브');
-  } else if (method === 'bank') {
-    // 계좌이체 안내
-    var bankDiv = document.getElementById('bank-info-div');
-    if (bankDiv) {
-      bankDiv.style.display = bankDiv.style.display === 'none' ? 'block' : 'none';
-    }
-  }
+  alert('💫 결제 시스템 준비 중입니다.\n\n곧 카카오페이·토스·계좌이체\n모든 결제 수단이 오픈됩니다!\n\n조금만 기다려 주세요 🙏');
 }
 
 

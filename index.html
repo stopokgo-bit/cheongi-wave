@@ -38,7 +38,7 @@
     try {
       localStorage.removeItem('cw_logged_out'); // 로그아웃 플래그 제거
       await signInWithPopup(auth, provider);
-      closeAuth();
+      if(window.closeAuth) window.closeAuth();
     } catch(e) {
       if (e.code !== 'auth/popup-closed-by-user') {
         alert('Google 로그인 오류: ' + e.message);
@@ -54,7 +54,7 @@
         signOut(auth);
         return;
       }
-      loginSuccess({
+      window.loginSuccess && window.loginSuccess({
         name: user.displayName || user.email.split('@')[0],
         email: user.email,
         avatar: user.photoURL,
@@ -1784,22 +1784,6 @@ async function doSajuScan() {
     alert('분석 오류: ' + e.message + '\n잠시 후 다시 시도해주세요.');
   }
 }
-  }
-  const result = JSON.parse(clean);
-
-  showLoading(false);
-  // 캐시 저장
-  // 캐시는 _resultCache에 저장됨
-  _cachedSajuResult = result;
-  renderSajuResult(name, yearVal || year, monthVal || month, dayVal || day, timeStr, age, result);
-
-} catch (e) {
-  clearInterval(msgTimer);
-  showLoading(false);
-  alert('분석 중 오류가 발생했습니다.\n\n' + e.message + '\n\n잠시 후 다시 시도해 주세요.');
-}
-}
-
 function showLoading(show) {
 const el = document.getElementById('sajuLoading');
 el.style.display = show ? 'flex' : 'none';

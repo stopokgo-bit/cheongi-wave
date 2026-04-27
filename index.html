@@ -1750,6 +1750,184 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
   
 
 <script>
+
+function drawWave() {
+  var cv = document.getElementById('wc'); if (!cv) return;
+  var W = cv.offsetWidth || 580;
+  var chartH = Math.round(W * (window.innerWidth >= 900 ? 0.38 : 0.5));
+  cv.width = W * 2; cv.height = chartH * 2; cv.style.height = chartH + 'px';
+  var ctx = cv.getContext('2d'), H = chartH * 2, pad = {t:24,b:36,l:18,r:18};
+  var gW = W * 2 - pad.l - pad.r, gH = H - pad.t - pad.b;
+  function xy(i, v) { return {x: pad.l + (i / (WD.length - 1)) * gW, y: pad.t + gH - (v / 100) * gH}; }
+  var pr = 0;
+  function frame() {
+    ctx.clearRect(0, 0, W * 2, H);
+    [40,60,85].forEach(function(y) {
+      var gy = pad.t + gH - (y / 100) * gH;
+      ctx.strokeStyle = 'rgba(255,255,255,0.07)'; ctx.lineWidth = 1;
+      ctx.setLineDash([5,5]); ctx.beginPath(); ctx.moveTo(pad.l, gy); ctx.lineTo(W*2-pad.r, gy); ctx.stroke(); ctx.setLineDash([]);
+    });
+    function line(key, col) {
+      ctx.beginPath(); ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.lineJoin = 'round';
+      var mi = Math.min(Math.floor(pr), WD.length - 1);
+      for (var i = 0; i <= mi; i++) { var p = xy(i, WD[i][key]); i === 0 ? ctx.moveTo(p.x, p.y) : ctx.lineTo(p.x, p.y); }
+      if (pr < WD.length - 1) {
+        var f = pr - Math.floor(pr), i0 = Math.floor(pr), i1 = Math.min(i0+1, WD.length-1);
+        var p0 = xy(i0, WD[i0][key]), p1 = xy(i1, WD[i1][key]);
+        ctx.lineTo(p0.x + (p1.x - p0.x) * f, p0.y + (p1.y - p0.y) * f);
+      }
+      ctx.stroke();
+      for (var j = 0; j < Math.min(Math.floor(pr + 1), WD.length); j++) {
+        var pt = xy(j, WD[j][key]); ctx.beginPath(); ctx.arc(pt.x, pt.y, 5, 0, Math.PI*2);
+        ctx.fillStyle = col; ctx.fill();
+      }
+    }
+    line('w','#50C878'); line('c','#FFD700'); line('l','#cc88bb');
+    WD.forEach(function(d, i) {
+      var p = xy(i, 50);
+      ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.font = '18px system-ui';
+      ctx.textAlign = 'center'; ctx.fillText(d.age, p.x, H - 4);
+    });
+    pr += 0.045; if (pr < WD.length - 1) requestAnimationFrame(frame);
+  }
+  frame();
+  cv.onmousemove = function(e) {
+    var r = cv.getBoundingClientRect(), mx = (e.clientX - r.left) * (W * 2 / r.width);
+    var ci = 0, md = Infinity;
+    WD.forEach(function(d, i) { var p = xy(i, 50); var dd = Math.abs(mx - p.x); if (dd < md) { md = dd; ci = i; } });
+    var d = WD[ci], p = xy(ci, 50);
+    var tt = document.getElementById('wtt'); if (!tt) return;
+    tt.style.left = Math.min(p.x / 2 + 8, W - 160) + 'px';
+    tt.style.top = '8px'; tt.style.opacity = '1';
+    tt.innerHTML = '<strong style="color:#50C878;display:block;margin-bottom:2px;">' + d.age + '</strong>재물 ' + d.w + ' · 직업 ' + d.c + ' · 애정 ' + d.l;
+  };
+  cv.onmouseleave = function() { var tt = document.getElementById('wtt'); if (tt) tt.style.opacity = '0'; };
+}
+
+function drawCompass() {
+  var cv = document.getElementById('cc'); if (!cv) return;
+  var ctx = cv.getContext('2d'), cx = 75, cy = 75, r = 62;
+
+  // ✅ 개인 길방 각도 (사주 분석값, 기본 45도)
+  var luckyAngle = (window.sajuCompassAngle !== undefined) ? window.sajuCompassAngle : 45;
+  var deviceHeading = 0; // 실제 폰 방향
+  var smoothHeading = 0; // 부드럽게 보간
+
+  // ✅ 실제 기기 방향 감지
+  function handleOrientation(e) {
+    // alpha = 나침반 방향 (0~360, 북쪽=0)
+    if (e.alpha !== null) {
+      deviceHeading = e.alpha;
+    }
+  }
+
+  // iOS 13+ 권한 요청
+  function requestCompassPermission() {
+    if (typeof DeviceOrientationEvent !== 'undefined' &&
+        typeof DeviceOrientationEvent.requestPermission === 'function') {
+      DeviceOrientationEvent.requestPermission()
+        .then(function(state) {
+          if (state === 'granted') {
+            window.addEventListener('deviceorientation', handleOrientation, true);
+          }
+        })
+        .catch(console.error);
+    } else {
+      // Android / 일반 브라우저
+      window.addEventListener('deviceorientation', handleOrientation, true);
+    }
+  }
+
+  // 나침반 클릭하면 권한 요청
+  cv.style.cursor = 'pointer';
+  cv.onclick = function() {
+    requestCompassPermission();
+    cv.onclick = null; // 한 번만
+    // 안내 텍스트 제거
+    var hint = document.getElementById('compass-hint');
+    if (hint) hint.style.display = 'none';
+  };
+
+  // 자동 시도 (Android)
+  requestCompassPermission();
+
+  var compassRunning = true;
+
+  (function frame() {
+    if (!compassRunning) return;
+    ctx.clearRect(0, 0, 150, 150);
+
+    // 부드러운 보간
+    var diff = deviceHeading - smoothHeading;
+    if (diff > 180) diff -= 360;
+    if (diff < -180) diff += 360;
+    smoothHeading += diff * 0.12;
+
+    // 배경 원
+    ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI*2);
+    ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 2; ctx.stroke();
+
+    // 길방 방향 하이라이트 (금색 섹터)
+    var luckyRad = (luckyAngle - smoothHeading - 90) * Math.PI / 180;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, r-2, luckyRad - 0.25, luckyRad + 0.25);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(255,215,0,0.18)'; ctx.fill();
+
+    // 방향 텍스트 (폰 회전에 따라 같이 회전)
+    [['N',0],['E',90],['S',180],['W',270]].forEach(function(item) {
+      var rad = (item[1] - smoothHeading - 90) * Math.PI / 180;
+      var tx = cx + Math.cos(rad) * (r - 13);
+      var ty = cy + Math.sin(rad) * (r - 13);
+      ctx.fillStyle = item[0] === 'N' ? '#e74c3c' : 'rgba(255,255,255,0.5)';
+      ctx.font = item[0] === 'N' ? 'bold 12px system-ui' : '11px system-ui';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(item[0], tx, ty);
+    });
+
+    // 눈금선
+    for (var deg = 0; deg < 360; deg += 30) {
+      var rad2 = (deg - smoothHeading - 90) * Math.PI / 180;
+      var len = deg % 90 === 0 ? 10 : 5;
+      ctx.beginPath();
+      ctx.moveTo(cx + Math.cos(rad2) * (r-2), cy + Math.sin(rad2) * (r-2));
+      ctx.lineTo(cx + Math.cos(rad2) * (r-2-len), cy + Math.sin(rad2) * (r-2-len));
+      ctx.strokeStyle = 'rgba(255,255,255,0.3)'; ctx.lineWidth = 1; ctx.stroke();
+    }
+
+    // 고정 바늘 (항상 위쪽 = 현재 폰이 향하는 방향)
+    // 빨간 끝 = 북쪽
+    ctx.save(); ctx.translate(cx, cy);
+    // 북쪽 (빨간)
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0, -46);
+    ctx.strokeStyle = '#e74c3c'; ctx.lineWidth = 3;
+    ctx.lineCap = 'round'; ctx.stroke();
+    // 남쪽 (흰색)
+    ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0, 32);
+    ctx.strokeStyle = 'rgba(255,255,255,0.5)'; ctx.lineWidth = 3; ctx.stroke();
+    // 중심점
+    ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI*2);
+    ctx.fillStyle = '#fff'; ctx.fill();
+    ctx.restore();
+
+    // 길방 화살표 (금색, 길방 방향 고정)
+    var laRad = (luckyAngle - smoothHeading - 90) * Math.PI / 180;
+    ctx.save(); ctx.translate(cx, cy); ctx.rotate(laRad + Math.PI/2);
+    ctx.beginPath(); ctx.moveTo(0, -38); ctx.lineTo(5, -28); ctx.lineTo(-5, -28); ctx.closePath();
+    ctx.fillStyle = 'rgba(255,215,0,0.85)'; ctx.fill();
+    ctx.restore();
+
+    requestAnimationFrame(frame);
+  })();
+
+  // 페이지 떠날 때 정리
+  window._stopCompass = function() {
+    compassRunning = false;
+    window.removeEventListener('deviceorientation', handleOrientation, true);
+  };
+}
+
 const EX = [
       { name: '천명 도사', spec: '자미두수·기문둔갑', rat: '4.9', tags: ['#비즈니스', '#승진운'], top: false },
       { name: '연화 선생', spec: '매화역수·심리상담', rat: '4.8', tags: ['#연애', '#재회부적'], top: false },
@@ -2192,8 +2370,7 @@ const EX = [
       loginSuccess({ name: '카카오 사용자', avatar: null, provider: 'kakao' });
     }
     buildExperts();
-    setTimeout(() => { drawWave(); drawCompass(); }, 80);
- 
+
 </script>
 <script>
 /* =====================================================

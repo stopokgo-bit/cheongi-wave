@@ -36,6 +36,7 @@
   // ✅ Google 로그인 함수 전역 노출
   window.doGoogleLogin = async function() {
     try {
+      localStorage.removeItem('cw_logged_out'); // 로그아웃 플래그 제거
       await signInWithPopup(auth, provider);
       closeAuth();
     } catch(e) {
@@ -48,6 +49,11 @@
   // 로그인 상태 감지
   onAuthStateChanged(auth, function(user) {
     if (user) {
+      // localStorage에 명시적 로그아웃 기록이 있으면 자동 로그인 안 함
+      if (localStorage.getItem('cw_logged_out') === '1') {
+        signOut(auth);
+        return;
+      }
       loginSuccess({
         name: user.displayName || user.email.split('@')[0],
         email: user.email,
@@ -2084,14 +2090,29 @@ area.innerHTML = `
 </div>`;
 }
 function doLogout() {
-if (currentUser?.provider === 'kakao') {
-  try { window.Kakao.Auth.logout(); } catch (e) { }
-}
-currentUser = null;
-document.getElementById('nav-auth-area').innerHTML = `
-<button class="nav-login-btn" onclick="openAuth('login')">
-<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>로그인
-</button>`;
+  // 로그아웃 플래그 저장 (자동 재로그인 방지)
+  try { localStorage.setItem('cw_logged_out', '1'); } catch(e) {}
+  // Firebase 로그아웃
+  try {
+    if (window._firebaseAuth && window._firebaseSignOut) {
+      window._firebaseSignOut(window._firebaseAuth);
+    }
+  } catch(e) {}
+  // Kakao 로그아웃
+  if (currentUser && currentUser.provider === 'kakao') {
+    try { window.Kakao.Auth.logout(); } catch(e) {}
+  }
+  currentUser = null;
+  // localStorage 세션 제거
+  try { localStorage.removeItem('cw_user'); } catch(e) {}
+  // 네비 초기화
+  var authArea = document.getElementById('nav-auth-area');
+  if (authArea) authArea.innerHTML = '<button class="nbtn" onclick="openAuth(\'login\')" title="로그인"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><span class="nav-label">로그인</span></button>';
+  var adminBtn = document.getElementById('bn-admin');
+  if (adminBtn) adminBtn.style.display = 'none';
+  var profileBar = document.getElementById('profile-bar');
+  if (profileBar) profileBar.style.display = 'none';
+  showShareToast('로그아웃됐습니다');
 }
 document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAuth(); });
 

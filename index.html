@@ -33,6 +33,18 @@
   window._googleProvider = provider;
   window._firebaseSignOut = signOut;
 
+  // ✅ Google 로그인 함수 전역 노출
+  window.doGoogleLogin = async function() {
+    try {
+      await signInWithPopup(auth, provider);
+      closeAuth();
+    } catch(e) {
+      if (e.code !== 'auth/popup-closed-by-user') {
+        alert('Google 로그인 오류: ' + e.message);
+      }
+    }
+  };
+
   // 로그인 상태 감지
   onAuthStateChanged(auth, function(user) {
     if (user) {

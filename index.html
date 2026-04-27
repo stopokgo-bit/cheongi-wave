@@ -2130,7 +2130,7 @@ WD = [
 drawWave();
 }
 
-let selCh = 'urban', sMode = 'face', gOn = false, lOn = false, sState = 'idle', aFr = null, camAnimFr = null, sLY = 0, sLD = 1, chBuilt = false;
+let selCh = 'urban', sMode = 'face', gOn = false, lOn = false, sState = 'idle', aFr = null, sLY = 0, sLD = 1, chBuilt = false;
 
 function showPg(pg, btn, sub) {
 document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
@@ -2268,6 +2268,10 @@ let currentAngle = compassTargetAngle;
 }
 
 let camStream = null;
+let camAnimFr = null;
+let aFr = null;
+let sState = 'idle';
+let sMode = 'face';
 
 let currentFacing = 'user'; // 현재 카메라 방향
 
@@ -2309,6 +2313,7 @@ try {
   camStream = await navigator.mediaDevices.getUserMedia(constraints);
   video.srcObject = camStream;
   video.style.display = 'block';
+  await video.play().catch(function(){});
   if (errBox) errBox.style.display = 'none';
 } catch (e) {
   console.error('카메라 오류:', e);
@@ -2319,6 +2324,7 @@ try {
       camStream = fallback;
       video.srcObject = fallback;
       video.style.display = 'block';
+      await video.play().catch(function(){});
       video.style.transform = 'scaleX(-1)';
       if (guideMsg) guideMsg.textContent = '후면 카메라 없음 - 전면 카메라로 대체';
       if (errBox) errBox.style.display = 'none';
@@ -2495,7 +2501,7 @@ const imageData = snapCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
 
 // 단계별 UI 진행하면서 AI 분석 병렬 실행
 runStep(0);
-analyzeWithAI(imageData);
+analyzeWithAI(imageData).then(function(r) { window._scanResult = r; }).catch(function() { window._scanResult = {}; });
 }
 
 async function analyzeWithAI(imageData) {

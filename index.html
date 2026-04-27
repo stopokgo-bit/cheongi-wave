@@ -572,6 +572,21 @@ html,body{background:var(--bg);color:var(--t);font-family:'Segoe UI',system-ui,s
 
   <!-- USER -->
   <div id="pg-main-user" class="pg on">
+    <!-- ✨ 환영 메시지 섹션 -->
+    <div id="welcome-hero" style="text-align:center;padding:18px 16px 10px;margin-bottom:4px;">
+      <div id="welcome-img-wrap" style="margin-bottom:14px;">
+        <div style="width:80px;height:80px;margin:0 auto;background:linear-gradient(135deg,rgba(255,215,0,0.2),rgba(120,80,255,0.2));border-radius:50%;display:flex;align-items:center;justify-content:center;border:2px solid rgba(255,215,0,0.3);box-shadow:0 0 24px rgba(255,215,0,0.15);">
+          <svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.2">
+            <circle cx="12" cy="12" r="10"/>
+            <path d="M12 2a10 10 0 0 1 0 20"/>
+            <path d="M2 12h20M12 2c-2.5 3-4 6-4 10s1.5 7 4 10"/>
+          </svg>
+        </div>
+      </div>
+      <div id="welcome-msg" style="font-size:15px;font-weight:700;color:#FFD700;line-height:1.6;min-height:24px;"></div>
+      <div id="welcome-sub" style="font-size:12px;color:var(--t2);margin-top:6px;line-height:1.6;min-height:18px;"></div>
+    </div>
+
     <div class="hero fu">
       <div class="hero-title"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>당신의 천기(天機)를 스캔하세요</div>
 
@@ -1663,153 +1678,112 @@ let _cachedSajuKey = null;
 let _cachedSajuResult = null;
 
 async function doSajuScan() {
-const name = document.getElementById('inp-name').value.trim();
-const yearVal = document.getElementById('inp-year').value;
-const monthVal = document.getElementById('inp-month').value;
-const dayVal = document.getElementById('inp-day').value;
-const unknownTime = document.getElementById('unk').checked;
-const gender = selectedGender;
-const cal = selectedCal;
-const timeEl = document.getElementById('inp-time');
-const time = timeEl ? timeEl.value : '';
+  const name = document.getElementById('inp-name').value.trim();
+  const yearVal = document.getElementById('inp-year').value;
+  const monthVal = document.getElementById('inp-month').value;
+  const dayVal = document.getElementById('inp-day').value;
+  const unknownTime = document.getElementById('unk').checked;
+  const gender = selectedGender;
+  const cal = selectedCal;
+  const timeEl = document.getElementById('inp-time');
+  const time = timeEl ? timeEl.value : '';
 
-if (!name) { alert('이름을 입력해 주세요.'); return; }
-if (!yearVal || !monthVal || !dayVal) { alert('생년월일을 입력해 주세요.'); return; }
-if (!time && !unknownTime) { alert('태어난 시간을 선택하거나\n"시간을 모릅니다"에 체크해 주세요.'); return; }
+  if (!name) { alert('이름을 입력해 주세요.'); return; }
+  if (!yearVal || !monthVal || !dayVal) { alert('생년월일을 입력해 주세요.'); return; }
+  if (!time && !unknownTime) { alert('태어난 시간을 선택하거나\n"시간을 모릅니다"에 체크해 주세요.'); return; }
 
-// 캐시 확인 - 동일 입력이면 저장된 결과 즉시 표시
-const cacheKey = `${name}_${yearVal}_${monthVal}_${dayVal}_${gender}_${cal}_${time || 'unknown'}`;
-if (_resultCache[cacheKey]) {
-  const cached = _resultCache[cacheKey];
-  renderSajuResult(name, yearVal, monthVal, dayVal, cached.timeStr, cached.age, cached.result);
-  return;
-}
+  const year = parseInt(yearVal);
+  const month = parseInt(monthVal);
+  const day = parseInt(dayVal);
+  const timeStr = unknownTime ? '미상 (삼주 분석)' : time;
+  const age = new Date().getFullYear() - year;
 
-showLoading(true);
-let msgIdx = 0;
-const msgTimer = setInterval(() => {
-  msgIdx = Math.min(msgIdx + 1, SAJU_LOADING_MSGS.length - 1);
-  document.getElementById('loading-msg').textContent = SAJU_LOADING_MSGS[msgIdx][0];
-  document.getElementById('loading-sub').textContent = SAJU_LOADING_MSGS[msgIdx][1];
-}, 1800);
+  const cacheKey = name + '_' + yearVal + '_' + monthVal + '_' + dayVal + '_' + gender + '_' + cal + '_' + (time || 'unknown');
+  if (_resultCache[cacheKey]) {
+    const cached = _resultCache[cacheKey];
+    renderSajuResult(name, yearVal, monthVal, dayVal, cached.timeStr, cached.age, cached.result);
+    return;
+  }
 
-const birthDate = new Date(birth);
-const year = birthDate.getFullYear();
-const month = birthDate.getMonth() + 1;
-const day = birthDate.getDate();
-const timeStr = unknownTime ? '미상 (삼주 분석)' : time;
-const today = new Date();
-const age = today.getFullYear() - year;
+  showLoading(true);
+  let msgIdx = 0;
+  const msgTimer = setInterval(function() {
+    msgIdx = Math.min(msgIdx + 1, SAJU_LOADING_MSGS.length - 1);
+    var lm = document.getElementById('loading-msg');
+    var ls = document.getElementById('loading-sub');
+    if (lm) lm.textContent = SAJU_LOADING_MSGS[msgIdx][0];
+    if (ls) ls.textContent = SAJU_LOADING_MSGS[msgIdx][1];
+  }, 1800);
 
-// 주성 기본 점수 미리 계산 (AI가 숫자를 만들지 못하게 고정)
-const analysisTime = formatAnalysisTime();
-const baseScoreHint = getBaseScore('');  // 주성 확정 전 기본값
+  const prompt = '당신은 천기 웨이브 수석 명리학 AI입니다.\n' +
+    '[의뢰인] ' + name + '(' + gender + ') ' + year + '년 ' + month + '월 ' + day + '일 ' + cal + ' ' + timeStr + ' ' + age + '세\n\n' +
+    '자미두수·매화역수·기문둔갑 3대 역학으로 분석하여 아래 JSON만 출력하세요:\n' +
+    '{"star":"명궁주성","palace_desc":"명궁특성2문장","daewoon":"현재대운기간","base_score":85,' +
+    '"scores":{"재물운":80,"직업운":85,"애정운":75,"건강운":82},' +
+    '"score_trends":{"재물운":"상승중","직업운":"안정","애정운":"하락중","건강운":"안정"},' +
+    '"score_sources":{"재물운":"자미두수근거","직업운":"자미두수근거","애정운":"매화역수근거","건강운":"자미두수근거"},' +
+    '"wave_data":[{"age":"20대","w":70,"c":75,"l":65},{"age":"30대","w":78,"c":80,"l":72},{"age":"현재","w":85,"c":82,"l":78},{"age":"50대","w":88,"c":85,"l":80},{"age":"60대","w":82,"c":80,"l":75}],' +
+    '"compass_angle":45,"compass_desc":"오늘기문둔갑길방",' +
+    '"ziwei":"자미두수분석3문장","meihua":"매화역수분석3문장","qimen":"기문둔갑분석3문장",' +
+    '"hybrid_msg":"3대역학통합메시지5문장","career":"직업분석3문장","wealth":"재물분석3문장",' +
+    '"love":"애정분석3문장","luck_period":"향후3년대운3문장","caution":"주의사항2문장",' +
+    '"lucky_direction":"북동","lucky_items":["청색","7","수요일"],' +
+    '"lucky_mindset":"오늘의마음가짐한문장",' +
+    '"lucky_days":[{"date":"2026-05-01","type":"대길","reason":"근거"},{"date":"2026-05-05","type":"길","reason":"근거"},{"date":"2026-05-12","type":"흉","reason":"근거"}],' +
+    '"summary":"전체요약30자이내"}';
 
-const prompt = `당신은 '천기 웨이브'의 수석 명리학 AI 분석가입니다.
-반드시 아래 [엄격한 분석 규칙]을 준수하여 일관성 있는 결과를 도출하세요.
-
-[엄격한 분석 규칙]
-1. 점수 산출: 자미두수 명궁 주성에 따라 기본점을 정하고, 매화역수 괘로 가감하세요.
-   - 자미/천부/무곡/태양: 기본 90점 내외
-   - 천기/태음/탐랑/거문: 기본 85점 내외
-   - 천상/천량/칠살/파군: 기본 80점 내외
-   - 매화역수 생체(生體)괘: +3~5점, 극체(剋體)괘: -3~5점
-2. 데이터 비중: 자미두수(인생항로) 70% + 매화역수(오늘기회) 20% + 기문둔갑(성공치트키) 10%
-3. 용어: 자미두수→'인생 지도', 매화역수→'오늘의 기회', 기문둔갑→'성공 치트키'
-4. 문체: 3인칭, 단호하고 신뢰감 있는 전문가 어조 (~입니다, ~하십시오)
-5. 점수는 한 번 산출되면 같은 사주에서 변하지 않도록 논리적 근거를 갖출 것
-
-[의뢰인 정보]
-- 성명: ${name} (${gender}성)
-- 생년월일: ${year}년 ${month}월 ${day}일 (${cal})
-- 태어난 시간: ${timeStr}
-- 현재 나이: ${age}세
-- 분석 시각: ${analysisTime}
-
-[3대 역학 통합 분석 지침]
-1. 자미두수: 명궁 주성 파악 - 격국/대운 방향(남성 양년생 순행/음년생 역행, 여성 반대) - 현재 대운 분석
-2. 매화역수: 오늘 날짜+시간으로 체괘/용괘 산출 - 오늘의 길흉 점수 도출
-3. 기문둔갑: 오늘 시반 기준 팔문/팔신 배치 - 길방/흉방/귀인 방위 산출
-4. 세 역학 결과를 하이브리드 메시지로 통합
-
-반드시 아래 JSON 형식으로만 응답하세요. 다른 텍스트 없이 JSON만 출력하세요.
-
-{
-  "star": "명궁 주성명",
-  "palace_desc": "명궁 주성 핵심 특성 (2줄 이내)",
-  "daewoon": "현재 대운 (몇 세~몇 세, 어떤 대운)",
-  "base_score": 숫자(주성 기본점수),
-  "scores": {
-"재물운": 숫자,
-"직업운": 숫자,
-"애정운": 숫자,
-"건강운": 숫자
-  },
-  "score_trends": {
-"재물운": "상승중 또는 하락중 또는 안정",
-"직업운": "상승중 또는 하락중 또는 안정",
-"애정운": "상승중 또는 하락중 또는 안정",
-"건강운": "상승중 또는 하락중 또는 안정"
-  },
-  "score_sources": {
-"재물운": "자미두수 기준",
-"직업운": "자미두수 기준",
-"애정운": "매화역수 기준",
-"건강운": "자미두수 기준"
-  },
-  "ziwei": "인생 지도 분석 (인생 항로/격국/대운, 3-4문장)",
-  "meihua": "오늘의 기회 분석 (체괘/용괘/길흉, 3-4문장)",
-  "qimen": "성공 치트키 분석 (오늘 길방/귀인 방위/전략, 3-4문장)",
-  "hybrid_msg": "3대 역학 통합 메시지 (5-6문장, ~입니다 어조)",
-  "career": "직업/커리어 분석 (3-4문장)",
-  "wealth": "재물/금전 분석 (3-4문장)",
-  "love": "애정/인간관계 분석 (3-4문장)",
-  "luck_period": "대운 흐름 향후 3년 (3-4문장)",
-  "caution": "주의사항 및 개운법 (2-3문장)",
-  "lucky_direction": "기문둔갑 오늘의 길방",
-  "lucky_items": ["길한 색상 또는 방위", "길한 숫자", "길한 요일"],
-  "summary": "전체 요약 한 줄 (30자 이내)"
-}`;
-
-try {
-  // CORS 우회: 로컬에서는 프록시 없이 직접 호출 시도
-  // 배포 후에는 Vercel Edge Function 사용
-      const apiUrl = '/api/saju';
-
-  let response;
   try {
-    response = await fetch(apiUrl, {
+    const response = await fetch('/api/saju', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        model: 'claude-haiku-4-5-20251001',
+        model: 'claude-sonnet-4-6',
         max_tokens: 4000,
+        system: '명리학 AI. 유효한 JSON만 출력.',
         messages: [{ role: 'user', content: prompt }]
       })
     });
-  } catch (fetchErr) {
-    throw new Error('Failed to fetch');
+
+    clearInterval(msgTimer);
+    if (!response.ok) throw new Error('API 오류: ' + response.status);
+
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder();
+    let text = '', buf = '';
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+      buf += decoder.decode(value, { stream: true });
+      const lines = buf.split('\n'); buf = lines.pop() || '';
+      for (const line of lines) {
+        if (!line.startsWith('data: ')) continue;
+        const d = line.slice(6).trim();
+        if (d === '[DONE]') continue;
+        try { const ev = JSON.parse(d); if (ev.type==='content_block_delta' && ev.delta && ev.delta.text) text += ev.delta.text; } catch(e) {}
+      }
+    }
+
+    let clean = text.replace(/```json\s*/gi,'').replace(/```/g,'').trim();
+    const fb = clean.indexOf('{'), lb = clean.lastIndexOf('}');
+    if (fb >= 0 && lb > fb) clean = clean.slice(fb, lb+1);
+    let result;
+    try { result = JSON.parse(clean); }
+    catch(e) {
+      let op = (clean.match(/{/g)||[]).length, cl = (clean.match(/}/g)||[]).length;
+      while (cl < op) { clean += '}'; cl++; }
+      try { result = JSON.parse(clean); } catch(e2) { result = {}; }
+    }
+
+    _resultCache[cacheKey] = { timeStr, age, result };
+    showLoading(false);
+    renderSajuResult(name, yearVal, monthVal, dayVal, timeStr, age, result);
+
+  } catch(e) {
+    clearInterval(msgTimer);
+    showLoading(false);
+    alert('분석 오류: ' + e.message + '\n잠시 후 다시 시도해주세요.');
   }
-
-  clearInterval(msgTimer);
-
-  if (!response.ok) {
-    throw new Error('API 응답 오류: ' + response.status);
-  }
-
-  const data = await response.json();
-  const text = data.content?.map(c => c.text || '').join('') || '';
-  let clean = text.replace(/```json|```/g, '').trim();
-  // JSON이 잘린 경우 복구 시도
-  if (!clean.endsWith('}')) {
-    const lastBrace = clean.lastIndexOf('}');
-    if (lastBrace > 0) clean = clean.substring(0, lastBrace + 1);
-    // 중괄호 닫기 보완
-    let opens = (clean.match(/{/g) || []).length;
-    let closes = (clean.match(/}/g) || []).length;
-    while (closes < opens) { clean += '}'; closes++; }
+}
   }
   const result = JSON.parse(clean);
 
@@ -2088,6 +2062,7 @@ area.innerHTML = `
 <span class="nav-user-name">${user.name}</span>
 <button class="nav-logout" onclick="doLogout()">로그아웃</button>
 </div>`;
+  if (typeof renderWelcomeMsg === 'function') setTimeout(renderWelcomeMsg, 100);
 }
 function doLogout() {
   // 로그아웃 플래그 저장 (자동 재로그인 방지)
@@ -4768,6 +4743,43 @@ function saveProfile() {
   renderProfileBar();
 }
 
+
+/* ── 환영 메시지 ── */
+var WELCOME_MSGS = [
+  { msg: "천기(天機)는 하늘의 기운을 읽는 것입니다", sub: "오늘도 당신만의 천기가 흐르고 있습니다 🌊" },
+  { msg: "하늘이 당신에게 보내는 신호가 있습니다", sub: "자미두수·매화역수·기문둔갑으로 풀어드립니다 ✨" },
+  { msg: "좋은 기운이 당신 곁에 머물고 있습니다", sub: "오늘 하루도 천기의 흐름과 함께 하세요 ☀️" },
+  { msg: "운명은 읽는 자의 것입니다", sub: "3대 정통 역학이 당신의 천기를 분석합니다 🔮" },
+  { msg: "오늘의 기회는 준비된 자에게 옵니다", sub: "기문둔갑 길방을 확인하고 하루를 여세요 🧭" },
+  { msg: "당신의 명궁에 빛나는 주성이 있습니다", sub: "자미두수 명반으로 인생 항로를 확인하세요 ⭐" },
+  { msg: "매화역수는 오늘의 길흉을 알려줍니다", sub: "작은 선택이 큰 흐름을 바꿉니다 🌸" },
+  { msg: "천기를 아는 자는 두려움이 없습니다", sub: "당신의 대운과 소운을 미리 파악하세요 🌙" },
+];
+var USER_WELCOME_MSGS = [
+  "에게 좋은 기운이 가득합니다 🌟",
+  "의 천기가 빛나고 있습니다 ✨",
+  "님, 오늘 하루도 천기의 가호가 함께합니다 🙏",
+  "님의 명반에 귀인성이 빛납니다 ⭐",
+  "님, 오늘은 좋은 기운이 흐르는 날입니다 🌊",
+];
+
+function renderWelcomeMsg() {
+  var msgEl = document.getElementById('welcome-msg');
+  var subEl = document.getElementById('welcome-sub');
+  if (!msgEl) return;
+
+  if (currentUser && currentUser.name) {
+    var firstName = currentUser.name.replace(/[\s\(].*/,'').slice(0,4);
+    var idx = Math.floor(Math.random() * USER_WELCOME_MSGS.length);
+    msgEl.textContent = '🌟 ' + firstName + USER_WELCOME_MSGS[idx];
+    if (subEl) subEl.textContent = '천기 웨이브가 ' + firstName + '님의 천기를 분석할 준비가 됐습니다';
+  } else {
+    var w = WELCOME_MSGS[Math.floor(Math.random() * WELCOME_MSGS.length)];
+    msgEl.textContent = '✨ ' + w.msg;
+    if (subEl) subEl.textContent = w.sub;
+  }
+}
+
 function renderProfileBar() {
   var bar = document.getElementById('profile-chips');
   if (!bar) return;
@@ -4835,6 +4847,7 @@ function deleteProfile(i) {
     if (typeof updateAdminNotifBadge === 'function') updateAdminNotifBadge();
   }
   if (typeof renderProfileBar === 'function') renderProfileBar();
+  if (typeof renderWelcomeMsg === 'function') renderWelcomeMsg();
   if (typeof renderReviews === 'function') setTimeout(function(){ renderReviews(); renderBoardList && renderBoardList(); }, 300);
 })();
 </script>

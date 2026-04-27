@@ -1776,6 +1776,17 @@ async function doSajuScan() {
 
     _resultCache[cacheKey] = { timeStr, age, result };
     showLoading(false);
+    // ✅ 분석 완료 시 자동 프로필 저장
+    (function() {
+      var profiles = [];
+      try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
+      var exists = profiles.some(function(p){ return p.name===name && p.year===yearVal && p.month===monthVal && p.day===dayVal; });
+      if (!exists) {
+        profiles.unshift({ name:name, year:yearVal, month:monthVal, day:dayVal, time:timeStr, gender:gender, cal:cal, savedAt:new Date().toLocaleDateString('ko-KR') });
+        localStorage.setItem('cw_profiles', JSON.stringify(profiles.slice(0,10)));
+        if (typeof renderProfileBar === 'function') setTimeout(renderProfileBar, 200);
+      }
+    })();
     renderSajuResult(name, yearVal, monthVal, dayVal, timeStr, age, result);
 
   } catch(e) {
@@ -1794,6 +1805,31 @@ if (show) {
 }
 
 function renderSajuResult(name, year, month, day, timeStr, age, r) {
+// r 기본값 보장 - null/undefined 방지
+r = r || {};
+r.scores = r.scores || { '재물운': 75, '직업운': 80, '애정운': 70, '건강운': 78 };
+r.score_trends = r.score_trends || {};
+r.score_sources = r.score_sources || {};
+r.wave_data = r.wave_data || [{"age":"20대","w":70,"c":75,"l":65},{"age":"30대","w":75,"c":78,"l":70},{"age":"현재","w":80,"c":82,"l":75},{"age":"50대","w":82,"c":80,"l":78},{"age":"60대","w":78,"c":76,"l":72}];
+r.lucky_days = r.lucky_days || [];
+r.lucky_items = r.lucky_items || [];
+r.star = r.star || '미상';
+r.summary = r.summary || '';
+r.hybrid_msg = r.hybrid_msg || '';
+r.ziwei = r.ziwei || '';
+r.meihua = r.meihua || '';
+r.qimen = r.qimen || '';
+r.career = r.career || '';
+r.wealth = r.wealth || '';
+r.love = r.love || '';
+r.luck_period = r.luck_period || '';
+r.caution = r.caution || '';
+r.daewoon = r.daewoon || '';
+r.compass_angle = r.compass_angle || 45;
+r.compass_desc = r.compass_desc || '';
+r.lucky_direction = r.lucky_direction || '북동';
+r.lucky_mindset = r.lucky_mindset || '';
+r.base_score = r.base_score || 80;
 // 전역에 사주 데이터 저장 (관상/손금 스캔 연동용)
 _sajuData = { name, year, month, day, timeStr, age, gender: selectedGender, cal: selectedCal, star: r.star, daewoon: r.daewoon, summary: r.summary, scores: r.scores, lucky_direction: r.lucky_direction };
 document.getElementById('saju-page-title').textContent = name + '님의 천기 분석';

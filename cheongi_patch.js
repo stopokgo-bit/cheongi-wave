@@ -577,7 +577,345 @@ window.selectPlan=function(plan){
   else{if(f){f.style.border='2px solid #fff';f.style.opacity='1';}if(e){e.style.border='1px solid rgba(255,215,0,0.3)';e.style.opacity='0.7';}}
 };
 window.confirmBankTransfer=function(){if(typeof showShareToast==='function')showShareToast('✅ 입금 완료 알림 전송. 24시간 내 리포트 발송드립니다.');};
-// downloadPDF replaced below
+
+
+// ── PDF 생성 (jsPDF) ──
+window.downloadPDF = function() {
+  var bodyEl = document.getElementById('report-full-body');
+  if (!bodyEl || bodyEl.innerHTML.length < 200) {
+    if (typeof showShareToast === 'function') showShareToast('⚠️ 먼저 인생 지침서를 생성해주세요');
+    return;
+  }
+  if (typeof showShareToast === 'function') showShareToast('📄 PDF 생성 중... 잠시만요!');
+  var sd = window._sajuData || {};
+
+  function loadScript(src, cb) {
+    if (document.querySelector('script[src="'+src+'"]')) { cb(); return; }
+    var s = document.createElement('script'); s.src = src; s.onload = cb; document.head.appendChild(s);
+  }
+  loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', function() {
+    _buildPDF(sd, bodyEl);
+  });
+};
+
+function _buildPDF(sd, bodyEl) {
+  var jsPDF = window.jspdf && window.jspdf.jsPDF;
+  if (!jsPDF) { showShareToast('❌ PDF 라이브러리 로드 실패'); return; }
+
+  var doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  var W=210, H=297, M=18;
+  var name = sd.name || '고객';
+  var today = new Date().toLocaleDateString('ko-KR');
+
+  // 헬퍼
+  function bg(r,g,b){ doc.setFillColor(r,g,b); doc.rect(0,0,W,H,'F'); }
+  function setFont(size, bold, r,g,b){
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold?'bold':'normal');
+    doc.setTextColor(r||255,g||255,b||255);
+  }
+  function drawText(str, x, y, opts){
+    opts=opts||{};
+    setFont(opts.size||12, opts.bold, ...(opts.color||[255,255,255]));
+    doc.text(str, x, y, {align:opts.align||'left'});
+  }
+  function footer(pageNum){
+    doc.setFillColor(20,20,60); doc.rect(0,H-12,W,12,'F');
+    setFont(8,false,80,80,120);
+    doc.text('천기 웨이브 (cheongi-wave.vercel.app)', M, H-4);
+    doc.text(pageNum+'', W-M, H-4, {align:'right'});
+    doc.setDrawColor(255,215,0,0.2); doc.setLineWidth(0.3); doc.line(0,H-12,W,H-12);
+  }
+
+  // 섹션 타이틀 정의
+  var SECTION_TITLES = [
+    '제1장  명주(命主) 사주 풀이',
+    '제2장  생애 대운(大運) 흐름',
+    '제3장  재물 · 투자운',
+    '제4장  직업 · 커리어운',
+    '제5장  애정 · 인간관계',
+    '제6장  건강 · 체질 분석',
+    '제7장  기문둔갑(奇門遁甲) 전략',
+    '제8장  매화역수(梅花易數) 월별운',
+    '제9장  개운법 · 길일 캘린더',
+    '제10장  2025~2027 타임라인',
+  ];
+  var SECTION_SUBTITLES = [
+    '자미두수 14주성과 12궁위로 타고난 그릇을 분석합니다',
+    '10대부터 80대까지, 인생의 파도를 미리 봅니다',
+    '돈을 버는 방식과 재물운이 강한 시기를 알아봅니다',
+    '최적의 직업군과 커리어 전환 타이밍을 제시합니다',
+    '연애 스타일, 결혼 적령기, 귀인의 방향을 안내합니다',
+    '타고난 체질과 주의해야 할 건강 패턴을 분석합니다',
+    '기문둔갑 팔문으로 길방·흉방과 이동 전략을 안내합니다',
+    '매화역수로 올해 월별 길흉과 최적 행동 시기를 봅니다',
+    '운을 높이는 색상·숫자·방향과 이달의 길일을 안내합니다',
+    '연도별 핵심 운세와 놓치면 안 될 기회를 정리합니다',
+  ];
+
+  var pageNum = 1;
+
+  // ══════════════════════════════
+  // 1페이지: 표지
+  // ══════════════════════════════
+  bg(15,15,58);
+
+  // 상단 골드 바
+  doc.setFillColor(255,215,0); doc.rect(0,0,W,3,'F');
+
+  // 중앙 원형 장식
+  doc.setDrawColor(255,215,0); doc.setLineWidth(0.3);
+  doc.circle(W/2,130,48,'S');
+  doc.setDrawColor(255,215,0,0.3); doc.setLineWidth(0.2);
+  doc.circle(W/2,130,56,'S');
+
+  // 별
+  setFont(36,true,...[255,215,0]);
+  doc.text('⭐', W/2, 140, {align:'center'});
+
+  // 메인 타이틀
+  setFont(34,true,...[255,255,255]);
+  doc.text('인생 지침서', W/2, 175, {align:'center'});
+
+  // 골드 언더라인
+  doc.setDrawColor(255,215,0); doc.setLineWidth(1.5);
+  doc.line(W/2-35, 180, W/2+35, 180);
+
+  // 부제
+  setFont(13,false,...[200,200,230]);
+  doc.text('자미두수 · 매화역수 · 기문둔갑 3대 역학 통합 분석', W/2, 193, {align:'center'});
+
+  // 의뢰인 박스
+  doc.setFillColor(25,25,75); doc.roundedRect(M+10,205,W-M*2-20,45,4,4,'F');
+  doc.setDrawColor(255,215,0,0.5); doc.roundedRect(M+10,205,W-M*2-20,45,4,4,'S');
+
+  setFont(11,false,...[153,153,204]);
+  doc.text('의뢰인', W/2, 217, {align:'center'});
+  setFont(20,true,...[255,255,255]);
+  doc.text(name + ' 님', W/2, 230, {align:'center'});
+  setFont(10,false,...[153,153,204]);
+  doc.text((sd.year||'')+'년 '+(sd.month||'')+'월 '+(sd.day||'')+'일생  ·  '+(sd.gender||'')+'  ·  명궁주성: '+(sd.star||'미상'), W/2, 241, {align:'center'});
+
+  setFont(9,false,...[80,80,120]);
+  doc.text('생성일: '+today, W/2, 258, {align:'center'});
+
+  // 하단 골드 바
+  doc.setFillColor(255,215,0); doc.rect(0,H-3,W,3,'F');
+
+  footer(pageNum++);
+
+  // ══════════════════════════════
+  // 2페이지: 목차
+  // ══════════════════════════════
+  doc.addPage(); bg(15,15,58);
+  doc.setFillColor(255,215,0); doc.rect(0,0,W,3,'F');
+
+  setFont(28,true,...[255,215,0]);
+  doc.text('목  차', W/2, 48, {align:'center'});
+  doc.setDrawColor(255,215,0,0.5); doc.setLineWidth(0.5); doc.line(M+20,55,W-M-20,55);
+
+  var ty = 72;
+  SECTION_TITLES.forEach(function(title,i){
+    var isEven = i%2===0;
+    doc.setFillColor(isEven?22:18, isEven?22:18, isEven?68:58);
+    doc.roundedRect(M, ty, W-M*2, 17, 2, 2, 'F');
+    // 번호 배지
+    doc.setFillColor(255,215,0);
+    doc.circle(M+8, ty+8.5, 6, 'F');
+    setFont(9,true,...[15,15,58]);
+    doc.text(String(i+1), M+8, ty+11, {align:'center'});
+    // 제목
+    setFont(11,true,...[255,255,255]);
+    doc.text(title, M+20, ty+8, {});
+    // 부제
+    setFont(8,false,...[153,153,204]);
+    doc.text(SECTION_SUBTITLES[i], M+20, ty+14, {});
+    // 점선
+    doc.setDrawColor(80,80,120); doc.setLineWidth(0.2);
+    doc.setLineDashPattern([1,2],0);
+    doc.line(M, ty+17, W-M, ty+17);
+    doc.setLineDashPattern([],0);
+    ty += 19;
+  });
+
+  footer(pageNum++);
+
+  // ══════════════════════════════
+  // 본문: 섹션별 타이틀 페이지 + 내용 페이지
+  // ══════════════════════════════
+
+  // HTML에서 섹션 파싱
+  var tmpDiv = document.createElement('div');
+  tmpDiv.innerHTML = bodyEl.innerHTML
+    .replace(/```html\s*/gi,'').replace(/```\s*/g,'')
+    .replace(/<span[^>]*typing-cursor[^>]*>.*?<\/span>/g,'');
+
+  var allH3 = tmpDiv.querySelectorAll('h3');
+  var sections = [];
+
+  if (allH3.length > 0) {
+    allH3.forEach(function(h3, si){
+      var sec = { title: h3.textContent.trim(), paras: [] };
+      var node = h3.nextElementSibling;
+      while (node && node.tagName !== 'H3') {
+        var t = node.textContent.trim();
+        if (t.length > 3) sec.paras.push({ tag: node.tagName, text: t });
+        node = node.nextElementSibling;
+      }
+      sections.push(sec);
+    });
+  } else {
+    // h3 없으면 p 전체를 하나로
+    var allP = tmpDiv.querySelectorAll('p, h4');
+    var sec0 = { title: '분석 결과', paras: [] };
+    allP.forEach(function(p){ if(p.textContent.trim().length>3) sec0.paras.push({tag:p.tagName, text:p.textContent.trim()}); });
+    sections.push(sec0);
+  }
+
+  var secColors = [
+    [80,200,120],[255,215,0],[255,165,0],[138,172,240],
+    [204,136,187],[80,200,120],[255,215,0],[255,165,0],
+    [138,172,240],[204,136,187]
+  ];
+
+  sections.forEach(function(sec, si){
+    var sColor = secColors[si % secColors.length];
+    var chapterTitle = SECTION_TITLES[si] || sec.title;
+    var chapterSub = SECTION_SUBTITLES[si] || '';
+
+    // ── 챕터 타이틀 페이지 ──
+    doc.addPage(); bg(15,15,58);
+
+    // 배경 장식 원
+    doc.setFillColor(sColor[0],sColor[1],sColor[2]);
+    doc.circle(W/2, H/2-20, 70, 'F');
+    doc.setFillColor(15,15,58); doc.circle(W/2, H/2-20, 62, 'F');
+
+    // 챕터 번호
+    doc.setFillColor(sColor[0],sColor[1],sColor[2]);
+    doc.circle(W/2, H/2-20, 22, 'F');
+    setFont(20,true,...[15,15,58]);
+    doc.text(String(si+1), W/2, H/2-13, {align:'center'});
+
+    // 제목
+    setFont(22,true,...[255,255,255]);
+    doc.text(chapterTitle, W/2, H/2+28, {align:'center'});
+
+    // 부제
+    setFont(11,false,...[sColor[0],sColor[1],sColor[2]]);
+    doc.text(chapterSub, W/2, H/2+42, {align:'center'});
+
+    // 장식선
+    doc.setDrawColor(sColor[0],sColor[1],sColor[2]);
+    doc.setLineWidth(0.8);
+    doc.line(M+30, H/2+50, W-M-30, H/2+50);
+
+    // 역학 배지
+    var badges = ['자미두수','매화역수','기문둔갑'];
+    var bColors = [[80,200,120],[255,215,0],[138,172,240]];
+    badges.forEach(function(b,bi){
+      var bx = W/2 - 42 + bi*28;
+      doc.setFillColor(bColors[bi][0],bColors[bi][1],bColors[bi][2]);
+      doc.roundedRect(bx-12, H/2+56, 24, 9, 2, 2, 'F');
+      setFont(7,true,...[15,15,58]);
+      doc.text(b, bx, H/2+62, {align:'center'});
+    });
+
+    footer(pageNum++);
+
+    // ── 내용 페이지 ──
+    if (sec.paras.length === 0) return;
+
+    doc.addPage(); bg(15,15,58);
+
+    // 헤더
+    doc.setFillColor(18,18,60); doc.rect(0,0,W,22,'F');
+    doc.setFillColor(sColor[0],sColor[1],sColor[2]); doc.rect(0,0,4,22,'F');
+    setFont(12,true,...[255,255,255]);
+    doc.text(chapterTitle, M, 14, {});
+    doc.setDrawColor(sColor[0],sColor[1],sColor[2]); doc.setLineWidth(0.4); doc.line(0,22,W,22);
+
+    var py = 34;
+    var maxY = H-18;
+
+    sec.paras.forEach(function(para){
+      if (para.tag === 'H4') {
+        if (py > maxY-12) {
+          doc.addPage(); bg(15,15,58);
+          doc.setFillColor(18,18,60); doc.rect(0,0,W,16,'F');
+          setFont(9,false,...[153,153,204]);
+          doc.text(chapterTitle+' (계속)', M, 11, {});
+          doc.setDrawColor(sColor[0],sColor[1],sColor[2]); doc.setLineWidth(0.3); doc.line(0,16,W,16);
+          footer(pageNum++);
+          py = 26;
+        }
+        setFont(11,true,...[sColor[0],sColor[1],sColor[2]]);
+        doc.text(para.text, M, py, {});
+        py += 8;
+        doc.setDrawColor(sColor[0],sColor[1],sColor[2],0.4);
+        doc.setLineWidth(0.2); doc.line(M, py, W-M, py);
+        py += 5;
+      } else {
+        // 긴 텍스트: 한 줄당 45자
+        var maxC = 45;
+        var txt = para.text;
+        var rows = [];
+        for (var ci=0; ci<txt.length; ci+=maxC) rows.push(txt.slice(ci,ci+maxC));
+
+        rows.forEach(function(row){
+          if (py > maxY-8) {
+            doc.addPage(); bg(15,15,58);
+            doc.setFillColor(18,18,60); doc.rect(0,0,W,16,'F');
+            setFont(9,false,...[153,153,204]);
+            doc.text(chapterTitle+' (계속)', M, 11, {});
+            doc.setDrawColor(sColor[0],sColor[1],sColor[2]); doc.setLineWidth(0.3); doc.line(0,16,W,16);
+            footer(pageNum++);
+            py = 26;
+          }
+          setFont(10,false,...[210,210,240]);
+          doc.text(row, M, py, {});
+          py += 7;
+        });
+        py += 3;
+      }
+    });
+
+    footer(pageNum++);
+  });
+
+  // 마지막 페이지: 마무리
+  doc.addPage(); bg(15,15,58);
+  doc.setFillColor(255,215,0); doc.rect(0,0,W,3,'F');
+  doc.setFillColor(255,215,0); doc.rect(0,H-3,W,3,'F');
+
+  setFont(24,true,...[255,215,0]);
+  doc.text('천기(天機)를 아는 자는', W/2, 110, {align:'center'});
+  setFont(24,true,...[255,255,255]);
+  doc.text('두려움이 없습니다', W/2, 128, {align:'center'});
+
+  doc.setDrawColor(255,215,0); doc.setLineWidth(0.8);
+  doc.line(M+30, 136, W-M-30, 136);
+
+  setFont(11,false,...[153,153,204]);
+  doc.text('본 리포트는 자미두수·매화역수·기문둔갑 3대 역학을', W/2, 152, {align:'center'});
+  doc.text('AI로 통합 분석한 참고 자료입니다.', W/2, 162, {align:'center'});
+
+  setFont(10,false,...[80,80,120]);
+  doc.text('천기 웨이브  ·  cheongi-wave.vercel.app', W/2, 200, {align:'center'});
+  doc.text('© 2026 Cheongi Wave. All rights reserved.', W/2, 210, {align:'center'});
+
+  footer(pageNum++);
+
+  // 저장
+  var filename = (name||'고객')+'_인생지침서_'+today.replace(/\./g,'')+'.pdf';
+  doc.save(filename);
+  window._lastPdfBase64 = doc.output('datauristring');
+  window._lastPdfFilename = filename;
+  if (typeof showShareToast === 'function') showShareToast('✅ PDF 저장 완료!');
+}
+window.downloadCompatPDF = window.downloadPDF;
+
+
 // downloadCompatPDF replaced below
 // sendReportEmail replaced below
   var to=email||(typeof prompt==='function'?prompt('이메일 주소를 입력해주세요:')||'':'');

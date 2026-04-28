@@ -265,7 +265,7 @@ window.generate50PReport = function() {
   var system='당신은 자미두수·매화역수·기문둔갑 40년 경력 명리학 대가입니다. HTML만 출력.';
   var prompt='['+sd.name+'] '+(sd.gender||'남')+' '+sd.year+'년 '+sd.month+'월 '+sd.day+'일 '+(sd.timeStr||'생시미상')+' ('+sd.age+'세)\n\n인생 지침서 10개 섹션을 <h3>제목</h3><p>본문 3문장 이상</p> HTML 형식으로 작성:\n1.명주 총평 2.생애 대운 흐름 3.재물·투자운 4.직업·커리어운 5.애정·인간관계 6.건강·체질 7.기문둔갑 전략 8.매화역수 월별운 9.개운법·길일 10.2025~2027 타임라인';
   fetch('/api/saju',{method:'POST',headers:{'Content-Type':'application/json'},
-    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:8000,system:system,messages:[{role:'user',content:prompt}]})
+    body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:16000,system:system,messages:[{role:'user',content:prompt}]})
   }).then(function(response){
     var reader=response.body.getReader(),dec=new TextDecoder(),html='',buf='';
     function read(){reader.read().then(function(chunk){

@@ -2548,6 +2548,17 @@
               points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
           </svg>당신의 천기(天機)를 스캔하세요</div>
 
+        <!-- 저장된 프로필 -->
+        <div id="profile-bar" style="margin-bottom:12px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
+            <span style="font-size:11px;color:var(--t2);font-weight:600;">💾 저장된 프로필</span>
+            <button onclick="saveProfile()" style="font-size:11px;padding:4px 12px;border-radius:6px;background:rgba(80,200,120,0.15);border:1px solid rgba(80,200,120,0.3);color:var(--em);cursor:pointer;font-family:inherit;font-weight:600;">+ 현재 정보 저장</button>
+          </div>
+          <div id="profile-chips" style="display:flex;gap:6px;flex-wrap:wrap;">
+            <div style="font-size:11px;color:rgba(153,153,204,0.5);padding:4px 0;">저장된 프로필이 없습니다</div>
+          </div>
+        </div>
+        <div style="height:1px;background:rgba(255,255,255,0.07);margin-bottom:12px;"></div>
         <div class="form-row r2">
           <div class="ig"><label>이름</label><input type="text" placeholder="이름 입력" id="inp-name"></div>
           <div class="ig">
@@ -2587,6 +2598,33 @@
           </div>
         </div>
 
+        <!-- 출생지 + 현재 거주지 -->
+        <div class="form-row r2" style="margin-bottom:10px;">
+          <div class="ig">
+            <label>태어난 곳 (출생지) <span style="color:var(--em);font-size:10px;" title="시차 보정 및 기문둔갑 포국에 사용">ⓘ</span></label>
+            <div style="display:flex;gap:4px;">
+              <select id="inp-birthplace-sido" onchange="updateSigungu('birth')" style="flex:1;padding:9px 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;">
+                <option value="">시/도</option>
+              </select>
+              <select id="inp-birthplace-sigungu" onchange="updateBirthplace()" style="flex:1.2;padding:9px 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;">
+                <option value="">시/군/구</option>
+              </select>
+            </div>
+            <input type="hidden" id="inp-birthplace" value="">
+          </div>
+          <div class="ig">
+            <label>현재 거주지 <span style="color:var(--em);font-size:10px;" title="기문둔갑 길방·흉방 계산 기준">ⓘ</span></label>
+            <div style="display:flex;gap:4px;">
+              <select id="inp-location-sido" onchange="updateSigungu('location')" style="flex:1;padding:9px 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;">
+                <option value="">시/도</option>
+              </select>
+              <select id="inp-location-sigungu" onchange="updateLocation()" style="flex:1.2;padding:9px 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;">
+                <option value="">시/군/구</option>
+              </select>
+            </div>
+            <input type="hidden" id="inp-location" value="">
+          </div>
+        </div>
         <div class="form-row r2">
           <div class="ig">
             <label>태어난 시간 (생시) <span style="color:var(--em);font-size:10px;"

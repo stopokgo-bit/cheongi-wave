@@ -77,50 +77,6 @@ window.buildChannels = function() {
   }
 };
 
-// ── PDF 생성 (html2canvas + jsPDF) ──
-window.downloadPDF = function() {
-  var bodyEl = document.getElementById('report-full-body');
-  if (!bodyEl || bodyEl.innerHTML.length < 100) {
-    if (typeof showShareToast === 'function') showShareToast('⚠️ 먼저 인생 지침서를 생성해주세요');
-    return;
-  }
-  var sd = window._sajuData || {};
-  // PDF용 팝업 창 열어서 인쇄
-  var win = window.open('', '_blank', 'width=800,height=900');
-  if (!win) { showShareToast('⚠️ 팝업 차단을 해제해주세요'); return; }
-  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + (sd.name||'') + ' 인생지침서</title><style>');
-  win.document.write('body{font-family:"Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#fff;color:#222;padding:2rem;max-width:700px;margin:0 auto;}');
-  win.document.write('h1{font-size:22px;color:#1a1a4a;border-bottom:3px solid #FFD700;padding-bottom:.5rem;margin-bottom:1.5rem;}');
-  win.document.write('h3{font-size:16px;font-weight:700;color:#1a1a4a;margin:1.5rem 0 .5rem;padding:.4rem .8rem;background:#f8f7f0;border-left:4px solid #FFD700;border-radius:0 6px 6px 0;}');
-  win.document.write('p{font-size:13px;line-height:2;color:#333;margin-bottom:.75rem;}');
-  win.document.write('em{color:#2d7a4a;font-style:normal;font-weight:600;}');
-  win.document.write('strong{color:#8b6a00;font-weight:700;}');
-  win.document.write('.cover{text-align:center;padding:3rem 1rem;border:2px solid #FFD700;border-radius:12px;margin-bottom:2rem;background:linear-gradient(135deg,#fffbf0,#fff);}');
-  win.document.write('.cover h2{font-size:28px;color:#1a1a4a;margin-bottom:.5rem;}');
-  win.document.write('.cover .info{font-size:13px;color:#666;line-height:2;}');
-  win.document.write('@media print{body{padding:.5rem;}.cover{page-break-after:always;}}');
-  win.document.write('</style></head><body>');
-  win.document.write('<div class="cover">');
-  win.document.write('<div style="font-size:32px;margin-bottom:.75rem;">⭐</div>');
-  win.document.write('<h2>천기 웨이브 인생 지침서</h2>');
-  win.document.write('<div class="info">');
-  win.document.write((sd.name||'') + ' · ' + (sd.gender||'') + ' · ' + (sd.year||'') + '년 ' + (sd.month||'') + '월 ' + (sd.day||'') + '일생<br>');
-  win.document.write('생성일: ' + new Date().toLocaleDateString('ko-KR') + '<br>');
-  win.document.write('<small>자미두수 · 매화역수 · 기문둔갑 3대 역학 AI 분석</small>');
-  win.document.write('</div></div>');
-  // 본문 HTML 정제
-  var html = bodyEl.innerHTML
-    .replace(/```html\s*/gi,'').replace(/```\s*/g,'')
-    .replace(/style="[^"]*color:[^"]*#[0-9a-fA-F]+[^"]*"/g, '')  // 어두운 색상 제거
-    .replace(/<span class="typing-cursor[^>]*>.*?<\/span>/g,'');
-  win.document.write('<div>' + html + '</div>');
-  win.document.write('<div style="margin-top:3rem;padding-top:1rem;border-top:1px solid #eee;font-size:11px;color:#999;text-align:center;">천기 웨이브 (cheongi-wave.vercel.app) · AI 기반 명리 참고자료</div>');
-  win.document.write('</body></html>');
-  win.document.close();
-  setTimeout(function() { win.focus(); win.print(); }, 500);
-  if (typeof showShareToast === 'function') showShareToast('📄 PDF 저장 창이 열렸습니다!');
-};
-window.downloadCompatPDF = window.downloadPDF;
 
 // ── 이메일 자동 발송 (EmailJS) ──
 var EJS_SERVICE = 'service_cheongi';
@@ -916,12 +872,6 @@ function _buildPDF(sd, bodyEl) {
 window.downloadCompatPDF = window.downloadPDF;
 
 
-// downloadCompatPDF replaced below
-// sendReportEmail replaced below
-  var to=email||(typeof prompt==='function'?prompt('이메일 주소를 입력해주세요:')||'':'');
-  if(to) window.open('https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(to)+'&su='+encodeURIComponent('[천기웨이브] '+(sd.name||'')+'님 인생 지침서')+'&body='+encodeURIComponent(text),'_blank');
-};
-// sendCompatEmail replaced below
 window.viewMyReport=function(){if(typeof showPg==='function')showPg('report');};
 window.applyUISettings=function(){};
 window.saveSettings=function(){if(typeof showShareToast==='function')showShareToast('✅ 설정 저장됐습니다');};

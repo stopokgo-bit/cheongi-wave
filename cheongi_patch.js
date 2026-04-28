@@ -399,7 +399,7 @@ window.generate50PReport = function() {
   var system = '당신은 자미두수·매화역수·기문둔갑 40년 경력 명리학 대가입니다. ' + styleRule;
 
   var prompt1 = baseInfo + '\n\n'
-    + '인생 지침서 1부 (섹션 1~5) - 각 섹션 최소 5문장 이상 깊고 상세하게:\n\n'
+    + '인생 지침서 1부 (섹션 1~5) - 각 섹션 3~4문장으로 핵심만:\n\n'
     + '1. <h3>✨ 명주(命主) 총평</h3> - 타고난 그릇, 명궁주성 특성, 인생 키워드 3가지\n'
     + '2. <h3>🌊 생애 대운 흐름</h3> - 10대부터 80대까지 10년 단위 대운 흐름과 주요 전환점\n'
     + '3. <h3>💰 재물·투자운</h3> - 돈을 버는 방식, 재물운 강한 시기, 투자 주의사항\n'
@@ -408,7 +408,7 @@ window.generate50PReport = function() {
     + styleRule;
 
   var prompt2 = baseInfo + '\n\n'
-    + '인생 지침서 2부 (섹션 6~10) - 각 섹션 최소 5문장 이상 깊고 상세하게:\n\n'
+    + '인생 지침서 2부 (섹션 6~10) - 각 섹션 3~4문장으로 핵심만:\n\n'
     + '6. <h3>🌿 건강·체질 분석</h3> - 타고난 체질, 주의할 질환, 건강 관리법\n'
     + '7. <h3>🧭 기문둔갑 전략</h3> - 길방(吉方), 흉방(凶方), 이동·이사 타이밍\n'
     + '8. <h3>🌸 매화역수 월별운</h3> - 올해 월별 길흉, 가장 좋은 달, 조심할 달\n'
@@ -429,7 +429,7 @@ window.generate50PReport = function() {
     }, 600);
     return fetch('/api/saju', {
       method: 'POST', headers: {'Content-Type':'application/json'},
-      body: JSON.stringify({model:'claude-sonnet-4-6', max_tokens:16000, system:system, messages:[{role:'user',content:prompt}]})
+      body: JSON.stringify({model:'claude-sonnet-4-6', max_tokens:8000, system:system, messages:[{role:'user',content:prompt}]})
     }).then(function(response) {
       if(!response.ok) throw new Error('서버 오류 ' + response.status);
       var reader = response.body.getReader(), dec = new TextDecoder(), html = '', buf = '';
@@ -1061,6 +1061,20 @@ function renderProfileBar() {
 }
 
 // DOM 로드 후 초기화
+// 즉시 실행 (DOMContentLoaded 이미 지난 경우 대비)
+(function() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      initSidoSelects();
+      renderProfileBar();
+    });
+  } else {
+    // 이미 DOM 로드 완료
+    initSidoSelects();
+    renderProfileBar();
+  }
+})();
+
 document.addEventListener('DOMContentLoaded', function() {
   initSidoSelects();
   renderProfileBar();

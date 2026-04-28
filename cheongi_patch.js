@@ -321,6 +321,7 @@ window.analyzePalmWithAI=function(isLeft,imageData){
 
 // ── 인생지침서: _sajuData 없으면 입력값으로 즉시 세팅 ──
 function _ensureSajuData() {
+  if (window._sajuData && window._sajuData.name && window._sajuData.year) return true;
   if (window._sajuData) return true;
   var name=(document.getElementById('inp-name')||{}).value||'';
   var year=(document.getElementById('inp-year')||{}).value||'';

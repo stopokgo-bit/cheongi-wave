@@ -1,5076 +1,1152 @@
-<!DOCTYPE html>
-<html lang="ko">
-
-<head>
-  <meta charset="UTF-8">
-<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><polygon points='12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26' fill='%23FFD700'/></svg>">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <script src="https://t1.kakaocdn.net/kakao_js_sdk/2.7.2/kakao.min.js"
-    integrity="sha384-TiCUE00h649CAMonG018J2ujOgDKW/kVWlChEuu4jK2vxfAAD0eZxzCKakxg55G4"
-    crossorigin="anonymous"></script>
-  <title>천기 웨이브 — 동양 3대 역학 통합 명리 플랫폼</title>
-  <meta name="description" content="정통 자미두수, 기문둔갑, 매화역수 기반 프리미엄 명리 플랫폼">
-  <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    :root {
-      --em: #50C878;
-      --gold: #FFD700;
-      --bg: #0f0f3a;
-      --bg2: rgba(255, 255, 255, 0.05);
-      --bd: rgba(255, 255, 255, 0.1);
-      --t: #e8e8f4;
-      --t2: #9999cc;
-      --t3: #ccccee;
-    }
-
-    html,
-    body {
-      background: var(--bg);
-      color: var(--t);
-      font-family: 'Segoe UI', system-ui, sans-serif;
-      min-height: 100vh;
-    }
-
-    .app {
-      max-width: 1100px;
-      margin: 0 auto;
-      padding-bottom: 3rem;
-    }
-
-    .nav {
-      background: rgba(15, 15, 58, 0.97);
-      border-bottom: 1px solid var(--bd);
-      padding: 0 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      height: 64px;
-      position: sticky;
-      top: 0;
-      z-index: 100;
-      backdrop-filter: blur(10px);
-    }
-
-    .logo {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      cursor: pointer;
-      text-decoration: none;
-    }
-
-    .logo-icon {
-      width: 36px;
-      height: 36px;
-      border-radius: 50%;
-      background: var(--gold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .logo-text {
-      font-size: 18px;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .logo-sub {
-      font-size: 10px;
-      letter-spacing: .15em;
-      color: var(--t2);
-      margin-top: 1px;
-    }
-
-    .nav-btns {
-      display: flex;
-      gap: 8px;
-    }
-
-    .nbtn {
-      padding: 7px 16px;
-      border-radius: 8px;
-      font-size: 13px;
-      cursor: pointer;
-      font-family: inherit;
-      border: 1px solid var(--bd);
-      background: rgba(255, 255, 255, 0.07);
-      color: var(--t);
-      transition: all .2s;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .nbtn.on {
-      background: var(--em);
-      border-color: var(--em);
-      color: #fff;
-    }
-
-    .nbtn.gon {
-      background: var(--gold);
-      border-color: var(--gold);
-      color: #0f0f3a;
-    }
-
-    .pg {
-      display: none;
-      padding: 1.5rem;
-    }
-
-    .pg.on {
-      display: block;
-    }
-
-    @keyframes fu {
-      from {
-        opacity: 0;
-        transform: translateY(14px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .fu {
-      animation: fu .4s ease both;
-    }
-
-    .fu2 {
-      animation: fu .4s .08s ease both;
-    }
-
-    .fu3 {
-      animation: fu .4s .16s ease both;
-    }
-
-    .fu4 {
-      animation: fu .4s .24s ease both;
-    }
-
-
-    /* ═══════════════════════════════════════
-       새벽연 스타일 — 스캔 결과 UI
-    ═══════════════════════════════════════ */
-    /* 가독성 개선 */
-    #rs { font-family: 'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',system-ui,sans-serif; }
-    #rs-sections .reading {
-      font-size:14px !important;
-      line-height:2 !important;
-      letter-spacing:0.02em;
-      color:rgba(225,225,245,0.95) !important;
-      word-break:keep-all;
-    }
-    #rs-sections .obs {
-      font-size:12px !important;
-      line-height:1.8 !important;
-      letter-spacing:0.01em;
-    }
-    #rs-sections .cross-text {
-      font-size:13px !important;
-      line-height:1.85 !important;
-      letter-spacing:0.01em;
-    }
-    #rs-sections h4 {
-      font-size:16px !important;
-      letter-spacing:-0.3px;
-      margin-bottom:.6rem !important;
-    }
-    #rs-summary .summary-card { font-size:14px; line-height:2; letter-spacing:0.02em; }
-    #rs-summary .fortune-flow-card p { font-size:14px !important; line-height:2.1 !important; letter-spacing:0.02em; }
-    .one-line-card .quote { font-size:16px !important; line-height:1.85 !important; letter-spacing:-0.2px; }
-    .cross-kicker { font-size:10px !important; padding-top:3px !important; }
-    .saebyeok-card {
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 20px;
-      padding: 1.25rem;
-      margin-bottom: 1rem;
-    }
-    .saebyeok-card.emerald {
-      border-color: rgba(80,200,120,0.3);
-      background: linear-gradient(135deg, rgba(80,200,120,0.06), rgba(255,255,255,0.02));
-    }
-    .saebyeok-card.gold {
-      border-color: rgba(255,215,0,0.3);
-      background: linear-gradient(135deg, rgba(255,215,0,0.06), rgba(255,255,255,0.02));
-    }
-    /* 섹션 헤더 — 새벽연 border-left 스타일 */
-    .sec-header {
-      border-left: 2px solid rgba(80,200,120,0.6);
-      padding-left: .75rem;
-      margin-bottom: 1rem;
-    }
-    .sec-header .kicker {
-      font-size: 10px;
-      font-family: monospace;
-      letter-spacing: .3em;
-      color: #50C878;
-      text-transform: uppercase;
-      margin-bottom: 3px;
-    }
-    .sec-header h3 {
-      font-size: 18px;
-      font-weight: 700;
-      color: #fff;
-    }
-    /* 3대 역학 교차 태그 */
-    .cross-line {
-      display: flex;
-      gap: 10px;
-      margin-bottom: 8px;
-      align-items: flex-start;
-    }
-    .cross-kicker {
-      font-size: 9px;
-      font-family: monospace;
-      letter-spacing: .2em;
-      color: #50C878;
-      flex-shrink: 0;
-      width: 58px;
-      padding-top: 2px;
-    }
-    .cross-text {
-      font-size: 12px;
-      color: rgba(204,204,238,0.9);
-      line-height: 1.7;
-    }
-    /* 손금·관상 섹션 카드 */
-    .scan-section-card {
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 14px;
-      padding: 1rem;
-      margin-bottom: .75rem;
-      position: relative;
-      overflow: hidden;
-    }
-    .scan-section-card .left-bar {
-      position: absolute;
-      left: 0; top: 0; bottom: 0;
-      width: 3px;
-      border-radius: 3px 0 0 3px;
-    }
-    .scan-section-card .content {
-      padding-left: .5rem;
-    }
-    .scan-section-card h4 {
-      font-size: 15px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: .5rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-    .scan-section-card .dot {
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-    .scan-section-card .obs {
-      font-size: 11px;
-      color: rgba(153,153,204,0.8);
-      font-style: italic;
-      margin-bottom: .4rem;
-    }
-    .scan-section-card .reading {
-      font-size: 13px;
-      color: rgba(220,220,245,0.9);
-      line-height: 1.8;
-      margin-bottom: .5rem;
-    }
-    .scan-section-card .cross-wrap {
-      border-top: 1px solid rgba(255,255,255,0.07);
-      padding-top: .6rem;
-      margin-top: .5rem;
-    }
-    /* 종합 리딩 카드들 */
-    .summary-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: .75rem;
-      margin-bottom: .75rem;
-    }
-    @media(max-width:580px){ .summary-grid { grid-template-columns: 1fr; } }
-    .summary-card {
-      border: 1px solid rgba(255,255,255,0.1);
-      border-radius: 14px;
-      padding: 1rem;
-    }
-    .summary-card .title {
-      font-size: 9px;
-      font-family: monospace;
-      letter-spacing: .3em;
-      color: #50C878;
-      text-transform: uppercase;
-      margin-bottom: .5rem;
-    }
-    .summary-card ul {
-      list-style: none;
-      padding: 0;
-      margin: 0;
-    }
-    .summary-card ul li {
-      font-size: 12px;
-      color: rgba(220,220,245,0.9);
-      line-height: 1.8;
-      display: flex;
-      gap: 6px;
-    }
-    .summary-card ul li::before {
-      content: '·';
-      color: #50C878;
-      flex-shrink: 0;
-    }
-    .summary-card ul li.caution::before { color: #e07070; }
-    .fortune-flow-card {
-      background: linear-gradient(135deg, rgba(80,200,120,0.08), rgba(255,255,255,0.02), rgba(255,215,0,0.05));
-      border: 1px solid rgba(80,200,120,0.3);
-      border-radius: 14px;
-      padding: 1.1rem;
-      margin-bottom: 1rem;
-    }
-    /* 한 줄 인상 카드 */
-    .one-line-card {
-      background: linear-gradient(135deg, rgba(80,200,120,0.06), rgba(255,255,255,0.02), rgba(138,172,240,0.06));
-      border: 1px solid rgba(80,200,120,0.25);
-      border-radius: 16px;
-      padding: 1.25rem;
-      margin-bottom: 1rem;
-      position: relative;
-    }
-    .one-line-card .quote {
-      font-size: 15px;
-      font-weight: 500;
-      line-height: 1.7;
-      color: #fff;
-      margin-bottom: .4rem;
-    }
-    .one-line-card .temperament {
-      font-size: 12px;
-      color: rgba(153,153,204,0.8);
-      font-style: italic;
-    }
-    /* 양손 비교 */
-    .hands-compare {
-      background: rgba(255,255,255,0.03);
-      border: 1px solid rgba(255,255,255,0.08);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: .75rem;
-    }
-    .hands-compare .compare-label {
-      font-size: 9px;
-      font-family: monospace;
-      letter-spacing: .25em;
-      color: #50C878;
-      text-transform: uppercase;
-      margin-bottom: .5rem;
-    }
-
-    /* INPUT HERO */
-    .hero {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--bd);
-      border-radius: 16px;
-      padding: 1.5rem 1.75rem;
-      margin-bottom: 1.25rem;
-    }
-
-    .hero-title {
-      font-size: 20px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 1.25rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .irow {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr auto;
-      gap: 12px;
-      align-items: end;
-    }
-
-    @media(max-width:600px) {
-      .irow {
-        grid-template-columns: 1fr 1fr;
-      }
-
-      .scan-btn {
-        grid-column: span 2;
-      }
-    }
-
-    .ig label {
-      font-size: 11px;
-      color: var(--t2);
-      margin-bottom: 5px;
-      display: block;
-    }
-
-    .ig input,
-    .ig select {
-      width: 100%;
-      padding: 9px 12px;
-      background: rgba(255, 255, 255, 0.07);
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 8px;
-      color: #fff;
-      font-size: 13px;
-      font-family: inherit;
-      outline: none;
-      transition: border-color .2s;
-    }
-
-    .ig input:focus,
-    .ig select:focus {
-      border-color: var(--em);
-    }
-
-    .ig input::placeholder {
-      color: var(--t2);
-    }
-
-    .ig select option {
-      background: #1a1a5a;
-    }
-
-    /* 출생지/거주지 select 포커스 */
-    #inp-birthplace-sido:focus, #inp-birthplace-sigungu:focus,
-    #inp-location-sido:focus, #inp-location-sigungu:focus {
-      border-color: var(--em) !important;
-      outline: none;
-      box-shadow: 0 0 0 2px rgba(80,200,120,0.15);
-    }
-    #inp-birthplace-sido, #inp-birthplace-sigungu,
-    #inp-location-sido, #inp-location-sigungu {
-      transition: border-color .2s, box-shadow .2s;
-    }
-
-    .scan-btn {
-      padding: 10px 20px;
-      background: var(--gold);
-      border: none;
-      border-radius: 8px;
-      color: #0f0f3a;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      white-space: nowrap;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      transition: all .2s;
-    }
-
-    .scan-btn:hover {
-      background: #ffe033;
-      transform: translateY(-1px);
-    }
-
-    .unk {
-      margin-top: 10px;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 12px;
-      color: var(--t2);
-    }
-
-    .unk input {
-      accent-color: var(--em);
-    }
-
-    .form-row {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .form-row.r2 {
-      grid-template-columns: 1fr 1.2fr;
-    }
-
-    .form-row.r3 {
-      grid-template-columns: 1fr 1fr 1fr;
-    }
-
-    @media(max-width:580px) {
-      .form-row.r3 {
-        grid-template-columns: 1fr 1fr;
-      }
-    }
-
-    .gender-btn {
-      flex: 1;
-      padding: 9px 0;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--t2);
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all .18s;
-    }
-
-    .gender-btn.on {
-      background: rgba(80, 200, 120, 0.15);
-      border-color: var(--em);
-      color: var(--em);
-    }
-
-    .cal-btn {
-      flex: 1;
-      padding: 9px 0;
-      border-radius: 8px;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      background: rgba(255, 255, 255, 0.05);
-      color: var(--t2);
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all .18s;
-    }
-
-    .cal-btn.on {
-      background: rgba(255, 215, 0, 0.12);
-      border-color: var(--gold);
-      color: var(--gold);
-    }
-
-    .method-banner {
-      margin-top: 12px;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      border-radius: 12px;
-      padding: .8rem 1rem;
-      display: grid;
-      grid-template-columns: 1fr 1px 1fr 1px 1fr;
-      gap: 8px;
-      align-items: center;
-    }
-
-    .method-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 4px;
-      padding: .2rem 0;
-    }
-
-    .method-name {
-      font-size: 12px;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .method-role {
-      font-size: 10px;
-      color: var(--em);
-      font-weight: 600;
-    }
-
-    .method-desc {
-      font-size: 10px;
-      color: var(--t2);
-      text-align: center;
-      line-height: 1.45;
-    }
-
-    .method-sep {
-      background: rgba(255, 255, 255, 0.08);
-      width: 1px;
-      height: 100%;
-    }
-
-    .scan-full-btn {
-      width: 100%;
-      margin-top: 12px;
-      padding: 14px;
-      background: var(--gold);
-      border: none;
-      border-radius: 10px;
-      color: #0f0f3a;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      transition: all .2s;
-    }
-
-    .scan-full-btn:hover {
-      background: #ffe033;
-      transform: translateY(-1px);
-    }
-
-    .scan-full-btn:active {
-      transform: scale(.98);
-    }
-
-    /* WAVE + COMPASS */
-    .two-col {
-      display: grid;
-      grid-template-columns: 1fr 300px;
-      gap: 1.25rem;
-      margin-bottom: 1.25rem;
-    }
-
-    @media(max-width:640px) {
-      .two-col {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .wcard {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--bd);
-      border-radius: 16px;
-      padding: 1.25rem 1.5rem;
-    }
-
-    .ct {
-      font-size: 15px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 3px;
-    }
-
-    .cs {
-      font-size: 12px;
-      color: var(--t2);
-      margin-bottom: .75rem;
-    }
-
-    .sbdg {
-      display: flex;
-      gap: 16px;
-      margin-bottom: .6rem;
-    }
-
-    .sb {
-      font-size: 12px;
-      color: var(--t2);
-    }
-
-    .sb span {
-      font-size: 20px;
-      font-weight: 700;
-      display: block;
-      margin-top: 2px;
-    }
-
-    .sb span.e {
-      color: var(--em);
-    }
-
-    .sb span.g {
-      color: var(--gold);
-    }
-
-    .sb span.p {
-      color: #cc88bb;
-    }
-
-    .wcta {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: .75rem;
-      padding: 9px 18px;
-      background: var(--gold);
-      border: none;
-      border-radius: 8px;
-      color: #0f0f3a;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all .2s;
-    }
-
-    .wcta:hover {
-      background: #ffe033;
-    }
-
-    .cmpc {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--bd);
-      border-radius: 16px;
-      padding: 1.25rem 1.5rem;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-    }
-
-    .cdir {
-      font-size: 14px;
-      font-weight: 700;
-      color: #fff;
-      text-align: center;
-      margin-top: .5rem;
-    }
-
-    .cdir span {
-      color: var(--gold);
-    }
-
-    .cdesc {
-      font-size: 11px;
-      color: var(--t2);
-      text-align: center;
-      margin-top: .35rem;
-      line-height: 1.55;
-    }
-
-    /* BIOMETRIC */
-    .bio {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--bd);
-      border-radius: 16px;
-      padding: 1.25rem 1.5rem;
-      margin-bottom: 1.25rem;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 1.25rem;
-    }
-
-    @media(max-width:600px) {
-      .bio {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .cambox {
-      background: #000;
-      border-radius: 12px;
-      height: 190px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      cursor: pointer;
-      transition: border-color .2s;
-    }
-
-    .cambox:hover {
-      border-color: rgba(80, 200, 120, 0.4);
-    }
-
-    .camring {
-      width: 52px;
-      height: 52px;
-      border-radius: 50%;
-      border: 2px dashed rgba(80, 200, 120, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .camring svg {
-      width: 22px;
-      height: 22px;
-      stroke: var(--em);
-    }
-
-    .sbtns {
-      display: flex;
-      gap: 8px;
-      margin-top: 4px;
-    }
-
-    .sbtn {
-      padding: 8px 14px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-family: inherit;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all .2s;
-    }
-
-    .sbtn.em {
-      background: var(--em);
-      border: none;
-      color: #fff;
-    }
-
-    .sbtn.em:hover {
-      background: #3db866;
-    }
-
-    .sbtn.out {
-      background: none;
-      border: 1px solid rgba(255, 255, 255, 0.2);
-      color: var(--t);
-    }
-
-    .sbtn.out:hover {
-      border-color: var(--em);
-      color: var(--em);
-    }
-
-    .ail {
-      display: flex;
-      flex-direction: column;
-      gap: 9px;
-    }
-
-    .ait {
-      display: flex;
-      gap: 9px;
-      align-items: flex-start;
-    }
-
-    .aid {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: var(--em);
-      flex-shrink: 0;
-      margin-top: 5px;
-    }
-
-    .aitx {
-      font-size: 12px;
-      color: var(--t2);
-      line-height: 1.6;
-    }
-
-    .aitx strong {
-      color: var(--t3);
-    }
-
-    .aitp {
-      padding: 9px 11px;
-      background: rgba(80, 200, 120, 0.08);
-      border: 1px solid rgba(80, 200, 120, 0.2);
-      border-radius: 8px;
-      font-size: 11px;
-      color: var(--em);
-      margin-top: .85rem;
-    }
-
-    /* EXPERTS */
-    .exsec {
-      margin-bottom: 1.25rem;
-    }
-
-    .exhdr {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: .75rem;
-    }
-
-    .exhdr h2 {
-      font-size: 18px;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .exhdr a {
-      font-size: 12px;
-      color: var(--em);
-      text-decoration: none;
-    }
-
-    .exgrid {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-    }
-
-    @media(max-width:600px) {
-      .exgrid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .ecard {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--bd);
-      border-radius: 14px;
-      padding: 1rem;
-      transition: all .2s;
-      cursor: pointer;
-    }
-
-    .ecard:hover {
-      border-color: rgba(255, 255, 255, 0.22);
-      transform: translateY(-2px);
-    }
-
-    .ecard.top {
-      border-color: var(--gold);
-    }
-
-    .echdr {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: .75rem;
-    }
-
-    .eav {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: rgba(100, 80, 160, 0.5);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      position: relative;
-      flex-shrink: 0;
-    }
-
-    .eav svg {
-      width: 20px;
-      height: 20px;
-      stroke: rgba(200, 180, 255, 0.8);
-    }
-
-    .edot {
-      position: absolute;
-      bottom: 1px;
-      right: 1px;
-      width: 10px;
-      height: 10px;
-      border-radius: 50%;
-      border: 2px solid var(--bg);
-      background: var(--em);
-    }
-
-    .pulse::after {
-      content: '';
-      position: absolute;
-      inset: -3px;
-      border-radius: 50%;
-      border: 2px solid var(--em);
-      animation: pulse 1.6s infinite;
-      opacity: .5;
-    }
-
-    @keyframes pulse {
-      0% {
-        transform: scale(1);
-        opacity: .5;
-      }
-
-      100% {
-        transform: scale(1.9);
-        opacity: 0;
-      }
-    }
-
-    .enm {
-      font-size: 13px;
-      font-weight: 600;
-      color: #fff;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .esp {
-      font-size: 11px;
-      color: var(--t2);
-      margin-top: 2px;
-    }
-
-    .ert {
-      font-size: 12px;
-      color: var(--gold);
-    }
-
-    .tbdg {
-      font-size: 9px;
-      padding: 1px 6px;
-      background: var(--gold);
-      color: #0f0f3a;
-      border-radius: 4px;
-      font-weight: 700;
-    }
-
-    .etgs {
-      display: flex;
-      gap: 5px;
-      flex-wrap: wrap;
-      margin-bottom: .75rem;
-    }
-
-    .etg {
-      font-size: 11px;
-      padding: 3px 8px;
-      border-radius: 12px;
-      background: rgba(80, 200, 120, 0.1);
-      color: var(--em);
-      border: 1px solid rgba(80, 200, 120, 0.2);
-    }
-
-    .ebs {
-      display: flex;
-      gap: 6px;
-    }
-
-    .eb {
-      flex: 1;
-      padding: 7px 0;
-      border-radius: 8px;
-      font-size: 12px;
-      font-family: inherit;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all .2s;
-      text-align: center;
-      border: none;
-    }
-
-    .eb.m {
-      background: var(--em);
-      color: #fff;
-    }
-
-    .eb.m:hover {
-      background: #3db866;
-    }
-
-    .eb.s {
-      background: none;
-      border: 1px solid rgba(255, 255, 255, 0.18);
-      color: var(--t);
-    }
-
-    .eb.s:hover {
-      border-color: var(--em);
-      color: var(--em);
-    }
-
-    /* BOTTOM CARDS */
-    .bgrid {
-      display: grid;
-      grid-template-columns: 1fr 1fr 1fr;
-      gap: 10px;
-      margin-bottom: 1.25rem;
-    }
-
-    @media(max-width:640px) {
-      .bgrid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .bc {
-      background: rgba(255, 255, 255, 0.04);
-      border-radius: 14px;
-      padding: 1.25rem;
-      border: 1px solid var(--bd);
-      transition: all .2s;
-      cursor: pointer;
-    }
-
-    .bc:hover {
-      border-color: rgba(255, 255, 255, 0.2);
-      transform: translateY(-2px);
-    }
-
-    .bci {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: .75rem;
-    }
-
-    .bci svg {
-      width: 15px;
-      height: 15px;
-    }
-
-    .bct {
-      font-size: 14px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: .35rem;
-      line-height: 1.3;
-    }
-
-    .bcd {
-      font-size: 12px;
-      color: var(--t2);
-      line-height: 1.6;
-      margin-bottom: .75rem;
-    }
-
-    .bcb {
-      width: 100%;
-      padding: 9px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-family: inherit;
-      cursor: pointer;
-      font-weight: 600;
-      transition: all .2s;
-      border: none;
-    }
-
-    .bcb.gold {
-      background: var(--gold);
-      color: #0f0f3a;
-    }
-
-    .bcb.gold:hover {
-      background: #ffe033;
-    }
-
-    .bcb.red {
-      background: #e74c3c;
-      color: #fff;
-    }
-
-    .bcb.red:hover {
-      background: #c0392b;
-    }
-
-    .bcb.em {
-      background: var(--em);
-      color: #fff;
-    }
-
-    .bcb.em:hover {
-      background: #3db866;
-    }
-
-    .mth {
-      background: #1a0505;
-      border-radius: 8px;
-      padding: .65rem .75rem;
-      margin-bottom: .65rem;
-      border: 1px solid rgba(231, 76, 60, 0.2);
-      display: flex;
-      align-items: center;
-      gap: 9px;
-    }
-
-    .plc {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: #e74c3c;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .plc svg {
-      width: 11px;
-      height: 11px;
-      fill: #fff;
-      margin-left: 2px;
-    }
-
-    /* SOUND PAGE */
-    .rx-hero {
-      background: rgba(80, 200, 120, 0.07);
-      border: 1px solid rgba(80, 200, 120, 0.2);
-      border-radius: 12px;
-      padding: 1.1rem 1.25rem;
-      margin-bottom: 1rem;
-    }
-
-    .rx-hl {
-      font-size: 18px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: .3rem;
-    }
-
-    .rx-hl span {
-      color: var(--em);
-    }
-
-    .spills {
-      display: flex;
-      gap: 6px;
-      flex-wrap: wrap;
-      margin-top: .55rem;
-    }
-
-    .spill {
-      padding: 3px 10px;
-      border-radius: 20px;
-      font-size: 11px;
-      font-weight: 700;
-      border: 1px solid;
-    }
-
-    .spill.e {
-      background: rgba(80, 200, 120, 0.15);
-      color: var(--em);
-      border-color: rgba(80, 200, 120, 0.3);
-    }
-
-    .spill.g {
-      background: rgba(255, 215, 0, 0.12);
-      color: var(--gold);
-      border-color: rgba(255, 215, 0, 0.25);
-    }
-
-    .spill.p {
-      background: rgba(204, 136, 187, 0.15);
-      color: #cc88bb;
-      border-color: rgba(204, 136, 187, 0.3);
-    }
-
-    .ch-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: 1rem;
-    }
-
-    @media(max-width:520px) {
-      .ch-grid {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .chc {
-      background: var(--bg2);
-      border: 1px solid var(--bd);
-      border-radius: 12px;
-      padding: .85rem;
-      cursor: pointer;
-      transition: all .18s;
-      display: flex;
-      gap: 10px;
-      align-items: flex-start;
-    }
-
-    .chc:hover {
-      border-color: rgba(255, 255, 255, 0.25);
-    }
-
-    .chc.sel {
-      border-width: 1.5px;
-    }
-
-    .chico {
-      width: 38px;
-      height: 38px;
-      border-radius: 9px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .chico svg {
-      width: 17px;
-      height: 17px;
-    }
-
-    .chnm {
-      font-size: 12px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: 2px;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      flex-wrap: wrap;
-    }
-
-    .chhdl {
-      font-size: 10px;
-      color: var(--t2);
-      margin-bottom: 3px;
-    }
-
-    .chmood {
-      font-size: 10px;
-      color: var(--t2);
-      line-height: 1.4;
-      margin-bottom: 5px;
-    }
-
-    .chtag {
-      display: inline-block;
-      font-size: 9px;
-      padding: 1px 7px;
-      border-radius: 7px;
-      font-weight: 700;
-    }
-
-    .ch-coming {
-      font-size: 9px;
-      padding: 1px 5px;
-      border-radius: 5px;
-      background: rgba(255, 255, 255, 0.1);
-      color: var(--t2);
-      font-weight: 600;
-    }
-
-    .ytbtn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      width: 100%;
-      padding: 13px;
-      border-radius: 10px;
-      font-size: 14px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all .2s;
-      color: #fff;
-      text-decoration: none;
-      border: none;
-      margin-bottom: .65rem;
-    }
-
-    .ytbtn:hover {
-      opacity: .88;
-      transform: translateY(-1px);
-    }
-
-    .ytbtn svg {
-      width: 18px;
-      height: 18px;
-      fill: #fff;
-      flex-shrink: 0;
-    }
-
-    .why-card {
-      border-radius: 10px;
-      padding: .85rem 1rem;
-      border: 1px solid;
-      margin-top: .85rem;
-    }
-
-    .why-title {
-      font-size: 12px;
-      font-weight: 700;
-      margin-bottom: .4rem;
-    }
-
-    .why-body {
-      font-size: 12px;
-      color: var(--t2);
-      line-height: 1.75;
-    }
-
-    .why-body em {
-      color: var(--em);
-      font-style: normal;
-      font-weight: 600;
-    }
-
-    .why-body b {
-      font-weight: 600;
-      color: var(--gold);
-    }
-
-    .time-rx {
-      margin-top: 1rem;
-      background: rgba(255, 255, 255, 0.03);
-      border: 1px solid var(--bd);
-      border-radius: 10px;
-      padding: .8rem .95rem;
-    }
-
-    .time-rx-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: .55rem;
-    }
-
-    .trow {
-      display: flex;
-      align-items: flex-start;
-      gap: 8px;
-      margin-bottom: 7px;
-    }
-
-    .trow:last-child {
-      margin-bottom: 0;
-    }
-
-    .ttag {
-      font-size: 10px;
-      font-weight: 700;
-      padding: 2px 8px;
-      border-radius: 6px;
-      flex-shrink: 0;
-      min-width: 68px;
-      text-align: center;
-      margin-top: 1px;
-    }
-
-    .tdesc {
-      font-size: 11px;
-      color: var(--t2);
-      line-height: 1.5;
-    }
-
-    /* SCAN PAGE */
-    .cam-stage {
-      position: relative;
-      background: #000;
-      border-radius: 16px;
-      overflow: hidden;
-      margin-bottom: 1rem;
-    }
-
-    .cam-stage canvas {
-      display: block;
-      width: 100%;
-      border-radius: 16px;
-    }
-
-    .fb-bar {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      padding: .75rem 1rem;
-      background: rgba(0, 0, 0, 0.6);
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .fb-dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
-      flex-shrink: 0;
-    }
-
-    .fb-dot.ok {
-      background: var(--em);
-    }
-
-    .fb-dot.warn {
-      background: var(--gold);
-    }
-
-    .fb-dot.sc {
-      background: var(--em);
-      animation: blink .7s infinite;
-    }
-
-    @keyframes blink {
-
-      0%,
-      100% {
-        opacity: 1;
-      }
-
-      50% {
-        opacity: .2;
-      }
-    }
-
-    .fb-txt {
-      font-size: 13px;
-      font-weight: 600;
-      color: #fff;
-    }
-
-    .fb-sub {
-      font-size: 11px;
-      color: var(--t2);
-      margin-left: auto;
-    }
-
-    .ctrl-row {
-      display: grid;
-      grid-template-columns: 1fr auto 1fr;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 1rem;
-    }
-
-    .shutter {
-      width: 64px;
-      height: 64px;
-      border-radius: 50%;
-      background: none;
-      border: 3px solid #fff;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: all .18s;
-      margin: 0 auto;
-    }
-
-    .shutter:hover,
-    .shutter.cap {
-      border-color: var(--em);
-    }
-
-    .shutter.cap .si {
-      background: var(--em);
-    }
-
-    .si {
-      width: 50px;
-      height: 50px;
-      border-radius: 50%;
-      background: #fff;
-      transition: all .18s;
-    }
-
-    .shutter:hover .si {
-      background: var(--em);
-    }
-
-    .side-ctrl {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .ctrl-btn {
-      padding: 7px 14px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-      border: 1px solid var(--bd);
-      background: var(--bg2);
-      color: var(--t);
-      transition: all .18s;
-      text-align: center;
-    }
-
-    .ctrl-btn:hover,
-    .ctrl-btn.active {
-      border-color: var(--em);
-      color: var(--em);
-    }
-
-    .ctrl-btn.active {
-      background: rgba(80, 200, 120, 0.1);
-    }
-
-    .tips-row {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 6px;
-      margin-bottom: 1rem;
-    }
-
-    @media(max-width:480px) {
-      .tips-row {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .tip-card {
-      background: var(--bg2);
-      border: 1px solid var(--bd);
-      border-radius: 10px;
-      padding: .6rem .75rem;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    .tip-icon {
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-    }
-
-    .tip-icon svg {
-      width: 13px;
-      height: 13px;
-    }
-
-    .tip-text {
-      font-size: 11px;
-      color: var(--t2);
-      line-height: 1.4;
-    }
-
-    .prog-sec {
-      background: var(--bg2);
-      border: 1px solid var(--bd);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: 1rem;
-      display: none;
-    }
-
-    .prog-sec.show {
-      display: block;
-    }
-
-    .prog-steps {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-
-    .prog-step {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .sico {
-      width: 24px;
-      height: 24px;
-      border-radius: 50%;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .sico.done {
-      background: var(--em);
-      color: #fff;
-    }
-
-    .sico.act {
-      background: rgba(80, 200, 120, 0.2);
-      border: 1px solid var(--em);
-    }
-
-    .sico.act svg {
-      width: 12px;
-      height: 12px;
-      stroke: var(--em);
-      animation: spin .8s linear infinite;
-    }
-
-    @keyframes spin {
-      to {
-        transform: rotate(360deg);
-      }
-    }
-
-    .sico.wait {
-      background: rgba(255, 255, 255, 0.07);
-      color: var(--t2);
-    }
-
-    .slbl {
-      font-size: 12px;
-      color: var(--t3);
-      flex: 1;
-    }
-
-    .slbl.act {
-      color: var(--em);
-      font-weight: 600;
-    }
-
-    .slbl.done {
-      color: var(--t2);
-    }
-
-    .spct {
-      font-size: 11px;
-      color: var(--t2);
-    }
-
-    .result-sec {
-      display: none;
-    }
-
-    .result-sec.show {
-      display: block;
-      animation: fu .4s ease both;
-    }
-
-    .res-hero {
-      background: rgba(80, 200, 120, 0.07);
-      border: 1px solid rgba(80, 200, 120, 0.2);
-      border-radius: 12px;
-      padding: 1rem;
-      margin-bottom: .75rem;
-      display: flex;
-      gap: 14px;
-      align-items: center;
-    }
-
-    .face-thumb {
-      width: 64px;
-      height: 80px;
-      border-radius: 10px;
-      background: #111;
-      border: 1px solid var(--bd);
-      overflow: hidden;
-      flex-shrink: 0;
-      position: relative;
-    }
-
-    .face-tag {
-      position: absolute;
-      bottom: 3px;
-      left: 0;
-      right: 0;
-      text-align: center;
-      font-size: 9px;
-      font-weight: 700;
-      color: var(--em);
-      background: rgba(0, 0, 0, 0.7);
-      padding: 2px 0;
-    }
-
-    .match-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      padding: 3px 10px;
-      border-radius: 12px;
-      background: rgba(80, 200, 120, 0.15);
-      border: 1px solid rgba(80, 200, 120, 0.3);
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--em);
-    }
-
-    .feat-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 8px;
-      margin-bottom: .75rem;
-    }
-
-    .feat-card {
-      background: var(--bg2);
-      border: 1px solid var(--bd);
-      border-radius: 10px;
-      padding: .8rem;
-    }
-
-    .feat-head {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: .5rem;
-    }
-
-    .feat-name {
-      font-size: 12px;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .feat-bar {
-      height: 4px;
-      background: rgba(255, 255, 255, 0.1);
-      border-radius: 2px;
-      overflow: hidden;
-      margin-bottom: .4rem;
-    }
-
-    .feat-fill {
-      height: 100%;
-      border-radius: 2px;
-      transition: width 1.2s cubic-bezier(.4, 0, .2, 1);
-    }
-
-    .feat-desc {
-      font-size: 11px;
-      color: var(--t2);
-      line-height: 1.55;
-    }
-
-    .feat-tag {
-      display: inline-block;
-      font-size: 9px;
-      padding: 1px 6px;
-      border-radius: 6px;
-      margin-top: 4px;
-      font-weight: 700;
-    }
-
-    .pm-list {
-      display: flex;
-      flex-direction: column;
-      gap: 6px;
-    }
-
-    .pm-item {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .pm-palace {
-      font-size: 12px;
-      color: var(--t2);
-      width: 70px;
-      flex-shrink: 0;
-    }
-
-    .pm-bar-wrap {
-      flex: 1;
-      height: 6px;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 3px;
-      overflow: hidden;
-    }
-
-    .pm-fill {
-      height: 100%;
-      border-radius: 3px;
-      transition: width 1.3s cubic-bezier(.4, 0, .2, 1);
-    }
-
-    .pm-pct {
-      font-size: 11px;
-      font-weight: 700;
-      color: #fff;
-      width: 30px;
-      text-align: right;
-      flex-shrink: 0;
-    }
-
-    .ib {
-      background: rgba(255, 215, 0, 0.05);
-      border: 1px solid rgba(255, 215, 0, 0.18);
-      border-radius: 10px;
-      padding: .85rem 1rem;
-      margin-bottom: .75rem;
-    }
-
-    .ib-title {
-      font-size: 12px;
-      font-weight: 700;
-      color: var(--gold);
-      margin-bottom: .4rem;
-    }
-
-    .ib-body {
-      font-size: 12px;
-      color: var(--t2);
-      line-height: 1.75;
-    }
-
-    .ib-body em {
-      color: var(--em);
-      font-style: normal;
-      font-weight: 600;
-    }
-
-    .ib-body b {
-      color: var(--gold);
-      font-weight: 600;
-    }
-
-    /* CMS */
-    .promo {
-      background: rgba(80, 200, 120, 0.1);
-      border: 1px solid rgba(80, 200, 120, 0.2);
-      border-radius: 16px 16px 0 0;
-      padding: 1rem 1.5rem;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 1rem;
-      flex-wrap: wrap;
-    }
-
-    .promo-btn {
-      padding: 8px 18px;
-      background: var(--em);
-      border: none;
-      border-radius: 8px;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 600;
-      cursor: pointer;
-      font-family: inherit;
-    }
-
-    .promo-btn:hover {
-      background: #3db866;
-    }
-
-    .cms-body {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid var(--bd);
-      border-top: none;
-      border-radius: 0 0 16px 16px;
-      padding: 1.25rem 1.5rem;
-      display: grid;
-      grid-template-columns: 1fr 250px;
-      gap: 1.5rem;
-    }
-
-    @media(max-width:640px) {
-      .cms-body {
-        grid-template-columns: 1fr;
-      }
-    }
-
-    .cms-mt {
-      font-size: 14px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: .75rem;
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .cms-mt svg {
-      width: 15px;
-      height: 15px;
-      stroke: var(--em);
-    }
-
-    .mcds {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
-      margin-bottom: .9rem;
-    }
-
-    .mc {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-      padding: .7rem;
-    }
-
-    .mcl {
-      font-size: 11px;
-      color: var(--t2);
-      margin-bottom: .25rem;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .mcl svg {
-      width: 11px;
-      height: 11px;
-      stroke: var(--t2);
-    }
-
-    .mcv {
-      font-size: 19px;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .mcd {
-      font-size: 11px;
-      color: var(--em);
-      margin-top: 2px;
-    }
-
-    .mcd.gold {
-      color: var(--gold);
-    }
-
-    .stit {
-      font-size: 13px;
-      font-weight: 600;
-      color: #fff;
-      margin-bottom: .6rem;
-    }
-
-    .stbl {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-      table-layout: fixed;
-    }
-
-    .stbl th {
-      color: var(--t2);
-      font-weight: 500;
-      padding: 6px;
-      text-align: left;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.08);
-    }
-
-    .stbl td {
-      padding: 7px 6px;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-      color: var(--t3);
-    }
-
-    .stbl td.neg {
-      color: #e74c3c;
-    }
-
-    .stbl td.pos {
-      color: var(--em);
-    }
-
-    .kwt {
-      font-size: 14px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: .65rem;
-    }
-
-    .kwc {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 6px;
-      margin-bottom: .85rem;
-    }
-
-    .kw {
-      padding: 4px 11px;
-      border-radius: 20px;
-      border: 1px solid rgba(255, 255, 255, 0.14);
-      font-size: 12px;
-      color: var(--t);
-      cursor: pointer;
-      transition: all .2s;
-    }
-
-    .kw:hover {
-      border-color: var(--em);
-      color: var(--em);
-    }
-
-    .kw .n {
-      color: var(--em);
-      font-weight: 600;
-      margin-left: 3px;
-    }
-
-    .rvc {
-      background: rgba(255, 255, 255, 0.04);
-      border-radius: 10px;
-      padding: .75rem;
-      border: 1px solid var(--bd);
-    }
-
-    .rvt {
-      font-size: 12px;
-      color: var(--t2);
-      line-height: 1.6;
-      font-style: italic;
-      margin-bottom: .45rem;
-    }
-
-    .rvs {
-      color: var(--gold);
-      font-size: 13px;
-    }
-
-    /* SHARED */
-    .cta-row {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-    }
-
-    .btn-gold {
-      flex: 1;
-      min-width: 120px;
-      padding: 12px;
-      background: var(--gold);
-      border: none;
-      border-radius: 10px;
-      color: #0f0f3a;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all .2s;
-    }
-
-    .btn-gold:hover {
-      background: #ffe033;
-    }
-
-    .btn-em {
-      flex: 1;
-      min-width: 120px;
-      padding: 12px;
-      background: var(--em);
-      border: none;
-      border-radius: 10px;
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all .2s;
-    }
-
-    .btn-em:hover {
-      background: #3db866;
-    }
-
-    .btn-out {
-      flex: 1;
-      min-width: 120px;
-      padding: 12px;
-      background: none;
-      border: 1px solid var(--bd);
-      border-radius: 10px;
-      color: var(--t);
-      font-size: 13px;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all .2s;
-    }
-
-    .btn-out:hover {
-      border-color: var(--em);
-      color: var(--em);
-    }
-
-    .back-btn {
-      width: 32px;
-      height: 32px;
-      border-radius: 8px;
-      background: var(--bg2);
-      border: 1px solid var(--bd);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      cursor: pointer;
-      flex-shrink: 0;
-      transition: border-color .15s;
-    }
-
-    .back-btn:hover {
-      border-color: var(--em);
-    }
-
-    .pgtop {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 1.25rem;
-    }
-
-    .pgtop h1 {
-      font-size: 16px;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .mode-toggle {
-      margin-left: auto;
-      display: flex;
-      gap: 6px;
-    }
-
-    .mtbtn {
-      padding: 5px 14px;
-      border-radius: 20px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      border: 1px solid var(--bd);
-      background: none;
-      color: var(--t2);
-      transition: all .18s;
-    }
-
-    .mtbtn.on {
-      background: var(--em);
-      border-color: var(--em);
-      color: #fff;
-    }
-
-    .footer {
-      border-top: 1px solid rgba(255, 255, 255, 0.07);
-      padding: 1.5rem;
-      text-align: center;
-      font-size: 12px;
-      color: var(--t2);
-      line-height: 1.8;
-    }
-
-    /* SAJU RESULT */
-    .saju-score-card {
-      background: rgba(255, 255, 255, 0.05);
-      border-radius: 10px;
-      padding: .7rem .6rem;
-      text-align: center;
-    }
-
-    .saju-score-label {
-      font-size: 10px;
-      color: var(--t2);
-      margin-bottom: 4px;
-    }
-
-    .saju-score-val {
-      font-size: 22px;
-      font-weight: 700;
-    }
-
-    .saju-score-trend {
-      font-size: 10px;
-      margin-top: 2px;
-    }
-
-    .saju-section {
-      background: rgba(255, 255, 255, 0.04);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 12px;
-      padding: 1rem 1.1rem;
-    }
-
-    .saju-section-title {
-      font-size: 13px;
-      font-weight: 700;
-      color: #fff;
-      margin-bottom: .6rem;
-      display: flex;
-      align-items: center;
-      gap: 7px;
-    }
-
-    .saju-section-title svg {
-      width: 14px;
-      height: 14px;
-    }
-
-    .saju-section-body {
-      font-size: 12px;
-      color: var(--t2);
-      line-height: 1.85;
-    }
-
-    .saju-section-body em {
-      color: var(--em);
-      font-style: normal;
-      font-weight: 600;
-    }
-
-    .saju-section-body b {
-      color: var(--gold);
-      font-weight: 600;
-    }
-
-    .saju-section-body strong {
-      color: #fff;
-      font-weight: 600;
-    }
-
-    .saju-tag {
-      display: inline-block;
-      font-size: 10px;
-      padding: 2px 8px;
-      border-radius: 6px;
-      margin-right: 4px;
-      margin-bottom: 4px;
-      font-weight: 600;
-    }
-
-    .saju-streaming {
-      border-left: 2px solid rgba(80, 200, 120, 0.4);
-      padding-left: .75rem;
-    }
-
-    .typing-cursor {
-      display: inline-block;
-      width: 2px;
-      height: 12px;
-      background: var(--em);
-      margin-left: 2px;
-      animation: blink .7s infinite;
-      vertical-align: middle;
-    }
-
-    .shutter-flash {
-      position: absolute;
-      inset: 0;
-      background: #fff;
-      opacity: 0;
-      border-radius: 12px;
-      pointer-events: none;
-      transition: opacity .05s;
-      z-index: 10;
-    }
-
-    .shutter-flash.on {
-      opacity: 0.85;
-    }
-
-    .cam-guide-msg {
-      position: absolute;
-      bottom: 50px;
-      left: 50%;
-      transform: translateX(-50%);
-      background: rgba(0, 0, 0, 0.65);
-      color: #fff;
-      font-size: 12px;
-      font-weight: 600;
-      padding: 6px 16px;
-      border-radius: 20px;
-      white-space: nowrap;
-      pointer-events: none;
-      z-index: 5;
-    }
-
-    /* AUTH MODAL */
-    .auth-overlay {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(0, 0, 0, 0.65);
-      z-index: 999;
-      align-items: center;
-      justify-content: center;
-      padding: 1rem;
-    }
-
-    .auth-overlay.show {
-      display: flex;
-    }
-
-    .auth-modal {
-      background: #13134a;
-      border: 1px solid rgba(255, 255, 255, 0.12);
-      border-radius: 20px;
-      width: 100%;
-      max-width: 380px;
-      overflow: hidden;
-      animation: modalIn .22s cubic-bezier(.4, 0, .2, 1);
-    }
-
-    @keyframes modalIn {
-      from {
-        opacity: 0;
-        transform: scale(.94) translateY(12px);
-      }
-
-      to {
-        opacity: 1;
-        transform: none;
-      }
-    }
-
-    .auth-head {
-      padding: 1.5rem 1.5rem 0;
-      text-align: center;
-    }
-
-    .auth-logo {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-bottom: 1.25rem;
-    }
-
-    .auth-logo-ico {
-      width: 30px;
-      height: 30px;
-      border-radius: 50%;
-      background: var(--gold);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .auth-logo-txt {
-      font-size: 15px;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .auth-tabs {
-      display: flex;
-      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      margin: 0 -1.5rem;
-    }
-
-    .auth-tab {
-      flex: 1;
-      padding: .7rem;
-      font-size: 13px;
-      cursor: pointer;
-      border: none;
-      background: none;
-      color: var(--t2);
-      font-family: inherit;
-      transition: all .15s;
-      border-bottom: 2px solid transparent;
-      margin-bottom: -1px;
-    }
-
-    .auth-tab.on {
-      color: var(--em);
-      border-bottom-color: var(--em);
-      font-weight: 600;
-    }
-
-    .auth-body {
-      padding: 1.25rem 1.5rem 1.5rem;
-    }
-
-    .auth-sec {
-      font-size: 11px;
-      color: var(--t2);
-      margin-bottom: .55rem;
-      margin-top: 1rem;
-    }
-
-    .auth-sec:first-child {
-      margin-top: 0;
-    }
-
-    .soc-btns {
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
-    }
-
-    .soc-btn {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      width: 100%;
-      padding: 10px 13px;
-      border-radius: 10px;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      background: rgba(255, 255, 255, 0.04);
-      cursor: pointer;
-      font-family: inherit;
-      font-size: 13px;
-      font-weight: 600;
-      transition: all .18s;
-      color: #fff;
-    }
-
-    .soc-btn:hover {
-      background: rgba(255, 255, 255, 0.09);
-      border-color: rgba(255, 255, 255, 0.2);
-    }
-
-    .soc-btn:active {
-      transform: scale(0.98);
-    }
-
-    .soc-ico {
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-shrink: 0;
-      font-size: 11px;
-      font-weight: 700;
-    }
-
-    .soc-lbl {
-      flex: 1;
-      text-align: left;
-    }
-
-    .soc-arr {
-      opacity: .4;
-    }
-
-    .auth-div {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin: 1rem 0;
-    }
-
-    .auth-div-line {
-      flex: 1;
-      height: 1px;
-      background: rgba(255, 255, 255, 0.08);
-    }
-
-    .auth-div-txt {
-      font-size: 11px;
-      color: var(--t2);
-    }
-
-    .auth-inp-grp {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: .9rem;
-    }
-
-    .auth-inp-row {
-      display: flex;
-      flex-direction: column;
-      gap: 4px;
-    }
-
-    .auth-inp-lbl {
-      font-size: 11px;
-      color: var(--t2);
-    }
-
-    .auth-inp {
-      width: 100%;
-      padding: 9px 12px;
-      background: rgba(255, 255, 255, 0.06);
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      border-radius: 8px;
-      color: #fff;
-      font-size: 13px;
-      font-family: inherit;
-      outline: none;
-      transition: border-color .15s;
-    }
-
-    .auth-inp:focus {
-      border-color: var(--em);
-    }
-
-    .auth-inp::placeholder {
-      color: rgba(255, 255, 255, 0.3);
-    }
-
-    .auth-submit {
-      width: 100%;
-      padding: 11px;
-      border-radius: 10px;
-      border: none;
-      background: var(--em);
-      color: #fff;
-      font-size: 13px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      transition: all .2s;
-      margin-bottom: .75rem;
-    }
-
-    .auth-submit:hover {
-      background: #3db866;
-    }
-
-    .auth-submit:active {
-      transform: scale(.98);
-    }
-
-    .auth-terms {
-      font-size: 11px;
-      color: var(--t2);
-      text-align: center;
-      line-height: 1.6;
-    }
-
-    .auth-terms a {
-      color: var(--em);
-    }
-
-    .auth-links {
-      display: flex;
-      justify-content: center;
-      gap: 14px;
-      margin-top: .55rem;
-    }
-
-    .auth-link {
-      font-size: 11px;
-      color: var(--t2);
-      cursor: pointer;
-      background: none;
-      border: none;
-      font-family: inherit;
-      transition: color .15s;
-    }
-
-    .auth-link:hover {
-      color: #fff;
-    }
-
-    .auth-close {
-      position: absolute;
-      top: 1rem;
-      right: 1rem;
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.08);
-      border: none;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-
-    .auth-close:hover {
-      background: rgba(255, 255, 255, 0.15);
-    }
-
-    .auth-close svg {
-      width: 13px;
-      height: 13px;
-      stroke: #fff;
-      stroke-width: 2.5;
-    }
-
-    .auth-modal-wrap {
-      position: relative;
-    }
-
-    /* NAV login button */
-    .nav-login-btn {
-      padding: 6px 14px;
-      border-radius: 8px;
-      font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      font-family: inherit;
-      border: 1px solid var(--em);
-      background: none;
-      color: var(--em);
-      transition: all .18s;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .nav-login-btn:hover {
-      background: rgba(80, 200, 120, 0.12);
-    }
-
-    .nav-user-pill {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 5px 12px 5px 6px;
-      border-radius: 20px;
-      background: rgba(80, 200, 120, 0.12);
-      border: 1px solid rgba(80, 200, 120, 0.25);
-    }
-
-    .nav-user-avatar {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: var(--em);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-size: 10px;
-      font-weight: 700;
-      color: #fff;
-      flex-shrink: 0;
-    }
-
-    .nav-user-name {
-      font-size: 12px;
-      font-weight: 600;
-      color: var(--em);
-    }
-
-    .nav-logout {
-      font-size: 11px;
-      color: var(--t2);
-      cursor: pointer;
-      background: none;
-      border: none;
-      font-family: inherit;
-      padding: 0;
-      margin-left: 2px;
-    }
-
-    .nav-logout:hover {
-      color: #fff;
-    }
-
-    .kakao-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 4px;
-      font-size: 10px;
-      padding: 2px 6px;
-      border-radius: 4px;
-      background: #FEE500;
-      color: #3C1E1E;
-      font-weight: 700;
-      margin-left: auto;
-    }
-  </style>
-</head>
-
-<body>
-  <div class="app">
-    <nav class="nav">
-      <a class="logo" onclick="showPg('main')">
-        <div class="logo-icon"><svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-            <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
-              fill="#0f0f3a" />
-          </svg></div>
-        <div>
-          <div class="logo-text">천기 웨이브</div>
-          <div class="logo-sub">CHEON-GI WAVE</div>
-        </div>
-      </a>
-      <div class="nav-btns">
-        <button class="nbtn on" id="bn-user" onclick="showPg('main',this,'user')">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="7" r="4" />
-            <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-          </svg>서비스 앱
-        </button>
-        <button class="nbtn" id="bn-cms" onclick="showPg('main',this,'cms')">
-          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <rect x="3" y="3" width="7" height="7" rx="1" />
-            <rect x="14" y="3" width="7" height="7" rx="1" />
-            <rect x="3" y="14" width="7" height="7" rx="1" />
-            <rect x="14" y="14" width="7" height="7" rx="1" />
-          </svg>전문가 CMS
-        </button>
-        <div id="nav-auth-area">
-          <button class="nav-login-btn" onclick="openAuth('login')">
-            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <circle cx="12" cy="7" r="4" />
-              <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-            </svg>로그인
-          </button>
-        </div>
-      </div>
-    </nav>
-
-    <!-- USER -->
-    <div id="pg-main-user" class="pg on">
-      <div class="hero fu">
-        <div class="hero-title"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#FFD700"
-            stroke-width="1.5">
-            <polygon
-              points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-          </svg>당신의 천기(天機)를 스캔하세요</div>
-
-        <!-- 저장된 프로필 -->
-        <div id="profile-bar" style="margin-bottom:12px;">
-          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px;">
-            <span style="font-size:11px;color:var(--t2);font-weight:600;">💾 저장된 프로필</span>
-            <button onclick="saveProfile()" style="font-size:11px;padding:4px 12px;border-radius:6px;background:rgba(80,200,120,0.15);border:1px solid rgba(80,200,120,0.3);color:var(--em);cursor:pointer;font-family:inherit;font-weight:600;">+ 현재 정보 저장</button>
-          </div>
-          <div id="profile-chips" style="display:flex;gap:6px;flex-wrap:wrap;">
-            <div style="font-size:11px;color:rgba(153,153,204,0.5);padding:4px 0;">저장된 프로필이 없습니다</div>
-          </div>
-        </div>
-        <div style="height:1px;background:rgba(255,255,255,0.07);margin-bottom:12px;"></div>
-        <div class="form-row r2">
-          <div class="ig"><label>이름</label><input type="text" placeholder="이름 입력" id="inp-name"></div>
-          <div class="ig">
-            <label>성별</label>
-            <div style="display:flex;gap:6px;">
-              <button type="button" class="gender-btn on" id="gbtn-m" onclick="setGender('남')"
-                style="pointer-events:auto;">남성</button>
-              <button type="button" class="gender-btn" id="gbtn-f" onclick="setGender('여')"
-                style="pointer-events:auto;">여성</button>
-            </div>
-          </div>
-        </div>
-
-        <div class="ig" style="margin-bottom:10px;">
-          <label>생년월일</label>
-          <div style="display:flex;gap:6px;align-items:center;flex-wrap:wrap;">
-            <input type="number" id="inp-year" placeholder="년도" min="1900" max="2025"
-              style="width:88px;padding:10px 9px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:15px;font-weight:600;font-family:inherit;outline:none;-moz-appearance:textfield;"
-              oninput="this.value=this.value.slice(0,4);if(this.value.length>=4)document.getElementById('inp-month').focus()">
-            <span style="color:var(--t2);font-size:13px;margin:0 1px;">년</span>
-            <input type="number" id="inp-month" placeholder="월" min="1" max="12"
-              style="width:56px;padding:10px 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:15px;font-weight:600;font-family:inherit;outline:none;-moz-appearance:textfield;"
-              oninput="this.value=this.value.slice(0,2);if(this.value.length>=2)document.getElementById('inp-day').focus()">
-            <span style="color:var(--t2);font-size:13px;margin:0 1px;">월</span>
-            <input type="number" id="inp-day" placeholder="일" min="1" max="31"
-              style="width:56px;padding:10px 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:15px;font-weight:600;font-family:inherit;outline:none;-moz-appearance:textfield;"
-              oninput="this.value=this.value.slice(0,2)">
-            <span style="color:var(--t2);font-size:13px;margin:0 1px;">일</span>
-            <div style="display:flex;gap:4px;margin-left:4px;">
-              <button type="button" class="cal-btn on" id="cbtn-solar" onclick="setCal('양력')"
-                style="padding:5px 9px;font-size:11px;">양력</button>
-              <button type="button" class="cal-btn" id="cbtn-lunar" onclick="setCal('음력')"
-                style="padding:5px 9px;font-size:11px;">음력</button>
-              <button type="button" class="cal-btn" id="cbtn-leap" onclick="setCal('음력윤달')"
-                style="padding:5px 9px;font-size:11px;">윤달</button>
-            </div>
-          </div>
-        </div>
-
-        <!-- 출생지 + 현재 거주지 -->
-        <div class="form-row r2" style="margin-bottom:10px;">
-          <div class="ig">
-            <label>태어난 곳 (출생지) <span style="color:var(--em);font-size:10px;" title="시차 보정 및 기문둔갑 포국에 사용">ⓘ</span></label>
-            <div style="display:flex;gap:4px;">
-              <select id="inp-birthplace-sido" onchange="updateSigungu('birth')" style="flex:1;padding:9px 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;">
-                <option value="">시/도 선택</option>
-                <option value="서울특별시">서울특별시</option>
-<option value="부산광역시">부산광역시</option>
-<option value="대구광역시">대구광역시</option>
-<option value="인천광역시">인천광역시</option>
-<option value="광주광역시">광주광역시</option>
-<option value="대전광역시">대전광역시</option>
-<option value="울산광역시">울산광역시</option>
-<option value="세종특별자치시">세종특별자치시</option>
-<option value="경기도">경기도</option>
-<option value="강원특별자치도">강원특별자치도</option>
-<option value="충청북도">충청북도</option>
-<option value="충청남도">충청남도</option>
-<option value="전라북도">전라북도</option>
-<option value="전라남도">전라남도</option>
-<option value="경상북도">경상북도</option>
-<option value="경상남도">경상남도</option>
-<option value="제주특별자치도">제주특별자치도</option>
-<option value="해외">해외</option>
-              </select>
-              <select id="inp-birthplace-sigungu" onchange="updateBirthplace()" style="flex:1.2;padding:9px 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;">
-                <option value="">시/군/구</option>
-              </select>
-            </div>
-            <input type="hidden" id="inp-birthplace" value="">
-          </div>
-          <div class="ig">
-            <label>현재 거주지 <span style="color:var(--em);font-size:10px;" title="기문둔갑 길방·흉방 계산 기준">ⓘ</span></label>
-            <div style="display:flex;gap:4px;">
-              <select id="inp-location-sido" onchange="updateSigungu('location')" style="flex:1;padding:9px 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;">
-                <option value="">시/도 선택</option>
-                <option value="서울특별시">서울특별시</option>
-<option value="부산광역시">부산광역시</option>
-<option value="대구광역시">대구광역시</option>
-<option value="인천광역시">인천광역시</option>
-<option value="광주광역시">광주광역시</option>
-<option value="대전광역시">대전광역시</option>
-<option value="울산광역시">울산광역시</option>
-<option value="세종특별자치시">세종특별자치시</option>
-<option value="경기도">경기도</option>
-<option value="강원특별자치도">강원특별자치도</option>
-<option value="충청북도">충청북도</option>
-<option value="충청남도">충청남도</option>
-<option value="전라북도">전라북도</option>
-<option value="전라남도">전라남도</option>
-<option value="경상북도">경상북도</option>
-<option value="경상남도">경상남도</option>
-<option value="제주특별자치도">제주특별자치도</option>
-<option value="해외">해외</option>
-              </select>
-              <select id="inp-location-sigungu" onchange="updateLocation()" style="flex:1.2;padding:9px 8px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.12);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;">
-                <option value="">시/군/구</option>
-              </select>
-            </div>
-            <input type="hidden" id="inp-location" value="">
-          </div>
-        </div>
-        <div class="form-row r2">
-          <div class="ig">
-            <label>태어난 시간 (생시) <span style="color:var(--em);font-size:10px;"
-                title="시간을 모르면 성격 위주 분석으로 진행됩니다">ⓘ</span></label>
-            <select id="inp-time">
-              <option value="">시간 선택</option>
-              <option value="자시">자시 (23:30~01:29)</option>
-              <option value="축시">축시 (01:30~03:29)</option>
-              <option value="인시">인시 (03:30~05:29)</option>
-              <option value="묘시">묘시 (05:30~07:29)</option>
-              <option value="진시">진시 (07:30~09:29)</option>
-              <option value="사시">사시 (09:30~11:29)</option>
-              <option value="오시">오시 (11:30~13:29)</option>
-              <option value="미시">미시 (13:30~15:29)</option>
-              <option value="신시">신시 (15:30~17:29)</option>
-              <option value="유시">유시 (17:30~19:29)</option>
-              <option value="술시">술시 (19:30~21:29)</option>
-              <option value="해시">해시 (21:30~23:29)</option>
-            </select>
-          </div>
-          <div class="ig" style="display:flex;align-items:flex-end;padding-bottom:2px;">
-            <label
-              style="display:flex;align-items:center;gap:8px;font-size:12px;color:var(--t2);cursor:pointer;line-height:1.5;">
-              <input type="checkbox" id="unk" style="accent-color:var(--em);width:15px;height:15px;flex-shrink:0;">
-              시간 모름<br><span style="color:rgba(153,153,204,0.7);">시간 미입력 시 성격/기질 위주 분석</span>
-            </label>
-          </div>
-        </div>
-
-        <div class="method-banner">
-          <div class="method-item">
-            <div class="method-name">인생 지도</div>
-            <div class="method-role">평생의 그릇 분석</div>
-            <div class="method-desc">타고난 격국과<br>평생 대운 흐름</div>
-          </div>
-          <div class="method-sep"></div>
-          <div class="method-item">
-            <div class="method-name">오늘의 기회</div>
-            <div class="method-role" style="color:var(--gold);">오늘의 행운 점수</div>
-            <div class="method-desc">실시간 길흉 점수<br>오늘 투자·계약 판단</div>
-          </div>
-          <div class="method-sep"></div>
-          <div class="method-item">
-            <div class="method-name">성공 치트키</div>
-            <div class="method-role" style="color:#8aacf0;">나침반·전략</div>
-            <div class="method-desc">행운 방위<br>귀인 방향·이동 타이밍</div>
-          </div>
-        </div>
-
-        <button class="scan-full-btn" onclick="doSajuScan()">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-            <circle cx="11" cy="11" r="8" />
-            <line x1="21" y1="21" x2="16.65" y2="16.65" />
-          </svg>
-          3대 정밀 역학 통합 분석 시작 🌊
-        </button>
-      </div>
-      <div class="two-col fu2">
-        <div class="wcard">
-          <div class="ct">생애 길흉 파동 (Destiny Wave)</div>
-          <div class="cs">자미두수 생애 주기에 따른 웰빙 지수 분석</div>
-          <div class="sbdg">
-            <div class="sb">재물운<span class="e">85점</span></div>
-            <div class="sb">명예운<span class="g">92점</span></div>
-            <div class="sb">애정운<span class="p">68점</span></div>
-          </div>
-          <div style="position:relative;">
-            <canvas id="wc" height="170" style="width:100%;cursor:crosshair;border-radius:6px;"></canvas>
-            <div id="wtt"
-              style="position:absolute;background:rgba(10,10,40,0.95);border:1px solid rgba(80,200,120,0.3);border-radius:8px;padding:7px 11px;font-size:11px;color:#fff;pointer-events:none;opacity:0;transition:opacity .15s;z-index:5;white-space:nowrap;top:8px;left:8px;">
-            </div>
-          </div>
-          <button class="wcta" onclick="showPg('report')">50P 리포트에서 상세 타임라인 보기 <svg width="13" height="13"
-              viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
-              <polyline points="9,18 15,12 9,6" />
-            </svg></button>
-        </div>
-        <div class="cmpc">
-          <div class="ct">기문둔갑 전략 나침반</div>
-          <div class="cs" style="text-align:center;margin-bottom:.5rem;">현재 위치 기준 실시간 길방(吉方)</div>
-          <canvas id="cc" width="150" height="150"
-            style="width:150px;height:150px;display:block;margin:0 auto;"></canvas>
-          <div class="cdir" style="margin-top:.6rem;">추천 길방: <span>북동(NE)</span></div>
-          <div class="cdesc">지금 이 방향으로 이동하면<br>계약과 귀인의 도움을 얻기 좋습니다.</div>
-        </div>
-      </div>
-      <div class="bio fu3">
-        <div>
-          <div class="cambox" onclick="showPg('scan')">
-            <div class="camring"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5">
-                <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
-                <circle cx="12" cy="13" r="4" />
-              </svg></div>
-            <div style="font-size:14px;font-weight:600;color:#fff;">Biometric Scan</div>
-            <div style="font-size:11px;color:var(--t2);text-align:center;padding:0 1rem;line-height:1.5;">자미두수 12궁
-              알고리즘과<br>실시간 관상 스캔</div>
-            <div class="sbtns">
-              <button class="sbtn em" onclick="event.stopPropagation();startAutoScan()">관상 스캔 가동</button>
-              <button class="sbtn out" onclick="event.stopPropagation();showPg('scan')">손금 스캔 가동</button>
-            </div>
-          </div>
-        </div>
-        <div>
-          <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:.75rem;">AI 스캐너 메커니즘</div>
-          <div class="ail">
-            <div class="ait">
-              <div class="aid"></div>
-              <div class="aitx"><strong>3D 랜드마크 추출:</strong> 안면 골격 구조 및 손금 깊이 데이터 추출</div>
-            </div>
-            <div class="ait">
-              <div class="aid"></div>
-              <div class="aitx"><strong>궁위(Palace) 동기화:</strong> 명반 12궁과의 수치적 일치도 계산</div>
-            </div>
-            <div class="ait">
-              <div class="aid"></div>
-              <div class="aitx"><strong>실시간 보정:</strong> 주변 환경 데이터를 통한 기하학적 정규화</div>
-            </div>
-          </div>
-          <div class="aitp">* 카메라를 눈높이에 맞추고 고정해 주세요.</div>
-        </div>
-      </div>
-      <div class="exsec fu4">
-        <div class="exhdr">
-          <h2>실시간 매칭 전문가</h2><a href="#">전체 보기 &gt;</a>
-        </div>
-        <div class="exgrid" id="eg"></div>
-      </div>
-      <div class="bgrid fu4">
-        <div class="bc" onclick="showPg('report')">
-          <div class="bci" style="background:rgba(255,215,0,0.15);"><svg viewBox="0 0 24 24" fill="none"
-              stroke="#FFD700" stroke-width="2">
-              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
-              <polyline points="14 2 14 8 20 8" />
-            </svg></div>
-          <div class="bct">50P '인생 지침서' 리포트</div>
-          <div class="bcd">20세부터 80세까지 재물, 커리어, 사랑의 파동을 5,000개 이상의 정교한 텍스트로 분석합니다.</div>
-          <button class="bcb gold">샘플 리포트 확인하기</button>
-        </div>
-        <div class="bc" onclick="showPg('sound')">
-          <div class="bci" style="background:rgba(231,76,60,0.15);"><svg viewBox="0 0 24 24" fill="none"
-              stroke="#e74c3c" stroke-width="2">
-              <path d="M9 18V5l12-2v13" />
-              <circle cx="6" cy="18" r="3" />
-              <circle cx="18" cy="16" r="3" />
-            </svg></div>
-          <div class="bct">천기 음파 처방 (Sound Remedy)</div>
-          <div class="bcd">오늘 직업운 <span style="color:var(--em);font-weight:600;">88점</span> — 강한 돌파의 날.</div>
-          <div class="mth">
-            <div class="plc"><svg viewBox="0 0 10 10">
-                <polygon points="2,1 9,5 2,9" />
-              </svg></div>
-            <div>
-              <div style="font-size:12px;font-weight:600;color:#fff;">UrbanPulseMix</div>
-              <div style="font-size:10px;color:var(--t2);">오늘의 처방</div>
-            </div>
-          </div>
-          <button class="bcb red">음악 처방 받으러 가기</button>
-        </div>
-        <div class="bc">
-          <div class="bci" style="background:rgba(80,200,120,0.15);"><svg viewBox="0 0 24 24" fill="none"
-              stroke="#50C878" stroke-width="2">
-              <rect x="3" y="4" width="18" height="18" rx="2" />
-              <line x1="16" y1="2" x2="16" y2="6" />
-              <line x1="8" y1="2" x2="8" y2="6" />
-              <line x1="3" y1="10" x2="21" y2="10" />
-            </svg></div>
-          <div class="bct">이달의 길일 캘린더</div>
-          <div class="bcd">이동, 계약, 소개팅에 가장 좋은 날짜를 개인별 맞춤 데이터로 추출합니다.</div>
-          <button class="bcb em">나의 길일 확인하기</button>
-        </div>
-      </div>
-    </div>
-
-    <!-- CMS -->
-    <div id="pg-main-cms" class="pg">
-      <div class="fu" style="border:1px solid var(--bd);border-radius:16px;overflow:hidden;margin-bottom:1.25rem;">
-        <div class="promo">
-          <div>
-            <div style="font-size:14px;font-weight:700;color:#fff;">신규 전문가 '샛별' 프로모션 적용 중</div>
-            <div style="font-size:12px;color:var(--t2);margin-top:2px;">90일간 최고 등급 수수료 혜택이 적용됩니다.</div>
-          </div>
-          <button class="promo-btn">상세 혜택 보기</button>
-        </div>
-        <div class="cms-body">
-          <div>
-            <div class="cms-mt"><svg viewBox="0 0 24 24" fill="none" stroke-width="2">
-                <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-              </svg>실시간 성과 지표</div>
-            <div class="mcds">
-              <div class="mc">
-                <div class="mcl"><svg viewBox="0 0 24 24" fill="none" stroke-width="2">
-                    <circle cx="12" cy="7" r="4" />
-                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />
-                  </svg>총 상담 인원</div>
-                <div class="mcv" id="c1">0</div>
-                <div class="mcd">+12%</div>
-              </div>
-              <div class="mc">
-                <div class="mcl"><svg viewBox="0 0 24 24" fill="none" stroke-width="2">
-                    <polygon
-                      points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-                  </svg>평균 평점</div>
-                <div class="mcv" id="c2">0.0</div>
-                <div class="mcd gold">Top 1%</div>
-              </div>
-              <div class="mc">
-                <div class="mcl"><svg viewBox="0 0 24 24" fill="none" stroke-width="2">
-                    <path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-                  </svg>누적 수익</div>
-                <div class="mcv" id="c3">₩0</div>
-                <div class="mcd">+₩340,000</div>
-              </div>
-            </div>
-            <div class="stit">정산 캘린더</div>
-            <table class="stbl">
-              <thead>
-                <tr>
-                  <th>날짜</th>
-                  <th>상담액</th>
-                  <th>수수료</th>
-                  <th>정산액</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>2026.04.21</td>
-                  <td>₩120,000</td>
-                  <td class="neg">-₩6,000</td>
-                  <td class="pos">₩114,000</td>
-                </tr>
-                <tr>
-                  <td>2026.04.20</td>
-                  <td>₩250,000</td>
-                  <td class="neg">-₩12,500</td>
-                  <td class="pos">₩237,500</td>
-                </tr>
-                <tr>
-                  <td>2026.04.19</td>
-                  <td>₩80,000</td>
-                  <td class="neg">-₩4,000</td>
-                  <td class="pos">₩76,000</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-          <div>
-            <div class="kwt">리뷰 키워드 지도</div>
-            <div class="kwc"><span class="kw">#전문성<span class="n">450</span></span><span class="kw">#치유<span
-                  class="n">320</span></span><span class="kw">#정확한예측<span class="n">280</span></span><span
-                class="kw">#진절함<span class="n">190</span></span><span class="kw">#통찰력<span class="n">150</span></span>
-            </div>
-            <div class="rvc">
-              <div class="rvt">"자미두수 분석이 정말 소름 돋게 정확해요!"</div>
-              <div class="rvs">★★★★★</div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SCAN -->
-    <div id="pg-scan" class="pg">
-
-      <!-- 자동 순차 촬영 오버레이 -->
-      <div id="seq-overlay" style="display:none;position:fixed;inset:0;background:rgba(5,5,30,0.97);z-index:9000;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;gap:20px;">
-        <div id="seq-icon" style="font-size:72px;line-height:1;filter:drop-shadow(0 0 20px rgba(80,200,120,0.5));">👁</div>
-        <div id="seq-title" style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;"></div>
-        <div id="seq-desc" style="font-size:15px;color:rgba(200,200,230,0.85);line-height:2;max-width:340px;white-space:pre-line;"></div>
-        <!-- 카운트다운 크게 -->
-        <div id="seq-countdown" style="font-size:96px;font-weight:900;color:var(--em);min-height:100px;line-height:1;display:none;text-shadow:0 0 40px rgba(80,200,120,0.6);"></div>
-        <!-- 준비 버튼 -->
-        <button id="seq-ready-btn" onclick="seqReady()" style="padding:16px 48px;background:var(--em);border:none;border-radius:14px;color:#fff;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(80,200,120,0.4);">📸 촬영 시작</button>
-        <button id="seq-skip-btn" onclick="seqSkip()" style="display:none;padding:10px 28px;background:none;border:1px solid rgba(255,255,255,0.2);border-radius:10px;color:rgba(153,153,204,0.8);font-size:13px;cursor:pointer;font-family:inherit;">이 단계 건너뛰기</button>
-        <!-- 진행 표시 -->
-        <div id="seq-progress" style="display:flex;gap:10px;align-items:center;">
-          <div class="seq-dot" id="sdot-0" style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.2);transition:all .3s;"></div>
-          <div class="seq-dot" id="sdot-1" style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.2);transition:all .3s;"></div>
-          <div class="seq-dot" id="sdot-2" style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.2);transition:all .3s;"></div>
-        </div>
-      </div>
-      <div class="pgtop">
-        <div class="back-btn" onclick="showPg('main')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-            stroke="var(--t)" stroke-width="2.5">
-            <polyline points="15,18 9,12 15,6" />
-          </svg></div>
-        <h1>AI 관상 스캔</h1>
-        <div class="mode-toggle"><button class="mtbtn on" id="mf" onclick="setMode('face',this)">관상</button><button
-            class="mtbtn" id="mp" onclick="setMode('palm_left',this)">왼손<span
-              style="font-size:9px;display:block;color:rgba(255,255,255,0.5);">선천운</span></button><button class="mtbtn"
-            id="mp2" onclick="setMode('palm_right',this)">오른손<span
-              style="font-size:9px;display:block;color:rgba(255,255,255,0.5);">후천운</span></button></div>
-      </div>
-      <div id="scan-saju-badge"
-        style="display:none;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);border-radius:10px;padding:.6rem 1rem;margin-bottom:.75rem;font-size:12px;color:var(--t2);display:flex;align-items:center;gap:8px;">
-        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="2">
-          <polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-        </svg>
-        <span id="scan-saju-info">사주 정보 연동 중...</span>
-        <span style="margin-left:auto;color:var(--em);font-weight:700;font-size:11px;">3대 역학 통합 분석</span>
-      </div>
-      <div class="cam-stage" style="position:relative;background:#000;border-radius:12px;overflow:hidden;">
-        <div class="shutter-flash" id="shutterFlash"></div>
-        <div class="cam-guide-msg" id="camGuideMsg">얼굴을 타원 안에 가득 채워주세요</div>
-        <video id="camVideo" autoplay playsinline muted
-          style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:none;transform:scaleX(-1);border-radius:12px;z-index:1;"></video>
-        <canvas id="sc" width="640" height="400"
-          style="position:relative;z-index:2;width:100%;background:transparent;pointer-events:none;transform:scaleX(-1)"></canvas>
-        <div id="cam-error"
-          style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:#0a0a20;border-radius:12px;">
-          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,80,80,0.7)" stroke-width="1.5">
-            <path d="M23 7l-7 5 7 5V7z" />
-            <rect x="1" y="5" width="15" height="14" rx="2" ry="2" />
-            <line x1="1" y1="1" x2="23" y2="23" stroke="rgba(255,80,80,0.7)" />
-          </svg>
-          <div style="font-size:13px;color:var(--t2);text-align:center;padding:0 1rem;">카메라 접근이 거부됐습니다<br>브라우저 설정에서 카메라
-            권한을 허용해주세요</div>
-          <button onclick="startCamera()"
-            style="padding:8px 20px;background:var(--em);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">다시
-            시도</button>
-        </div>
-        <div id="cam-flash"
-          style="position:absolute;inset:0;background:white;opacity:0;pointer-events:none;border-radius:12px;transition:opacity 0.1s;z-index:5;">
-        </div>
-        <div id="cam-guide-msg"
-          style="position:absolute;top:12px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.6);color:#fff;font-size:12px;font-weight:600;padding:6px 16px;border-radius:20px;white-space:nowrap;z-index:4;">
-          얼굴을 원 안에 가득 채워주세요</div>
-        <button id="cam-flip-btn" onclick="flipCamera()"
-          style="position:absolute;top:12px;right:12px;width:36px;height:36px;border-radius:50%;background:rgba(0,0,0,0.5);border:1px solid rgba(255,255,255,0.3);cursor:pointer;z-index:4;display:flex;align-items:center;justify-content:center;">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2">
-            <path d="M1 4v6h6" />
-            <path d="M23 20v-6h-6" />
-            <path d="M20.49 9A9 9 0 0 0 5.64 5.64L1 10m22 4l-4.64 4.36A9 9 0 0 1 3.51 15" />
-          </svg>
-        </button>
-        <div class="fb-bar">
-          <div class="fb-dot warn" id="fd"></div>
-          <div class="fb-txt" id="ft">카메라를 눈높이에 맞춰 주세요</div>
-          <div class="fb-sub" id="fs">얼굴을 가이드 안에 맞춰주세요</div>
-        </div>
-      </div>
-      <div class="ctrl-row">
-        <div class="side-ctrl">
-          <div class="ctrl-btn" id="bg" onclick="tGrid()">격자 가이드</div>
-          <div class="ctrl-btn" id="bl" onclick="tLight()">밝기 보정</div>
-        </div>
-        <button class="shutter" id="sh" onclick="doCapture()">
-          <div class="si"></div>
-        </button>
-        <div class="side-ctrl">
-          <div class="ctrl-btn" onclick="resetScan()">다시 찍기</div>
-          <div class="ctrl-btn" onclick="setMode('palm_left',document.getElementById('mp'))">왼손 전환</div>
-        </div>
-      </div>
-      <div class="tips-row">
-        <div class="tip-card">
-          <div class="tip-icon" style="background:rgba(80,200,120,0.15);"><svg viewBox="0 0 24 24" fill="none"
-              stroke="#50C878" stroke-width="2">
-              <circle cx="12" cy="12" r="10" />
-              <line x1="12" y1="8" x2="12" y2="12" />
-              <line x1="12" y1="16" x2="12.01" y2="16" />
-            </svg></div>
-          <div class="tip-text">정면을 바라보고 표정을 편안하게</div>
-        </div>
-        <div class="tip-card">
-          <div class="tip-icon" style="background:rgba(255,215,0,0.15);"><svg viewBox="0 0 24 24" fill="none"
-              stroke="#FFD700" stroke-width="2">
-              <circle cx="12" cy="12" r="5" />
-              <line x1="12" y1="1" x2="12" y2="3" />
-              <line x1="12" y1="21" x2="12" y2="23" />
-              <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
-              <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
-            </svg></div>
-          <div class="tip-text">밝은 자연광 또는 정면 조명 권장</div>
-        </div>
-        <div class="tip-card">
-          <div class="tip-icon" style="background:rgba(96,130,220,0.15);"><svg viewBox="0 0 24 24" fill="none"
-              stroke="#8aacf0" stroke-width="2">
-              <rect x="2" y="3" width="20" height="14" rx="2" />
-              <line x1="8" y1="21" x2="16" y2="21" />
-              <line x1="12" y1="17" x2="12" y2="21" />
-            </svg></div>
-          <div class="tip-text">카메라와 40~60cm 거리 유지</div>
-        </div>
-      </div>
-      <div class="prog-sec" id="ps">
-        <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.75rem;">분석 진행 중...</div>
-        <div class="prog-steps" id="psteps"></div>
-      </div>
-      <!-- 새벽연 스타일 결과 화면 -->
-      <div class="result-sec" id="rs">
-
-        <!-- 한 줄 인상 카드 -->
-        <div class="one-line-card">
-          <div style="font-size:10px;font-family:monospace;letter-spacing:.3em;color:#50C878;text-transform:uppercase;margin-bottom:8px;" id="rs-mode-label">觀相 × 手相 — 한 줄 인상</div>
-          <div class="quote" id="rs-one-line">"분석 결과를 불러오는 중..."</div>
-          <div class="temperament" id="rs-temperament"></div>
-          <button onclick="window._scanResult=undefined;doCapture()" style="position:absolute;top:.75rem;right:.75rem;font-size:10px;color:rgba(153,153,204,0.6);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit;">
-            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23,4 23,11 16,11"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 11"/></svg>
-            다시 분석
-          </button>
-        </div>
-
-        <!-- 촬영 탭 -->
-        <div style="display:flex;gap:8px;margin-bottom:1rem;">
-          <div id="tab-face" onclick="if(capturedImages.face){sMode='face';showScanResult()}" style="flex:1;padding:7px 10px;border-radius:8px;background:rgba(80,200,120,0.1);border:1px solid rgba(80,200,120,0.25);font-size:11px;color:var(--em);font-weight:700;text-align:center;cursor:pointer;opacity:0.4;">👁 관상</div>
-          <div id="tab-left" onclick="if(capturedImages.palm_left){sMode='palm_left';showScanResult()}" style="flex:1;padding:7px 10px;border-radius:8px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.25);font-size:11px;color:var(--gold);font-weight:700;text-align:center;cursor:pointer;opacity:0.4;">✋ 왼손</div>
-          <div id="tab-right" onclick="if(capturedImages.palm_right){sMode='palm_right';showScanResult()}" style="flex:1;padding:7px 10px;border-radius:8px;background:rgba(96,130,220,0.1);border:1px solid rgba(96,130,220,0.25);font-size:11px;color:#8aacf0;font-weight:700;text-align:center;cursor:pointer;opacity:0.4;">🤚 오른손</div>
-        </div>
-
-        <!-- 썸네일 + 매칭 뱃지 -->
-        <div style="display:flex;gap:12px;align-items:center;margin-bottom:1rem;">
-          <canvas id="tc" width="64" height="80" style="width:64px;height:80px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);flex-shrink:0;"></canvas>
-          <div>
-            <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;" id="rs-name">스캔 완료</div>
-            <div style="font-size:11px;color:var(--t2);margin-bottom:6px;" id="rs-sub">3대 역학 분석 중...</div>
-            <div class="match-badge" id="rs-match">
-              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>
-              명반 동기화 완료
-            </div>
-          </div>
-        </div>
-
-        <!-- 세부 분석 섹션 (JS로 채워짐) -->
-        <div id="rs-sections"></div>
-
-        <!-- 종합 리딩 (JS로 채워짐) -->
-        <div id="rs-summary"></div>
-
-        <!-- CTA -->
-        <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:10px;">
-          <!-- 인생지침서 가운데 크게 -->
-          <button onclick="checkScanBeforeReport()" style="width:100%;padding:16px;background:linear-gradient(135deg,#FFD700,#FFA500);border:none;border-radius:14px;color:#0f0f3a;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-0.3px;box-shadow:0 4px 20px rgba(255,215,0,0.3);">
-            ✦ 인생 지침서 받기
-          </button>
-          <!-- 보조 버튼들 작게 -->
-          <div style="display:flex;gap:8px;">
-            <button onclick="sMode='face';resetScan();startAutoScan();" style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--t2);font-size:12px;cursor:pointer;font-family:inherit;">🔄 다시 분석</button>
-            <button onclick="showPg('main')" style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--t2);font-size:12px;cursor:pointer;font-family:inherit;">← 메인으로</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- SOUND -->
-    <div id="pg-sound" class="pg">
-      <div class="pgtop">
-        <div class="back-btn" onclick="showPg('main')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-            stroke="var(--t)" stroke-width="2.5">
-            <polyline points="15,18 9,12 15,6" />
-          </svg></div>
-        <h1>천기 사운드 레미디</h1>
-        <div style="font-size:11px;color:var(--t2);margin-left:auto;">실시간 처방</div>
-      </div>
-      <div class="rx-hero fu">
-        <div style="font-size:11px;color:var(--t2);margin-bottom:.4rem;">관록궁 삼합일 · 오늘의 처방</div>
-        <div class="rx-hl">오늘은 <span>돌파의 에너지</span>가 흐릅니다</div>
-        <div style="font-size:12px;color:var(--t2);">직업운 88 · 이동운 91 · UrbanPulseMix 처방</div>
-        <div class="spills"><span class="spill e">직업운 88</span><span class="spill e">이동운 91</span><span
-            class="spill g">재물운 74</span><span class="spill p">애정운 65</span></div>
-      </div>
-      <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:.55rem;">채널 선택</div>
-      <div class="ch-grid" id="chg"></div>
-      <a id="ytl" href="#" class="ytbtn" target="_blank" rel="noopener noreferrer">
-        <svg viewBox="0 0 24 24">
-          <path
-            d="M19.59 6.69a4.83 4.83 0 01-3.77-4.25V2h-3.45v13.67a2.89 2.89 0 01-2.88 2.5 2.89 2.89 0 01-2.89-2.89 2.89 2.89 0 012.89-2.89c.28 0 .54.04.79.1V9.01a6.33 6.33 0 00-.79-.05 6.34 6.34 0 00-6.34 6.34 6.34 6.34 0 006.34 6.34 6.34 6.34 0 006.33-6.34V9.96a8.28 8.28 0 004.83 1.54V8.06a4.85 4.85 0 01-1.06-.3z" />
-        </svg>
-        <span id="ytlt">유튜브에서 UrbanPulseMix 열기 →</span>
-      </a>
-      <div style="font-size:11px;color:var(--t2);text-align:center;margin-bottom:.85rem;" id="ytnote"><span
-          style="color:var(--em);">↑ 클릭하면 유튜브로 이동합니다</span></div>
-      <div class="why-card" id="wc2">
-        <div class="why-title" id="wt2"></div>
-        <div class="why-body" id="wb2"></div>
-      </div>
-      <div class="time-rx">
-        <div class="time-rx-title">오늘 시간대별 처방 플로우</div>
-        <div class="trow">
-          <div class="ttag" style="background:rgba(255,215,0,0.15);color:var(--gold);">오전 9~12시</div>
-          <div class="tdesc">UrbanPulseMix — 도시 에너지로 업무·미팅 집중</div>
-        </div>
-        <div class="trow">
-          <div class="ttag" style="background:rgba(255,165,0,0.15);color:#FFA500;">오후 1~5시</div>
-          <div class="tdesc">행운곱하기 · 행운증폭 · 행운배수 — 긍정 흐름 유지</div>
-        </div>
-        <div class="trow">
-          <div class="ttag" style="background:rgba(160,110,200,0.15);color:#c088e0;">저녁 5~8시</div>
-          <div class="tdesc">딱적당 — 오늘 만난 사람의 심리 읽기, 인간관계 정리</div>
-        </div>
-        <div class="trow">
-          <div class="ttag" style="background:rgba(80,200,120,0.15);color:var(--em);">저녁 8~10시</div>
-          <div class="tdesc">YeoniWave — 감정 회복·마음 정리</div>
-        </div>
-        <div class="trow">
-          <div class="ttag" style="background:rgba(96,130,220,0.15);color:#8aacf0;">취침 전</div>
-          <div class="tdesc">Deep Rest Mode — 앰비언트·블랙스크린으로 깊은 수면</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- REPORT -->
-    <div id="pg-report" class="pg">
-      <div class="pgtop">
-        <div class="back-btn" onclick="showPg('main')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-            stroke="var(--t)" stroke-width="2.5">
-            <polyline points="15,18 9,12 15,6" />
-          </svg></div>
-        <h1>라이프 컴퍼스 50P 리포트</h1>
-      </div>
-      <div
-        style="background:rgba(80,200,120,0.1);border:1px solid rgba(80,200,120,0.2);border-radius:12px;padding:1rem;margin-bottom:1rem;display:flex;align-items:center;gap:10px;"
-        class="fu">
-        <div
-          style="width:32px;height:32px;border-radius:50%;background:var(--em);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5">
-            <polyline points="20,6 9,17 4,12" />
-          </svg></div>
-        <div>
-          <div style="font-size:14px;font-weight:700;color:#fff;">결제 완료 — 즉시 열람 가능</div>
-          <div style="font-size:11px;color:var(--t2);">₩89,000 · 에스크로 보호 완료</div>
-        </div>
-      </div>
-      <div class="ib fu">
-        <div class="ib-title">천기성 명주 핵심 해석</div>
-        <div class="ib-body"><em>천기성(天機星)</em>은 계략과 지혜의 별입니다. 두뇌와 빠른 상황 판단력으로 기획·전략·컨설팅 분야에서 탁월한 성과를
-          냅니다.<br><br><b>40~49세 천동성 대운(92점)</b>이 인생 최대의 황금기입니다. <b>2027년 5월</b> 관록궁 화록 발동 — 승진·계약 확정.</div>
-      </div>
-      <div class="cta-row fu">
-        <button class="btn-gold" onclick="showPg('scan')">AI 관상 스캔 추가</button>
-        <button class="btn-em" onclick="showPg('sound')">음악 처방 받기</button>
-        <button class="btn-out" onclick="showPg('main')">메인으로</button>
-      </div>
-    </div>
-
-    <!-- SAJU RESULT PAGE -->
-    <div id="pg-saju" class="pg">
-      <div class="pgtop">
-        <div class="back-btn" onclick="showPg('main')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
-            stroke="var(--t)" stroke-width="2.5">
-            <polyline points="15,18 9,12 15,6" />
-          </svg></div>
-        <h1 id="saju-page-title">천기 분석 결과</h1>
-        <div style="font-size:11px;color:var(--t2);margin-left:auto;" id="saju-date-tag"></div>
-      </div>
-
-      <div id="saju-profile-card"
-        style="background:rgba(255,215,0,0.06);border:1px solid rgba(255,215,0,0.2);border-radius:14px;padding:1rem 1.25rem;margin-bottom:1rem;display:flex;align-items:center;gap:14px;">
-        <div
-          style="width:44px;height:44px;border-radius:50%;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#FFD700" stroke-width="1.5">
-            <polygon
-              points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26" />
-          </svg>
-        </div>
-        <div>
-          <div id="saju-profile-name" style="font-size:16px;font-weight:700;color:#fff;margin-bottom:3px;"></div>
-          <div id="saju-profile-info" style="font-size:11px;color:var(--t2);"></div>
-        </div>
-      </div>
-
-      <div id="saju-score-row" style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-bottom:1rem;">
-      </div>
-
-      <div id="saju-result-body" style="display:flex;flex-direction:column;gap:.85rem;"></div>
-
-      <div style="margin-top:1rem;" class="cta-row">
-        <button class="btn-gold" onclick="showPg('sound')">오늘의 음악 처방 받기</button>
-        <button class="btn-em" onclick="showPg('scan')">AI 관상 스캔 추가</button>
-        <button class="btn-out" onclick="showPg('main')">다시 입력</button>
-      </div>
-    </div>
-
-    <div class="footer">© 2026 천기 웨이브 (Cheon-gi Wave). All rights reserved.<br>정통 자미두수, 기문둔갑, 매화역수 기반 프리미엄 명리 플랫폼</div>
-  </div>
-
-  <!-- LOADING OVERLAY -->
-  <div id="sajuLoading"
-    style="display:none;position:fixed;inset:0;background:rgba(10,10,40,0.88);z-index:998;flex-direction:column;align-items:center;justify-content:center;gap:1.5rem;">
-    <div
-      style="width:64px;height:64px;border-radius:50%;border:3px solid rgba(80,200,120,0.2);border-top-color:#50C878;animation:spin 1s linear infinite;">
-    </div>
-    <div style="text-align:center;">
-      <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:.4rem;" id="loading-msg">천기(天機)를 읽는 중...</div>
-      <div style="font-size:12px;color:var(--t2);" id="loading-sub">자미두수 12궁 배치 연산 중</div>
-    </div>
-  </div>
-
-  <!-- AUTH MODAL -->
-  <div class="auth-overlay" id="authOverlay" onclick="overlayClose(event)">
-    <div class="auth-modal-wrap">
-      <div class="auth-modal" id="authModal">
-        <div class="auth-head">
-          <div class="auth-logo">
-            <div class="auth-logo-ico"><svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                <polygon
-                  points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"
-                  fill="#0f0f3a" />
-              </svg></div>
-            <div class="auth-logo-txt">천기 웨이브</div>
-          </div>
-          <div class="auth-tabs">
-            <button class="auth-tab on" id="atab-login" onclick="switchAuthTab('login')">로그인</button>
-            <button class="auth-tab" id="atab-join" onclick="switchAuthTab('join')">회원가입</button>
-          </div>
-        </div>
-
-        <!-- LOGIN BODY -->
-        <div class="auth-body" id="abody-login">
-          <div class="auth-sec">간편 로그인</div>
-          <div class="soc-btns">
-            <button class="soc-btn" id="kakao-login-btn" onclick="doKakaoLogin()">
-              <div class="soc-ico" style="background:#FEE500;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 3C6.48 3 2 6.48 2 10.8c0 2.72 1.6 5.12 4 6.56L5 21l4.28-2.56A12 12 0 0 0 12 18.6c5.52 0 10-3.48 10-7.8S17.52 3 12 3z"
-                    fill="#3C1E1E" />
-                </svg>
-              </div>
-              <span class="soc-lbl">카카오톡으로 로그인</span>
-              <span class="kakao-badge">추천</span>
-            </button>
-            <button class="soc-btn" onclick="alertOauth('토스')">
-              <div class="soc-ico" style="background:#0064FF;color:#fff;font-size:11px;font-weight:700;">T</div>
-              <span class="soc-lbl">토스로 로그인</span>
-              <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
-                <polyline points="9,18 15,12 9,6" />
-              </svg>
-            </button>
-            <button class="soc-btn" onclick="alertOauth('PASS')">
-              <div class="soc-ico" style="background:#E8002D;color:#fff;font-size:9px;font-weight:700;">PASS</div>
-              <span class="soc-lbl">PASS로 로그인</span>
-              <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
-                <polyline points="9,18 15,12 9,6" />
-              </svg>
-            </button>
-            <button class="soc-btn" onclick="alertOauth('네이버')">
-              <div class="soc-ico" style="background:#03C75A;color:#fff;font-size:12px;font-weight:700;">N</div>
-              <span class="soc-lbl">네이버로 로그인</span>
-              <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
-                <polyline points="9,18 15,12 9,6" />
-              </svg>
-            </button>
-          </div>
-          <div class="auth-div">
-            <div class="auth-div-line"></div>
-            <div class="auth-div-txt">또는 이메일로</div>
-            <div class="auth-div-line"></div>
-          </div>
-          <div class="auth-inp-grp">
-            <div class="auth-inp-row">
-              <div class="auth-inp-lbl">이메일</div><input class="auth-inp" type="email" placeholder="example@email.com"
-                id="li-email">
-            </div>
-            <div class="auth-inp-row">
-              <div class="auth-inp-lbl">비밀번호</div><input class="auth-inp" type="password" placeholder="비밀번호 입력"
-                id="li-pw">
-            </div>
-          </div>
-          <button class="auth-submit" onclick="doEmailLogin()">로그인</button>
-          <div class="auth-links">
-            <button class="auth-link">아이디 찾기</button>
-            <button class="auth-link">비밀번호 찾기</button>
-            <button class="auth-link" onclick="switchAuthTab('join')">회원가입</button>
-          </div>
-        </div>
-
-        <!-- JOIN BODY -->
-        <div class="auth-body" id="abody-join" style="display:none;">
-          <div class="auth-sec">간편 회원가입 — 3초 완료</div>
-          <div class="soc-btns">
-            <button class="soc-btn" onclick="doKakaoLogin()">
-              <div class="soc-ico" style="background:#FEE500;">
-                <svg width="14" height="14" viewBox="0 0 24 24" fill="none">
-                  <path
-                    d="M12 3C6.48 3 2 6.48 2 10.8c0 2.72 1.6 5.12 4 6.56L5 21l4.28-2.56A12 12 0 0 0 12 18.6c5.52 0 10-3.48 10-7.8S17.52 3 12 3z"
-                    fill="#3C1E1E" />
-                </svg>
-              </div>
-              <span class="soc-lbl">카카오톡으로 시작하기</span>
-              <span class="kakao-badge">추천</span>
-            </button>
-            <button class="soc-btn" onclick="alertOauth('토스')">
-              <div class="soc-ico" style="background:#0064FF;color:#fff;font-size:11px;font-weight:700;">T</div>
-              <span class="soc-lbl">토스로 시작하기</span>
-              <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
-                <polyline points="9,18 15,12 9,6" />
-              </svg>
-            </button>
-            <button class="soc-btn" onclick="alertOauth('PASS')">
-              <div class="soc-ico" style="background:#E8002D;color:#fff;font-size:9px;font-weight:700;">PASS</div>
-              <span class="soc-lbl">PASS로 시작하기</span>
-              <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
-                <polyline points="9,18 15,12 9,6" />
-              </svg>
-            </button>
-            <button class="soc-btn" onclick="alertOauth('네이버')">
-              <div class="soc-ico" style="background:#03C75A;color:#fff;font-size:12px;font-weight:700;">N</div>
-              <span class="soc-lbl">네이버로 시작하기</span>
-              <svg class="soc-arr" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2">
-                <polyline points="9,18 15,12 9,6" />
-              </svg>
-            </button>
-          </div>
-          <div class="auth-div">
-            <div class="auth-div-line"></div>
-            <div class="auth-div-txt">또는 이메일로</div>
-            <div class="auth-div-line"></div>
-          </div>
-          <div class="auth-inp-grp">
-            <div class="auth-inp-row">
-              <div class="auth-inp-lbl">이름</div><input class="auth-inp" type="text" placeholder="홍길동" id="ji-name">
-            </div>
-            <div class="auth-inp-row">
-              <div class="auth-inp-lbl">이메일</div><input class="auth-inp" type="email" placeholder="example@email.com"
-                id="ji-email">
-            </div>
-            <div class="auth-inp-row">
-              <div class="auth-inp-lbl">비밀번호</div><input class="auth-inp" type="password" placeholder="8자 이상"
-                id="ji-pw">
-            </div>
-          </div>
-          <button class="auth-submit" onclick="doEmailJoin()">가입하고 천기 스캔 시작</button>
-          <div class="auth-terms">가입 시 <a href="#">이용약관</a> 및 <a href="#">개인정보처리방침</a>에 동의합니다.</div>
-        </div>
-
-        <button class="auth-close" onclick="closeAuth()">
-          <svg viewBox="0 0 24 24">
-            <line x1="18" y1="6" x2="6" y2="18" />
-            <line x1="6" y1="6" x2="18" y2="18" />
-          </svg>
-        </button>
-      </div>
-    </div>
-  </div>
-
-  <script>
-    /* Cheon-gi Wave - Saju AI Engine / Claude API */
-
-    const SAJU_LOADING_MSGS = [
-      ['천기(天機)를 읽는 중...', '생년월일 간지(干支) 변환 중'],
-      ['자미두수 12궁 배치 중...', '명궁·재백궁·관록궁 계산 중'],
-      ['주성(主星) 좌정 중...', '자미성·천기성·태양성 배치 중'],
-      ['대운·소운 흐름 분석 중...', '10년 대운 주기 연산 중'],
-      ['AI 해석 생성 중...', '개인화 사주 리포트 작성 중'],
-    ];
-
-    let selectedGender = '남';
-    let selectedCal = '양력';
-
-    function setGender(g) {
-      selectedGender = g;
-      const bm = document.getElementById('gbtn-m');
-      const bf = document.getElementById('gbtn-f');
-      if (bm) { bm.classList.toggle('on', g === '남'); }
-      if (bf) { bf.classList.toggle('on', g === '여'); }
-      console.log('성별 선택:', g);
-    }
-    function setCal(c) {
-      selectedCal = c;
-      ['solar', 'lunar', 'leap'].forEach(id => document.getElementById('cbtn-' + id).classList.remove('on'));
-      const map = { '양력': 'solar', '음력': 'lunar', '음력윤달': 'leap' };
-      if (map[c]) document.getElementById('cbtn-' + map[c]).classList.add('on');
-    }
-
-    let _cachedSajuKey = null;
-    let _cachedSajuResult = null;
-
-    async function doSajuScan() {
-      const name = document.getElementById('inp-name').value.trim();
-      const yearVal = document.getElementById('inp-year').value;
-      const monthVal = document.getElementById('inp-month').value;
-      const dayVal = document.getElementById('inp-day').value;
-      const unknownTime = document.getElementById('unk').checked;
-      const gender = selectedGender;
-      const cal = selectedCal;
-      const timeEl = document.getElementById('inp-time');
-      const time = timeEl ? timeEl.value : '';
-
-      if (!name) { alert('이름을 입력해 주세요.'); return; }
-      if (!yearVal || !monthVal || !dayVal) { alert('생년월일을 입력해 주세요.'); return; }
-      if (!time && !unknownTime) { alert('태어난 시간을 선택하거나\n"시간을 모릅니다"에 체크해 주세요.'); return; }
-
-      // 캐시 확인 - 동일 입력이면 저장된 결과 즉시 표시
-      const cacheKey = `${name}_${yearVal}_${monthVal}_${dayVal}_${gender}_${cal}_${time || 'unknown'}`;
-      if (_resultCache[cacheKey]) {
-        const cached = _resultCache[cacheKey];
-        renderSajuResult(name, yearVal, monthVal, dayVal, cached.timeStr, cached.age, cached.result);
+// 천기 웨이브 — Fix Script v4
+// 충돌 방지: var 선언 없음, window.xxx 방식만 사용
+
+// ── 인생지침서 HTML 렌더링 스타일 주입 ──
+(function injectReportStyles() {
+  if (document.getElementById('cw-report-style')) return;
+  var style = document.createElement('style');
+  style.id = 'cw-report-style';
+  style.textContent = [
+    '#report-full-body h3{font-size:16px;font-weight:700;color:#FFD700;margin:1.4rem 0 .6rem;padding-bottom:.4rem;border-bottom:1px solid rgba(255,215,0,0.15);display:flex;align-items:center;gap:6px;}',
+    '#report-full-body p{font-size:13px;color:#ccccee;line-height:2;margin-bottom:.85rem;}',
+    '#report-full-body h4{font-size:14px;font-weight:600;color:#fff;margin:.85rem 0 .35rem;}',
+    '#report-full-body strong{color:#FFD700;font-weight:600;}',
+    '#report-full-body em{color:#50C878;font-style:normal;font-weight:600;}',
+    '#report-full-body ul,#report-full-body ol{padding-left:1.2rem;margin-bottom:.75rem;}',
+    '#report-full-body li{font-size:13px;color:#ccccee;line-height:1.9;margin-bottom:.2rem;}',
+    '#report-full-body .section-wrap{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem 1.2rem;margin-bottom:.85rem;}',
+    '.typing-cursor{display:inline-block;width:2px;height:14px;background:#50C878;margin-left:2px;animation:blink .7s infinite;vertical-align:middle;}',
+  ].join('\n');
+  document.head.appendChild(style);
+})();
+
+// ── 유튜브 채널 카드 클릭 → 직접 유튜브 이동 ──
+window.buildChannels = function() {
+  var g = document.getElementById('chg'); if (!g) return;
+  g.innerHTML = '';
+  var CH = window.CH || [];
+  CH.forEach(function(c) {
+    var d = document.createElement('div');
+    d.className = 'chc';
+    d.style.cursor = c.coming ? 'default' : 'pointer';
+    d.style.position = 'relative';
+    // 호버 효과
+    d.onmouseenter = function(){ if(!c.coming) d.style.borderColor = c.sb; d.style.transform='translateY(-2px)'; };
+    d.onmouseleave = function(){ d.style.borderColor=''; d.style.transform=''; };
+    d.innerHTML =
+      '<div class="chico" style="background:' + c.iBg + ';flex-shrink:0;"><svg viewBox="0 0 24 24" fill="none" stroke="' + c.iC + '" stroke-width="2">' + c.icon + '</svg></div>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div class="chnm" style="display:flex;align-items:center;gap:6px;">' + c.name +
+          (c.coming
+            ? '<span class="ch-coming">준비중</span>'
+            : '<span style="font-size:9px;padding:2px 7px;border-radius:10px;background:rgba(255,0,0,0.15);color:#ff6060;font-weight:700;">▶ YouTube</span>') +
+        '</div>' +
+        '<div class="chhdl">' + c.handle + '</div>' +
+        '<div class="chmood">' + c.mood + '</div>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">' +
+          '<span class="chtag" style="background:' + c.tBg + ';color:' + c.tC + ';">' + c.tag + '</span>' +
+          (!c.coming ? '<span style="font-size:10px;color:rgba(255,255,255,0.35);">탭하면 이동 →</span>' : '') +
+        '</div>' +
+      '</div>';
+    // 카드 전체 클릭 → 즉시 유튜브
+    d.onclick = function() {
+      if (c.coming) {
+        if(typeof showShareToast==='function') showShareToast('🎵 ' + c.name + ' — 콘텐츠 준비 중이에요!');
         return;
       }
-
-      showLoading(true);
-      let msgIdx = 0;
-      const msgTimer = setInterval(() => {
-        msgIdx = Math.min(msgIdx + 1, SAJU_LOADING_MSGS.length - 1);
-        document.getElementById('loading-msg').textContent = SAJU_LOADING_MSGS[msgIdx][0];
-        document.getElementById('loading-sub').textContent = SAJU_LOADING_MSGS[msgIdx][1];
-      }, 1800);
-
-      const year = parseInt(yearVal);
-      const month = parseInt(monthVal);
-      const day = parseInt(dayVal);
-      const timeStr = unknownTime ? '미상 (삼주 분석)' : time;
-      const today = new Date();
-      const age = today.getFullYear() - year;
-
-      // 주성 기본 점수 미리 계산 (AI가 숫자를 만들지 못하게 고정)
-      const analysisTime = formatAnalysisTime();
-      const baseScoreHint = getBaseScore('');  // 주성 확정 전 기본값
-
-      const prompt = `당신은 '천기 웨이브'의 수석 명리학 AI 분석가입니다.
-반드시 아래 [엄격한 분석 규칙]을 준수하여 일관성 있는 결과를 도출하세요.
-
-[엄격한 분석 규칙]
-1. 점수 산출: 자미두수 명궁 주성에 따라 기본점을 정하고, 매화역수 괘로 가감하세요.
-   - 자미/천부/무곡/태양: 기본 90점 내외
-   - 천기/태음/탐랑/거문: 기본 85점 내외
-   - 천상/천량/칠살/파군: 기본 80점 내외
-   - 매화역수 생체(生體)괘: +3~5점, 극체(剋體)괘: -3~5점
-2. 데이터 비중: 자미두수(인생항로) 70% + 매화역수(오늘기회) 20% + 기문둔갑(성공치트키) 10%
-3. 용어: 자미두수→'인생 지도', 매화역수→'오늘의 기회', 기문둔갑→'성공 치트키'
-4. 문체: 3인칭, 단호하고 신뢰감 있는 전문가 어조 (~입니다, ~하십시오)
-5. 점수는 한 번 산출되면 같은 사주에서 변하지 않도록 논리적 근거를 갖출 것
-
-[의뢰인 정보]
-- 성명: ${name} (${gender}성)
-- 생년월일: ${year}년 ${month}월 ${day}일 (${cal})
-- 태어난 시간: ${timeStr}
-- 현재 나이: ${age}세
-- 분석 시각: ${analysisTime}
-
-[3대 역학 통합 분석 지침]
-1. 자미두수: 명궁 주성 파악 - 격국/대운 방향(남성 양년생 순행/음년생 역행, 여성 반대) - 현재 대운 분석
-2. 매화역수: 오늘 날짜+시간으로 체괘/용괘 산출 - 오늘의 길흉 점수 도출
-3. 기문둔갑: 오늘 시반 기준 팔문/팔신 배치 - 길방/흉방/귀인 방위 산출
-4. 세 역학 결과를 하이브리드 메시지로 통합
-
-반드시 아래 JSON 형식으로만 응답하세요. 다른 텍스트 없이 JSON만 출력하세요.
-
-{
-  "star": "명궁 주성명",
-  "palace_desc": "명궁 주성 핵심 특성 (2줄 이내)",
-  "daewoon": "현재 대운 (몇 세~몇 세, 어떤 대운)",
-  "base_score": 숫자(주성 기본점수),
-  "scores": {
-    "재물운": 숫자,
-    "직업운": 숫자,
-    "애정운": 숫자,
-    "건강운": 숫자
-  },
-  "score_trends": {
-    "재물운": "상승중 또는 하락중 또는 안정",
-    "직업운": "상승중 또는 하락중 또는 안정",
-    "애정운": "상승중 또는 하락중 또는 안정",
-    "건강운": "상승중 또는 하락중 또는 안정"
-  },
-  "score_sources": {
-    "재물운": "자미두수 기준",
-    "직업운": "자미두수 기준",
-    "애정운": "매화역수 기준",
-    "건강운": "자미두수 기준"
-  },
-  "ziwei": "인생 지도 분석 (인생 항로/격국/대운, 3-4문장)",
-  "meihua": "오늘의 기회 분석 (체괘/용괘/길흉, 3-4문장)",
-  "qimen": "성공 치트키 분석 (오늘 길방/귀인 방위/전략, 3-4문장)",
-  "hybrid_msg": "3대 역학 통합 메시지 (5-6문장, ~입니다 어조)",
-  "career": "직업/커리어 분석 (3-4문장)",
-  "wealth": "재물/금전 분석 (3-4문장)",
-  "love": "애정/인간관계 분석 (3-4문장)",
-  "luck_period": "대운 흐름 향후 3년 (3-4문장)",
-  "caution": "주의사항 및 개운법 (2-3문장)",
-  "lucky_direction": "기문둔갑 오늘의 길방",
-  "lucky_items": ["길한 색상 또는 방위", "길한 숫자", "길한 요일"],
-  "summary": "전체 요약 한 줄 (30자 이내)"
-}`;
-
-      try {
-        // CORS 우회: 로컬에서는 프록시 없이 직접 호출 시도
-        // 배포 후에는 Vercel Edge Function 사용
-        let response;
-        try {
-          response = await fetch('/api/saju', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'Content-Type': 'application/json'},
-            body: JSON.stringify({
-              model: 'claude-haiku-4-5-20251001',
-              max_tokens: 4000,
-              messages: [{ role: 'user', content: prompt }]
-            })
-          });
-        } catch (fetchErr) {
-          throw new Error('Failed to fetch');
-        }
-
-        clearInterval(msgTimer);
-
-        if (!response.ok) throw new Error('API 응답 오류: ' + response.status);
-
-        // 스트리밍 응답 처리
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let text = '', buf = '';
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buf += decoder.decode(value, { stream: true });
-          const lines = buf.split('\n'); buf = lines.pop() || '';
-          for (const line of lines) {
-            if (!line.startsWith('data: ')) continue;
-            const d = line.slice(6).trim();
-            if (d === '[DONE]') continue;
-            try {
-              const ev = JSON.parse(d);
-              if (ev.type === 'content_block_delta' && ev.delta?.text) text += ev.delta.text;
-            } catch(e) {}
-          }
-        }
-
-        let clean = text.replace(/```json\s*/gi, '').replace(/```/g, '').trim();
-        const fb = clean.indexOf('{'), lb = clean.lastIndexOf('}');
-        if (fb >= 0 && lb > fb) clean = clean.slice(fb, lb + 1);
-        // 중괄호 보완
-        let opens = (clean.match(/{/g)||[]).length, closes = (clean.match(/}/g)||[]).length;
-        while (closes < opens) { clean += '}'; closes++; }
-
-        const result = JSON.parse(clean);
-        showLoading(false);
-        _resultCache[cacheKey] = { timeStr, age, result };
-        renderSajuResult(name, yearVal, monthVal, dayVal, timeStr, age, result);
-
-      } catch (e) {
-        clearInterval(msgTimer);
-        showLoading(false);
-        alert('분석 중 오류가 발생했습니다.\n\n' + e.message + '\n\n잠시 후 다시 시도해 주세요.');
-      }
-    }
-
-    function showLoading(show) {
-      const el = document.getElementById('sajuLoading');
-      el.style.display = show ? 'flex' : 'none';
-      if (show) {
-        document.getElementById('loading-msg').textContent = SAJU_LOADING_MSGS[0][0];
-        document.getElementById('loading-sub').textContent = SAJU_LOADING_MSGS[0][1];
-      }
-    }
-
-    function renderSajuResult(name, year, month, day, timeStr, age, r) {
-      // 전역에 사주 데이터 저장 (관상/손금 스캔 연동용)
-      _sajuData = { name, year, month, day, timeStr, age, gender: selectedGender, cal: selectedCal, star: r.star, daewoon: r.daewoon, summary: r.summary, scores: r.scores, lucky_direction: r.lucky_direction };
-      document.getElementById('saju-page-title').textContent = name + '님의 천기 분석';
-      document.getElementById('saju-date-tag').textContent = formatAnalysisTime();
-
-      // 기문둔갑 나침반 방위 동기화
-      if (r.lucky_direction) setCompassDirection(r.lucky_direction);
-
-      // 생애파동 AI 결과 반영
-      setTimeout(() => { updateWaveFromAI(r.scores, r.base_score); }, 100);
-
-      // 생애 파동 점수 동기화 (AI 결과 반영)
-      if (r.scores) {
-        const waveEl = document.querySelector('.sb.e');
-        const waveEl2 = document.querySelector('.sb.g');
-        const waveEl3 = document.querySelector('.sb.p');
-        if (waveEl) waveEl.textContent = Math.round(r.scores['재물운'] || 85) + '점';
-        if (waveEl2) waveEl2.textContent = Math.round(r.scores['직업운'] || 92) + '점';
-        if (waveEl3) waveEl3.textContent = Math.round(r.scores['애정운'] || 68) + '점';
-      }
-
-      document.getElementById('saju-profile-name').textContent =
-        name + ' · ' + r.star + ' 명주';
-      document.getElementById('saju-profile-info').innerHTML =
-        year + '년 ' + month + '월 ' + day + '일 · ' + timeStr +
-        ' · ' + age + '세 · <em style="color:var(--em);">' + r.summary + '</em>';
-
-      const scoreColors = { '재물운': '#FFD700', '직업운': '#50C878', '애정운': '#cc88bb', '건강운': '#8aacf0' };
-      const trendIcon = { '상승중': '↑', '하락중': '↓', '안정': '->' };
-      const trendColor = { '상승중': '#50C878', '하락중': '#e74c3c', '안정': '#9999cc' };
-
-      const scoreRow = document.getElementById('saju-score-row');
-      scoreRow.innerHTML = '';
-      Object.entries(r.scores).forEach(([k, v]) => {
-        const trend = r.score_trends?.[k] || '안정';
-        const src = r.score_sources?.[k] || '';
-        scoreRow.innerHTML += `
-      <div class="saju-score-card">
-        <div class="saju-score-label">${k}</div>
-        <div class="saju-score-val" style="color:${scoreColors[k]}">${Math.round(v)}</div>
-        <div class="saju-score-trend" style="color:${trendColor[trend]}">${trendIcon[trend]} ${trend}</div>
-        ${src ? `<div style="font-size:9px;color:rgba(153,153,204,0.7);margin-top:3px;line-height:1.3;">${src}</div>` : ''}
-      </div>`;
-      });
-
-      if (r.lucky_direction) {
-        const dirCard = document.createElement('div');
-        dirCard.style.cssText = 'background:rgba(96,130,220,0.08);border:1px solid rgba(96,130,220,0.2);border-radius:10px;padding:.7rem 1rem;display:flex;align-items:center;gap:12px;margin-bottom:.85rem;';
-        dirCard.innerHTML = `
-      <div style="width:40px;height:40px;border-radius:50%;background:rgba(96,130,220,0.15);border:1px solid rgba(96,130,220,0.3);display:flex;align-items:center;justify-content:center;flex-shrink:0;">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#8aacf0" stroke-width="2"><circle cx="12" cy="12" r="10"/><polygon points="16.24,7.76 11.29,11.29 7.76,16.24 12.71,12.71"/></svg>
-      </div>
-      <div>
-        <div style="font-size:11px;color:#8aacf0;font-weight:700;margin-bottom:2px;">기문둔갑 오늘의 길방</div>
-        <div style="font-size:15px;font-weight:700;color:#fff;">${r.lucky_direction}</div>
-      </div>`;
-        document.getElementById('saju-result-body').prepend(dirCard);
-      }
-
-      // 무료 공개 섹션
-      const freeSections = [
-        { icon: '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>', color: '#FFD700', title: '3대 역학 통합 인생 메시지', body: r.hybrid_msg },
-        { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#50C878', title: '오늘의 기회 - 매화역수 분석', body: r.meihua },
-        { icon: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', color: '#EF9F27', title: '성공 치트키 - 오늘의 개운법', body: r.caution },
-      ];
-      // 유료 섹션
-      const paidSections = [
-        { icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>', color: '#FFD700', title: '자미두수 - 명궁: ' + r.star, body: r.ziwei },
-        { icon: '<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', color: '#FFD700', title: '재물/금전운 상세', body: r.wealth },
-        { icon: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/>', color: '#50C878', title: '직업/커리어운 상세', body: r.career },
-        { icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>', color: '#cc88bb', title: '애정/인간관계 상세', body: r.love },
-        { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#8aacf0', title: '대운 흐름 · 향후 3년', body: r.luck_period },
-        { icon: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>', color: '#8aacf0', title: '기문둔갑 - 길방/전략', body: r.qimen },
-      ];
-      const sections = freeSections;
-
-      const body = document.getElementById('saju-result-body');
-      body.innerHTML = '';
-      sections.forEach(s => {
-        const div = document.createElement('div');
-        div.className = 'saju-section';
-        div.innerHTML = `
-      <div class="saju-section-title" style="color:${s.color}">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${s.color}" stroke-width="2">${s.icon}</svg>
-        ${s.title}
-      </div>
-      <div class="saju-section-body saju-streaming">${s.body}</div>`;
-        body.appendChild(div);
-      });
-
-      // 유료 섹션 블러 처리
-      const paidWrap = document.createElement('div');
-      paidWrap.style.cssText = 'position:relative;margin-top:.5rem;';
-      const paidInner = document.createElement('div');
-      paidInner.style.cssText = 'filter:blur(4px);pointer-events:none;display:flex;flex-direction:column;gap:.85rem;';
-      paidSections.forEach(s => {
-        const div = document.createElement('div');
-        div.className = 'saju-section';
-        div.innerHTML = `<div class="saju-section-title" style="color:${s.color}"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="${s.color}" stroke-width="2">${s.icon}</svg>${s.title}</div><div class="saju-section-body">${s.body}</div>`;
-        paidInner.appendChild(div);
-      });
-      const paidOverlay = document.createElement('div');
-      paidOverlay.style.cssText = 'position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;background:rgba(10,10,40,0.7);border-radius:12px;z-index:2;';
-      paidOverlay.innerHTML = `
-    <div style="font-size:22px;">🔒</div>
-    <div style="font-size:14px;font-weight:700;color:#fff;text-align:center;">50P 프리미엄 리포트</div>
-    <div style="font-size:12px;color:var(--t2);text-align:center;line-height:1.6;">자미두수 명궁 분석 · 대운 3년 흐름<br>재물/직업/애정 상세 분석 포함</div>
-    <button onclick="showPg('report')" style="padding:10px 24px;background:var(--gold);border:none;border-radius:8px;color:#0f0f3a;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">✦ 전체 리포트 보기</button>`;
-      paidWrap.appendChild(paidInner);
-      paidWrap.appendChild(paidOverlay);
-      body.appendChild(paidWrap);
-
-      if (r.lucky_items?.length) {
-        const luckDiv = document.createElement('div');
-        luckDiv.className = 'saju-section';
-        luckDiv.innerHTML = `
-      <div class="saju-section-title" style="color:var(--gold)">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/></svg>
-        오늘의 길한 아이템
-      </div>
-      <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:.2rem;">
-        ${r.lucky_items.map(i => `<span class="saju-tag" style="background:rgba(255,215,0,0.12);color:var(--gold);border:1px solid rgba(255,215,0,0.25);">✦ ${i}</span>`).join('')}
-      </div>`;
-        body.appendChild(luckDiv);
-      }
-
-      showPg('saju');
-      window.scrollTo(0, 0);
-    }
-  </script>
-  <script>
-    /* =====================================================
-       천기 웨이브 — 점수 룰북 (데이터 일관성 보장)
-       AI는 이 숫자를 읽어서 해설만 합니다
-       ===================================================== */
-    const STAR_BASE_SCORES = {
-      // 갑급 주성 (90점대)
-      '자미성': 92, '천부성': 91, '태양성': 90, '무곡성': 89,
-      // 을급 주성 (85점대)
-      '천기성': 86, '태음성': 85, '탐랑성': 84, '거문성': 83,
-      // 병급 주성 (78점대)
-      '천상성': 81, '천량성': 80, '칠살성': 79, '파군성': 78,
-      // 기본값
-      'default': 80
+      window.open(c.url, '_blank', 'noopener,noreferrer');
     };
-    const SCORE_WEIGHTS = { ziwei: 0.7, meihua: 0.2, qimen: 0.1 };
+    g.appendChild(d);
+  });
+};
 
-    function getBaseScore(starName) {
-      for (const [k, v] of Object.entries(STAR_BASE_SCORES)) {
-        if (starName && starName.includes(k.replace('성', ''))) return v;
-      }
-      return STAR_BASE_SCORES['default'];
+
+// ── 이메일 자동 발송 (EmailJS) ──
+var EJS_SERVICE = 'service_cheongi';
+var EJS_TEMPLATE = 'template_report';
+var EJS_KEY = 'YOUR_EMAILJS_PUBLIC_KEY'; // EmailJS 가입 후 교체
+
+function _initEmailJS() {
+  if (window.emailjs && window._ejsInited) return;
+  // emailjs SDK는 index.html <head>에 이미 로드됨
+  try {
+    if (window.emailjs && typeof window.emailjs.init === 'function') {
+      window.emailjs.init(EJS_KEY);
+      window._ejsInited = true;
     }
-
-    function formatAnalysisTime() {
-      const now = new Date();
-      return now.getFullYear() + '년 ' + (now.getMonth() + 1) + '월 ' + now.getDate() + '일 ' +
-        String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ' 분석 기준';
-    }
-
-    /* 결과 캐싱 - 동일 사주 입력 시 저장된 결과 재사용 */
-    const _resultCache = {};
-    function getCacheKey(name, year, month, day, gender, cal, time) {
-      return `${name}_${year}_${month}_${day}_${gender}_${cal}_${time}`;
-    }
-
-    /* 전역 사주 데이터 - 관상/손금 분석에 활용 */
-    let _sajuData = null;
-
-    /* Kakao JS Key */
-    const KAKAO_JS_KEY = 'c67fa5fbeff62e7471a00b20a4eccae7';
-
-    let currentUser = null;
-
-    function initKakao() {
-      try {
-        if (window.Kakao) {
-          if (!window.Kakao.isInitialized()) {
-            window.Kakao.init(KAKAO_JS_KEY);
-            console.log('Kakao SDK initialized:', window.Kakao.isInitialized());
-          }
-        }
-      } catch (e) { console.error('Kakao init error:', e); }
-    }
-
-    function openAuth(tab) {
-      initKakao();
-      document.getElementById('authOverlay').classList.add('show');
-      switchAuthTab(tab || 'login');
-      document.body.style.overflow = 'hidden';
-    }
-    function closeAuth() {
-      document.getElementById('authOverlay').classList.remove('show');
-      document.body.style.overflow = '';
-    }
-    function overlayClose(e) {
-      if (e.target === document.getElementById('authOverlay')) closeAuth();
-    }
-    function switchAuthTab(t) {
-      document.getElementById('atab-login').classList.toggle('on', t === 'login');
-      document.getElementById('atab-join').classList.toggle('on', t === 'join');
-      document.getElementById('abody-login').style.display = t === 'login' ? 'block' : 'none';
-      document.getElementById('abody-join').style.display = t === 'join' ? 'block' : 'none';
-    }
-
-    function doKakaoLogin() {
-      if (KAKAO_JS_KEY === 'YOUR_KAKAO_JS_KEY') {
-        alert('카카오 JavaScript 키를 설정해 주세요.');
-        return;
-      }
-      try {
-        initKakao();
-        window.Kakao.Auth.authorize({
-          redirectUri: window.location.origin,
-        });
-      } catch (e) {
-        console.error('카카오 SDK 오류', e);
-        alert('카카오 SDK 오류: ' + e.message);
-      }
-    }
-    function doEmailLogin() {
-      const email = document.getElementById('li-email').value.trim();
-      const pw = document.getElementById('li-pw').value;
-      if (!email || !email.includes('@')) { alert('올바른 이메일을 입력해 주세요.'); return; }
-      if (!pw) { alert('비밀번호를 입력해 주세요.'); return; }
-      const name = email.split('@')[0];
-      loginSuccess({ name: name, avatar: null, provider: 'email' });
-    }
-    function doEmailJoin() {
-      const name = document.getElementById('ji-name').value.trim();
-      const email = document.getElementById('ji-email').value.trim();
-      const pw = document.getElementById('ji-pw').value;
-      if (!name) { alert('이름을 입력해 주세요.'); return; }
-      if (!email || !email.includes('@')) { alert('올바른 이메일을 입력해 주세요.'); return; }
-      if (!pw || pw.length < 8) { alert('비밀번호를 8자 이상 입력해 주세요.'); return; }
-      loginSuccess({ name: name, avatar: null, provider: 'email' });
-    }
-
-    function alertOauth(p) {
-      alert(p + ' 로그인은 해당 플랫폼의\n파트너/개발자 계약 후 연동 가능합니다.\n\n현재는 카카오 로그인과 이메일 로그인을\n사용해 주세요.');
-    }
-
-    function loginSuccess(user) {
-      currentUser = user;
-      closeAuth();
-      const area = document.getElementById('nav-auth-area');
-      const initials = user.name.slice(0, 1).toUpperCase();
-      area.innerHTML = `
-    <div class="nav-user-pill">
-      <div class="nav-user-avatar">${initials}</div>
-      <span class="nav-user-name">${user.name}</span>
-      <button class="nav-logout" onclick="doLogout()">로그아웃</button>
-    </div>`;
-    }
-    function doLogout() {
-      if (currentUser?.provider === 'kakao') {
-        try { window.Kakao.Auth.logout(); } catch (e) { }
-      }
-      currentUser = null;
-      document.getElementById('nav-auth-area').innerHTML = `
-    <button class="nav-login-btn" onclick="openAuth('login')">
-      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>로그인
-    </button>`;
-    }
-    document.addEventListener('keydown', e => { if (e.key === 'Escape') closeAuth(); });
-  </script>
-  <script>
-    const EX = [
-      { name: '천명 도사', spec: '자미두수·기문둔갑', rat: '4.9', tags: ['#비즈니스', '#승진운'], top: false },
-      { name: '연화 선생', spec: '매화역수·심리상담', rat: '4.8', tags: ['#연애', '#재회부적'], top: false },
-      { name: '자미 광인', spec: '정통 자미두수', rat: '5.0', tags: ['#평생총운', '#50p리포트'], top: true },
-    ];
-
-    const CH = [
-      { id: 'urban', name: 'UrbanPulseMix', handle: '@urbanpulsemix', url: 'https://youtube.com/@urbanpulsemix?si=QdYFCZR-weLTTQe0', mood: '팝/팝트랩/힙합팝 - 트렌디 여성 보컬', tag: '오늘 추천', tBg: 'rgba(255,215,0,0.18)', tC: '#FFD700', iBg: 'rgba(255,215,0,0.15)', iC: '#FFD700', btn: '#e74c3c', sb: '#FFD700', icon: '<polygon points="13,2 3,14 12,14 11,22 21,10 12,10"/>', coming: false, why: { bg: 'rgba(255,215,0,0.05)', bd: 'rgba(255,215,0,0.2)', tc: '#FFD700', title: 'UrbanPulseMix - 오전/활동 처방', body: '직업운 <em>88점</em>, 이동운 <em>91점</em> - 오늘은 활동과 추진의 날. 도시적 팝·힙합팝이 <b>관록궁 삼합 기운</b>을 극대화합니다.' } },
-      { id: 'yeoni', name: 'YeoniWave', handle: '@YeoniWave', url: 'https://youtube.com/@yeoniwave?si=5sJ_CeJywBoLV193', mood: '재즈/올드팝 - 허스키 여성 보컬 - 따뜻한 감정선', tag: '저녁 처방', tBg: 'rgba(80,200,120,0.15)', tC: '#50C878', iBg: 'rgba(80,200,120,0.15)', iC: '#50C878', btn: '#1e6e40', sb: '#50C878', icon: '<path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/>', coming: false, why: { bg: 'rgba(80,200,120,0.05)', bd: 'rgba(80,200,120,0.2)', tc: '#50C878', title: 'YeoniWave - 저녁 감정 회복 처방', body: '지친 마음에 부드럽게 닿는 <em>따뜻한 음악의 파도</em>. 재즈와 올드팝 기반 허스키 보컬이 내면 풍요를 자극합니다.' } },
-      { id: 'luck1', name: '행운곱하기', handle: '@luckmultipy', url: 'https://youtube.com/@luckmultipy?si=9lmI5iyq7YXDBHNO', mood: '미스터리 앰비언트 - 반복 청취형 - 정서적 의식감', tag: '긍정 흐름', tBg: 'rgba(255,165,0,0.15)', tC: '#FFA500', iBg: 'rgba(255,165,0,0.15)', iC: '#FFA500', btn: '#7a4800', sb: '#FFA500', icon: '<path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>', coming: false, why: { bg: 'rgba(255,165,0,0.05)', bd: 'rgba(255,165,0,0.2)', tc: '#FFA500', title: '행운곱하기 - 마인드셋 정렬', body: '좋은 기운을 <em>믿고 머무르게 하는</em> 몰입형 사운드. 오후 마인드셋을 <b>풍요로운 방향</b>으로 정렬할 때 활용하십시오.' } },
-      { id: 'luck2', name: '행운증폭', handle: '@luckamplify', url: 'https://youtube.com/@luckamplify?si=N9zLq4MaAtxGSipB', mood: '상징적 키워드 반복 - 밝고 몰입감 있는 분위기', tag: '기분 상승', tBg: 'rgba(255,200,0,0.12)', tC: '#ccaa00', iBg: 'rgba(255,200,0,0.12)', iC: '#ccaa00', btn: '#5a4a00', sb: '#ccaa00', icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', coming: true, why: { bg: 'rgba(255,200,0,0.04)', bd: 'rgba(255,200,0,0.18)', tc: '#ccaa00', title: '행운증폭 - 셀프 암시/기분 환기', body: '상징적 키워드의 반복 노출로 <em>긍정 인식을 강화</em>합니다. 채널 준비 중, 곧 콘텐츠가 업로드됩니다.' } },
-      { id: 'luck3', name: '행운배수', handle: '@luckamplify', url: 'https://youtube.com/@luckamplify?si=3Bz7_XjNs55vpKpt', mood: '강한 확장감 - 동기 부여 - 긍정 루프 강화', tag: '동기 부여', tBg: 'rgba(255,100,50,0.13)', tC: '#e07050', iBg: 'rgba(255,100,50,0.13)', iC: '#e07050', btn: '#6a2510', sb: '#e07050', icon: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/>', coming: true, why: { bg: 'rgba(255,100,50,0.04)', bd: 'rgba(255,100,50,0.18)', tc: '#e07050', title: '행운배수 - 확장/가속 에너지', body: '좋은 흐름을 <em>더 크게, 더 멀리</em> 이어가게 하는 채널. 채널 준비 중, 곧 콘텐츠가 업로드됩니다.' } },
-      { id: 'ddak', name: '딱적당', handle: '@ddakjeokdang', url: 'https://youtube.com/@ddakjeokdang?si=rwTGbsOpjuytSOo6', mood: 'MBTI - 사람 심리 - 쉽고 재미있는 설명', tag: '인간관계', tBg: 'rgba(160,110,200,0.18)', tC: '#c088e0', iBg: 'rgba(160,110,200,0.15)', iC: '#c088e0', btn: '#5a3080', sb: '#c088e0', icon: '<path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/>', coming: false, why: { bg: 'rgba(160,110,200,0.05)', bd: 'rgba(160,110,200,0.2)', tc: '#c088e0', title: '딱적당 - 인간관계/심리 처방', body: '오늘 만난 사람의 마음을 <em>쉽게 읽고 이해</em>하는 시간. MBTI와 사람 심리를 재미있게 풀어주는 콘텐츠로 <b>인간관계 피로</b>를 녹입니다.' } },
-      { id: 'deep', name: 'Deep Rest Mode', handle: '@cloud9modeon', url: 'https://youtube.com/@cloud9modeon?si=E1VgoSb-A9gVUJxh', mood: '앰비언트 - 블랙스크린 - 저자극 - 느린 호흡 음장', tag: '취침 전', tBg: 'rgba(96,130,220,0.15)', tC: '#8aacf0', iBg: 'rgba(96,130,220,0.15)', iC: '#8aacf0', btn: '#253070', sb: '#6082dc', icon: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>', coming: false, why: { bg: 'rgba(96,130,220,0.05)', bd: 'rgba(96,130,220,0.2)', tc: '#8aacf0', title: 'Deep Rest Mode - 수면/뇌 완전 휴식', body: '블랙 스크린 기반 앰비언트로 <em>완전히 내려놓는</em> 밤의 공간. <b>뇌를 알파-세타-델타</b>로 자연 전환합니다.' } },
-    ];
-
-    const FEATS = [
-      { name: '이마 (관록궁)', score: 88, color: '#50C878', desc: '넓고 둥근 형태. 직업운 강함.', tag: '명반 일치', tBg: 'rgba(80,200,120,0.18)', tC: '#3db866' },
-      { name: '눈빛 (명궁)', score: 92, color: '#50C878', desc: '예리하고 깊은 눈빛. 천기성 직관력.', tag: '강력 일치', tBg: 'rgba(80,200,120,0.18)', tC: '#3db866' },
-      { name: '코 (재백궁)', score: 79, color: '#FFD700', desc: '우뚝하고 안정적. 태음 화권 일치.', tag: '일치', tBg: 'rgba(255,215,0,0.15)', tC: '#B8860B' },
-      { name: '인중 (천이궁)', score: 85, color: '#50C878', desc: '인중이 길고 선명. 이동운 91점 상응.', tag: '명반 일치', tBg: 'rgba(80,200,120,0.18)', tC: '#3db866' },
-      { name: '입술 (부처궁)', score: 62, color: '#cc88bb', desc: '부드러운 곡선. 애정운 주의.', tag: '보통', tBg: 'rgba(204,136,187,0.15)', tC: '#8a4870' },
-      { name: '턱선 (전택궁)', score: 70, color: '#EF9F27', desc: '안정적 턱선. 40대 이후 부동산.', tag: '일치', tBg: 'rgba(255,215,0,0.15)', tC: '#B8860B' },
-    ];
-    const PALACES = [
-      { name: '명궁', pct: 92, color: '#50C878', c: '강력 확인' }, { name: '관록궁', pct: 88, color: '#50C878', c: '확인' },
-      { name: '천이궁', pct: 85, color: '#50C878', c: '확인' }, { name: '재백궁', pct: 79, color: '#FFD700', c: '확인' },
-      { name: '전택궁', pct: 70, color: '#EF9F27', c: '일치' }, { name: '부처궁', pct: 62, color: '#cc88bb', c: '보통' },
-    ];
-    const STEPS = [
-      { label: '얼굴 감지 및 정렬 확인', dur: 600 }, { label: '3D 랜드마크 68점 추출', dur: 900 },
-      { label: '골격 구조 분석', dur: 700 }, { label: '12궁 명반 좌표 동기화', dur: 1000 },
-      { label: '관상·사주 통합 해석 생성', dur: 800 },
-    ];
-    let WD = [{ age: '20대', w: 72, c: 80, l: 65 }, { age: '30대', w: 65, c: 85, l: 70 }, { age: '45세', w: 88, c: 92, l: 75, ev: '황금기' }, { age: '50대', w: 78, c: 80, l: 68 }, { age: '60대', w: 55, c: 60, l: 74 }, { age: '70대', w: 70, c: 75, l: 80 }];
-
-    function updateWaveFromAI(scores, baseScore) {
-      if (!scores) return;
-      const w = Math.round(scores['재물운'] || 75);
-      const c = Math.round(scores['직업운'] || 80);
-      const l = Math.round(scores['애정운'] || 70);
-      const bs = baseScore || 80;
-      // 선천점수(60%)를 기반으로 생애 파동 생성
-      const age = _sajuData ? _sajuData.age : 40;
-      WD = [
-        { age: '20대', w: Math.round(bs * 0.6 + 55 * 0.4), c: Math.round(bs * 0.6 + 60 * 0.4), l: Math.round(bs * 0.6 + 50 * 0.4) },
-        { age: '30대', w: Math.round(bs * 0.6 + w * 0.3), c: Math.round(bs * 0.6 + c * 0.3), l: Math.round(bs * 0.6 + l * 0.3) },
-        { age: '현재', w: w, c: c, l: l, ev: '현재' },
-        { age: '50대', w: Math.round(w * 0.85 + bs * 0.15), c: Math.round(c * 0.9 + bs * 0.1), l: Math.round(l * 0.9 + bs * 0.1) },
-        { age: '60대', w: Math.round(bs * 0.6 + 45 * 0.4), c: Math.round(bs * 0.6 + 55 * 0.4), l: Math.round(bs * 0.6 + 65 * 0.4) },
-        { age: '70대', w: Math.round(bs * 0.6 + 60 * 0.4), c: Math.round(bs * 0.6 + 65 * 0.4), l: Math.round(bs * 0.6 + 70 * 0.4) },
-      ];
-      drawWave();
-    }
-
-    let selCh = 'urban', sMode = 'face', gOn = false, lOn = false, sState = 'idle', aFr = null, sLY = 0, sLD = 1, chBuilt = false;
-
-    function showPg(pg, btn, sub) {
-      document.querySelectorAll('.pg').forEach(p => p.classList.remove('on'));
-      const id = pg === 'main' ? 'pg-main-' + (sub || 'user') : 'pg-' + pg;
-      const el = document.getElementById(id); if (el) el.classList.add('on');
-      if (pg === 'main') {
-        document.querySelectorAll('.nbtn').forEach(b => b.classList.remove('on', 'gon'));
-        if (sub === 'cms') { document.getElementById('bn-cms').classList.add('gon'); animCMS(); }
-        else { document.getElementById('bn-user').classList.add('on'); setTimeout(() => { drawWave(); drawCompass(); }, 80); }
-      }
-      if (pg === 'scan') {
-        setTimeout(() => {
-          // 스캔 페이지 제목 업데이트
-          const h1 = document.querySelector('#pg-scan h1');
-          if (h1) h1.textContent = sMode === 'face' ? 'AI 기색(氣色) 관상 스캔' : (sMode === 'palm_left' ? 'AI 왼손 선천운 스캔' : 'AI 오른손 후천운 스캔');
-          if(typeof window.startCamera==='function') window.startCamera(); else startCamera(); drawScan();
-          setTimeout(() => { setFB('aligning'); setTimeout(() => setFB('ready'), 1500); }, 800);
-          // 사주 배지 업데이트
-          const badge = document.getElementById('scan-saju-badge');
-          const info = document.getElementById('scan-saju-info');
-          if (badge && info) {
-            if (_sajuData) {
-              badge.style.display = 'flex';
-              info.textContent = _sajuData.name + ' · ' + _sajuData.star + ' 명주 · ' + _sajuData.year + '년생 · 자미두수+매화역수+기문둔갑 연동됨';
-            } else {
-              badge.style.display = 'flex';
-              info.textContent = '사주 입력 없이 관상/손금만 분석합니다. 메인에서 사주를 먼저 입력하면 3대 역학 통합 분석이 가능합니다.';
-              badge.style.borderColor = 'rgba(255,255,255,0.1)';
-            }
-          }
-        }, 80);
-      } else { stopCamera(); }
-      if (pg === 'sound') { if(typeof window.buildChannels==='function') window.buildChannels(); else buildChannels(); }
-      if (pg === 'saju') { setTimeout(() => { drawWave(); }, 80); }
-      window.scrollTo(0, 0);
-    }
-
-    function buildExperts() {
-      const g = document.getElementById('eg'); if (!g) return;
-      EX.forEach(e => {
-        const d = document.createElement('div'); d.className = 'ecard' + (e.top ? ' top' : '');
-        d.innerHTML = `<div class="echdr"><div class="eav"><svg viewBox="0 0 24 24" fill="none" stroke-width="1.5"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg><div class="edot pulse"></div></div><div style="flex:1;"><div class="enm">${e.name}${e.top ? '<span class="tbdg">TOP</span>' : ''}</div><div class="esp">${e.spec}</div><div class="ert">${'★'.repeat(Math.floor(parseFloat(e.rat)))} ${e.rat}</div></div></div><div class="etgs">${e.tags.map(t => `<span class="etg">${t}</span>`).join('')}</div><div class="ebs"><button class="eb m">상담 신청</button><button class="eb s">프로필</button></div>`;
-        g.appendChild(d);
-      });
-    }
-
-    function animCMS() {
-      function ac(id, to, dur, fmt) { const el = document.getElementById(id); if (!el) return; const s = performance.now(); (function step(now) { const t = Math.min((now - s) / dur, 1), e = 1 - Math.pow(1 - t, 3); el.textContent = fmt(to * e); if (t < 1) requestAnimationFrame(step); })(performance.now()); }
-      ac('c1', 1240, 1200, v => Math.round(v).toLocaleString());
-      ac('c2', 4.9, 1300, v => v.toFixed(1));
-      ac('c3', 21450000, 1400, v => '₩' + Math.round(v).toLocaleString());
-    }
-
-    function drawWave() {
-      // AI 결과 점수가 있으면 파동에 반영
-      if (_sajuData && _sajuData.scores) {
-        const sc = _sajuData.scores;
-        const wEls = document.querySelectorAll('.sb');
-        if (wEls[0]) wEls[0].innerHTML = Math.round(sc['재물운'] || 85) + '<span style="font-size:14px;">점</span>';
-        if (wEls[1]) wEls[1].innerHTML = Math.round(sc['직업운'] || 92) + '<span style="font-size:14px;">점</span>';
-        if (wEls[2]) wEls[2].innerHTML = Math.round(sc['애정운'] || 68) + '<span style="font-size:14px;">점</span>';
-      }
-      // 생애파동 점수 표시 업데이트 (AI 결과 반영)
-      if (_sajuData && _sajuData.scores) {
-        const s = _sajuData.scores;
-        const eEl = document.querySelector('.sb.e');
-        const gEl = document.querySelector('.sb.g');
-        const pEl = document.querySelector('.sb.p');
-        if (eEl) eEl.textContent = Math.round(s['재물운'] || 85) + '점';
-        if (gEl) gEl.textContent = Math.round(s['직업운'] || 92) + '점';
-        if (pEl) pEl.textContent = Math.round(s['애정운'] || 68) + '점';
-      }
-      const cv = document.getElementById('wc'); if (!cv) return;
-      const W = cv.offsetWidth || 580; cv.width = W * 2; cv.height = 340; cv.style.height = '170px';
-      const ctx = cv.getContext('2d'), H = 340, pad = { t: 24, b: 36, l: 18, r: 18 };
-      const gW = W * 2 - pad.l - pad.r, gH = H - pad.t - pad.b;
-      function xy(i, v) { return { x: pad.l + (i / (WD.length - 1)) * gW, y: pad.t + gH - (v / 100) * gH }; }
-      let pr = 0;
-      function frame() {
-        ctx.clearRect(0, 0, W * 2, H);
-        [40, 60, 85].forEach(y => { const gy = pad.t + gH - (y / 100) * gH; ctx.strokeStyle = 'rgba(255,255,255,0.07)'; ctx.lineWidth = 1; ctx.setLineDash([5, 5]); ctx.beginPath(); ctx.moveTo(pad.l, gy); ctx.lineTo(W * 2 - pad.r, gy); ctx.stroke(); ctx.setLineDash([]); });
-        function line(key, col) {
-          ctx.beginPath(); ctx.strokeStyle = col; ctx.lineWidth = 3; ctx.lineJoin = 'round';
-          const mi = Math.min(Math.floor(pr), WD.length - 1);
-          for (let i = 0; i <= mi; i++) { const { x, y } = xy(i, WD[i][key]); i === 0 ? ctx.moveTo(x, y) : ctx.lineTo(x, y); }
-          if (pr < WD.length - 1) { const f = pr - Math.floor(pr), i0 = Math.floor(pr), i1 = Math.min(i0 + 1, WD.length - 1); const p0 = xy(i0, WD[i0][key]), p1 = xy(i1, WD[i1][key]); ctx.lineTo(p0.x + (p1.x - p0.x) * f, p0.y + (p1.y - p0.y) * f); }
-          ctx.stroke();
-          for (let i = 0; i < Math.min(Math.floor(pr + 1), WD.length); i++) { const { x, y } = xy(i, WD[i][key]); ctx.beginPath(); ctx.arc(x, y, 5, 0, Math.PI * 2); ctx.fillStyle = col; ctx.fill(); }
-        }
-        line('w', '#50C878'); line('c', '#FFD700'); line('l', '#cc88bb');
-        WD.forEach((d, i) => { const { x } = xy(i, 50); ctx.fillStyle = 'rgba(255,255,255,0.45)'; ctx.font = '18px system-ui'; ctx.textAlign = 'center'; ctx.fillText(d.age, x, H - 4); });
-        pr += 0.045; if (pr < WD.length - 1) requestAnimationFrame(frame);
-      }
-      frame();
-      cv.onmousemove = function (e) { const r = cv.getBoundingClientRect(), mx = (e.clientX - r.left) * (W * 2 / r.width); let ci = 0, md = Infinity; WD.forEach((d, i) => { const { x } = xy(i, 50); const dd = Math.abs(mx - x); if (dd < md) { md = dd; ci = i; } }); const d = WD[ci], { x } = xy(ci, 50); const tt = document.getElementById('wtt'); if (!tt) return; tt.style.left = Math.min(x / 2 + 8, W - 160) + 'px'; tt.style.top = '8px'; tt.style.opacity = '1'; tt.innerHTML = `<strong style="color:#50C878;display:block;margin-bottom:2px;">${d.age}</strong>재물 ${d.w} · 직업 ${d.c} · 애정 ${d.l}`; };
-      cv.onmouseleave = () => { const tt = document.getElementById('wtt'); if (tt) tt.style.opacity = '0'; };
-    }
-
-    const DIR_ANGLES = {
-      '북(N)': 0, '북동(NE)': 45, '동(E)': 90, '남동(SE)': 135,
-      '남(S)': 180, '남서(SW)': 225, '서(W)': 270, '북서(NW)': 315,
-      '북방': 0, '동북방': 45, '동방': 90, '동남방': 135,
-      '남방': 180, '서남방': 225, '서방': 270, '서북방': 315
-    };
-    let compassTargetAngle = 45;
-
-    function setCompassDirection(dirStr) {
-      if (!dirStr) return;
-      for (const [k, v] of Object.entries(DIR_ANGLES)) {
-        if (dirStr.includes(k.replace('(N)', '').replace('(NE)', '').replace('(E)', '').replace('(SE)', '').replace('(S)', '').replace('(SW)', '').replace('(W)', '').replace('(NW)', ''))) {
-          compassTargetAngle = v;
-          // 메인 나침반 텍스트도 업데이트
-          const cdirEl = document.querySelector('.cdir span');
-          if (cdirEl) cdirEl.textContent = dirStr;
-          break;
-        }
-      }
-    }
-
-    function drawCompass() {
-      const cv = document.getElementById('cc'); if (!cv) return;
-      const ctx = cv.getContext('2d'), cx = 75, cy = 75, r = 62;
-      let currentAngle = compassTargetAngle;
-      (function frame() {
-        // 부드럽게 목표 각도로 이동
-        const diff = compassTargetAngle - currentAngle;
-        currentAngle += diff * 0.05;
-        const displayAngle = currentAngle + Math.sin(Date.now() / 600) * 1.5;
-        ctx.clearRect(0, 0, 150, 150);
-        ctx.beginPath(); ctx.arc(cx, cy, r, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.lineWidth = 2; ctx.stroke();
-        [['북(N)', 0], ['동(E)', 90], ['남(S)', 180], ['서(W)', 270]].forEach(([l, deg]) => { const rad = (deg - 90) * Math.PI / 180; ctx.fillStyle = 'rgba(255,255,255,0.5)'; ctx.font = '11px system-ui'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle'; ctx.fillText(l, cx + Math.cos(rad) * (r - 12), cy + Math.sin(rad) * (r - 12)); });
-        ctx.save(); ctx.translate(cx, cy); ctx.rotate(displayAngle * Math.PI / 180); ctx.beginPath(); ctx.moveTo(0, -50); ctx.lineTo(7, 0); ctx.lineTo(0, 50); ctx.lineTo(-7, 0); ctx.closePath(); ctx.fillStyle = '#FFD700'; ctx.fill(); ctx.beginPath(); ctx.arc(0, 0, 5, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255,255,255,0.9)'; ctx.fill(); ctx.restore();
-        requestAnimationFrame(frame);
-      })();
-    }
-
-    let camStream = null;
-
-    let currentFacing = 'user'; // 현재 카메라 방향
-
-    async function startCamera(facing) {
-      const video = document.getElementById('camVideo');
-      const errBox = document.getElementById('cam-error');
-      if (!video) return;
-
-      // 기본 방향: 관상=전면(user), 손금=후면(environment)
-      if (facing === undefined) {
-        facing = sMode === 'face' ? 'user' : 'environment';
-      }
-      currentFacing = facing;
-
-      // 미러 반전: 전면(셀피)만 적용
-      video.style.transform = facing === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
-      const canvas = document.getElementById('sc');
-      if (canvas) canvas.style.transform = facing === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
-
-      // 가이드 메시지 업데이트
-      const guideMsg = document.getElementById('cam-guide-msg');
-      if (guideMsg) {
-        guideMsg.textContent = facing === 'user'
-          ? '얼굴을 원 안에 가득 채워주세요'
-          : '손바닥을 화면 중앙에 펼쳐주세요';
-      }
-
-      // Stop existing stream
-      if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
-
-      try {
-        const constraints = {
-          video: {
-            facingMode: facing,
-            width: { ideal: 1280 },
-            height: { ideal: 720 }
-          }
-        };
-        camStream = await navigator.mediaDevices.getUserMedia(constraints);
-        video.srcObject = camStream;
-        video.style.display = 'block';
-        await video.play().catch(function(){});
-        if (errBox) errBox.style.display = 'none';
-      } catch (e) {
-        console.error('카메라 오류:', e);
-        // 후면 카메라 없는 경우(PC) 전면으로 대체
-        if (facing === 'environment') {
-          try {
-            const fallback = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: { ideal: 1280 }, height: { ideal: 720 } } });
-            camStream = fallback;
-            video.srcObject = fallback;
-            video.style.display = 'block';
-            await video.play().catch(function(){});
-            video.style.transform = 'scaleX(-1)';
-            if (guideMsg) guideMsg.textContent = '후면 카메라 없음 - 전면 카메라로 대체';
-            if (errBox) errBox.style.display = 'none';
-            return;
-          } catch (e2) { }
-        }
-        video.style.display = 'none';
-        if (errBox) errBox.style.display = 'flex';
-      }
-    }
-
-    function flipCamera() {
-      const newFacing = currentFacing === 'user' ? 'environment' : 'user';
-      startCamera(newFacing);
-    }
-
-    function stopCamera() {
-      if (camStream) { camStream.getTracks().forEach(t => t.stop()); camStream = null; }
-      const video = document.getElementById('camVideo');
-      if (video) { video.srcObject = null; }
-    }
-
-    function drawScan() {
-      const cv = document.getElementById('sc'); if (!cv) return;
-      const W = cv.offsetWidth || 640; cv.width = W * 2; cv.height = Math.round(W * 0.625) * 2; cv.style.height = Math.round(W * 0.625) + 'px';
-      const ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
-      // Canvas is overlay on top of video - transparent background
-      ctx.clearRect(0, 0, w, h);
-      if (!camStream) { ctx.fillStyle = '#0a0a20'; ctx.fillRect(0, 0, w, h); }
-      if (lOn) { ctx.fillStyle = 'rgba(255,255,200,0.04)'; ctx.fillRect(0, 0, w, h); }
-      if (sMode === 'face') {
-        const cx = w / 2, cy = h / 2, rx = w * 0.22, ry = h * 0.38;
-        ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(80,200,120,0.55)'; ctx.lineWidth = 2; ctx.setLineDash([8, 6]); ctx.stroke(); ctx.setLineDash([]);
-        [{ x: cx, y: cy - ry * 0.55, l: '이마' }, { x: cx - rx * 0.55, y: cy - ry * 0.15, l: '눈(좌)' }, { x: cx + rx * 0.55, y: cy - ry * 0.15, l: '눈(우)' }, { x: cx, y: cy + ry * 0.05, l: '코' }, { x: cx, y: cy + ry * 0.35, l: '입' }, { x: cx, y: cy + ry * 0.62, l: '턱' }].forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = 'rgba(80,200,120,0.7)'; ctx.fill(); ctx.fillStyle = 'rgba(80,200,120,0.9)'; ctx.font = '20px system-ui'; ctx.textAlign = 'center'; ctx.fillText(p.l, p.x, p.y + (p.y < cy ? -14 : 18)); });
-      } else if (sMode === 'palm_left' || sMode === 'palm_right') {
-        const px = w * 0.2, py = h * 0.12, pw = w * 0.6, ph = h * 0.76;
-        ctx.beginPath(); ctx.moveTo(px + pw * 0.5, py); ctx.lineTo(px + pw, py + ph * 0.15); ctx.lineTo(px + pw, py + ph * 0.8); ctx.lineTo(px + pw * 0.5, py + ph); ctx.lineTo(px, py + ph * 0.8); ctx.lineTo(px, py + ph * 0.15); ctx.closePath(); ctx.strokeStyle = 'rgba(80,200,120,0.55)'; ctx.lineWidth = 2; ctx.setLineDash([8, 6]); ctx.stroke(); ctx.setLineDash([]);
-        [{ x1: px + pw * 0.15, y1: py + ph * 0.25, x2: px + pw * 0.85, y2: py + ph * 0.35, l: '감정선' }, { x1: px + pw * 0.2, y1: py + ph * 0.45, x2: px + pw * 0.75, y2: py + ph * 0.55, l: '두뇌선' }, { x1: px + pw * 0.35, y1: py + ph * 0.2, x2: px + pw * 0.4, y2: py + ph * 0.85, l: '생명선' }, { x1: px + pw * 0.55, y1: py + ph * 0.18, x2: px + pw * 0.58, y2: py + ph * 0.75, l: '운명선' }].forEach(l => { ctx.beginPath(); ctx.moveTo(l.x1, l.y1); ctx.lineTo(l.x2, l.y2); ctx.strokeStyle = 'rgba(80,200,120,0.5)'; ctx.lineWidth = 2; ctx.stroke(); ctx.fillStyle = 'rgba(255,215,0,0.85)'; ctx.font = '18px system-ui'; ctx.textAlign = 'left'; ctx.fillText(l.l, (l.x1 + l.x2) / 2 + 10, (l.y1 + l.y2) / 2); });
-      }
-      if (gOn) { ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1; for (let x = 0; x < w; x += w / 6) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke(); } for (let y = 0; y < h; y += h / 4) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke(); } }
-      // AR 오버레이: 자미두수 12궁 (관상모드) / 기문둔갑 팔문 (손금모드)
-      const arAlpha = 0.18 + Math.sin(Date.now() / 1200) * 0.06;
-      if (sMode === 'face') {
-        // 12궁 AR 링 - 얼굴 주변 원형 배치
-        const palaces = ['명궁', '재백', '형제', '전택', '남녀', '노복', '처첩', '질액', '이동', '관록', '복덕', '부모'];
-        const arR = Math.min(w, h) * 0.42;
-        const arCx = w / 2, arCy = h / 2;
-        palaces.forEach((p, i) => {
-          const angle = (i / 12) * Math.PI * 2 - Math.PI / 2;
-          const px = arCx + arR * Math.cos(angle);
-          const py = arCy + arR * Math.sin(angle);
-          ctx.beginPath(); ctx.arc(px, py, 18, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(255,215,0,${arAlpha})`; ctx.fill();
-          ctx.strokeStyle = `rgba(255,215,0,${arAlpha * 2})`; ctx.lineWidth = 1; ctx.stroke();
-          ctx.fillStyle = `rgba(255,215,0,${arAlpha * 4})`; ctx.font = '14px system-ui'; ctx.textAlign = 'center'; ctx.fillText(p, px, py + 4);
-        });
-        // 중앙 연결선
-        ctx.strokeStyle = `rgba(255,215,0,${arAlpha * 0.5})`; ctx.lineWidth = 0.5; ctx.setLineDash([4, 8]);
-        ctx.beginPath(); ctx.arc(arCx, arCy, arR, 0, Math.PI * 2); ctx.stroke(); ctx.setLineDash([]);
-      } else if (sMode === 'palm_left' || sMode === 'palm_right') {
-        // 팔문 AR - 손금 위에 팔괘 배치
-        const gates = ['휴문', '생문', '상문', '두문', '경문', '사문', '경문', '개문'];
-        const colors = ['#50C878', '#FFD700', '#cc88bb', '#8aacf0', '#50C878', '#EF9F27', '#8aacf0', '#FFD700'];
-        const gR = Math.min(w, h) * 0.35;
-        const gCx = w / 2, gCy = h / 2;
-        gates.forEach((g, i) => {
-          const angle = (i / 8) * Math.PI * 2 - Math.PI / 2;
-          const gx = gCx + gR * Math.cos(angle);
-          const gy = gCy + gR * Math.sin(angle);
-          ctx.beginPath(); ctx.arc(gx, gy, 20, 0, Math.PI * 2);
-          ctx.fillStyle = `rgba(${colors[i].replace('#', '').match(/.{2}/g).map(h => parseInt(h, 16)).join(',')},${arAlpha})`; ctx.fill();
-          ctx.fillStyle = colors[i]; ctx.globalAlpha = arAlpha * 3; ctx.font = 'bold 13px system-ui'; ctx.textAlign = 'center'; ctx.fillText(g, gx, gy + 4); ctx.globalAlpha = 1;
-        });
-      }
-
-      // 스캐닝 라인
-      if (sState === 'scanning') {
-        sLY += 3 * sLD; if (sLY > h || sLY < 0) sLD *= -1;
-        ctx.beginPath(); ctx.moveTo(0, sLY); ctx.lineTo(w, sLY); ctx.strokeStyle = 'rgba(80,200,120,0.6)'; ctx.lineWidth = 2; ctx.stroke();
-        const grd = ctx.createLinearGradient(0, sLY - 40, 0, sLY + 40); grd.addColorStop(0, 'rgba(80,200,120,0)'); grd.addColorStop(0.5, 'rgba(80,200,120,0.15)'); grd.addColorStop(1, 'rgba(80,200,120,0)'); ctx.fillStyle = grd; ctx.fillRect(0, sLY - 40, w, 80);
-        // 실시간 분석 메시지
-        ctx.fillStyle = 'rgba(80,200,120,0.8)'; ctx.font = 'bold 14px system-ui'; ctx.textAlign = 'center';
-        const msgs = ['인생 지도 데이터 연동 중...', '기색 데이터 감지 중...', '12궁 동기화 중...', '에너지 패턴 분석 중...'];
-        ctx.fillText(msgs[Math.floor(Date.now() / 600) % msgs.length], w / 2, h - 20);
-        aFr = requestAnimationFrame(drawScan);
-      } else if (camStream) {
-        aFr = requestAnimationFrame(drawScan);
-      }
-    }
-
-    function setFB(state) {
-      const dot = document.getElementById('fd'), txt = document.getElementById('ft'), sub = document.getElementById('fs'); if (!dot) return;
-      dot.className = 'fb-dot';
-      if (state === 'idle') {
-        dot.classList.add('warn');
-        if (sMode === 'face') { txt.textContent = '얼굴을 원 안에 가득 채워주세요'; sub.textContent = '정면 응시, 카메라를 얼굴에 가까이 당겨주세요'; }
-        else if (sMode === 'palm_left') { txt.textContent = '왼손 (선천운) 손바닥을 카메라에 펼쳐주세요'; sub.textContent = '손금이 잘 보이도록 밝은 곳에서 가까이 대주세요'; }
-        else { txt.textContent = '오른손 (후천운) 손바닥을 카메라에 펼쳐주세요'; sub.textContent = '손금이 잘 보이도록 밝은 곳에서 가까이 대주세요'; }
-      }
-      else if (state === 'aligning') { dot.classList.add('warn'); txt.textContent = '정렬 중... 조금 더 가까이'; sub.textContent = '얼굴을 타원 가이드 중앙에 맞춰주세요'; }
-      else if (state === 'ready') { dot.classList.add('ok'); txt.textContent = '준비 완료 - 셔터를 눌러주세요'; sub.textContent = '3초간 정지 후 촬영'; }
-      else if (state === 'scanning') { dot.classList.add('sc'); txt.textContent = '스캔 중... 움직이지 마세요'; sub.textContent = 'AI 분석 진행 중'; }
-    }
-
-    function setMode(m, btn) {
-      sMode = m;
-      document.getElementById('mf').classList.toggle('on', m === 'face');
-      document.getElementById('mp').classList.toggle('on', m === 'palm');
-      const guideMsg = document.getElementById('camGuideMsg');
-      if (guideMsg) guideMsg.textContent = m === 'face' ? '얼굴을 타원 안에 가득 채워주세요' : '손바닥을 펼쳐 육각형 안에 맞춰주세요';
-      resetScan();
-    }
-    function tGrid() { gOn = !gOn; document.getElementById('bg').classList.toggle('active', gOn); drawScan(); }
-    function tLight() { lOn = !lOn; document.getElementById('bl').classList.toggle('active', lOn); drawScan(); }
-    function resetScan() {
-      sState = 'idle';
-      document.getElementById('ps').classList.remove('show');
-      document.getElementById('rs').classList.remove('show');
-      document.getElementById('sh').classList.remove('cap');
-      setFB('idle');
-      if (aFr) { cancelAnimationFrame(aFr); aFr = null; }
-      // 가이드 메시지 복구
-      const guideMsg = document.getElementById('cam-guide-msg');
-      if (guideMsg) {
-        guideMsg.textContent = sMode === 'face' ? '얼굴을 원 안에 가득 채워주세요' : '손바닥을 화면 중앙에 펼쳐주세요';
-      }
-      drawScan();
-    }
-
-    function doCapture() {
-      if (sState === 'scanning' || sState === 'done') return;
-      sState = 'scanning';
-      document.getElementById('sh').classList.add('cap');
-      setFB('scanning');
-      sLY = 0; sLD = 1; drawScan();
-      document.getElementById('ps').classList.add('show');
-      document.getElementById('rs').classList.remove('show');
-      const c = document.getElementById('psteps'); c.innerHTML = '';
-      STEPS.forEach((s, i) => {
-        const d = document.createElement('div');
-        d.className = 'prog-step';
-        d.innerHTML = `<div class="sico wait" id="si${i}">${i + 1}</div><div class="slbl" id="sl${i}">${s.label}</div><div class="spct" id="sp${i}"></div>`;
-        c.appendChild(d);
-      });
-
-      // AI 결과 초기화
-      window._scanResult = undefined;
-
-      // 셔터 플래시 효과
-      const flash = document.getElementById('shutterFlash');
-      if (flash) {
-        flash.classList.add('on');
-        setTimeout(() => flash.classList.remove('on'), 150);
-      }
-      // 가이드 메시지 변경
-      const guideMsg = document.getElementById('camGuideMsg');
-      if (guideMsg) guideMsg.textContent = '✓ 촬영 완료! AI 분석 중...';
-
-      // 실제 사진 캡처
-      const video = document.getElementById('camVideo');
-      const snapCanvas = document.createElement('canvas');
-      snapCanvas.width = 640; snapCanvas.height = 400;
-      const snapCtx = snapCanvas.getContext('2d');
-      if (video && video.readyState >= 2) {
-        // 미러 보정: 캔버스는 정방향으로 저장 (AI 분석용)
-        snapCtx.save();
-        snapCtx.scale(-1, 1);
-        snapCtx.drawImage(video, -640, 0, 640, 400);
-        snapCtx.restore();
-      } else {
-        snapCtx.fillStyle = '#111'; snapCtx.fillRect(0, 0, 640, 400);
-      }
-      const imageData = snapCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
-
-      // 단계별 UI 진행하면서 AI 분석 병렬 실행
-      runStep(0);
-      analyzeWithAI(imageData);
-    }
-
-    async function analyzeWithAI(imageData) {
-      const sd = _sajuData;
-      const sajuCtx = sd
-        ? `이름: ${sd.name} / ${sd.gender}성 / ${sd.year}년생 / 명궁주성: ${sd.star} / 현재대운: ${sd.daewoon||'미상'} / 사주요약: ${sd.summary||''}`
-        : '';
-
-      let prompt, systemMsg;
-
-      if (sMode === 'face') {
-        systemMsg = '당신은 자미두수·매화역수·기문둔갑에 정통한 40년 경력 명리학 대가이자 관상 전문가입니다. 이미지를 보고 동양 전통 기색(氣色) 관상법으로 깊이 있게 분석합니다. 반드시 JSON만 출력하고 마크다운 코드블록은 절대 사용하지 마세요.';
-        prompt = (sajuCtx ? `[의뢰인 사주 정보]\n${sajuCtx}\n\n` : '')
-          + `위 이미지를 동양 전통 관상법으로 분석해주세요.
-얼굴의 이마(관록궁), 눈빛(명궁), 코(재백궁), 입술(부처궁), 턱선(전택궁) 각 부위를 실제로 보이는 특징에 기반해 자미두수 12궁과 매화역수·기문둔갑을 교차하여 해석하세요.
-${sajuCtx ? '사주 명반과 관상의 일치도를 교차 분석하고, 일치하는 부분과 차이점을 구체적으로 설명하세요.' : ''}
-
-반드시 아래 JSON 형식으로만 출력 (다른 텍스트 없이):
-{"overall":"관상 핵심 한줄 요약 (실제 관찰 기반, 30자이내)","match_pct":숫자(75~95),"features":[{"name":"이마(관록궁)","score":숫자(0-100),"desc":"실제 이마 형태와 관록궁 기색 에너지 상세 해석 2문장","tag":"관록운","color":"#FFD700","tBg":"rgba(255,215,0,0.15)","tC":"#FFD700","ziwei":"자미두수 근거","meihua":"매화역수 근거","qimen":"기문둔갑 근거"},{"name":"눈빛(명궁)","score":숫자,"desc":"실제 눈빛과 명궁 에너지 상세 해석 2문장","tag":"핵심기운","color":"#50C878","tBg":"rgba(80,200,120,0.15)","tC":"#50C878"},{"name":"코(재백궁)","score":숫자,"desc":"실제 코 형태와 재백궁 기색 상세 해석 2문장","tag":"재물운","color":"#8aacf0","tBg":"rgba(96,130,220,0.15)","tC":"#8aacf0"},{"name":"입술(부처궁)","score":숫자,"desc":"실제 입술과 부처궁 에너지 상세 해석 2문장","tag":"인간관계","color":"#cc88bb","tBg":"rgba(180,100,180,0.15)","tC":"#cc88bb"},{"name":"턱선(전택궁)","score":숫자,"desc":"실제 턱선과 전택궁 기색 상세 해석 2문장","tag":"기반/의지","color":"#EF9F27","tBg":"rgba(200,130,30,0.15)","tC":"#EF9F27"}],"palace_sync":[{"palace":"명궁","result":"명궁 기색과 사주 일치도 상세","score":숫자},{"palace":"재백궁","result":"재물운 교차 분석 상세","score":숫자},{"palace":"관록궁","result":"직업운 교차 분석 상세","score":숫자},{"palace":"전택궁","result":"기반운 교차 분석 상세","score":숫자}],"interpretation":"자미두수 명반 + 매화역수 오늘 괘 + 관상 기색을 3중 교차한 통합 해석. 이 사람의 타고난 기질, 현재 운세 흐름, 주의할 점, 강점을 5문장 이상 구체적으로 서술. <em>강조</em> <b>금색강조</b> 태그 적극 활용."}`;
-
-      } else {
-        // 손금 분석 - ChatGPT 수준 심층 분석
-        const isLeft = sMode === 'palm_left';
-        systemMsg = '당신은 동양 전통 수상학(手相學)과 자미두수·매화역수·기문둔갑을 통합하는 40년 경력 명리학 대가입니다. 손바닥 사진을 보고 실제로 보이는 손금선의 형태·깊이·방향·잔선 등을 구체적으로 관찰하여 깊이 있게 분석합니다. 반드시 JSON만 출력하고 마크다운 코드블록은 절대 사용하지 마세요.';
-
-        prompt = (sajuCtx ? `[의뢰인 사주 정보]\n${sajuCtx}\n\n` : '')
-          + `이것은 ${isLeft ? '왼손(선천운 - 타고난 기질과 잠재력)' : '오른손(후천운 - 현재와 미래의 실제 운세 흐름)'} 손바닥 사진입니다.
-
-실제로 보이는 선들을 꼼꼼히 관찰하여 아래 항목들을 분석해주세요:
-
-1. 생명선: 실제 선의 길이, 깊이, 굵기, 엄지를 감싸는 호의 크기, 잔선 유무
-2. 감정선(심장선): 시작점과 끝점의 위치, 곡선/직선 여부, 선의 굵기와 선명도
-3. 두뇌선: 길이와 기울기 방향, 생명선과의 연결/분리 여부
-4. 운명선: 선의 존재 여부, 강약, 시작점 위치
-5. 손 전체: 손가락 길이, 손바닥 넓이, 잔선 많음/적음
-6. ${sajuCtx ? `사주 명반(${sd?.star} 명주)과 손금의 교차 분석` : '전체적인 손금 에너지'}
-
-${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로 분석하세요.' : '현재 진행 중인 운세, 실제 실현된 능력, 앞으로의 변화 흐름을 중심으로 분석하세요.'}
-
-반드시 아래 JSON 형식으로만 출력:
-{"overall":"${isLeft?'선천운':'후천운'} 핵심 한줄 요약 (실제 관찰 기반, 30자이내)","match_pct":숫자(75~95),"features":[{"name":"생명선(건강·활력궁)","score":숫자(0-100),"desc":"실제 생명선 형태 관찰 + 체력/생명력/회복력 상세 해석 2-3문장","tag":"건강/활력","color":"#50C878","tBg":"rgba(80,200,120,0.15)","tC":"#50C878"},{"name":"감정선(부처·인연궁)","score":숫자,"desc":"실제 감정선 형태 관찰 + 애정방식/인간관계 패턴 상세 해석 2-3문장","tag":"애정/인연","color":"#cc88bb","tBg":"rgba(180,100,180,0.15)","tC":"#cc88bb"},{"name":"두뇌선(사고·판단)","score":숫자,"desc":"실제 두뇌선 형태 관찰 + 사고방식/창의성/판단력 상세 해석 2-3문장","tag":"지혜/창의","color":"#8aacf0","tBg":"rgba(96,130,220,0.15)","tC":"#8aacf0"},{"name":"운명선(직업·대운궁)","score":숫자,"desc":"실제 운명선 형태 관찰 + 직업운/커리어 방향 상세 해석 2-3문장","tag":"직업/대운","color":"#FFD700","tBg":"rgba(255,215,0,0.15)","tC":"#FFD700"},{"name":"손 형태(기질·에너지)","score":숫자,"desc":"손가락 길이·손바닥 넓이·잔선 특징 관찰 + 기질과 에너지 패턴 상세 해석 2-3문장","tag":"기질/에너지","color":"#EF9F27","tBg":"rgba(200,130,30,0.15)","tC":"#EF9F27"}],"palace_sync":[{"palace":"재백궁","result":"손금과 사주 재물운 교차 상세 분석","score":숫자},{"palace":"관록궁","result":"손금과 사주 직업운 교차 상세 분석","score":숫자},{"palace":"부처궁","result":"손금과 사주 인간관계 교차 상세 분석","score":숫자},{"palace":"건강궁","result":"손금과 사주 건강운 교차 상세 분석","score":숫자}],"interpretation":"3대역학 통합해석 6문장이상","strengths":["강점1","강점2","강점3"],"cautions":["주의1","주의2"]}`;
-      }
-
-      try {
-        const response = await fetch('/api/saju', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            model: 'claude-sonnet-4-6',
-            max_tokens: 4000,
-            system: systemMsg,
-            messages: [{ role: 'user', content: [
-              { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageData } },
-              { type: 'text', text: prompt }
-            ]}]
-          })
-        });
-
-        const reader = response.body.getReader();
-        const decoder = new TextDecoder();
-        let text = '', buf = '';
-        while (true) {
-          const { done, value } = await reader.read();
-          if (done) break;
-          buf += decoder.decode(value, { stream: true });
-          const lines = buf.split('\n'); buf = lines.pop() || '';
-          for (const line of lines) {
-            if (!line.startsWith('data: ')) continue;
-            const d = line.slice(6).trim();
-            if (d === '[DONE]') continue;
-            try { const ev = JSON.parse(d); if (ev.type==='content_block_delta'&&ev.delta?.text) text+=ev.delta.text; } catch(e) {}
-          }
-        }
-        const clean = text.replace(/```json?\s*/gi,'').replace(/```/g,'').trim();
-        const fb = clean.indexOf('{'), lb = clean.lastIndexOf('}');
-        const jsonStr = fb>=0&&lb>fb ? clean.slice(fb,lb+1) : clean;
-        window._scanResult = JSON.parse(jsonStr);
-      } catch (e) {
-        console.error('스캔 AI 오류:', e);
-        window._scanResult = null;
-      }
-    }
-
-            function runStep(i) {
-      if (i >= STEPS.length) {
-        // AI 분석 완료 대기 후 결과 표시
-        // AI 결과 대기 (최대 15초)
-        var _waitCount = 0;
-        var _waitTimer = setInterval(function() {
-          _waitCount++;
-          if (window._scanResult !== undefined || _waitCount > 50) {
-            clearInterval(_waitTimer);
-            setTimeout(showResult, 300);
-          }
-        }, 300);
-        return;
-      }
-      const si = document.getElementById('si' + i), sl = document.getElementById('sl' + i), sp = document.getElementById('sp' + i);
-      si.className = 'sico act'; si.innerHTML = '<svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/></svg>';
-      sl.className = 'slbl act'; let pct = 0;
-      const iv = setInterval(() => { pct = Math.min(100, pct + Math.round(100 / (STEPS[i].dur / 50))); sp.textContent = pct + '%'; if (pct >= 100) { clearInterval(iv); si.className = 'sico done'; si.innerHTML = '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>'; sl.className = 'slbl done'; setTimeout(() => runStep(i + 1), 100); } }, 50);
-    }
-
-    // ── 자동 순차 촬영 ──
-    var _seqStep = 0;
-    var _seqAuto = false;
-    var _seqTimer = null;
-
-    var SEQ = [
-      { mode:'face',       icon:'👁',  facing:'user',        title:'관상 촬영',        desc:'카메라를 눈높이에 맞추고\n얼굴을 타원 안에 가득 채워주세요.\n자연스러운 표정으로 정면을 봐주세요.' },
-      { mode:'palm_left',  icon:'✋',  facing:'environment', title:'왼손 촬영 (선천운)', desc:'왼손 손바닥이 카메라를 향하도록\n손을 쭉 펴서 보여주세요.\n손금이 선명하게 보이도록 해주세요.' },
-      { mode:'palm_right', icon:'🤚', facing:'environment', title:'오른손 촬영 (후천운)', desc:'오른손 손바닥이 카메라를 향하도록\n손을 쭉 펴서 보여주세요.\n손금이 선명하게 보이도록 해주세요.' },
-    ];
-
-    function startAutoScan() {
-      _seqStep = 0;
-      _seqAuto = true;
-      sMode = 'face';
-      showPg('scan');
-      // 카메라 즉시 켜기
-      setTimeout(function(){
-        startCamera('user');
-        // 카메라 준비되면 바로 오버레이 표시
-        setTimeout(function(){ _showSeqOverlay(0); }, 800);
-      }, 200);
-    }
-
-    function _showSeqOverlay(step) {
-      var s = SEQ[step];
-      var overlay = document.getElementById('seq-overlay');
-      if (!overlay) return;
-      document.getElementById('seq-icon').textContent = s.icon;
-      document.getElementById('seq-title').textContent = s.title;
-      document.getElementById('seq-desc').textContent = s.desc;
-      document.getElementById('seq-countdown').style.display = 'none';
-      document.getElementById('seq-countdown').textContent = '';
-      var readyBtn = document.getElementById('seq-ready-btn');
-      var skipBtn = document.getElementById('seq-skip-btn');
-      readyBtn.style.display = 'inline-block';
-      readyBtn.style.background = 'var(--em)';
-      readyBtn.style.color = '#fff';
-      readyBtn.textContent = '📸 촬영 시작';
-      readyBtn.onclick = seqReady;
-      skipBtn.style.display = step > 0 ? 'inline-block' : 'none';
-      // 진행 도트 업데이트
-      [0,1,2].forEach(function(i) {
-        var dot = document.getElementById('sdot-'+i);
-        if (!dot) return;
-        if (i < step) { dot.style.background='var(--em)'; dot.style.width='12px'; dot.style.height='12px'; }
-        else if (i === step) { dot.style.background='#fff'; dot.style.width='14px'; dot.style.height='14px'; dot.style.boxShadow='0 0 10px rgba(255,255,255,0.5)'; }
-        else { dot.style.background='rgba(255,255,255,0.2)'; dot.style.width='10px'; dot.style.height='10px'; dot.style.boxShadow='none'; }
-      });
-      overlay.style.display = 'flex';
-    }
-
-    function seqReady() {
-      clearInterval(_seqTimer);
-      var s = SEQ[_seqStep];
-      var readyBtn = document.getElementById('seq-ready-btn');
-      var cd = document.getElementById('seq-countdown');
-      readyBtn.style.display = 'none';
-      cd.style.display = 'block';
-
-      // 카메라 전환
-      var modeBtn = document.getElementById(s.mode==='face'?'mf':s.mode==='palm_left'?'mp':'mp2');
-      setMode(s.mode, modeBtn);
-      currentFacing = s.facing;
-      setTimeout(function(){
-        startCamera(s.facing);
-        // 관상=미러(전면), 손금=정방향(후면/PC전면)
-        var vid = document.getElementById('camVideo');
-        if (vid) vid.style.transform = s.mode==='face' ? 'scaleX(-1)' : 'scaleX(1)';
-      }, 200);
-
-      // 3,2,1 카운트다운
-      var cnt = 3;
-      cd.textContent = cnt;
-      _seqTimer = setInterval(function() {
-        cnt--;
-        if (cnt > 0) {
-          cd.textContent = cnt;
-        } else {
-          clearInterval(_seqTimer);
-          cd.textContent = '📸';
-          setTimeout(function(){
-            document.getElementById('seq-overlay').style.display = 'none';
-            // 자동 촬영 실행
-            setTimeout(function(){ doCapture(); }, 300);
-          }, 500);
-        }
-      }, 1000);
-    }
-
-    function seqSkip() {
-      clearInterval(_seqTimer);
-      document.getElementById('seq-overlay').style.display = 'none';
-      _seqStep++;
-      if (_seqStep < SEQ.length) {
-        setTimeout(function(){ _showSeqOverlay(_seqStep); }, 400);
-      } else {
-        _seqAuto = false;
-        _showSeqComplete();
-      }
-    }
-
-    function _seqNext() {
-      if (!_seqAuto) return;
-      _seqStep++;
-      if (_seqStep < SEQ.length) {
-        setTimeout(function(){ _showSeqOverlay(_seqStep); }, 1200);
-      } else {
-        _seqAuto = false;
-        setTimeout(_showSeqComplete, 800);
-      }
-    }
-
-    function _showSeqComplete() {
-      var overlay = document.getElementById('seq-overlay');
-      if (!overlay) return;
-      document.getElementById('seq-icon').textContent = '✨';
-      document.getElementById('seq-title').textContent = '3단계 촬영 완료!';
-      document.getElementById('seq-desc').textContent = '관상 · 왼손 · 오른손\n모두 촬영됐어요.\n지금 바로 AI가 분석을 시작합니다...';
-      document.getElementById('seq-countdown').style.display = 'block';
-      document.getElementById('seq-countdown').style.fontSize = '40px';
-      document.getElementById('seq-countdown').textContent = '🔮 분석 중...';
-      // 진행 도트 모두 완료
-      [0,1,2].forEach(function(i) {
-        var dot = document.getElementById('sdot-'+i);
-        if (dot) { dot.style.background='var(--em)'; dot.style.width='12px'; dot.style.height='12px'; }
-      });
-      var readyBtn = document.getElementById('seq-ready-btn');
-      var skipBtn = document.getElementById('seq-skip-btn');
-      readyBtn.style.display = 'none';
-      skipBtn.style.display = 'none';
-      overlay.style.display = 'flex';
-      // 1초 후 자동으로 결과 화면으로
-      setTimeout(function(){
-        overlay.style.display = 'none';
-        // 결과 섹션 표시
-        var rsEl = document.getElementById('rs');
-        if (rsEl) rsEl.classList.add('show');
-        showScanResult();
-        // 안내 토스트
-        setTimeout(function(){
-          var toast = document.createElement('div');
-          toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,40,0.97);border:1px solid var(--em);border-radius:16px;padding:1.5rem 2rem;text-align:center;z-index:9999;max-width:320px;box-shadow:0 8px 40px rgba(0,0,0,0.5);';
-          toast.innerHTML = '<div style="font-size:32px;margin-bottom:.5rem;">🔮</div>'
-            + '<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:.4rem;">분석 중입니다</div>'
-            + '<div style="font-size:13px;color:var(--t2);line-height:1.7;">아래에서 결과를 확인해주세요.<br>잠시 스크롤 내려주세요 ↓</div>';
-          document.body.appendChild(toast);
-          setTimeout(function(){ toast.style.transition='opacity .5s'; toast.style.opacity='0'; setTimeout(function(){ toast.remove(); }, 500); }, 2500);
-          // 결과 위치로 부드럽게 스크롤
-          setTimeout(function(){
-            var rsEl2 = document.getElementById('rs');
-            if (rsEl2) rsEl2.scrollIntoView({ behavior:'smooth', block:'start' });
-          }, 400);
-        }, 300);
-      }, 800);
-    }
-
-    function showResult() {
-      if (aFr) { cancelAnimationFrame(aFr); aFr = null; }
-      sState = 'done'; setFB('ready');
-
-      // 자동 순차 촬영 중이면 다음 단계
-      if (_seqAuto) {
-        var _modeNames = {face:'관상', palm_left:'왼손', palm_right:'오른손'};
-        if(typeof showShareToast==='function') showShareToast('✅ ' + (_modeNames[sMode]||'') + ' 촬영 완료!');
-        setTimeout(_seqNext, 1500);
-      }
-
-      // 캔버스 스냅샷
-      var sc = document.getElementById('sc');
-      if (sc) capturedImages[sMode] = sc.toDataURL('image/jpeg', 0.85);
-
-      // 썸네일
-      var tc = document.getElementById('tc');
-      if (tc && capturedImages[sMode]) {
-        var img = new Image(); img.onload = function(){ tc.getContext('2d').drawImage(img,0,0,64,80); };
-        img.src = capturedImages[sMode];
-      }
-
-      // 탭 활성화
-      ['tab-face','tab-left','tab-right'].forEach(function(id,i){
-        var el = document.getElementById(id);
-        if (!el) return;
-        var keys = ['face','palm_left','palm_right'];
-        el.style.opacity = capturedImages[keys[i]] ? '1' : '0.4';
-      });
-
-      // 이름/서브 업데이트
-      var nameEl = document.getElementById('rs-name');
-      var subEl  = document.getElementById('rs-sub');
-      var modeLabel = document.getElementById('rs-mode-label');
-      var modeNames = {face:'관상', palm_left:'왼손 손금(선천운)', palm_right:'오른손 손금(후천운)'};
-      if (nameEl && _sajuData) nameEl.textContent = _sajuData.name + ' · ' + (modeNames[sMode]||'') + ' 스캔 완료';
-      if (subEl) subEl.textContent = sMode==='face' ? '관상 분석 완료 · 자미두수 12궁 동기화' : '손금 분석 완료 · 3대 역학 교차 분석';
-      if (modeLabel) modeLabel.textContent = sMode==='face' ? '觀相 — 관상 정밀 풀이' : (sMode==='palm_left'?'手相 — 왼손 선천운 풀이':'手相 — 오른손 후천운 풀이');
-
-      document.getElementById('rs').classList.add('show');
-      showScanResult();
-    }
-
-    function showScanResult() {
-      var r = window._scanResult;
-      var sectionsEl = document.getElementById('rs-sections');
-      var summaryEl  = document.getElementById('rs-summary');
-      var oneLineEl  = document.getElementById('rs-one-line');
-      var tempEl     = document.getElementById('rs-temperament');
-      var matchEl    = document.getElementById('rs-match');
-      if (!sectionsEl) return;
-
-      // 한 줄 인상 업데이트
-      if (r && r.overall) {
-        if (oneLineEl) oneLineEl.textContent = '"' + r.overall + '"';
-        if (tempEl && r.interpretation) tempEl.innerHTML = r.interpretation;
-        if (matchEl) matchEl.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg> 명반 일치도 ' + (r.match_pct||87) + '%';
-      }
-
-      sectionsEl.innerHTML = '';
-
-      if (sMode === 'face') {
-        _renderFaceResult(r, sectionsEl);
-      } else {
-        _renderPalmResult(r, sectionsEl);
-      }
-
-      // 종합 리딩
-      if (r && summaryEl) {
-        _renderSummary(r, summaryEl);
-      }
-    }
-
-    function _renderFaceResult(r, container) {
-      var feats = (r && r.features) ? r.features : FEATS;
-
-      // 헤더
-      var hdr = document.createElement('div');
-      hdr.className = 'sec-header';
-      hdr.innerHTML = '<div class="kicker">觀相 6 — 결을 하나씩</div><h3>관상 정밀 풀이</h3>';
-      container.appendChild(hdr);
-
-      feats.forEach(function(f) {
-        var card = document.createElement('div');
-        card.className = 'scan-section-card';
-        card.style.borderColor = f.color ? f.color + '44' : 'rgba(255,255,255,0.1)';
-        var bar = document.createElement('div');
-        bar.className = 'left-bar';
-        bar.style.background = f.color || '#50C878';
-        card.appendChild(bar);
-
-        var content = document.createElement('div');
-        content.className = 'content';
-        content.innerHTML = '<h4><span class="dot" style="background:' + (f.color||'#50C878') + '"></span>' + f.name + '</h4>'
-          + '<div class="reading">' + f.desc + '</div>'
-          + '<div class="cross-wrap">'
-          + '<div class="cross-line"><span class="cross-kicker">紫微斗數</span><span class="cross-text">' + (f.ziwei || f.desc) + '</span></div>'
-          + '<div class="cross-line"><span class="cross-kicker">梅花易數</span><span class="cross-text">' + (f.meihua || '오늘 기회의 결과 같은 방향 — 스며드는 흐름이에요.') + '</span></div>'
-          + '<div class="cross-line"><span class="cross-kicker">奇門遁甲</span><span class="cross-text">' + (f.qimen || '오늘 길방에서 이 결을 가장 잘 살리는 자리가 같은 방향이에요.') + '</span></div>'
-          + '</div>';
-        card.appendChild(content);
-        container.appendChild(card);
-      });
-    }
-
-    function _renderPalmResult(r, container) {
-      var feats = (r && r.features) ? r.features : (sMode==='palm_left' ? PALM_LINES_LEFT : PALM_LINES_RIGHT).map(function(l){
-        return { name:l.l, desc:l.desc, score:l.score, color:l.color };
-      });
-
-      var isLeft = sMode === 'palm_left';
-      var hdr = document.createElement('div');
-      hdr.className = 'sec-header';
-      hdr.innerHTML = '<div class="kicker">手相 6 — 결을 하나씩</div><h3>' + (isLeft?'왼손 (선천운) 정밀 풀이':'오른손 (후천운) 정밀 풀이') + '</h3>';
-      container.appendChild(hdr);
-
-      feats.forEach(function(f) {
-        var card = document.createElement('div');
-        card.className = 'scan-section-card';
-        card.style.borderColor = (f.color||'#50C878') + '44';
-        var bar = document.createElement('div');
-        bar.className = 'left-bar';
-        bar.style.background = f.color || '#50C878';
-        card.appendChild(bar);
-
-        var obs = f.observation || '';
-        var content = document.createElement('div');
-        content.className = 'content';
-        content.innerHTML = '<h4><span class="dot" style="background:' + (f.color||'#50C878') + '"></span>' + f.name + '</h4>'
-          + (obs ? '<div class="obs">"' + obs + '"</div>' : '')
-          + '<div class="reading">' + f.desc + '</div>'
-          + '<div class="cross-wrap">'
-          + '<div class="cross-line"><span class="cross-kicker">紫微斗數</span><span class="cross-text">' + (f.ziwei || f.desc) + '</span></div>'
-          + '<div class="cross-line"><span class="cross-kicker">梅花易數</span><span class="cross-text">' + (f.meihua || '오늘 본괘의 손위풍 — 스며들고 설득하는 흐름이에요.') + '</span></div>'
-          + '<div class="cross-line"><span class="cross-kicker">奇門遁甲</span><span class="cross-text">' + (f.qimen || '기문둔갑으로 보면 오늘 길방에서 이 결을 가장 잘 살리는 자리가 같은 방향이에요.') + '</span></div>'
-          + '</div>';
-        card.appendChild(content);
-        container.appendChild(card);
-      });
-    }
-
-    function _renderSummary(r, container) {
-      container.innerHTML = '';
-      var hdr = document.createElement('div');
-      hdr.className = 'sec-header';
-      hdr.innerHTML = '<div class="kicker">綜合 — 종합 리딩</div><h3>이 사진들이 모여서 말해주는 것</h3>';
-      container.appendChild(hdr);
-
-      var grid = document.createElement('div');
-      grid.className = 'summary-grid';
-
-      // 강점
-      var strengths = r.strengths || [];
-      if (!strengths.length && r.features) {
-        strengths = r.features.slice(0,3).map(function(f){ return f.desc.split('.')[0]+'.'; });
-      }
-      var sc = document.createElement('div');
-      sc.className = 'summary-card';
-      sc.innerHTML = '<div class="title">강점</div><ul>'
-        + strengths.map(function(s){ return '<li>'+s+'</li>'; }).join('')
-        + '</ul>';
-      grid.appendChild(sc);
-
-      // 주의할 결
-      var cautions = r.cautions || [];
-      var cc = document.createElement('div');
-      cc.className = 'summary-card';
-      cc.innerHTML = '<div class="title">주의할 결</div><ul>'
-        + (cautions.length ? cautions.map(function(s){ return '<li class="caution">'+s+'</li>'; }).join('') : '<li class="caution">세심하게 살펴야 할 부분이에요.</li>')
-        + '</ul>';
-      grid.appendChild(cc);
-      container.appendChild(grid);
-
-      // 운 흐름 카드
-      if (r.interpretation) {
-        var fc = document.createElement('div');
-        fc.className = 'fortune-flow-card';
-        fc.innerHTML = '<div style="font-size:9px;font-family:monospace;letter-spacing:.3em;color:#50C878;text-transform:uppercase;margin-bottom:.5rem;">運 — 운 흐름</div>'
-          + '<p style="font-size:13px;line-height:1.9;color:rgba(220,220,245,0.95);">' + r.interpretation + '</p>';
-        container.appendChild(fc);
-      }
-    }
-
-        function buildChannels() {
-      const g = document.getElementById('chg'); if (!g) return; g.innerHTML = '';
-      CH.forEach(c => {
-        const d = document.createElement('div');
-        d.className = 'chc' + (c.id === selCh ? ' sel' : '');
-        if (c.id === selCh) d.style.borderColor = c.sb;
-        d.innerHTML = `<div class="chico" style="background:${c.iBg};"><svg viewBox="0 0 24 24" fill="none" stroke="${c.iC}" stroke-width="2">${c.icon}</svg></div><div style="flex:1;min-width:0;"><div class="chnm">${c.name}${c.coming ? '<span class="ch-coming">준비중</span>' : ''}</div><div class="chhdl">${c.handle}</div><div class="chmood">${c.mood}</div><span class="chtag" style="background:${c.tBg};color:${c.tC};">${c.tag}</span></div>`;
-        d.onclick = () => { selCh = c.id; renderCh(); };
-        g.appendChild(d);
-      });
-      renderCh();
-    }
-
-    function renderCh() {
-      const c = CH.find(x => x.id === selCh);
-      document.querySelectorAll('.chc').forEach((card, i) => { if (i < CH.length) { card.classList.toggle('sel', CH[i].id === selCh); card.style.borderColor = CH[i].id === selCh ? CH[i].sb : ''; } });
-      const yl = document.getElementById('ytl'), ylt = document.getElementById('ytlt'), yn = document.getElementById('ytnote');
-      yl.href = c.url; yl.style.background = c.btn;
-      if (c.coming) { ylt.textContent = c.name + ' 채널 보기 (콘텐츠 업로드 준비 중)'; yn.innerHTML = '<span style="color:#ccaa00;">채널은 열려있으나 콘텐츠 업로드 준비 중입니다</span>'; }
-      else { ylt.textContent = '유튜브에서 ' + c.name + ' 열기 >'; yn.innerHTML = '<span style="color:var(--em);">↑ 클릭하면 유튜브로 이동합니다</span>'; }
-      const wc2 = document.getElementById('wc2'), wt2 = document.getElementById('wt2'), wb2 = document.getElementById('wb2');
-      if (wc2) { wc2.style.background = c.why.bg; wc2.style.borderColor = c.why.bd; }
-      if (wt2) { wt2.style.color = c.why.tc; wt2.textContent = c.why.title; }
-      if (wb2) wb2.innerHTML = c.why.body;
-    }
-
-    window.addEventListener('resize', () => {
-      if (document.getElementById('pg-main-user').classList.contains('on')) { drawWave(); drawCompass(); }
-      if (document.getElementById('pg-scan').classList.contains('on')) drawScan();
+  } catch(e) {}
+}
+
+window.sendReportEmail = function(toEmail) {
+  var bodyEl = document.getElementById('report-full-body');
+  if (!bodyEl || bodyEl.innerHTML.length < 100) {
+    if (typeof showShareToast === 'function') showShareToast('⚠️ 먼저 인생 지침서를 생성해주세요');
+    return;
+  }
+  var email = toEmail || prompt('받으실 이메일 주소를 입력하세요:');
+  if (!email || !email.includes('@')) { showShareToast('⚠️ 올바른 이메일을 입력해주세요'); return; }
+  var sd = window._sajuData || {};
+
+  _initEmailJS();
+
+  // EmailJS 키가 설정된 경우 자동 발송
+  if (EJS_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY' && window.emailjs) {
+    var reportText = bodyEl.innerText.substring(0, 8000);
+    if (typeof showShareToast === 'function') showShareToast('📧 발송 중...');
+    window.emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
+      to_email: email,
+      to_name: sd.name || '고객',
+      subject: '[천기웨이브] ' + (sd.name||'') + '님의 인생 지침서',
+      report_content: reportText,
+      birth_info: (sd.year||'') + '년 ' + (sd.month||'') + '월 ' + (sd.day||'') + '일 · ' + (sd.gender||'') + ' · ' + (sd.timeStr||''),
+      generated_date: new Date().toLocaleDateString('ko-KR'),
+    }).then(function() {
+      showShareToast('✅ 이메일이 ' + email + '로 발송됐습니다!');
+    }).catch(function(err) {
+      showShareToast('❌ 발송 실패: ' + (err.text||err.message||'오류'));
+      // 폴백: PDF 창 열기
+      window.downloadPDF();
     });
-    const _kp = new URLSearchParams(window.location.search);
-    const _kc = _kp.get('code');
-    if (_kc) {
-      window.history.replaceState({}, '', '/');
-      loginSuccess({ name: '카카오 사용자', avatar: null, provider: 'kakao' });
-    }
+  } else {
+    // EmailJS 미설정 시: PDF 창 열고 저장 안내
+    showShareToast('📧 PDF를 저장 후 ' + email + '로 첨부 발송하세요');
+    setTimeout(window.downloadPDF, 500);
+  }
+};
+window.sendCompatEmail = window.sendReportEmail;
 
-  // 시/군/구 데이터 (index.html 직접 포함)
-  var _SIDO = {
-    '서울특별시':['강남구','강동구','강북구','강서구','관악구','광진구','구로구','금천구','노원구','도봉구','동대문구','동작구','마포구','서대문구','서초구','성동구','성북구','송파구','양천구','영등포구','용산구','은평구','종로구','중구','중랑구'],
-    '부산광역시':['강서구','금정구','기장군','남구','동구','동래구','부산진구','북구','사상구','사하구','서구','수영구','연제구','영도구','중구','해운대구'],
-    '대구광역시':['남구','달서구','달성군','동구','북구','서구','수성구','중구'],
-    '인천광역시':['강화군','계양구','남동구','동구','미추홀구','부평구','서구','연수구','옹진군','중구'],
-    '광주광역시':['광산구','남구','동구','북구','서구'],
-    '대전광역시':['대덕구','동구','서구','유성구','중구'],
-    '울산광역시':['남구','동구','북구','울주군','중구'],
-    '세종특별자치시':['세종시'],
-    '경기도':['가평군','고양시','과천시','광명시','광주시','구리시','군포시','김포시','남양주시','동두천시','부천시','성남시','수원시','시흥시','안산시','안성시','안양시','양주시','양평군','여주시','연천군','오산시','용인시','의왕시','의정부시','이천시','파주시','평택시','포천시','하남시','화성시'],
-    '강원특별자치도':['강릉시','고성군','동해시','삼척시','속초시','양구군','양양군','영월군','원주시','인제군','정선군','철원군','춘천시','태백시','평창군','홍천군','화천군','횡성군'],
-    '충청북도':['괴산군','단양군','보은군','영동군','옥천군','음성군','제천시','진천군','청주시','충주시'],
-    '충청남도':['계룡시','공주시','금산군','논산시','당진시','보령시','부여군','서산시','서천군','아산시','예산군','천안시','청양군','태안군','홍성군'],
-    '전라북도':['고창군','군산시','김제시','남원시','무주군','부안군','순창군','완주군','익산시','임실군','장수군','전주시','정읍시','진안군'],
-    '전라남도':['강진군','고흥군','곡성군','광양시','구례군','나주시','담양군','목포시','무안군','보성군','순천시','신안군','여수시','영광군','영암군','완도군','장성군','장흥군','진도군','함평군','해남군','화순군'],
-    '경상북도':['경산시','경주시','고령군','구미시','김천시','문경시','봉화군','상주시','성주군','안동시','영덕군','영양군','영주시','영천시','예천군','울릉군','울진군','의성군','청도군','청송군','칠곡군','포항시'],
-    '경상남도':['거제시','거창군','고성군','김해시','남해군','밀양시','사천시','산청군','양산시','의령군','진주시','창녕군','창원시','통영시','하동군','함안군','함양군','합천군'],
-    '제주특별자치도':['서귀포시','제주시'],
-    '해외':['미국 동부','미국 서부','캐나다','일본','중국','영국','독일','프랑스','호주','싱가포르','기타 해외']
+
+// ── 전역 변수 초기화 (충돌 없는 방식) ──
+window.capturedImages = window.capturedImages || { face: null, palm_left: null, palm_right: null };
+window.scanResults    = window.scanResults    || { face: null, palm_left: null, palm_right: null };
+window._adminMonth    = new Date();
+
+window.PALM_LINES_LEFT = [
+  { l:'생명선', score:82, desc:'길고 깊게 발달. 타고난 생명력·건강운 강함.', color:'#50C878', tBg:'rgba(80,200,120,0.18)', tC:'#3db866' },
+  { l:'감정선', score:78, desc:'풍부한 굴곡. 애정 표현 풍부하고 감수성 예민.', color:'#FFD700', tBg:'rgba(255,215,0,0.15)', tC:'#B8860B' },
+  { l:'두뇌선', score:85, desc:'실용적 방향. 분석력·판단력 우수.', color:'#50C878', tBg:'rgba(80,200,120,0.18)', tC:'#3db866' },
+  { l:'운명선', score:70, desc:'중년 이후 강화. 노력형 성공 패턴.', color:'#EF9F27', tBg:'rgba(255,165,0,0.15)', tC:'#c07020' }
+];
+window.PALM_LINES_RIGHT = [
+  { l:'생명선', score:80, desc:'현재 건강·활력 상태 양호.', color:'#50C878', tBg:'rgba(80,200,120,0.18)', tC:'#3db866' },
+  { l:'감정선', score:75, desc:'현재 감정 관계 안정적.', color:'#FFD700', tBg:'rgba(255,215,0,0.15)', tC:'#B8860B' },
+  { l:'두뇌선', score:88, desc:'후천적 능력 발달. 커리어 상승 흐름.', color:'#50C878', tBg:'rgba(80,200,120,0.18)', tC:'#3db866' },
+  { l:'운명선', score:83, desc:'뚜렷한 상향선. 직업운 강화 중.', color:'#8aacf0', tBg:'rgba(96,130,220,0.15)', tC:'#6082dc' }
+];
+
+// ── 카메라: 기존 video 태그 반환 (동적 생성 안 함) ──
+function _ensureVideo() {
+  return document.getElementById('camVideo');
+}
+
+window.startCamera = async function(facing) {
+  var v = _ensureVideo();
+  if (!v) return;
+  if (facing === undefined) facing = (window.sMode === 'face') ? 'user' : 'environment';
+  window.currentFacing = facing;
+  v.style.transform = facing === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
+  if (window.camStream) { window.camStream.getTracks().forEach(function(t){t.stop();}); window.camStream = null; }
+  var errBox = document.getElementById('cam-error');
+  try {
+    var stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: facing, width:{ideal:1280}, height:{ideal:720} }
+    });
+    window.camStream = stream;
+    v.srcObject = stream; v.style.display = 'block';
+    try { await v.play(); } catch(e){}
+    if (errBox) errBox.style.display = 'none';
+    setTimeout(function(){ if(typeof setFB==='function') setFB('idle'); }, 200);
+    if (typeof drawScan === 'function') drawScan();
+  } catch(e) {
+    if (facing === 'environment') {
+      try {
+        var fb = await navigator.mediaDevices.getUserMedia({video:{facingMode:'user',width:{ideal:1280},height:{ideal:720}}});
+        window.camStream = fb; v.srcObject = fb; v.style.display = 'block';
+        v.style.transform = 'scaleX(-1)'; window.currentFacing = 'user';
+        try { await v.play(); } catch(ex){}
+        if (errBox) errBox.style.display = 'none';
+        if (typeof drawScan === 'function') drawScan();
+        return;
+      } catch(e2) {}
+    }
+    v.style.display = 'none';
+    if (errBox) errBox.style.display = 'flex';
+    if (typeof setFB === 'function') setFB('nocam');
+  }
+};
+
+window.stopCamera = function() {
+  if (window.camStream) { window.camStream.getTracks().forEach(function(t){t.stop();}); window.camStream = null; }
+  var v = document.getElementById('camVideo');
+  if (v) { v.srcObject = null; v.style.display = 'none'; }
+};
+
+// ── setInputMode ──
+window.setInputMode = function(mode) {
+  var ca=document.getElementById('camera-area'), pa=document.getElementById('photo-upload-area');
+  var cb=document.getElementById('input-cam-btn'), pb=document.getElementById('input-photo-btn');
+  if (mode === 'camera') {
+    if(ca) ca.style.display='block'; if(pa) pa.style.display='none';
+    if(cb){cb.style.borderColor='var(--em)';cb.style.background='rgba(80,200,120,0.15)';cb.style.color='var(--em)';}
+    if(pb){pb.style.borderColor='var(--bd)';pb.style.background='var(--bg2)';pb.style.color='var(--t2)';}
+    window.startCamera();
+  } else {
+    if(ca) ca.style.display='none'; if(pa) pa.style.display='block';
+    if(cb){cb.style.borderColor='var(--bd)';cb.style.background='var(--bg2)';cb.style.color='var(--t2)';}
+    if(pb){pb.style.borderColor='var(--em)';pb.style.background='rgba(80,200,120,0.15)';pb.style.color='var(--em)';}
+    window.stopCamera();
+  }
+};
+
+// ── 사진 업로드 ──
+window.handlePhotoUpload = function(event) {
+  var file = event.target.files[0]; if(!file) return;
+  var reader = new FileReader();
+  reader.onload = function(e) {
+    var img=document.getElementById('preview-img'); if(img) img.src=e.target.result;
+    var pv=document.getElementById('photo-preview'), dz=document.getElementById('upload-drop-zone');
+    if(pv) pv.style.display='block'; if(dz) dz.style.display='none';
+    var hint=document.getElementById('photo-quality-hint');
+    if(hint){hint.style.cssText='padding:.6rem .85rem;border-radius:8px;background:rgba(80,200,120,0.08);border:1px solid rgba(80,200,120,0.2);font-size:11px;color:var(--em);';hint.textContent='✓ 사진 업로드 완료. 분석 버튼을 눌러주세요.';}
   };
-  function updateSigungu(type) {
-    var sidoId = type==='birth' ? 'inp-birthplace-sido' : 'inp-location-sido';
-    var sgId   = type==='birth' ? 'inp-birthplace-sigungu' : 'inp-location-sigungu';
-    var sido = (document.getElementById(sidoId)||{}).value||'';
-    var sgSel = document.getElementById(sgId);
-    if (!sgSel) return;
-    sgSel.innerHTML = '<option value="">시/군/구 선택</option>';
-    if (sido && _SIDO[sido]) {
-      _SIDO[sido].forEach(function(sg) {
-        var opt = document.createElement('option');
-        opt.value = sg; opt.textContent = sg;
-        sgSel.appendChild(opt);
-      });
+  reader.readAsDataURL(file);
+};
+
+window.analyzePhoto = function() {
+  var img=document.getElementById('preview-img');
+  if(!img||!img.src||img.src===window.location.href||img.src.length<100){
+    if(typeof showShareToast==='function') showShareToast('⚠️ 사진을 먼저 업로드해주세요'); return;
+  }
+  var canvas=document.createElement('canvas'); canvas.width=640; canvas.height=480;
+  var ctx=canvas.getContext('2d'), image=new Image();
+  image.onload=function(){
+    ctx.drawImage(image,0,0,640,480);
+    var data=canvas.toDataURL('image/jpeg',0.8);
+    window.capturedImages[window.sMode]=data;
+    _runScanImage(data.split(',')[1]);
+  };
+  image.src=img.src;
+};
+
+// ── 셔터 캡처 ──
+window.doCapture = function() {
+  if (window.sState==='scanning'||window.sState==='done') return;
+  var v=document.getElementById('camVideo');
+  if (!v||!window.camStream||v.readyState<2||v.videoWidth===0) {
+    if(typeof showShareToast==='function') showShareToast('⚠️ 카메라가 아직 준비되지 않았습니다');
+    return;
+  }
+  var snap=document.createElement('canvas'); snap.width=640; snap.height=400;
+  var sctx=snap.getContext('2d');
+  if (window.currentFacing==='user') { sctx.save();sctx.scale(-1,1);sctx.drawImage(v,-640,0,640,400);sctx.restore(); }
+  else { sctx.drawImage(v,0,0,640,400); }
+  var data=snap.toDataURL('image/jpeg',0.8);
+  window.capturedImages[window.sMode]=data;
+  _runScanImage(data.split(',')[1]);
+};
+
+function _runScanImage(imageData) {
+  window.sState='scanning';
+  var sh=document.getElementById('sh'); if(sh) sh.classList.add('cap');
+  if(typeof setFB==='function') setFB('scanning');
+  window.sLY=0; window.sLD=1;
+  var ps=document.getElementById('ps'),rs=document.getElementById('rs');
+  if(ps) ps.classList.add('show'); if(rs) rs.classList.remove('show');
+  var psteps=document.getElementById('psteps');
+  if(psteps) {
+    psteps.innerHTML='';
+    var steps=window.STEPS||[
+      {label:'얼굴 감지 및 정렬 확인',dur:600},{label:'3D 랜드마크 68점 추출',dur:900},
+      {label:'골격 구조 분석',dur:700},{label:'12궁 명반 좌표 동기화',dur:1000},
+      {label:'관상·사주 통합 해석 생성',dur:800}
+    ];
+    steps.forEach(function(s,i){
+      var d=document.createElement('div'); d.className='prog-step';
+      d.innerHTML='<div class="sico wait" id="si'+i+'">'+(i+1)+'</div>'
+        +'<div class="slbl" id="sl'+i+'">'+s.label+'</div>'
+        +'<div class="spct" id="sp'+i+'"></div>';
+      psteps.appendChild(d);
+    });
+  }
+  window._scanResult=undefined;
+  if(typeof analyzeWithAI==='function')
+    analyzeWithAI(imageData).then(function(r){window._scanResult=r;}).catch(function(){window._scanResult={};});
+  else window._scanResult={};
+  if(typeof runStep==='function') runStep(0);
+}
+
+window.startAlignCheck = function() {
+  window._alignScore=0;
+  clearInterval(window._alignTimer);
+  window._alignTimer=setInterval(function(){
+    window._alignScore=Math.min(100,(window._alignScore||0)+Math.random()*10+3);
+    var b=document.getElementById('align-bar'),h=document.getElementById('align-hint');
+    if(b) b.style.width=Math.round(window._alignScore)+'%';
+    if(h) h.textContent=window._alignScore<50?'가이드 안으로 맞춰주세요':window._alignScore<85?'거의 됐어요!':'완벽! 셔터를 눌러주세요';
+    if(window._alignScore>=95){clearInterval(window._alignTimer);if(typeof setFB==='function') setFB('ready');}
+  },200);
+};
+window.drawCamLoop=function(){if(window.camStream&&typeof drawScan==='function') drawScan();};
+
+// ── 손금 ──
+window.renderPalmLines=function(container,lines){
+  lines.forEach(function(l){
+    var col=l.score>=85?'#50C878':l.score>=75?'#FFD700':'#cc88bb';
+    var d=document.createElement('div'); d.className='feat-card';
+    d.innerHTML='<div class="feat-head"><div class="feat-name">'+l.l+'</div><div style="color:'+col+';">'+l.score+'</div></div>'
+      +'<div class="feat-bar"><div class="feat-fill" style="width:0%;background:'+col+';" data-w="'+l.score+'"></div></div>'
+      +'<div class="feat-desc">'+l.desc+'</div>'
+      +'<span class="feat-tag" style="background:rgba(80,200,120,0.15);color:#50C878;">'+(l.score>=85?'강함':l.score>=75?'보통':'약함')+'</span>';
+    container.appendChild(d);
+  });
+  setTimeout(function(){document.querySelectorAll('.feat-fill').forEach(function(f){f.style.width=f.dataset.w+'%';});},80);
+};
+window.analyzePalmWithAI=function(isLeft,imageData){
+  var ml=isLeft?'왼손 손금(선천운)':'오른손 손금(후천운)';
+  var sd=window._sajuData,ctx=sd?sd.name+' '+(sd.gender||'')+'성 '+sd.year+'년생':'';
+  var prompt=(ctx?'【'+ml+' + 사주 통합분석】의뢰인: '+ctx+' ':'')+ml+' 분석, JSON만:\n{"overall":"종합3문장","features":[{"part":"선","result":"분석","score":80}],"interpretation":"해석4문장"}';
+  return fetch('/api/saju',{method:'POST',headers:{'Content-Type':'application/json'},
+    body:JSON.stringify({model:'claude-haiku-4-5-20251001',max_tokens:1500,system:'손금AI.JSON만.',
+    messages:[{role:'user',content:[{type:'image',source:{type:'base64',media_type:'image/jpeg',data:imageData}},{type:'text',text:prompt}]}]})
+  }).then(function(r){
+    var reader=r.body.getReader(),dec=new TextDecoder(),text='',buf='';
+    function read(){return reader.read().then(function(c){
+      if(c.done){try{return JSON.parse(text.replace(/```json?\s*/gi,'').replace(/```/g,'').trim());}catch(e){return{overall:'분석완료',features:[],interpretation:'확인해주세요.'};}}
+      buf+=dec.decode(c.value,{stream:true});var ls=buf.split('\n');buf=ls.pop()||'';
+      for(var i=0;i<ls.length;i++){var ln=ls[i].trim();if(!ln.startsWith('data: '))continue;var dt=ln.slice(6).trim();if(dt==='[DONE]')continue;try{var ev=JSON.parse(dt);if(ev.type==='content_block_delta'&&ev.delta&&ev.delta.text)text+=ev.delta.text;}catch(ex){}}
+      return read();
+    });}return read();
+  }).catch(function(){return{overall:'분석오류',features:[],interpretation:'다시 시도해주세요.'};});
+};
+
+// ── 인생지침서: _sajuData 없으면 입력값으로 즉시 세팅 ──
+function _ensureSajuData() {
+  if (window._sajuData) return true;
+  var name=(document.getElementById('inp-name')||{}).value||'';
+  var year=(document.getElementById('inp-year')||{}).value||'';
+  var month=(document.getElementById('inp-month')||{}).value||'';
+  var day=(document.getElementById('inp-day')||{}).value||'';
+  if (!name||!year||!month||!day) return false;
+  var time=(document.getElementById('inp-time')||{}).value||'';
+  var unk=(document.getElementById('unk')||{}).checked||false;
+  window._sajuData = {
+    name:name, year:year, month:month, day:day,
+    timeStr: unk?'시간미상':time,
+    age: new Date().getFullYear()-parseInt(year),
+    gender: window.selectedGender||'남',
+    cal: window.selectedCal||'양력',
+    star:'', daewoon:'', summary:'', scores:{}, lucky_direction:'북동'
+  };
+  return true;
+}
+
+window.generate50PReport = function() {
+  if (!_ensureSajuData()) {
+    alert('이름과 생년월일을 먼저 입력해주세요.');
+    if(typeof showPg==='function') showPg('main');
+    return;
+  }
+  var sd = window._sajuData;
+  var bodyEl = document.getElementById('report-full-body');
+  var genBtn = document.getElementById('report-generate-btn');
+  if(genBtn) genBtn.style.display = 'none';
+
+  if(bodyEl) bodyEl.innerHTML =
+    '<div style="text-align:center;padding:3rem 1rem;color:var(--t2);">'
+    + '<div style="font-size:48px;margin-bottom:1rem;animation:spin 1.2s linear infinite;display:inline-block;">⭐</div>'
+    + '<div style="font-size:15px;font-weight:700;color:#fff;margin-bottom:.5rem;" id="rpt-status">1부 분석 중... (1/2) 🔮</div>'
+    + '<div style="font-size:12px;color:var(--t2);margin-bottom:1.25rem;" id="rpt-sub">명주총평 · 생애대운 · 재물 · 직업 · 애정 분석 중입니다 ☕ 잠시만 기다려주세요!</div>'
+    + '<div style="width:260px;height:6px;background:rgba(255,255,255,0.1);border-radius:3px;overflow:hidden;margin:0 auto 1rem;">'
+    +   '<div id="rpt-bar" style="height:100%;width:0%;background:linear-gradient(90deg,var(--em),#FFD700);border-radius:3px;transition:width .4s;"></div>'
+    + '</div>'
+    + '<div style="font-size:11px;color:rgba(255,255,255,0.3);">총 50페이지 분량 · 약 60~90초 소요됩니다</div>'
+    + '</div>';
+
+  var prog = 0;
+  var progTimer = setInterval(function() {
+    prog = Math.min(45, prog + Math.random() * 2 + 0.5);
+    var b = document.getElementById('rpt-bar');
+    if(b) b.style.width = prog + '%';
+  }, 600);
+
+  var baseInfo = '[' + sd.name + '] ' + (sd.gender||'남') + ' '
+    + sd.year + '년 ' + sd.month + '월 ' + sd.day + '일 '
+    + (sd.timeStr||'생시미상') + ' (' + (sd.age||'') + '세)'
+    + (sd.star ? ' · 명궁주성: ' + sd.star : '')
+    + (sd.daewoon ? ' · 현재대운: ' + sd.daewoon : '');
+
+  var styleRule = '각 섹션은 반드시 <h3 style="color:#FFD700;margin:1.2rem 0 .5rem;">제목</h3>'
+    + '<p style="color:#ccccee;line-height:1.9;margin-bottom:.75rem;">본문</p> HTML 형식으로만 출력.'
+    + ' 절대 ```html 이나 ``` 같은 마크다운 코드블록 사용 금지. 순수 HTML 태그만 출력.';
+
+  var system = '당신은 자미두수·매화역수·기문둔갑 40년 경력 명리학 대가입니다. ' + styleRule;
+
+  var prompt1 = baseInfo + '\n\n'
+    + '인생 지침서 1부 (섹션 1~5) - 각 섹션 3~4문장으로 핵심만:\n\n'
+    + '1. <h3>✨ 명주(命主) 총평</h3> - 타고난 그릇, 명궁주성 특성, 인생 키워드 3가지\n'
+    + '2. <h3>🌊 생애 대운 흐름</h3> - 10대부터 80대까지 10년 단위 대운 흐름과 주요 전환점\n'
+    + '3. <h3>💰 재물·투자운</h3> - 돈을 버는 방식, 재물운 강한 시기, 투자 주의사항\n'
+    + '4. <h3>💼 직업·커리어운</h3> - 적성에 맞는 직업군, 승진/전직 타이밍, 커리어 전략\n'
+    + '5. <h3>💕 애정·인간관계</h3> - 연애 스타일, 결혼 적령기, 귀인 유형, 주의할 관계\n\n'
+    + styleRule;
+
+  var prompt2 = baseInfo + '\n\n'
+    + '인생 지침서 2부 (섹션 6~10) - 각 섹션 3~4문장으로 핵심만:\n\n'
+    + '6. <h3>🌿 건강·체질 분석</h3> - 타고난 체질, 주의할 질환, 건강 관리법\n'
+    + '7. <h3>🧭 기문둔갑 전략</h3> - 길방(吉方), 흉방(凶方), 이동·이사 타이밍\n'
+    + '8. <h3>🌸 매화역수 월별운</h3> - 올해 월별 길흉, 가장 좋은 달, 조심할 달\n'
+    + '9. <h3>⭐ 개운법·길일 캘린더</h3> - 운을 높이는 색상·숫자·방향, 이달의 길일 5개\n'
+    + '10. <h3>📅 2025~2027 타임라인</h3> - 연도별 핵심 운세, 놓치면 안 될 기회, 위기 시기\n\n'
+    + styleRule;
+
+  function fetchSection(prompt, progStart, progEnd, statusText, subText) {
+    var statusEl = document.getElementById('rpt-status');
+    var subEl = document.getElementById('rpt-sub');
+    if(statusEl) statusEl.textContent = statusText;
+    if(subEl) subEl.textContent = subText;
+    clearInterval(progTimer);
+    progTimer = setInterval(function() {
+      prog = Math.min(progEnd - 2, prog + Math.random() * 1.5 + 0.3);
+      var b = document.getElementById('rpt-bar');
+      if(b) b.style.width = prog + '%';
+    }, 600);
+    return fetch('/api/saju', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({model:'claude-sonnet-4-6', max_tokens:8000, system:system, messages:[{role:'user',content:prompt}]})
+    }).then(function(response) {
+      if(!response.ok) throw new Error('서버 오류 ' + response.status);
+      var reader = response.body.getReader(), dec = new TextDecoder(), html = '', buf = '';
+      function read() {
+        return reader.read().then(function(chunk) {
+          if(chunk.done) return html;
+          buf += dec.decode(chunk.value, {stream:true});
+          var ls = buf.split('\n'); buf = ls.pop() || '';
+          for(var i=0;i<ls.length;i++){
+            var ln=ls[i].trim(); if(!ln.startsWith('data: ')) continue;
+            var dt=ln.slice(6).trim(); if(dt==='[DONE]') continue;
+            try{var ev=JSON.parse(dt);if(ev.type==='content_block_delta'&&ev.delta&&ev.delta.text)html+=ev.delta.text;}catch(e){}
+          }
+          return read();
+        });
+      }
+      return read();
+    });
+  }
+
+  fetchSection(prompt1, 0, 48, '1부 분석 중... (1/2) 🔮', '명주총평 · 생애대운 · 재물 · 직업 · 애정 분석 중입니다 ☕ 잠시만 기다려주세요!')
+  .then(function(html1) {
+    prog = 50;
+    var b = document.getElementById('rpt-bar'); if(b) b.style.width = '50%';
+    return fetchSection(prompt2, 50, 95, '2부 분석 중... (2/2) ✨', '건강 · 기문둔갑 · 매화역수 · 개운법 · 타임라인 작성 중입니다 🌙 거의 다 왔어요!')
+    .then(function(html2) {
+      clearInterval(progTimer);
+      var b2 = document.getElementById('rpt-bar'); if(b2) b2.style.width = '100%';
+      var fullHtml = (html1 + html2).replace(/```html\s*/gi,'').replace(/```\s*/g,'').trim();
+      setTimeout(function() {
+        if(bodyEl) bodyEl.innerHTML = '<div style="font-size:13px;color:var(--t2);line-height:2;padding:.5rem 0;">' + fullHtml + '</div>';
+        var ab=document.getElementById('report-action-btns'); if(ab) ab.style.display='block';
+        var rb=document.getElementById('report-regen-btn'); if(rb) rb.style.display='block';
+        try{localStorage.setItem('cw_report_'+sd.name,JSON.stringify({html:fullHtml,date:new Date().toISOString()}));}catch(e){}
+        if(typeof showShareToast==='function') showShareToast('✅ 인생 지침서 완성! 🎉');
+      }, 300);
+    });
+  }).catch(function(e) {
+    clearInterval(progTimer);
+    if(bodyEl) bodyEl.innerHTML='<div style="color:#e74c3c;padding:1rem;border-radius:8px;background:rgba(231,76,60,0.1);">오류: '+e.message+'<br><button onclick="generate50PReport()" style="margin-top:.5rem;padding:8px 16px;background:var(--em);border:none;border-radius:6px;color:#fff;cursor:pointer;font-family:inherit;">다시 시도</button></div>';
+    if(genBtn) genBtn.style.display='block';
+  });
+};
+
+// ── 결제 (테스트: 바로 열람) ──
+window.doPayment = function(method) {
+  _ensureSajuData();
+  localStorage.setItem('cw_paid','1');
+  var paySection=document.getElementById('payment-section');
+  var paidSection=document.getElementById('report-paid-section');
+  if(paySection) paySection.style.display='none';
+  if(paidSection) paidSection.style.display='block';
+  var sd=window._sajuData||{};
+  var t=document.getElementById('report-title'),g=document.getElementById('report-price-tag');
+  if(t) t.textContent='✅ 결제 완료 — 즉시 열람 가능';
+  if(g) g.textContent='₩19,900 · 얼리버드';
+  if(sd.name){
+    var ib=document.getElementById('report-ib-title'),ib2=document.getElementById('report-ib-body');
+    if(ib) ib.textContent=sd.name+' · '+(sd.star||'명리')+' 분석';
+    if(ib2) ib2.innerHTML=sd.summary||sd.name+'님의 사주 기반으로 인생 지침서를 생성합니다.';
+  }
+  if(typeof showShareToast==='function') showShareToast('✅ 결제가 완료됐습니다!');
+};
+
+// ── 기타 누락 함수 ──
+window.goToTimeline=function(){if(typeof showPg==='function')showPg('report');};
+window.checkScanBeforeReport=function(){if(typeof showPg==='function')showPg('report');};
+window.goNextScan=function(){
+  if(window.sMode==='face'){if(typeof setMode==='function')setMode('palm_left',document.getElementById('mp'));}
+  else if(window.sMode==='palm_left'){if(typeof setMode==='function')setMode('palm_right',document.getElementById('mp2'));}
+  else{if(typeof showPg==='function')showPg('report');}
+};
+window.selectPlan=function(plan){
+  var e=document.getElementById('price-early'),f=document.getElementById('price-full');
+  if(plan==='early'){if(e){e.style.border='2px solid var(--gold)';e.style.opacity='1';}if(f){f.style.border='1px solid var(--bd)';f.style.opacity='0.7';}}
+  else{if(f){f.style.border='2px solid #fff';f.style.opacity='1';}if(e){e.style.border='1px solid rgba(255,215,0,0.3)';e.style.opacity='0.7';}}
+};
+window.confirmBankTransfer=function(){if(typeof showShareToast==='function')showShareToast('✅ 입금 완료 알림 전송. 24시간 내 리포트 발송드립니다.');};
+
+
+// ── PDF 생성 (jsPDF) ──
+window.downloadPDF = function() {
+  var bodyEl = document.getElementById('report-full-body');
+  if (!bodyEl || bodyEl.innerHTML.length < 200) {
+    if (typeof showShareToast === 'function') showShareToast('⚠️ 먼저 인생 지침서를 생성해주세요');
+    return;
+  }
+  if (typeof showShareToast === 'function') showShareToast('📄 PDF 생성 중... 잠시만요!');
+  var sd = window._sajuData || {};
+
+  function loadScript(src, cb) {
+    if (document.querySelector('script[src="'+src+'"]')) { cb(); return; }
+    var s = document.createElement('script'); s.src = src; s.onload = cb; document.head.appendChild(s);
+  }
+  loadScript('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js', function() {
+    _buildPDF(sd, bodyEl);
+  });
+};
+
+function _buildPDF(sd, bodyEl) {
+  var jsPDF = window.jspdf && window.jspdf.jsPDF;
+  if (!jsPDF) { showShareToast('❌ PDF 라이브러리 로드 실패'); return; }
+
+  var doc = new jsPDF({ orientation:'portrait', unit:'mm', format:'a4' });
+  var W=210, H=297, M=18;
+  var name = sd.name || '고객';
+  var today = new Date().toLocaleDateString('ko-KR');
+
+  // 헬퍼
+  function bg(r,g,b){ doc.setFillColor(r,g,b); doc.rect(0,0,W,H,'F'); }
+  function setFont(size, bold, r,g,b){
+    doc.setFontSize(size);
+    doc.setFont('helvetica', bold?'bold':'normal');
+    doc.setTextColor(r||255,g||255,b||255);
+  }
+  function drawText(str, x, y, opts){
+    opts=opts||{};
+    setFont(opts.size||12, opts.bold, ...(opts.color||[255,255,255]));
+    doc.text(str, x, y, {align:opts.align||'left'});
+  }
+  function footer(pageNum){
+    doc.setFillColor(20,20,60); doc.rect(0,H-12,W,12,'F');
+    setFont(8,false,80,80,120);
+    doc.text('천기 웨이브 (cheongi-wave.vercel.app)', M, H-4);
+    doc.text(pageNum+'', W-M, H-4, {align:'right'});
+    doc.setDrawColor(255,215,0,0.2); doc.setLineWidth(0.3); doc.line(0,H-12,W,H-12);
+  }
+
+  // 섹션 타이틀 정의
+  var SECTION_TITLES = [
+    '제1장  명주(命主) 사주 풀이',
+    '제2장  생애 대운(大運) 흐름',
+    '제3장  재물 · 투자운',
+    '제4장  직업 · 커리어운',
+    '제5장  애정 · 인간관계',
+    '제6장  건강 · 체질 분석',
+    '제7장  기문둔갑(奇門遁甲) 전략',
+    '제8장  매화역수(梅花易數) 월별운',
+    '제9장  개운법 · 길일 캘린더',
+    '제10장  2025~2027 타임라인',
+  ];
+  var SECTION_SUBTITLES = [
+    '자미두수 14주성과 12궁위로 타고난 그릇을 분석합니다',
+    '10대부터 80대까지, 인생의 파도를 미리 봅니다',
+    '돈을 버는 방식과 재물운이 강한 시기를 알아봅니다',
+    '최적의 직업군과 커리어 전환 타이밍을 제시합니다',
+    '연애 스타일, 결혼 적령기, 귀인의 방향을 안내합니다',
+    '타고난 체질과 주의해야 할 건강 패턴을 분석합니다',
+    '기문둔갑 팔문으로 길방·흉방과 이동 전략을 안내합니다',
+    '매화역수로 올해 월별 길흉과 최적 행동 시기를 봅니다',
+    '운을 높이는 색상·숫자·방향과 이달의 길일을 안내합니다',
+    '연도별 핵심 운세와 놓치면 안 될 기회를 정리합니다',
+  ];
+
+  var pageNum = 1;
+
+  // ══════════════════════════════
+  // 1페이지: 표지
+  // ══════════════════════════════
+  bg(15,15,58);
+
+  // 상단 골드 바
+  doc.setFillColor(255,215,0); doc.rect(0,0,W,3,'F');
+
+  // 중앙 원형 장식
+  doc.setDrawColor(255,215,0); doc.setLineWidth(0.3);
+  doc.circle(W/2,130,48,'S');
+  doc.setDrawColor(255,215,0,0.3); doc.setLineWidth(0.2);
+  doc.circle(W/2,130,56,'S');
+
+  // 별
+  setFont(36,true,...[255,215,0]);
+  doc.text('⭐', W/2, 140, {align:'center'});
+
+  // 메인 타이틀
+  setFont(34,true,...[255,255,255]);
+  doc.text('인생 지침서', W/2, 175, {align:'center'});
+
+  // 골드 언더라인
+  doc.setDrawColor(255,215,0); doc.setLineWidth(1.5);
+  doc.line(W/2-35, 180, W/2+35, 180);
+
+  // 부제
+  setFont(13,false,...[200,200,230]);
+  doc.text('자미두수 · 매화역수 · 기문둔갑 3대 역학 통합 분석', W/2, 193, {align:'center'});
+
+  // 의뢰인 박스
+  doc.setFillColor(25,25,75); doc.roundedRect(M+10,205,W-M*2-20,45,4,4,'F');
+  doc.setDrawColor(255,215,0,0.5); doc.roundedRect(M+10,205,W-M*2-20,45,4,4,'S');
+
+  setFont(11,false,...[153,153,204]);
+  doc.text('의뢰인', W/2, 217, {align:'center'});
+  setFont(20,true,...[255,255,255]);
+  doc.text(name + ' 님', W/2, 230, {align:'center'});
+  setFont(10,false,...[153,153,204]);
+  doc.text((sd.year||'')+'년 '+(sd.month||'')+'월 '+(sd.day||'')+'일생  ·  '+(sd.gender||'')+'  ·  명궁주성: '+(sd.star||'미상'), W/2, 241, {align:'center'});
+
+  setFont(9,false,...[80,80,120]);
+  doc.text('생성일: '+today, W/2, 258, {align:'center'});
+
+  // 하단 골드 바
+  doc.setFillColor(255,215,0); doc.rect(0,H-3,W,3,'F');
+
+  footer(pageNum++);
+
+  // ══════════════════════════════
+  // 2페이지: 목차
+  // ══════════════════════════════
+  doc.addPage(); bg(15,15,58);
+  doc.setFillColor(255,215,0); doc.rect(0,0,W,3,'F');
+
+  setFont(28,true,...[255,215,0]);
+  doc.text('목  차', W/2, 48, {align:'center'});
+  doc.setDrawColor(255,215,0,0.5); doc.setLineWidth(0.5); doc.line(M+20,55,W-M-20,55);
+
+  var ty = 72;
+  SECTION_TITLES.forEach(function(title,i){
+    var isEven = i%2===0;
+    doc.setFillColor(isEven?22:18, isEven?22:18, isEven?68:58);
+    doc.roundedRect(M, ty, W-M*2, 17, 2, 2, 'F');
+    // 번호 배지
+    doc.setFillColor(255,215,0);
+    doc.circle(M+8, ty+8.5, 6, 'F');
+    setFont(9,true,...[15,15,58]);
+    doc.text(String(i+1), M+8, ty+11, {align:'center'});
+    // 제목
+    setFont(11,true,...[255,255,255]);
+    doc.text(title, M+20, ty+8, {});
+    // 부제
+    setFont(8,false,...[153,153,204]);
+    doc.text(SECTION_SUBTITLES[i], M+20, ty+14, {});
+    // 점선
+    doc.setDrawColor(80,80,120); doc.setLineWidth(0.2);
+    doc.setLineDashPattern([1,2],0);
+    doc.line(M, ty+17, W-M, ty+17);
+    doc.setLineDashPattern([],0);
+    ty += 19;
+  });
+
+  footer(pageNum++);
+
+  // ══════════════════════════════
+  // 본문: 섹션별 타이틀 페이지 + 내용 페이지
+  // ══════════════════════════════
+
+  // HTML에서 섹션 파싱
+  var tmpDiv = document.createElement('div');
+  tmpDiv.innerHTML = bodyEl.innerHTML
+    .replace(/```html\s*/gi,'').replace(/```\s*/g,'')
+    .replace(/<span[^>]*typing-cursor[^>]*>.*?<\/span>/g,'');
+
+  var allH3 = tmpDiv.querySelectorAll('h3');
+  var sections = [];
+
+  if (allH3.length > 0) {
+    allH3.forEach(function(h3, si){
+      var sec = { title: h3.textContent.trim(), paras: [] };
+      var node = h3.nextElementSibling;
+      while (node && node.tagName !== 'H3') {
+        var t = node.textContent.trim();
+        if (t.length > 3) sec.paras.push({ tag: node.tagName, text: t });
+        node = node.nextElementSibling;
+      }
+      sections.push(sec);
+    });
+  } else {
+    // h3 없으면 p 전체를 하나로
+    var allP = tmpDiv.querySelectorAll('p, h4');
+    var sec0 = { title: '분석 결과', paras: [] };
+    allP.forEach(function(p){ if(p.textContent.trim().length>3) sec0.paras.push({tag:p.tagName, text:p.textContent.trim()}); });
+    sections.push(sec0);
+  }
+
+  var secColors = [
+    [80,200,120],[255,215,0],[255,165,0],[138,172,240],
+    [204,136,187],[80,200,120],[255,215,0],[255,165,0],
+    [138,172,240],[204,136,187]
+  ];
+
+  sections.forEach(function(sec, si){
+    var sColor = secColors[si % secColors.length];
+    var chapterTitle = SECTION_TITLES[si] || sec.title;
+    var chapterSub = SECTION_SUBTITLES[si] || '';
+
+    // ── 챕터 타이틀 페이지 ──
+    doc.addPage(); bg(15,15,58);
+
+    // 배경 장식 원
+    doc.setFillColor(sColor[0],sColor[1],sColor[2]);
+    doc.circle(W/2, H/2-20, 70, 'F');
+    doc.setFillColor(15,15,58); doc.circle(W/2, H/2-20, 62, 'F');
+
+    // 챕터 번호
+    doc.setFillColor(sColor[0],sColor[1],sColor[2]);
+    doc.circle(W/2, H/2-20, 22, 'F');
+    setFont(20,true,...[15,15,58]);
+    doc.text(String(si+1), W/2, H/2-13, {align:'center'});
+
+    // 제목
+    setFont(22,true,...[255,255,255]);
+    doc.text(chapterTitle, W/2, H/2+28, {align:'center'});
+
+    // 부제
+    setFont(11,false,...[sColor[0],sColor[1],sColor[2]]);
+    doc.text(chapterSub, W/2, H/2+42, {align:'center'});
+
+    // 장식선
+    doc.setDrawColor(sColor[0],sColor[1],sColor[2]);
+    doc.setLineWidth(0.8);
+    doc.line(M+30, H/2+50, W-M-30, H/2+50);
+
+    // 역학 배지
+    var badges = ['자미두수','매화역수','기문둔갑'];
+    var bColors = [[80,200,120],[255,215,0],[138,172,240]];
+    badges.forEach(function(b,bi){
+      var bx = W/2 - 42 + bi*28;
+      doc.setFillColor(bColors[bi][0],bColors[bi][1],bColors[bi][2]);
+      doc.roundedRect(bx-12, H/2+56, 24, 9, 2, 2, 'F');
+      setFont(7,true,...[15,15,58]);
+      doc.text(b, bx, H/2+62, {align:'center'});
+    });
+
+    footer(pageNum++);
+
+    // ── 내용 페이지 ──
+    if (sec.paras.length === 0) return;
+
+    doc.addPage(); bg(15,15,58);
+
+    // 헤더
+    doc.setFillColor(18,18,60); doc.rect(0,0,W,22,'F');
+    doc.setFillColor(sColor[0],sColor[1],sColor[2]); doc.rect(0,0,4,22,'F');
+    setFont(12,true,...[255,255,255]);
+    doc.text(chapterTitle, M, 14, {});
+    doc.setDrawColor(sColor[0],sColor[1],sColor[2]); doc.setLineWidth(0.4); doc.line(0,22,W,22);
+
+    var py = 34;
+    var maxY = H-18;
+
+    sec.paras.forEach(function(para){
+      if (para.tag === 'H4') {
+        if (py > maxY-12) {
+          doc.addPage(); bg(15,15,58);
+          doc.setFillColor(18,18,60); doc.rect(0,0,W,16,'F');
+          setFont(9,false,...[153,153,204]);
+          doc.text(chapterTitle+' (계속)', M, 11, {});
+          doc.setDrawColor(sColor[0],sColor[1],sColor[2]); doc.setLineWidth(0.3); doc.line(0,16,W,16);
+          footer(pageNum++);
+          py = 26;
+        }
+        setFont(11,true,...[sColor[0],sColor[1],sColor[2]]);
+        doc.text(para.text, M, py, {});
+        py += 8;
+        doc.setDrawColor(sColor[0],sColor[1],sColor[2],0.4);
+        doc.setLineWidth(0.2); doc.line(M, py, W-M, py);
+        py += 5;
+      } else {
+        // 긴 텍스트: 한 줄당 45자
+        var maxC = 45;
+        var txt = para.text;
+        var rows = [];
+        for (var ci=0; ci<txt.length; ci+=maxC) rows.push(txt.slice(ci,ci+maxC));
+
+        rows.forEach(function(row){
+          if (py > maxY-8) {
+            doc.addPage(); bg(15,15,58);
+            doc.setFillColor(18,18,60); doc.rect(0,0,W,16,'F');
+            setFont(9,false,...[153,153,204]);
+            doc.text(chapterTitle+' (계속)', M, 11, {});
+            doc.setDrawColor(sColor[0],sColor[1],sColor[2]); doc.setLineWidth(0.3); doc.line(0,16,W,16);
+            footer(pageNum++);
+            py = 26;
+          }
+          setFont(10,false,...[210,210,240]);
+          doc.text(row, M, py, {});
+          py += 7;
+        });
+        py += 3;
+      }
+    });
+
+    footer(pageNum++);
+  });
+
+  // 마지막 페이지: 마무리
+  doc.addPage(); bg(15,15,58);
+  doc.setFillColor(255,215,0); doc.rect(0,0,W,3,'F');
+  doc.setFillColor(255,215,0); doc.rect(0,H-3,W,3,'F');
+
+  setFont(24,true,...[255,215,0]);
+  doc.text('천기(天機)를 아는 자는', W/2, 110, {align:'center'});
+  setFont(24,true,...[255,255,255]);
+  doc.text('두려움이 없습니다', W/2, 128, {align:'center'});
+
+  doc.setDrawColor(255,215,0); doc.setLineWidth(0.8);
+  doc.line(M+30, 136, W-M-30, 136);
+
+  setFont(11,false,...[153,153,204]);
+  doc.text('본 리포트는 자미두수·매화역수·기문둔갑 3대 역학을', W/2, 152, {align:'center'});
+  doc.text('AI로 통합 분석한 참고 자료입니다.', W/2, 162, {align:'center'});
+
+  setFont(10,false,...[80,80,120]);
+  doc.text('천기 웨이브  ·  cheongi-wave.vercel.app', W/2, 200, {align:'center'});
+  doc.text('© 2026 Cheongi Wave. All rights reserved.', W/2, 210, {align:'center'});
+
+  footer(pageNum++);
+
+  // 저장
+  var filename = (name||'고객')+'_인생지침서_'+today.replace(/\./g,'')+'.pdf';
+  doc.save(filename);
+  window._lastPdfBase64 = doc.output('datauristring');
+  window._lastPdfFilename = filename;
+  if (typeof showShareToast === 'function') showShareToast('✅ PDF 저장 완료!');
+}
+window.downloadCompatPDF = window.downloadPDF;
+
+
+window.viewMyReport=function(){if(typeof showPg==='function')showPg('report');};
+window.applyUISettings=function(){};
+window.saveSettings=function(){if(typeof showShareToast==='function')showShareToast('✅ 설정 저장됐습니다');};
+window.resetSettings=function(){if(typeof showShareToast==='function')showShareToast('초기화됐습니다');};
+window.applySettings=function(){};
+window.toggleMirror=function(){
+  var v=document.getElementById('camVideo');
+  if(!v) return;
+  v.style.transform=(v.style.transform==='scaleX(1)')?'scaleX(-1)':'scaleX(1)';
+};
+window.switchAdminTab=function(tab){
+  ['batch','members','settings'].forEach(function(t){
+    var el=document.getElementById('admin-tab-'+t),btn=document.getElementById('atab-'+t);
+    if(el)el.style.display=t===tab?'block':'none';
+    if(btn)btn.classList.toggle('on',t===tab);
+  });
+};
+window.setAdminTab=function(filter,btn){
+  document.querySelectorAll('#admin-tab-members .admin-tab').forEach(function(b){b.classList.remove('on');});
+  if(btn)btn.classList.add('on');
+};
+window.changeAdminMonth=function(dir){
+  window._adminMonth.setMonth(window._adminMonth.getMonth()+dir);
+  var el=document.getElementById('admin-month-label');
+  if(el)el.textContent=window._adminMonth.getFullYear()+'년 '+(window._adminMonth.getMonth()+1)+'월';
+};
+window.addAdminMember=function(){if(typeof showShareToast==='function')showShareToast('✅ 회원 추가됐습니다');};
+
+// ── loginSuccess: localStorage 저장 ──
+window._origLS=window.loginSuccess;
+window.loginSuccess=function(user){
+  window.currentUser=user;
+  try{localStorage.setItem('cw_user',JSON.stringify(user));}catch(e){}
+  if(typeof closeAuth==='function')closeAuth();
+  if(typeof renderUserNav==='function')renderUserNav(user);
+  else{
+    var area=document.getElementById('nav-auth-area');
+    if(area){var ini=(user.name||'?').slice(0,1).toUpperCase();area.innerHTML='<div class="nav-user-pill"><div class="nav-user-avatar">'+ini+'</div><span class="nav-user-name">'+user.name+'</span><button class="nav-logout" onclick="doLogout()">로그아웃</button></div>';}
+  }
+  if(typeof renderWelcomeMsg==='function')setTimeout(renderWelcomeMsg,100);
+  if(typeof trackVisit==='function')trackVisit();
+};
+
+// ── switchCommTab 재정의 ──
+window.switchCommTab=function(tab){
+  ['review','board','qna'].forEach(function(t){
+    var el=document.getElementById('comm-'+t);if(el)el.style.display=t===tab?'block':'none';
+  });
+  var rb=document.getElementById('comm-tab-review'),bb=document.getElementById('comm-tab-board'),qb=document.getElementById('comm-tab-qna');
+  if(rb){rb.style.background=tab==='review'?'var(--em)':'none';rb.style.color=tab==='review'?'#fff':'var(--t2)';rb.style.borderColor=tab==='review'?'var(--em)':'var(--bd)';}
+  if(bb){bb.style.background=tab==='board'?'rgba(255,215,0,0.15)':'none';bb.style.color=tab==='board'?'var(--gold)':'var(--t2)';bb.style.borderColor=tab==='board'?'rgba(255,215,0,0.4)':'var(--bd)';}
+  if(qb){qb.style.background=tab==='qna'?'rgba(138,172,240,0.2)':'none';qb.style.color=tab==='qna'?'#8aacf0':'var(--t2)';qb.style.borderColor=tab==='qna'?'rgba(138,172,240,0.4)':'var(--bd)';}
+  if(tab==='qna'&&typeof renderFixedQnA==='function')renderFixedQnA();
+  if(tab==='board'&&typeof renderBoardList==='function')renderBoardList();
+  if(tab==='review'&&typeof renderReviews==='function')renderReviews();
+};
+
+
+// ── 시/도 데이터 & 출생지/거주지 ──
+var SIDO_DATA = {
+  '서울특별시':['강남구','강동구','강북구','강서구','관악구','광진구','구로구','금천구','노원구','도봉구','동대문구','동작구','마포구','서대문구','서초구','성동구','성북구','송파구','양천구','영등포구','용산구','은평구','종로구','중구','중랑구'],
+  '부산광역시':['강서구','금정구','기장군','남구','동구','동래구','부산진구','북구','사상구','사하구','서구','수영구','연제구','영도구','중구','해운대구'],
+  '대구광역시':['남구','달서구','달성군','동구','북구','서구','수성구','중구'],
+  '인천광역시':['강화군','계양구','남동구','동구','미추홀구','부평구','서구','연수구','옹진군','중구'],
+  '광주광역시':['광산구','남구','동구','북구','서구'],
+  '대전광역시':['대덕구','동구','서구','유성구','중구'],
+  '울산광역시':['남구','동구','북구','울주군','중구'],
+  '세종특별자치시':['세종시'],
+  '경기도':['가평군','고양시','과천시','광명시','광주시','구리시','군포시','김포시','남양주시','동두천시','부천시','성남시','수원시','시흥시','안산시','안성시','안양시','양주시','양평군','여주시','연천군','오산시','용인시','의왕시','의정부시','이천시','파주시','평택시','포천시','하남시','화성시'],
+  '강원특별자치도':['강릉시','고성군','동해시','삼척시','속초시','양구군','양양군','영월군','원주시','인제군','정선군','철원군','춘천시','태백시','평창군','홍천군','화천군','횡성군'],
+  '충청북도':['괴산군','단양군','보은군','영동군','옥천군','음성군','제천시','진천군','청주시','충주시'],
+  '충청남도':['계룡시','공주시','금산군','논산시','당진시','보령시','부여군','서산시','서천군','아산시','예산군','천안시','청양군','태안군','홍성군'],
+  '전라북도':['고창군','군산시','김제시','남원시','무주군','부안군','순창군','완주군','익산시','임실군','장수군','전주시','정읍시','진안군'],
+  '전라남도':['강진군','고흥군','곡성군','광양시','구례군','나주시','담양군','목포시','무안군','보성군','순천시','신안군','여수시','영광군','영암군','완도군','장성군','장흥군','진도군','함평군','해남군','화순군'],
+  '경상북도':['경산시','경주시','고령군','구미시','김천시','문경시','봉화군','상주시','성주군','안동시','영덕군','영양군','영주시','영천시','예천군','울릉군','울진군','의성군','청도군','청송군','칠곡군','포항시'],
+  '경상남도':['거제시','거창군','고성군','김해시','남해군','밀양시','사천시','산청군','양산시','의령군','진주시','창녕군','창원시','통영시','하동군','함안군','함양군','합천군'],
+  '제주특별자치도':['서귀포시','제주시'],
+  '해외':['미국 동부','미국 서부','캐나다','일본','중국','영국','독일','프랑스','호주','싱가포르','기타 해외']
+};
+
+function initSidoSelects() {
+  var sidos = Object.keys(SIDO_DATA);
+  ['inp-birthplace-sido','inp-location-sido'].forEach(function(id) {
+    var sel = document.getElementById(id);
+    if (!sel) return;
+    sel.innerHTML = '<option value="">시/도 선택</option>';
+    sidos.forEach(function(sido) {
+      var opt = document.createElement('option');
+      opt.value = sido; opt.textContent = sido;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+window.updateSigungu = function(type) {
+  var sidoId = type==='birth' ? 'inp-birthplace-sido' : 'inp-location-sido';
+  var sgId   = type==='birth' ? 'inp-birthplace-sigungu' : 'inp-location-sigungu';
+  var sido = (document.getElementById(sidoId)||{}).value||'';
+  var sgSel = document.getElementById(sgId);
+  if (!sgSel) return;
+  sgSel.innerHTML = '<option value="">시/군/구 선택</option>';
+  if (sido && SIDO_DATA[sido]) {
+    SIDO_DATA[sido].forEach(function(sg) {
+      var opt = document.createElement('option');
+      opt.value = sg; opt.textContent = sg;
+      sgSel.appendChild(opt);
+    });
+  }
+};
+
+window.updateBirthplace = function() {
+  var sido = (document.getElementById('inp-birthplace-sido')||{}).value||'';
+  var sg   = (document.getElementById('inp-birthplace-sigungu')||{}).value||'';
+  var h = document.getElementById('inp-birthplace');
+  if (h) h.value = sg ? sido+' '+sg : sido;
+};
+
+window.updateLocation = function() {
+  var sido = (document.getElementById('inp-location-sido')||{}).value||'';
+  var sg   = (document.getElementById('inp-location-sigungu')||{}).value||'';
+  var h = document.getElementById('inp-location');
+  if (h) h.value = sg ? sido+' '+sg : sido;
+};
+
+function _restorePlace(type, val) {
+  if (!val) return;
+  var sidoId = type==='birth' ? 'inp-birthplace-sido' : 'inp-location-sido';
+  var sgId   = type==='birth' ? 'inp-birthplace-sigungu' : 'inp-location-sigungu';
+  var parts = val.split(' ');
+  var sido = parts[0]||'', sg = parts.slice(1).join(' ')||'';
+  var sidoEl = document.getElementById(sidoId);
+  if (sidoEl) {
+    sidoEl.value = sido;
+    window.updateSigungu(type);
+    setTimeout(function(){
+      var sgEl = document.getElementById(sgId);
+      if (sgEl) sgEl.value = sg;
+      var h = document.getElementById(type==='birth'?'inp-birthplace':'inp-location');
+      if (h) h.value = val;
+    }, 80);
+  }
+}
+
+// ── 프로필 저장/불러오기 ──
+window.saveProfile = function() {
+  var name  = (document.getElementById('inp-name')||{}).value||'';
+  var year  = (document.getElementById('inp-year')||{}).value||'';
+  var month = (document.getElementById('inp-month')||{}).value||'';
+  var day   = (document.getElementById('inp-day')||{}).value||'';
+  if (!name||!year||!month||!day) { if(typeof showShareToast==='function') showShareToast('⚠️ 이름과 생년월일을 입력해주세요'); return; }
+  var profiles = [];
+  try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
+  if (profiles.find(function(p){ return p.name===name&&p.year===year&&p.month===month&&p.day===day; })) {
+    if(typeof showShareToast==='function') showShareToast('이미 저장된 프로필입니다'); return;
+  }
+  profiles.unshift({
+    name:name, year:year, month:month, day:day,
+    time:(document.getElementById('inp-time')||{}).value||'',
+    unk:(document.getElementById('unk')||{}).checked||false,
+    gender:window.selectedGender||'남',
+    cal:window.selectedCal||'양력',
+    birthplace:(document.getElementById('inp-birthplace')||{}).value||'',
+    location:(document.getElementById('inp-location')||{}).value||'',
+    savedAt:new Date().toLocaleDateString('ko-KR')
+  });
+  localStorage.setItem('cw_profiles', JSON.stringify(profiles.slice(0,10)));
+  if(typeof showShareToast==='function') showShareToast('✅ 프로필 저장됐습니다!');
+  renderProfileBar();
+};
+
+window.loadProfile = function(i) {
+  var profiles = [];
+  try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
+  var p = profiles[i]; if (!p) return;
+  var el;
+  el=document.getElementById('inp-name');  if(el) el.value=p.name||'';
+  el=document.getElementById('inp-year');  if(el) el.value=p.year||'';
+  el=document.getElementById('inp-month'); if(el) el.value=p.month||'';
+  el=document.getElementById('inp-day');   if(el) el.value=p.day||'';
+  el=document.getElementById('inp-time');  if(el) el.value=p.time||'';
+  el=document.getElementById('unk');       if(el) el.checked=p.unk||false;
+  if(p.gender && typeof setGender==='function') setGender(p.gender);
+  if(p.cal    && typeof setCal==='function')    setCal(p.cal);
+  _restorePlace('birth', p.birthplace||'');
+  _restorePlace('location', p.location||'');
+  if(typeof showShareToast==='function') showShareToast('✅ '+p.name+'님 프로필 불러왔습니다');
+};
+
+window.deleteProfile = function(i) {
+  var profiles = [];
+  try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
+  profiles.splice(i,1);
+  localStorage.setItem('cw_profiles', JSON.stringify(profiles));
+  renderProfileBar();
+};
+
+function renderProfileBar() {
+  var bar = document.getElementById('profile-chips'); if (!bar) return;
+  var profiles = [];
+  try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
+  if (!profiles.length) {
+    bar.innerHTML = '<div style="font-size:11px;color:rgba(153,153,204,0.5);padding:4px 0;">저장된 프로필이 없습니다</div>';
+    return;
+  }
+  bar.innerHTML = profiles.map(function(p,i){
+    return '<div style="position:relative;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:20px;cursor:pointer;font-size:12px;color:#fff;" onclick="loadProfile('+i+')">'
+      +'<span>'+p.name+'</span>'
+      +'<span style="font-size:10px;color:var(--t2);">·'+p.year.slice(2)+'.'+p.month+'.'+p.day+'</span>'
+      +'<button onclick="event.stopPropagation();deleteProfile('+i+')" style="background:rgba(231,76,60,0.2);border:none;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;color:#e74c3c;font-size:10px;line-height:1;">×</button>'
+      +'</div>';
+  }).join('');
+}
+
+// DOM 로드 후 초기화
+// 즉시 실행 (DOMContentLoaded 이미 지난 경우 대비)
+(function() {
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', function() {
+      initSidoSelects();
+      renderProfileBar();
+    });
+  } else {
+    // 이미 DOM 로드 완료
+    initSidoSelects();
+    renderProfileBar();
+  }
+})();
+
+document.addEventListener('DOMContentLoaded', function() {
+  initSidoSelects();
+  renderProfileBar();
+
+  // 분석 완료 시 자동 프로필 저장
+  var _origRender = window.renderSajuResult;
+  if (_origRender) {
+    window.renderSajuResult = function(name, year, month, day, timeStr, age, r) {
+      _origRender.apply(this, arguments);
+      var profiles = [];
+      try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
+      if (!profiles.find(function(p){ return p.name===name&&p.year===year&&p.month===month&&p.day===day; })) {
+        profiles.unshift({
+          name:name, year:year, month:month, day:day, time:timeStr,
+          gender:window.selectedGender||'남', cal:window.selectedCal||'양력',
+          birthplace:(document.getElementById('inp-birthplace')||{}).value||'',
+          location:(document.getElementById('inp-location')||{}).value||'',
+          savedAt:new Date().toLocaleDateString('ko-KR')
+        });
+        localStorage.setItem('cw_profiles', JSON.stringify(profiles.slice(0,10)));
+        renderProfileBar();
+      }
+    };
+  }
+});
+
+// ── DOM 로드 후 초기화 ──
+document.addEventListener('DOMContentLoaded',function(){
+  // 가격 39000원으로 변경
+  document.querySelectorAll('*').forEach(function(el){
+    if(el.childNodes.length===1&&el.childNodes[0].nodeType===3){
+      if(el.textContent.trim()==='₩89,000')el.textContent='₩39,000';
+      if(el.textContent.trim()==='78% 할인')el.textContent='49% 할인';
     }
+  });
+
+  // Tab 순서
+  var tabOrder=['inp-name','gbtn-m','gbtn-f','inp-year','inp-month','inp-day',
+    'cbtn-solar','cbtn-lunar','cbtn-leap',
+    'inp-birthplace-sido','inp-birthplace-sigungu',
+    'inp-location-sido','inp-location-sigungu',
+    'inp-time','unk'];
+  tabOrder.forEach(function(id,i){var el=document.getElementById(id);if(el)el.tabIndex=i+1;});
+
+  // 양력/음력/윤달 → Tab → 출생지
+  ['cbtn-solar','cbtn-lunar','cbtn-leap'].forEach(function(id){
+    var el=document.getElementById(id);if(!el)return;
+    el.addEventListener('keydown',function(e){
+      if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();var n=document.getElementById('inp-birthplace-sido');if(n)n.focus();}
+    });
+  });
+  // 시/도 → 시/군/구 자동 포커스
+  var s1=document.getElementById('inp-birthplace-sido');
+  if(s1)s1.addEventListener('change',function(){if(typeof updateSigungu==='function')updateSigungu('birth');setTimeout(function(){var n=document.getElementById('inp-birthplace-sigungu');if(n)n.focus();},100);});
+  var sg1=document.getElementById('inp-birthplace-sigungu');
+  if(sg1){
+    sg1.addEventListener('change',function(){if(typeof updateBirthplace==='function')updateBirthplace();});
+    sg1.addEventListener('keydown',function(e){if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();var n=document.getElementById('inp-location-sido');if(n)n.focus();}});
   }
-  function updateBirthplace() {
-    var sido = (document.getElementById('inp-birthplace-sido')||{}).value||'';
-    var sg   = (document.getElementById('inp-birthplace-sigungu')||{}).value||'';
-    var h = document.getElementById('inp-birthplace');
-    if (h) h.value = sg ? sido+' '+sg : sido;
-  }
-  function updateLocation() {
-    var sido = (document.getElementById('inp-location-sido')||{}).value||'';
-    var sg   = (document.getElementById('inp-location-sigungu')||{}).value||'';
-    var h = document.getElementById('inp-location');
-    if (h) h.value = sg ? sido+' '+sg : sido;
+  var s2=document.getElementById('inp-location-sido');
+  if(s2)s2.addEventListener('change',function(){if(typeof updateSigungu==='function')updateSigungu('location');setTimeout(function(){var n=document.getElementById('inp-location-sigungu');if(n)n.focus();},100);});
+  var sg2=document.getElementById('inp-location-sigungu');
+  if(sg2){
+    sg2.addEventListener('change',function(){if(typeof updateLocation==='function')updateLocation();});
+    sg2.addEventListener('keydown',function(e){if(e.key==='Tab'&&!e.shiftKey){e.preventDefault();var n=document.getElementById('inp-time');if(n)n.focus();}});
   }
 
-    buildExperts();
-    setTimeout(() => { drawWave(); drawCompass(); }, 80);
-  </script>
-</body>
+  // Admin month
+  var am=document.getElementById('admin-month-label');
+  if(am)am.textContent=window._adminMonth.getFullYear()+'년 '+(window._adminMonth.getMonth()+1)+'월';
 
-</html>
+  // 커뮤니티 초기 렌더
+  if(typeof renderFixedQnA==='function')renderFixedQnA();
+  if(typeof renderReviews==='function')setTimeout(renderReviews,300);
+  if(typeof renderBoardList==='function')setTimeout(renderBoardList,300);
+
+  // scan 페이지에서 카메라 자동 시작 (showPg override)
+  window._origSP=window.showPg;
+  window.showPg=function(pg,btn,sub){
+    if(typeof window._origSP==='function')window._origSP(pg,btn,sub);
+    if(pg==='scan'){
+      setTimeout(function(){
+        _ensureVideo();
+        window.startCamera();
+      },200);
+    } else {
+      window.stopCamera();
+    }
+  };
+
+  console.log('[천기웨이브] Patch v4 로드 완료 ✅');
+});

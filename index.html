@@ -226,6 +226,18 @@
       background: #1a1a5a;
     }
 
+    /* 출생지/거주지 select 포커스 */
+    #inp-birthplace-sido:focus, #inp-birthplace-sigungu:focus,
+    #inp-location-sido:focus, #inp-location-sigungu:focus {
+      border-color: var(--em) !important;
+      outline: none;
+      box-shadow: 0 0 0 2px rgba(80,200,120,0.15);
+    }
+    #inp-birthplace-sido, #inp-birthplace-sigungu,
+    #inp-location-sido, #inp-location-sigungu {
+      transition: border-color .2s, box-shadow .2s;
+    }
+
     .scan-btn {
       padding: 10px 20px;
       background: var(--gold);

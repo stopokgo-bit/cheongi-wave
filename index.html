@@ -4538,14 +4538,15 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
             function runStep(i) {
       if (i >= STEPS.length) {
         // AI 분석 완료 대기 후 결과 표시
-        const waitForAI = (attempts) => {
-          if (window._scanResult !== undefined || attempts > 30) {
+        // AI 결과 대기 (최대 15초)
+        var _waitCount = 0;
+        var _waitTimer = setInterval(function() {
+          _waitCount++;
+          if (window._scanResult !== undefined || _waitCount > 50) {
+            clearInterval(_waitTimer);
             setTimeout(showResult, 300);
-          } else {
-            setTimeout(() => waitForAI(attempts + 1), 300);
           }
-        };
-        waitForAI(0);
+        }, 300);
         return;
       }
       const si = document.getElementById('si' + i), sl = document.getElementById('sl' + i), sp = document.getElementById('sp' + i);
@@ -4673,7 +4674,7 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
       // 자동 순차 촬영 중이면 다음 단계
       if (_seqAuto) {
         var _modeNames = {face:'관상', palm_left:'왼손', palm_right:'오른손'};
-        showShareToast('✅ ' + (_modeNames[sMode]||'') + ' 촬영 완료!');
+        if(typeof showShareToast==='function') showShareToast('✅ ' + (_modeNames[sMode]||'') + ' 촬영 완료!');
         setTimeout(_seqNext, 1500);
       }
 

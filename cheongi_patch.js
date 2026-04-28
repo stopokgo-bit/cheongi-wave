@@ -1,6 +1,182 @@
 // 천기 웨이브 — Fix Script v4
 // 충돌 방지: var 선언 없음, window.xxx 방식만 사용
 
+// ── 인생지침서 HTML 렌더링 스타일 주입 ──
+(function injectReportStyles() {
+  if (document.getElementById('cw-report-style')) return;
+  var style = document.createElement('style');
+  style.id = 'cw-report-style';
+  style.textContent = [
+    '#report-full-body h3{font-size:16px;font-weight:700;color:#FFD700;margin:1.4rem 0 .6rem;padding-bottom:.4rem;border-bottom:1px solid rgba(255,215,0,0.15);display:flex;align-items:center;gap:6px;}',
+    '#report-full-body p{font-size:13px;color:#ccccee;line-height:2;margin-bottom:.85rem;}',
+    '#report-full-body h4{font-size:14px;font-weight:600;color:#fff;margin:.85rem 0 .35rem;}',
+    '#report-full-body strong{color:#FFD700;font-weight:600;}',
+    '#report-full-body em{color:#50C878;font-style:normal;font-weight:600;}',
+    '#report-full-body ul,#report-full-body ol{padding-left:1.2rem;margin-bottom:.75rem;}',
+    '#report-full-body li{font-size:13px;color:#ccccee;line-height:1.9;margin-bottom:.2rem;}',
+    '#report-full-body .section-wrap{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,0.08);border-radius:12px;padding:1rem 1.2rem;margin-bottom:.85rem;}',
+    '.typing-cursor{display:inline-block;width:2px;height:14px;background:#50C878;margin-left:2px;animation:blink .7s infinite;vertical-align:middle;}',
+  ].join('\n');
+  document.head.appendChild(style);
+})();
+
+// ── 유튜브 채널 카드 클릭 → 직접 유튜브 이동 ──
+window.buildChannels = function() {
+  var g = document.getElementById('chg'); if (!g) return;
+  g.innerHTML = '';
+  var CH = window.CH || [];
+  CH.forEach(function(c) {
+    var d = document.createElement('div');
+    d.className = 'chc' + (window.selCh === c.id ? ' sel' : '');
+    if (window.selCh === c.id) d.style.borderColor = c.sb;
+    d.style.cursor = 'pointer';
+    d.innerHTML =
+      '<div class="chico" style="background:' + c.iBg + ';"><svg viewBox="0 0 24 24" fill="none" stroke="' + c.iC + '" stroke-width="2">' + c.icon + '</svg></div>' +
+      '<div style="flex:1;min-width:0;">' +
+        '<div class="chnm">' + c.name + (c.coming ? '<span class="ch-coming">준비중</span>' : '<span style="font-size:9px;padding:1px 6px;border-radius:5px;background:rgba(255,100,100,0.15);color:#ff8080;margin-left:4px;">▶ YouTube</span>') + '</div>' +
+        '<div class="chhdl">' + c.handle + '</div>' +
+        '<div class="chmood">' + c.mood + '</div>' +
+        '<span class="chtag" style="background:' + c.tBg + ';color:' + c.tC + ';">' + c.tag + '</span>' +
+      '</div>';
+    // 클릭 시 유튜브 직접 이동
+    d.onclick = function() {
+      window.selCh = c.id;
+      // 모든 카드 선택 해제 후 현재 카드 선택
+      document.querySelectorAll('.chc').forEach(function(card) {
+        card.classList.remove('sel');
+        card.style.borderColor = '';
+      });
+      d.classList.add('sel');
+      d.style.borderColor = c.sb;
+      // 유튜브 링크 업데이트
+      var yl = document.getElementById('ytl');
+      var ylt = document.getElementById('ytlt');
+      var yn = document.getElementById('ytnote');
+      if (yl) { yl.href = c.url; yl.style.background = c.btn; }
+      if (ylt) ylt.textContent = c.coming ? c.name + ' 채널 보기 (준비중)' : '유튜브에서 ' + c.name + ' 열기 ▶';
+      if (yn) yn.innerHTML = c.coming ? '<span style="color:#ccaa00;">콘텐츠 업로드 준비 중입니다</span>' : '<span style="color:var(--em);">↑ 탭하면 유튜브로 바로 이동합니다</span>';
+      // 왜 카드 업데이트
+      var wc2 = document.getElementById('wc2'), wt2 = document.getElementById('wt2'), wb2 = document.getElementById('wb2');
+      if (wc2) { wc2.style.background = c.why.bg; wc2.style.borderColor = c.why.bd; }
+      if (wt2) { wt2.style.color = c.why.tc; wt2.textContent = c.why.title; }
+      if (wb2) wb2.innerHTML = c.why.body;
+      // 준비중 아니면 유튜브 직접 이동
+      if (!c.coming) {
+        setTimeout(function() { window.open(c.url, '_blank', 'noopener'); }, 150);
+      }
+    };
+    g.appendChild(d);
+  });
+  // 첫 선택 채널 유튜브 링크 세팅
+  var sel = (window.CH || []).find(function(x){ return x.id === window.selCh; });
+  if (sel) {
+    var yl = document.getElementById('ytl');
+    var ylt = document.getElementById('ytlt');
+    if (yl) { yl.href = sel.url; yl.style.background = sel.btn; }
+    if (ylt) ylt.textContent = '유튜브에서 ' + sel.name + ' 열기 ▶';
+  }
+};
+
+// ── PDF 생성 (html2canvas + jsPDF) ──
+window.downloadPDF = function() {
+  var bodyEl = document.getElementById('report-full-body');
+  if (!bodyEl || bodyEl.innerHTML.length < 100) {
+    if (typeof showShareToast === 'function') showShareToast('⚠️ 먼저 인생 지침서를 생성해주세요');
+    return;
+  }
+  var sd = window._sajuData || {};
+  // PDF용 팝업 창 열어서 인쇄
+  var win = window.open('', '_blank', 'width=800,height=900');
+  if (!win) { showShareToast('⚠️ 팝업 차단을 해제해주세요'); return; }
+  win.document.write('<!DOCTYPE html><html><head><meta charset="UTF-8"><title>' + (sd.name||'') + ' 인생지침서</title><style>');
+  win.document.write('body{font-family:"Apple SD Gothic Neo","Malgun Gothic",sans-serif;background:#fff;color:#222;padding:2rem;max-width:700px;margin:0 auto;}');
+  win.document.write('h1{font-size:22px;color:#1a1a4a;border-bottom:3px solid #FFD700;padding-bottom:.5rem;margin-bottom:1.5rem;}');
+  win.document.write('h3{font-size:16px;font-weight:700;color:#1a1a4a;margin:1.5rem 0 .5rem;padding:.4rem .8rem;background:#f8f7f0;border-left:4px solid #FFD700;border-radius:0 6px 6px 0;}');
+  win.document.write('p{font-size:13px;line-height:2;color:#333;margin-bottom:.75rem;}');
+  win.document.write('em{color:#2d7a4a;font-style:normal;font-weight:600;}');
+  win.document.write('strong{color:#8b6a00;font-weight:700;}');
+  win.document.write('.cover{text-align:center;padding:3rem 1rem;border:2px solid #FFD700;border-radius:12px;margin-bottom:2rem;background:linear-gradient(135deg,#fffbf0,#fff);}');
+  win.document.write('.cover h2{font-size:28px;color:#1a1a4a;margin-bottom:.5rem;}');
+  win.document.write('.cover .info{font-size:13px;color:#666;line-height:2;}');
+  win.document.write('@media print{body{padding:.5rem;}.cover{page-break-after:always;}}');
+  win.document.write('</style></head><body>');
+  win.document.write('<div class="cover">');
+  win.document.write('<div style="font-size:32px;margin-bottom:.75rem;">⭐</div>');
+  win.document.write('<h2>천기 웨이브 인생 지침서</h2>');
+  win.document.write('<div class="info">');
+  win.document.write((sd.name||'') + ' · ' + (sd.gender||'') + ' · ' + (sd.year||'') + '년 ' + (sd.month||'') + '월 ' + (sd.day||'') + '일생<br>');
+  win.document.write('생성일: ' + new Date().toLocaleDateString('ko-KR') + '<br>');
+  win.document.write('<small>자미두수 · 매화역수 · 기문둔갑 3대 역학 AI 분석</small>');
+  win.document.write('</div></div>');
+  // 본문 HTML 정제
+  var html = bodyEl.innerHTML
+    .replace(/```html\s*/gi,'').replace(/```\s*/g,'')
+    .replace(/style="[^"]*color:[^"]*#[0-9a-fA-F]+[^"]*"/g, '')  // 어두운 색상 제거
+    .replace(/<span class="typing-cursor[^>]*>.*?<\/span>/g,'');
+  win.document.write('<div>' + html + '</div>');
+  win.document.write('<div style="margin-top:3rem;padding-top:1rem;border-top:1px solid #eee;font-size:11px;color:#999;text-align:center;">천기 웨이브 (cheongi-wave.vercel.app) · AI 기반 명리 참고자료</div>');
+  win.document.write('</body></html>');
+  win.document.close();
+  setTimeout(function() { win.focus(); win.print(); }, 500);
+  if (typeof showShareToast === 'function') showShareToast('📄 PDF 저장 창이 열렸습니다!');
+};
+window.downloadCompatPDF = window.downloadPDF;
+
+// ── 이메일 자동 발송 (EmailJS) ──
+var EJS_SERVICE = 'service_cheongi';
+var EJS_TEMPLATE = 'template_report';
+var EJS_KEY = 'YOUR_EMAILJS_PUBLIC_KEY'; // EmailJS 가입 후 교체
+
+function _initEmailJS() {
+  if (window.emailjs && window._ejsInited) return;
+  // emailjs SDK는 index.html <head>에 이미 로드됨
+  try {
+    if (window.emailjs && typeof window.emailjs.init === 'function') {
+      window.emailjs.init(EJS_KEY);
+      window._ejsInited = true;
+    }
+  } catch(e) {}
+}
+
+window.sendReportEmail = function(toEmail) {
+  var bodyEl = document.getElementById('report-full-body');
+  if (!bodyEl || bodyEl.innerHTML.length < 100) {
+    if (typeof showShareToast === 'function') showShareToast('⚠️ 먼저 인생 지침서를 생성해주세요');
+    return;
+  }
+  var email = toEmail || prompt('받으실 이메일 주소를 입력하세요:');
+  if (!email || !email.includes('@')) { showShareToast('⚠️ 올바른 이메일을 입력해주세요'); return; }
+  var sd = window._sajuData || {};
+
+  _initEmailJS();
+
+  // EmailJS 키가 설정된 경우 자동 발송
+  if (EJS_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY' && window.emailjs) {
+    var reportText = bodyEl.innerText.substring(0, 8000);
+    if (typeof showShareToast === 'function') showShareToast('📧 발송 중...');
+    window.emailjs.send(EJS_SERVICE, EJS_TEMPLATE, {
+      to_email: email,
+      to_name: sd.name || '고객',
+      subject: '[천기웨이브] ' + (sd.name||'') + '님의 인생 지침서',
+      report_content: reportText,
+      birth_info: (sd.year||'') + '년 ' + (sd.month||'') + '월 ' + (sd.day||'') + '일 · ' + (sd.gender||'') + ' · ' + (sd.timeStr||''),
+      generated_date: new Date().toLocaleDateString('ko-KR'),
+    }).then(function() {
+      showShareToast('✅ 이메일이 ' + email + '로 발송됐습니다!');
+    }).catch(function(err) {
+      showShareToast('❌ 발송 실패: ' + (err.text||err.message||'오류'));
+      // 폴백: PDF 창 열기
+      window.downloadPDF();
+    });
+  } else {
+    // EmailJS 미설정 시: PDF 창 열고 저장 안내
+    showShareToast('📧 PDF를 저장 후 ' + email + '로 첨부 발송하세요');
+    setTimeout(window.downloadPDF, 500);
+  }
+};
+window.sendCompatEmail = window.sendReportEmail;
+
+
 // ── 전역 변수 초기화 (충돌 없는 방식) ──
 window.capturedImages = window.capturedImages || { face: null, palm_left: null, palm_right: null };
 window.scanResults    = window.scanResults    || { face: null, palm_left: null, palm_right: null };
@@ -401,16 +577,13 @@ window.selectPlan=function(plan){
   else{if(f){f.style.border='2px solid #fff';f.style.opacity='1';}if(e){e.style.border='1px solid rgba(255,215,0,0.3)';e.style.opacity='0.7';}}
 };
 window.confirmBankTransfer=function(){if(typeof showShareToast==='function')showShareToast('✅ 입금 완료 알림 전송. 24시간 내 리포트 발송드립니다.');};
-window.downloadPDF=function(){if(typeof showShareToast==='function')showShareToast('📥 PDF 기능 준비 중입니다.');};
-window.downloadCompatPDF=window.downloadPDF;
-window.sendReportEmail=function(email){
-  var body=document.getElementById('report-full-body');
-  var text=body?body.innerText.substring(0,1000):'';
-  var sd=window._sajuData||{};
+// downloadPDF replaced below
+// downloadCompatPDF replaced below
+// sendReportEmail replaced below
   var to=email||(typeof prompt==='function'?prompt('이메일 주소를 입력해주세요:')||'':'');
   if(to) window.open('https://mail.google.com/mail/?view=cm&fs=1&to='+encodeURIComponent(to)+'&su='+encodeURIComponent('[천기웨이브] '+(sd.name||'')+'님 인생 지침서')+'&body='+encodeURIComponent(text),'_blank');
 };
-window.sendCompatEmail=function(){window.sendReportEmail('');};
+// sendCompatEmail replaced below
 window.viewMyReport=function(){if(typeof showPg==='function')showPg('report');};
 window.applyUISettings=function(){};
 window.saveSettings=function(){if(typeof showShareToast==='function')showShareToast('✅ 설정 저장됐습니다');};

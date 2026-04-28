@@ -3,10 +3,12 @@
 // =====================================================
 
 // ── 1. 핵심 전역 변수 (최우선 선언) ──
-if (typeof capturedImages === 'undefined') var capturedImages = { face: null, palm_left: null, palm_right: null };
-if (typeof scanResults === 'undefined') var scanResults = { face: null, palm_left: null, palm_right: null };
-if (typeof alignScore === 'undefined') var alignScore = 0;
-if (typeof currentFacing === 'undefined') var currentFacing = 'user';
+window.capturedImages = window.capturedImages || { face: null, palm_left: null, palm_right: null };
+var capturedImages = window.capturedImages;
+window.scanResults = window.scanResults || { face: null, palm_left: null, palm_right: null };
+var scanResults = window.scanResults;
+window.alignScore = window.alignScore || 0;
+window.currentFacing = window.currentFacing || 'user';
 
 var PALM_LINES_LEFT = [
   { l: '생명선', score: 82, desc: '길고 깊게 발달. 타고난 생명력과 건강운 강함.', color: '#50C878', tBg: 'rgba(80,200,120,0.18)', tC: '#3db866' },

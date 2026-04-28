@@ -1,6 +1,3 @@
-
-// ✅ PATCH v2: 누락 함수 복구
-
 // ============ 누락 변수 및 함수 모음 ============
 
 var capturedImages = { face: null, palm_left: null, palm_right: null };
@@ -369,3 +366,286 @@ function switchCommTab(tab) {
 
 // ============ 누락 함수 끝 ============
 
+
+// ============ 패치 v2: 카메라 수정 + 결제 우회 + 가격 변경 ============
+
+// ✅ 1. 정가 39,000원으로 변경 (DOM 로드 후)
+document.addEventListener('DOMContentLoaded', function() {
+  // 가격 텍스트 변경
+  var priceTexts = document.querySelectorAll('#pay-price-kakao, #pay-price-toss, #pay-price-bank');
+  priceTexts.forEach(function(el) { if (el) el.textContent = '₩19,900'; });
+
+  // price-full 카드의 정가 변경
+  var fullCard = document.getElementById('price-full');
+  if (fullCard) {
+    var priceEl = fullCard.querySelector('[style*="font-size:26px"]');
+    if (priceEl) priceEl.textContent = '₩39,000';
+    var strikeEl = fullCard.querySelector('[style*="line-through"]');
+    // price-early의 취소선 가격도 변경
+  }
+  var earlyCard = document.getElementById('price-early');
+  if (earlyCard) {
+    var strikeEl = earlyCard.querySelector('[style*="line-through"]');
+    if (strikeEl) strikeEl.textContent = '₩39,000';
+    var discountEl = earlyCard.querySelector('[style*="color:var(--em)"]');
+    if (discountEl && discountEl.textContent.includes('%')) discountEl.textContent = '49% 할인';
+  }
+
+  // 탭 순서 설정
+  var tabOrder = ['inp-name','gbtn-m','gbtn-f','inp-year','inp-month','inp-day',
+    'cbtn-solar','cbtn-lunar','cbtn-leap',
+    'inp-birthplace-sido','inp-birthplace-sigungu',
+    'inp-location-sido','inp-location-sigungu',
+    'inp-time','unk'];
+  tabOrder.forEach(function(id, i) {
+    var el = document.getElementById(id);
+    if (el) el.tabIndex = i + 1;
+  });
+
+  // 양력/음력/윤달 버튼 Tab → 출생지 이동
+  ['cbtn-solar','cbtn-lunar','cbtn-leap'].forEach(function(id) {
+    var el = document.getElementById(id);
+    if (!el) return;
+    el.addEventListener('keydown', function(e) {
+      if (e.key === 'Tab' && !e.shiftKey) {
+        e.preventDefault();
+        var next = document.getElementById('inp-birthplace-sido');
+        if (next) next.focus();
+      }
+    });
+  });
+
+  // 시/도 변경 시 자동 시/군/구 포커스
+  var sidoBirth = document.getElementById('inp-birthplace-sido');
+  if (sidoBirth) {
+    sidoBirth.addEventListener('change', function() {
+      if (typeof updateSigungu === 'function') updateSigungu('birth');
+      setTimeout(function() {
+        var next = document.getElementById('inp-birthplace-sigungu');
+        if (next) next.focus();
+      }, 100);
+    });
+  }
+  var sigunguBirth = document.getElementById('inp-birthplace-sigungu');
+  if (sigunguBirth) {
+    sigunguBirth.addEventListener('change', function() {
+      if (typeof updateBirthplace === 'function') updateBirthplace();
+      setTimeout(function() { document.getElementById('inp-location-sido') && document.getElementById('inp-location-sido').focus(); }, 50);
+    });
+  }
+  var sidoLoc = document.getElementById('inp-location-sido');
+  if (sidoLoc) {
+    sidoLoc.addEventListener('change', function() {
+      if (typeof updateSigungu === 'function') updateSigungu('location');
+      setTimeout(function() {
+        var next = document.getElementById('inp-location-sigungu');
+        if (next) next.focus();
+      }, 100);
+    });
+  }
+  var sigunguLoc = document.getElementById('inp-location-sigungu');
+  if (sigunguLoc) {
+    sigunguLoc.addEventListener('change', function() {
+      if (typeof updateLocation === 'function') updateLocation();
+    });
+  }
+
+  // Admin month 초기화
+  var el = document.getElementById('admin-month-label');
+  var am = new Date();
+  if (el) el.textContent = am.getFullYear() + '년 ' + (am.getMonth()+1) + '월';
+
+  // QnA/리뷰 초기 렌더
+  if (typeof renderFixedQnA === 'function') renderFixedQnA();
+  if (typeof renderReviews === 'function') setTimeout(renderReviews, 200);
+  if (typeof renderBoardList === 'function') setTimeout(renderBoardList, 200);
+});
+
+// ✅ 2. 결제 없이 인생지침서 바로 보기 (테스트 모드)
+function doPayment(method) {
+  // 테스트용: 결제 완료 처리
+  localStorage.setItem('cw_paid', '1');
+  var paySection = document.getElementById('payment-section');
+  var paidSection = document.getElementById('report-paid-section');
+  if (paySection) paySection.style.display = 'none';
+  if (paidSection) paidSection.style.display = 'block';
+
+  var titleEl = document.getElementById('report-title');
+  var tagEl = document.getElementById('report-price-tag');
+  if (titleEl) titleEl.textContent = '✅ 테스트 모드 — 즉시 열람 가능';
+  if (tagEl) tagEl.textContent = '₩19,900 · 얼리버드';
+
+  // 사주 데이터 있으면 명주 해석 표시
+  if (window._sajuData) {
+    var ibTitle = document.getElementById('report-ib-title');
+    var ibBody = document.getElementById('report-ib-body');
+    if (ibTitle) ibTitle.textContent = window._sajuData.name + ' · ' + (window._sajuData.star||'') + ' 명주 핵심';
+    if (ibBody) ibBody.innerHTML = window._sajuData.summary || '사주 분석 결과를 기반으로 생성됩니다.';
+  }
+
+  showShareToast('✅ 테스트 모드: 결제 완료 처리됨');
+}
+
+// ✅ 3. 카메라 수정 - video 엘리먼트가 없으면 동적 생성
+var _origStartCamera = window.startCamera;
+window.startCamera = async function(facing) {
+  // camera-area 안에 video 엘리먼트 확인/생성
+  var camArea = document.getElementById('camera-area');
+  if (!camArea) return;
+
+  var video = document.getElementById('camVideo');
+  if (!video) {
+    // video 엘리먼트 동적 생성 및 삽입
+    video = document.createElement('video');
+    video.id = 'camVideo';
+    video.autoplay = true;
+    video.playsInline = true;
+    video.muted = true;
+    video.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:16px;z-index:1;display:none;';
+
+    // cam-stage 안에 canvas 앞에 삽입
+    var camStage = camArea.querySelector('.cam-stage');
+    if (camStage) {
+      var canvas = camStage.querySelector('#sc');
+      if (canvas) {
+        // canvas를 z-index 2로, video를 뒤에
+        canvas.style.position = 'relative';
+        canvas.style.zIndex = '2';
+        canvas.style.background = 'transparent';
+        camStage.style.position = 'relative';
+        camStage.insertBefore(video, canvas);
+      } else {
+        camStage.insertBefore(video, camStage.firstChild);
+      }
+    }
+  }
+
+  // cam-error 엘리먼트 확인/생성
+  var errBox = document.getElementById('cam-error');
+  if (!errBox) {
+    errBox = document.createElement('div');
+    errBox.id = 'cam-error';
+    errBox.style.cssText = 'display:none;position:absolute;inset:0;background:#0a0a20;align-items:center;justify-content:center;flex-direction:column;gap:10px;z-index:3;border-radius:16px;';
+    errBox.innerHTML = '<div style="font-size:32px;">📷</div><div style="font-size:13px;color:#9999cc;text-align:center;">카메라 권한을 허용해주세요<br><span style="font-size:11px;">또는 사진 업로드를 사용해주세요</span></div>';
+    var camStage = document.querySelector('.cam-stage');
+    if (camStage) camStage.appendChild(errBox);
+  }
+
+  if (facing === undefined) {
+    facing = (typeof sMode !== 'undefined' && sMode === 'face') ? 'user' : 'environment';
+  }
+  if (typeof currentFacing !== 'undefined') window.currentFacing = facing;
+
+  video.style.transform = facing === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
+
+  // 기존 스트림 중지
+  if (window.camStream) {
+    window.camStream.getTracks().forEach(function(t) { t.stop(); });
+    window.camStream = null;
+  }
+
+  try {
+    var stream = await navigator.mediaDevices.getUserMedia({
+      video: { facingMode: facing, width: { ideal: 1280 }, height: { ideal: 720 } }
+    });
+    window.camStream = stream;
+    video.srcObject = stream;
+    video.style.display = 'block';
+    await video.play().catch(function(){});
+    if (errBox) errBox.style.display = 'none';
+
+    // 캔버스 배경 투명하게 (비디오 위에 오버레이)
+    var canvas = document.getElementById('sc');
+    if (canvas) {
+      canvas.style.background = 'transparent';
+      canvas.style.position = 'absolute';
+      canvas.style.top = '0';
+      canvas.style.left = '0';
+      canvas.style.zIndex = '2';
+      canvas.style.pointerEvents = 'auto';
+    }
+
+    if (typeof setFB === 'function') setFB('idle');
+    if (typeof drawScan === 'function') drawScan();
+    if (typeof startAlignCheck === 'function') setTimeout(startAlignCheck, 500);
+
+  } catch(e) {
+    console.warn('카메라 오류:', e.message);
+    // 후면→전면 폴백
+    if (facing === 'environment') {
+      try {
+        var fb = await navigator.mediaDevices.getUserMedia({ video: { facingMode: 'user', width: {ideal:1280}, height: {ideal:720} } });
+        window.camStream = fb;
+        video.srcObject = fb;
+        video.style.display = 'block';
+        video.style.transform = 'scaleX(-1)';
+        await video.play().catch(function(){});
+        if (errBox) errBox.style.display = 'none';
+        if (typeof drawScan === 'function') drawScan();
+        return;
+      } catch(e2) {}
+    }
+    video.style.display = 'none';
+    if (errBox) errBox.style.display = 'flex';
+    if (typeof setFB === 'function') setFB('nocam');
+  }
+};
+
+// ✅ 4. doCapture 오버라이드 - 실제 video에서 캡처
+var _origDoCapture = window.doCapture;
+window.doCapture = function() {
+  if (window.sState === 'scanning' || window.sState === 'done') return;
+  window.sState = 'scanning';
+  var shutter = document.getElementById('sh');
+  if (shutter) shutter.classList.add('cap');
+  if (typeof setFB === 'function') setFB('scanning');
+  window.sLY = 0; window.sLD = 1;
+
+  document.getElementById('ps').classList.add('show');
+  document.getElementById('rs').classList.remove('show');
+  var c = document.getElementById('psteps'); c.innerHTML = '';
+  (window.STEPS || []).forEach(function(s, i) {
+    var d = document.createElement('div'); d.className = 'prog-step';
+    d.innerHTML = '<div class="sico wait" id="si'+i+'">'+(i+1)+'</div><div class="slbl" id="sl'+i+'">'+s.label+'</div><div class="spct" id="sp'+i+'"></div>';
+    c.appendChild(d);
+  });
+
+  window._scanResult = undefined;
+
+  // 실제 video 또는 캔버스에서 캡처
+  var video = document.getElementById('camVideo');
+  var snapCanvas = document.createElement('canvas');
+  snapCanvas.width = 640; snapCanvas.height = 400;
+  var snapCtx = snapCanvas.getContext('2d');
+
+  if (video && video.readyState >= 2 && video.videoWidth > 0) {
+    // 전면카메라면 미러 보정
+    if (window.currentFacing === 'user') {
+      snapCtx.save();
+      snapCtx.scale(-1, 1);
+      snapCtx.drawImage(video, -640, 0, 640, 400);
+      snapCtx.restore();
+    } else {
+      snapCtx.drawImage(video, 0, 0, 640, 400);
+    }
+  } else {
+    snapCtx.fillStyle = '#111';
+    snapCtx.fillRect(0, 0, 640, 400);
+    // 카메라 없음 - 분석 중단
+    if (typeof showShareToast === 'function') showShareToast('⚠️ 카메라가 연결되지 않았습니다. 사진 업로드를 이용해주세요.');
+    window.sState = 'idle';
+    document.getElementById('ps').classList.remove('show');
+    if (shutter) shutter.classList.remove('cap');
+    return;
+  }
+
+  var imageData = snapCanvas.toDataURL('image/jpeg', 0.8).split(',')[1];
+  if (typeof capturedImages !== 'undefined') capturedImages[window.sMode] = snapCanvas.toDataURL('image/jpeg', 0.8);
+
+  if (typeof runStep === 'function') runStep(0);
+  if (typeof analyzeWithAI === 'function') {
+    analyzeWithAI(imageData).then(function(r) { window._scanResult = r; }).catch(function() { window._scanResult = {}; });
+  }
+};
+
+// ============ 패치 v2 끝 ============

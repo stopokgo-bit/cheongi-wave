@@ -3756,29 +3756,39 @@
 
         clearInterval(msgTimer);
 
-        if (!response.ok) {
-          throw new Error('API 응답 오류: ' + response.status);
+        if (!response.ok) throw new Error('API 응답 오류: ' + response.status);
+
+        // 스트리밍 응답 처리
+        const reader = response.body.getReader();
+        const decoder = new TextDecoder();
+        let text = '', buf = '';
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          buf += decoder.decode(value, { stream: true });
+          const lines = buf.split('\n'); buf = lines.pop() || '';
+          for (const line of lines) {
+            if (!line.startsWith('data: ')) continue;
+            const d = line.slice(6).trim();
+            if (d === '[DONE]') continue;
+            try {
+              const ev = JSON.parse(d);
+              if (ev.type === 'content_block_delta' && ev.delta?.text) text += ev.delta.text;
+            } catch(e) {}
+          }
         }
 
-        const data = await response.json();
-        const text = data.content?.map(c => c.text || '').join('') || '';
-        let clean = text.replace(/```json|```/g, '').trim();
-        // JSON이 잘린 경우 복구 시도
-        if (!clean.endsWith('}')) {
-          const lastBrace = clean.lastIndexOf('}');
-          if (lastBrace > 0) clean = clean.substring(0, lastBrace + 1);
-          // 중괄호 닫기 보완
-          let opens = (clean.match(/{/g) || []).length;
-          let closes = (clean.match(/}/g) || []).length;
-          while (closes < opens) { clean += '}'; closes++; }
-        }
+        let clean = text.replace(/```json\s*/gi, '').replace(/```/g, '').trim();
+        const fb = clean.indexOf('{'), lb = clean.lastIndexOf('}');
+        if (fb >= 0 && lb > fb) clean = clean.slice(fb, lb + 1);
+        // 중괄호 보완
+        let opens = (clean.match(/{/g)||[]).length, closes = (clean.match(/}/g)||[]).length;
+        while (closes < opens) { clean += '}'; closes++; }
+
         const result = JSON.parse(clean);
-
         showLoading(false);
-        // 캐시 저장
-        // 캐시는 _resultCache에 저장됨
-        _cachedSajuResult = result;
-        renderSajuResult(name, yearVal || year, monthVal || month, dayVal || day, timeStr, age, result);
+        _resultCache[cacheKey] = { timeStr, age, result };
+        renderSajuResult(name, yearVal, monthVal, dayVal, timeStr, age, result);
 
       } catch (e) {
         clearInterval(msgTimer);

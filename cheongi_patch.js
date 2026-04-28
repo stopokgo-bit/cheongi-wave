@@ -27,54 +27,37 @@ window.buildChannels = function() {
   var CH = window.CH || [];
   CH.forEach(function(c) {
     var d = document.createElement('div');
-    d.className = 'chc' + (window.selCh === c.id ? ' sel' : '');
-    if (window.selCh === c.id) d.style.borderColor = c.sb;
-    d.style.cursor = 'pointer';
+    d.className = 'chc';
+    d.style.cursor = c.coming ? 'default' : 'pointer';
+    d.style.position = 'relative';
+    // 호버 효과
+    d.onmouseenter = function(){ if(!c.coming) d.style.borderColor = c.sb; d.style.transform='translateY(-2px)'; };
+    d.onmouseleave = function(){ d.style.borderColor=''; d.style.transform=''; };
     d.innerHTML =
-      '<div class="chico" style="background:' + c.iBg + ';"><svg viewBox="0 0 24 24" fill="none" stroke="' + c.iC + '" stroke-width="2">' + c.icon + '</svg></div>' +
+      '<div class="chico" style="background:' + c.iBg + ';flex-shrink:0;"><svg viewBox="0 0 24 24" fill="none" stroke="' + c.iC + '" stroke-width="2">' + c.icon + '</svg></div>' +
       '<div style="flex:1;min-width:0;">' +
-        '<div class="chnm">' + c.name + (c.coming ? '<span class="ch-coming">준비중</span>' : '<span style="font-size:9px;padding:1px 6px;border-radius:5px;background:rgba(255,100,100,0.15);color:#ff8080;margin-left:4px;">▶ YouTube</span>') + '</div>' +
+        '<div class="chnm" style="display:flex;align-items:center;gap:6px;">' + c.name +
+          (c.coming
+            ? '<span class="ch-coming">준비중</span>'
+            : '<span style="font-size:9px;padding:2px 7px;border-radius:10px;background:rgba(255,0,0,0.15);color:#ff6060;font-weight:700;">▶ YouTube</span>') +
+        '</div>' +
         '<div class="chhdl">' + c.handle + '</div>' +
         '<div class="chmood">' + c.mood + '</div>' +
-        '<span class="chtag" style="background:' + c.tBg + ';color:' + c.tC + ';">' + c.tag + '</span>' +
+        '<div style="display:flex;align-items:center;justify-content:space-between;margin-top:4px;">' +
+          '<span class="chtag" style="background:' + c.tBg + ';color:' + c.tC + ';">' + c.tag + '</span>' +
+          (!c.coming ? '<span style="font-size:10px;color:rgba(255,255,255,0.35);">탭하면 이동 →</span>' : '') +
+        '</div>' +
       '</div>';
-    // 클릭 시 유튜브 직접 이동
+    // 카드 전체 클릭 → 즉시 유튜브
     d.onclick = function() {
-      window.selCh = c.id;
-      // 모든 카드 선택 해제 후 현재 카드 선택
-      document.querySelectorAll('.chc').forEach(function(card) {
-        card.classList.remove('sel');
-        card.style.borderColor = '';
-      });
-      d.classList.add('sel');
-      d.style.borderColor = c.sb;
-      // 유튜브 링크 업데이트
-      var yl = document.getElementById('ytl');
-      var ylt = document.getElementById('ytlt');
-      var yn = document.getElementById('ytnote');
-      if (yl) { yl.href = c.url; yl.style.background = c.btn; }
-      if (ylt) ylt.textContent = c.coming ? c.name + ' 채널 보기 (준비중)' : '유튜브에서 ' + c.name + ' 열기 ▶';
-      if (yn) yn.innerHTML = c.coming ? '<span style="color:#ccaa00;">콘텐츠 업로드 준비 중입니다</span>' : '<span style="color:var(--em);">↑ 탭하면 유튜브로 바로 이동합니다</span>';
-      // 왜 카드 업데이트
-      var wc2 = document.getElementById('wc2'), wt2 = document.getElementById('wt2'), wb2 = document.getElementById('wb2');
-      if (wc2) { wc2.style.background = c.why.bg; wc2.style.borderColor = c.why.bd; }
-      if (wt2) { wt2.style.color = c.why.tc; wt2.textContent = c.why.title; }
-      if (wb2) wb2.innerHTML = c.why.body;
-      // 준비중 아니면 유튜브 직접 이동
-      if (!c.coming) {
-        setTimeout(function() { window.open(c.url, '_blank', 'noopener'); }, 150);
+      if (c.coming) {
+        if(typeof showShareToast==='function') showShareToast('🎵 ' + c.name + ' — 콘텐츠 준비 중이에요!');
+        return;
       }
+      window.open(c.url, '_blank', 'noopener,noreferrer');
     };
     g.appendChild(d);
   });
-  // 첫 선택 채널 유튜브 링크 세팅
-  var sel = (window.CH || []).find(function(x){ return x.id === window.selCh; });
-  if (sel) {
-    var yl = document.getElementById('ytl');
-    var ylt = document.getElementById('ytlt');
-    if (yl) { yl.href = sel.url; yl.style.background = sel.btn; }
-    if (ylt) ylt.textContent = '유튜브에서 ' + sel.name + ' 열기 ▶';
-  }
 };
 
 

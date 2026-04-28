@@ -3902,7 +3902,7 @@
     function renderSajuResult(name, year, month, day, timeStr, age, r) {
       // 전역에 사주 데이터 저장 (관상/손금 스캔 연동용)
       _sajuData = { name, year, month, day, timeStr, age, gender: selectedGender, cal: selectedCal, star: r.star, daewoon: r.daewoon, summary: r.summary, scores: r.scores, lucky_direction: r.lucky_direction };
-      document.getElementById('saju-page-title').textContent = name + '님의 천기 분석';
+      document.getElementById('saju-page-title').textContent = (name||'') + '님의 천기 분석';
       document.getElementById('saju-date-tag').textContent = formatAnalysisTime();
 
       // 기문둔갑 나침반 방위 동기화
@@ -3961,18 +3961,18 @@
 
       // 무료 공개 섹션
       const freeSections = [
-        { icon: '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>', color: '#FFD700', title: '3대 역학 통합 인생 메시지', body: r.hybrid_msg },
-        { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#50C878', title: '오늘의 기회 - 매화역수 분석', body: r.meihua },
-        { icon: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', color: '#EF9F27', title: '성공 치트키 - 오늘의 개운법', body: r.caution },
+        { icon: '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>', color: '#FFD700', title: '3대 역학 통합 인생 메시지', body: r.hybrid_msg || r.ziwei || '' },
+        { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#50C878', title: '오늘의 기회 - 매화역수 분석', body: r.meihua || '' },
+        { icon: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', color: '#EF9F27', title: '성공 치트키 - 오늘의 개운법', body: r.caution || r.qimen || '' },
       ];
       // 유료 섹션
       const paidSections = [
-        { icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>', color: '#FFD700', title: '자미두수 - 명궁: ' + r.star, body: r.ziwei },
-        { icon: '<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', color: '#FFD700', title: '재물/금전운 상세', body: r.wealth },
-        { icon: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/>', color: '#50C878', title: '직업/커리어운 상세', body: r.career },
-        { icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>', color: '#cc88bb', title: '애정/인간관계 상세', body: r.love },
-        { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#8aacf0', title: '대운 흐름 · 향후 3년', body: r.luck_period },
-        { icon: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>', color: '#8aacf0', title: '기문둔갑 - 길방/전략', body: r.qimen },
+        { icon: '<path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>', color: '#FFD700', title: '자미두수 - 명궁: ' + (r.star||''), body: r.ziwei||'' },
+        { icon: '<path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>', color: '#FFD700', title: '재물/금전운 상세', body: r.wealth||'' },
+        { icon: '<rect x="2" y="7" width="20" height="14" rx="2"/><path d="M16 3l-4 4-4-4"/>', color: '#50C878', title: '직업/커리어운 상세', body: r.career||'' },
+        { icon: '<path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/>', color: '#cc88bb', title: '애정/인간관계 상세', body: r.love||'' },
+        { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#8aacf0', title: '대운 흐름 · 향후 3년', body: r.luck_period||'' },
+        { icon: '<circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/>', color: '#8aacf0', title: '기문둔갑 - 길방/전략', body: r.qimen||'' },
       ];
       const sections = freeSections;
 
@@ -4279,6 +4279,24 @@
       }
       localStorage.setItem('cw_palm_paid','1');
       if(typeof showShareToast==='function') showShareToast('✅ 손금 단품 구매 완료!');
+    }
+
+
+    // 사주 결과 화면에서 빠른 관상 스캔 (카운팅/안내 없음)
+    function _quickScan() {
+      _seqStep = 0;
+      _seqAuto = true;
+      sMode = 'face';
+      showPg('scan');
+      setTimeout(function(){
+        startCamera('user');
+        var vid = document.getElementById('camVideo');
+        if (vid) vid.style.transform = 'scaleX(-1)';
+        // 3초 후 자동 촬영 (안내 없이)
+        setTimeout(function(){
+          doCapture();
+        }, 3000);
+      }, 400);
     }
 
     function _checkAndGoReport() {

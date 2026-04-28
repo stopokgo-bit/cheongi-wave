@@ -4245,21 +4245,54 @@
     }
 
     async function analyzeWithAI(imageData) {
-      const modeLabel = sMode === 'face' ? '관상' : '손금';
       const sd = _sajuData;
-      const sajuCtx = sd ? sd.name + ' ' + sd.gender + '성 ' + sd.year + '년생, 명궁주성: ' + sd.star + ', 현재대운: ' + (sd.daewoon||'') : '';
-      const prompt = sMode === 'face'
-        ? '동양 명리학 기색(氣色) 분석 전문가로서 이미지의 기운을 자미두수 12궁과 연관하여 분석. ' + (sajuCtx ? '의뢰인 사주: ' + sajuCtx + '. ' : '') + '반드시 JSON만 출력:\n{"overall":"기색 한줄요약(30자이내)","match_pct":85,"features":[{"name":"이마(관록궁)","score":85,"desc":"관록궁 기색 해석","tag":"관록운","color":"#FFD700","tBg":"rgba(255,215,0,0.15)","tC":"#FFD700"},{"name":"눈빛(명궁)","score":88,"desc":"명궁 에너지 해석","tag":"핵심기운","color":"#50C878","tBg":"rgba(80,200,120,0.15)","tC":"#50C878"},{"name":"코(재백궁)","score":80,"desc":"재백궁 기색 해석","tag":"재물운","color":"#8aacf0","tBg":"rgba(96,130,220,0.15)","tC":"#8aacf0"},{"name":"입(처첩궁)","score":75,"desc":"처첩궁 에너지 해석","tag":"인간관계","color":"#cc88bb","tBg":"rgba(180,100,180,0.15)","tC":"#cc88bb"},{"name":"턱(전택궁)","score":78,"desc":"전택궁 기색 해석","tag":"기반/의지","color":"#EF9F27","tBg":"rgba(200,130,30,0.15)","tC":"#EF9F27"}],"palace_sync":[{"palace":"명궁","result":"명궁 일치도","score":88},{"palace":"재백궁","result":"재물운 교차","score":80},{"palace":"관록궁","result":"직업운 교차","score":85},{"palace":"전택궁","result":"기반운 교차","score":78}],"interpretation":"3대 역학 통합 해석 4-5문장"}'
-        : '동양 수상학 장문(掌紋) 에너지 분석 전문가로서 이미지의 기운을 자미두수와 연관하여 분석. ' + (sajuCtx ? '의뢰인 사주: ' + sajuCtx + '. ' : '') + (sMode==='palm_left'?'왼손(선천운):':'오른손(후천운):') + '반드시 JSON만 출력:\n{"overall":"장문 한줄요약(30자이내)","match_pct":83,"features":[{"name":"감정선(부처궁)","score":78,"desc":"감정선 에너지 해석","tag":"애정운","color":"#cc88bb","tBg":"rgba(180,100,180,0.15)","tC":"#cc88bb"},{"name":"두뇌선(명궁)","score":85,"desc":"두뇌선 에너지 해석","tag":"지혜/판단","color":"#8aacf0","tBg":"rgba(96,130,220,0.15)","tC":"#8aacf0"},{"name":"생명선(건강궁)","score":82,"desc":"생명선 에너지 해석","tag":"건강/활력","color":"#50C878","tBg":"rgba(80,200,120,0.15)","tC":"#50C878"},{"name":"운명선(관록궁)","score":80,"desc":"운명선 에너지 해석","tag":"직업/대운","color":"#FFD700","tBg":"rgba(255,215,0,0.15)","tC":"#FFD700"},{"name":"태양선(재백궁)","score":75,"desc":"태양선 에너지 해석","tag":"명예/성공","color":"#EF9F27","tBg":"rgba(200,130,30,0.15)","tC":"#EF9F27"}],"palace_sync":[{"palace":"재백궁","result":"재물운 교차","score":80},{"palace":"관록궁","result":"직업운 교차","score":82},{"palace":"부처궁","result":"인간관계 교차","score":78},{"palace":"건강궁","result":"건강운 교차","score":82}],"interpretation":"3대 역학 통합 해석 4-5문장"}';
+      const sajuCtx = sd
+        ? `이름: ${sd.name} / ${sd.gender}성 / ${sd.year}년생 / 명궁주성: ${sd.star} / 현재대운: ${sd.daewoon||'미상'} / 사주요약: ${sd.summary||''}`
+        : '';
+
+      let prompt, systemMsg;
+
+      if (sMode === 'face') {
+        systemMsg = '당신은 자미두수·매화역수·기문둔갑에 정통한 40년 경력 명리학 대가이자 관상 전문가입니다. 이미지를 보고 동양 전통 기색(氣色) 관상법으로 깊이 있게 분석합니다. 반드시 JSON만 출력하고 마크다운 코드블록은 절대 사용하지 마세요.';
+        prompt = (sajuCtx ? `[의뢰인 사주 정보]\n${sajuCtx}\n\n` : '')
+          + `위 이미지를 동양 전통 관상법으로 분석해주세요.
+얼굴의 이마(관록궁), 눈빛(명궁), 코(재백궁), 입술(부처궁), 턱선(전택궁) 각 부위를 실제로 보이는 특징에 기반해 자미두수 12궁과 매화역수·기문둔갑을 교차하여 해석하세요.
+${sajuCtx ? '사주 명반과 관상의 일치도를 교차 분석하고, 일치하는 부분과 차이점을 구체적으로 설명하세요.' : ''}
+
+반드시 아래 JSON 형식으로만 출력 (다른 텍스트 없이):
+{"overall":"관상 핵심 한줄 요약 (실제 관찰 기반, 30자이내)","match_pct":숫자(75~95),"features":[{"name":"이마(관록궁)","score":숫자(0-100),"desc":"실제 이마 형태와 관록궁 기색 에너지 상세 해석 2문장","tag":"관록운","color":"#FFD700","tBg":"rgba(255,215,0,0.15)","tC":"#FFD700"},{"name":"눈빛(명궁)","score":숫자,"desc":"실제 눈빛과 명궁 에너지 상세 해석 2문장","tag":"핵심기운","color":"#50C878","tBg":"rgba(80,200,120,0.15)","tC":"#50C878"},{"name":"코(재백궁)","score":숫자,"desc":"실제 코 형태와 재백궁 기색 상세 해석 2문장","tag":"재물운","color":"#8aacf0","tBg":"rgba(96,130,220,0.15)","tC":"#8aacf0"},{"name":"입술(부처궁)","score":숫자,"desc":"실제 입술과 부처궁 에너지 상세 해석 2문장","tag":"인간관계","color":"#cc88bb","tBg":"rgba(180,100,180,0.15)","tC":"#cc88bb"},{"name":"턱선(전택궁)","score":숫자,"desc":"실제 턱선과 전택궁 기색 상세 해석 2문장","tag":"기반/의지","color":"#EF9F27","tBg":"rgba(200,130,30,0.15)","tC":"#EF9F27"}],"palace_sync":[{"palace":"명궁","result":"명궁 기색과 사주 일치도 상세","score":숫자},{"palace":"재백궁","result":"재물운 교차 분석 상세","score":숫자},{"palace":"관록궁","result":"직업운 교차 분석 상세","score":숫자},{"palace":"전택궁","result":"기반운 교차 분석 상세","score":숫자}],"interpretation":"자미두수 명반 + 매화역수 오늘 괘 + 관상 기색을 3중 교차한 통합 해석. 이 사람의 타고난 기질, 현재 운세 흐름, 주의할 점, 강점을 5문장 이상 구체적으로 서술. <em>강조</em> <b>금색강조</b> 태그 적극 활용."}`;
+
+      } else {
+        // 손금 분석 - ChatGPT 수준 심층 분석
+        const isLeft = sMode === 'palm_left';
+        systemMsg = '당신은 동양 전통 수상학(手相學)과 자미두수·매화역수·기문둔갑을 통합하는 40년 경력 명리학 대가입니다. 손바닥 사진을 보고 실제로 보이는 손금선의 형태·깊이·방향·잔선 등을 구체적으로 관찰하여 깊이 있게 분석합니다. 반드시 JSON만 출력하고 마크다운 코드블록은 절대 사용하지 마세요.';
+
+        prompt = (sajuCtx ? `[의뢰인 사주 정보]\n${sajuCtx}\n\n` : '')
+          + `이것은 ${isLeft ? '왼손(선천운 - 타고난 기질과 잠재력)' : '오른손(후천운 - 현재와 미래의 실제 운세 흐름)'} 손바닥 사진입니다.
+
+실제로 보이는 선들을 꼼꼼히 관찰하여 아래 항목들을 분석해주세요:
+
+1. 생명선: 실제 선의 길이, 깊이, 굵기, 엄지를 감싸는 호의 크기, 잔선 유무
+2. 감정선(심장선): 시작점과 끝점의 위치, 곡선/직선 여부, 선의 굵기와 선명도
+3. 두뇌선: 길이와 기울기 방향, 생명선과의 연결/분리 여부
+4. 운명선: 선의 존재 여부, 강약, 시작점 위치
+5. 손 전체: 손가락 길이, 손바닥 넓이, 잔선 많음/적음
+6. ${sajuCtx ? `사주 명반(${sd?.star} 명주)과 손금의 교차 분석` : '전체적인 손금 에너지'}
+
+${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로 분석하세요.' : '현재 진행 중인 운세, 실제 실현된 능력, 앞으로의 변화 흐름을 중심으로 분석하세요.'}
+
+반드시 아래 JSON 형식으로만 출력:
+{"overall":"${isLeft?'선천운':'후천운'} 핵심 한줄 요약 (실제 관찰 기반, 30자이내)","match_pct":숫자(75~95),"features":[{"name":"생명선(건강·활력궁)","score":숫자(0-100),"desc":"실제 생명선 형태 관찰 + 체력/생명력/회복력 상세 해석 2-3문장","tag":"건강/활력","color":"#50C878","tBg":"rgba(80,200,120,0.15)","tC":"#50C878"},{"name":"감정선(부처·인연궁)","score":숫자,"desc":"실제 감정선 형태 관찰 + 애정방식/인간관계 패턴 상세 해석 2-3문장","tag":"애정/인연","color":"#cc88bb","tBg":"rgba(180,100,180,0.15)","tC":"#cc88bb"},{"name":"두뇌선(사고·판단)","score":숫자,"desc":"실제 두뇌선 형태 관찰 + 사고방식/창의성/판단력 상세 해석 2-3문장","tag":"지혜/창의","color":"#8aacf0","tBg":"rgba(96,130,220,0.15)","tC":"#8aacf0"},{"name":"운명선(직업·대운궁)","score":숫자,"desc":"실제 운명선 형태 관찰 + 직업운/커리어 방향 상세 해석 2-3문장","tag":"직업/대운","color":"#FFD700","tBg":"rgba(255,215,0,0.15)","tC":"#FFD700"},{"name":"손 형태(기질·에너지)","score":숫자,"desc":"손가락 길이·손바닥 넓이·잔선 특징 관찰 + 기질과 에너지 패턴 상세 해석 2-3문장","tag":"기질/에너지","color":"#EF9F27","tBg":"rgba(200,130,30,0.15)","tC":"#EF9F27"}],"palace_sync":[{"palace":"재백궁","result":"손금과 사주 재물운 교차 상세 분석","score":숫자},{"palace":"관록궁","result":"손금과 사주 직업운 교차 상세 분석","score":숫자},{"palace":"부처궁","result":"손금과 사주 인간관계 교차 상세 분석","score":숫자},{"palace":"건강궁","result":"손금과 사주 건강운 교차 상세 분석","score":숫자}],"interpretation":"${isLeft?'선천운':'후천운'} 종합 해석: 이 손이 말해주는 이 사람의 타고난 기질(또는 현재 운세 흐름), 강점, 주의할 점, 앞으로의 방향을 자미두수·매화역수·기문둔갑 3대 역학과 교차하여 6문장 이상 구체적이고 개인화된 내용으로 서술. <em>강조</em> <b>금색강조</b> 태그 적극 활용."}`;
+      }
 
       try {
         const response = await fetch('/api/saju', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            model: 'claude-haiku-4-5-20251001',
-            max_tokens: 2000,
-            system: '명리학 AI. 반드시 JSON만 출력. 마크다운 코드블록 금지.',
+            model: 'claude-sonnet-4-6',
+            max_tokens: 4000,
+            system: systemMsg,
             messages: [{ role: 'user', content: [
               { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageData } },
               { type: 'text', text: prompt }
@@ -4292,7 +4325,7 @@
       }
     }
 
-        function runStep(i) {
+            function runStep(i) {
       if (i >= STEPS.length) {
         // AI 분석 완료 대기 후 결과 표시
         const waitForAI = (attempts) => {

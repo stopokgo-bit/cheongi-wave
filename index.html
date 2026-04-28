@@ -3372,12 +3372,17 @@
         <!-- CTA -->
         <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:10px;">
           <!-- 인생지침서 가운데 크게 -->
-          <button onclick="checkScanBeforeReport()" style="width:100%;padding:16px;background:linear-gradient(135deg,#FFD700,#FFA500);border:none;border-radius:14px;color:#0f0f3a;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-0.3px;box-shadow:0 4px 20px rgba(255,215,0,0.3);">
+          <button onclick="_checkAndGoReport()" style="width:100%;padding:16px;background:linear-gradient(135deg,#FFD700,#FFA500);border:none;border-radius:14px;color:#0f0f3a;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-0.3px;box-shadow:0 4px 20px rgba(255,215,0,0.3);">
             ✦ 인생 지침서 받기
           </button>
+          <!-- 관상/손금 단품 -->
+          <div style="display:flex;gap:8px;">
+            <button onclick="_buyFaceReport()" style="flex:1;padding:11px 6px;background:rgba(80,200,120,0.1);border:1px solid rgba(80,200,120,0.3);border-radius:10px;color:var(--em);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">👁 관상 단품<br><span style='font-size:10px;opacity:.8;'>₩9,900</span></button>
+            <button onclick="_buyPalmReport()" style="flex:1;padding:11px 6px;background:rgba(138,172,240,0.1);border:1px solid rgba(138,172,240,0.3);border-radius:10px;color:#8aacf0;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🤚 손금 단품<br><span style='font-size:10px;opacity:.8;'>₩9,900</span></button>
+          </div>
           <!-- 보조 버튼들 작게 -->
           <div style="display:flex;gap:8px;">
-            <button onclick="sMode='face';resetScan();startAutoScan();" style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--t2);font-size:12px;cursor:pointer;font-family:inherit;">🔄 다시 분석</button>
+            <button onclick="startAutoScan();" style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--t2);font-size:12px;cursor:pointer;font-family:inherit;">🔄 다시 분석</button>
             <button onclick="showPg('main')" style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--t2);font-size:12px;cursor:pointer;font-family:inherit;">← 메인으로</button>
           </div>
         </div>
@@ -4192,9 +4197,9 @@
       { name: '전택궁', pct: 70, color: '#EF9F27', c: '일치' }, { name: '부처궁', pct: 62, color: '#cc88bb', c: '보통' },
     ];
     const STEPS = [
-      { label: '얼굴 감지 및 정렬 확인', dur: 200 }, { label: '3D 랜드마크 68점 추출', dur: 300 },
-      { label: '골격 구조 분석', dur: 200 }, { label: '12궁 명반 좌표 동기화', dur: 300 },
-      { label: '관상·사주 통합 해석 생성', dur: 200 },
+      { label: '얼굴 감지 및 정렬 확인', dur: 400 }, { label: '3D 랜드마크 68점 추출', dur: 600 },
+      { label: '골격 구조 분석', dur: 500 }, { label: '12궁 명반 좌표 동기화', dur: 700 },
+      { label: '관상·사주 통합 해석 생성', dur: 800 },
     ];
     let WD = [{ age: '20대', w: 72, c: 80, l: 65 }, { age: '30대', w: 65, c: 85, l: 70 }, { age: '45세', w: 88, c: 92, l: 75, ev: '황금기' }, { age: '50대', w: 78, c: 80, l: 68 }, { age: '60대', w: 55, c: 60, l: 74 }, { age: '70대', w: 70, c: 75, l: 80 }];
 
@@ -4253,6 +4258,47 @@
       if (pg === 'sound') { if(typeof window.buildChannels==='function') window.buildChannels(); else buildChannels(); }
       if (pg === 'saju') { setTimeout(() => { drawWave(); }, 80); }
       window.scrollTo(0, 0);
+    }
+
+
+
+    function _buyFaceReport() {
+      if (!window._scanResult) {
+        alert('관상 스캔을 먼저 완료해주세요.');
+        return;
+      }
+      // 테스트: 바로 열람
+      localStorage.setItem('cw_face_paid','1');
+      if(typeof showShareToast==='function') showShareToast('✅ 관상 단품 구매 완료!');
+      // 결과는 현재 화면에 이미 표시됨
+    }
+    function _buyPalmReport() {
+      if (!window.capturedImages || (!window.capturedImages.palm_left && !window.capturedImages.palm_right)) {
+        alert('손금 스캔을 먼저 완료해주세요.');
+        return;
+      }
+      localStorage.setItem('cw_palm_paid','1');
+      if(typeof showShareToast==='function') showShareToast('✅ 손금 단품 구매 완료!');
+    }
+
+    function _checkAndGoReport() {
+      // 사주 데이터 있으면 바로 이동
+      if (window._sajuData && window._sajuData.name && window._sajuData.year) {
+        showPg('report');
+        return;
+      }
+      // 없으면 팝업
+      var popup = document.createElement('div');
+      popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,10,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
+      popup.innerHTML = '<div style="background:#0f0f3a;border:1px solid var(--em);border-radius:20px;padding:2rem;max-width:320px;width:100%;text-align:center;">'
+        + '<div style="font-size:36px;margin-bottom:.75rem;">📋</div>'
+        + '<div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:.5rem;">사주 정보가 필요해요</div>'
+        + '<div style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:1.25rem;">인생 지침서는 사주 분석을 먼저 완료해야 생성할 수 있어요.<br>메인 화면에서 이름과 생년월일을 입력해주세요.</div>'
+        + '<div style="display:flex;gap:8px;">'
+        + '<button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:11px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:var(--t2);font-size:13px;cursor:pointer;font-family:inherit;">닫기</button>'
+        + '<button onclick="this.closest('div[style*=fixed]').remove();showPg('main')" style="flex:1;padding:11px;background:var(--em);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">입력하러 가기</button>'
+        + '</div></div>';
+      document.body.appendChild(popup);
     }
 
     function buildExperts() {

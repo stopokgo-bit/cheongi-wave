@@ -3131,13 +3131,21 @@
     <div id="pg-scan" class="pg">
 
       <!-- 자동 순차 촬영 오버레이 -->
-      <div id="seq-overlay" style="display:none;position:fixed;inset:0;background:rgba(10,10,40,0.95);z-index:9000;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;gap:16px;">
-        <div id="seq-icon" style="font-size:64px;line-height:1;">👁</div>
-        <div id="seq-title" style="font-size:22px;font-weight:800;color:#fff;"></div>
-        <div id="seq-desc" style="font-size:14px;color:var(--t2);line-height:1.9;max-width:320px;white-space:pre-line;"></div>
-        <div id="seq-countdown" style="font-size:72px;font-weight:900;color:var(--em);min-height:80px;line-height:1;display:none;"></div>
-        <button id="seq-ready-btn" onclick="seqReady()" style="padding:14px 40px;background:var(--em);border:none;border-radius:12px;color:#fff;font-size:16px;font-weight:700;cursor:pointer;font-family:inherit;">준비됐어요!</button>
-        <button id="seq-skip-btn" onclick="seqSkip()" style="display:none;padding:8px 24px;background:none;border:1px solid rgba(255,255,255,0.2);border-radius:8px;color:var(--t2);font-size:13px;cursor:pointer;font-family:inherit;">이 단계 건너뛰기</button>
+      <div id="seq-overlay" style="display:none;position:fixed;inset:0;background:rgba(5,5,30,0.97);z-index:9000;flex-direction:column;align-items:center;justify-content:center;text-align:center;padding:2rem;gap:20px;">
+        <div id="seq-icon" style="font-size:72px;line-height:1;filter:drop-shadow(0 0 20px rgba(80,200,120,0.5));">👁</div>
+        <div id="seq-title" style="font-size:26px;font-weight:800;color:#fff;letter-spacing:-0.5px;"></div>
+        <div id="seq-desc" style="font-size:15px;color:rgba(200,200,230,0.85);line-height:2;max-width:340px;white-space:pre-line;"></div>
+        <!-- 카운트다운 크게 -->
+        <div id="seq-countdown" style="font-size:96px;font-weight:900;color:var(--em);min-height:100px;line-height:1;display:none;text-shadow:0 0 40px rgba(80,200,120,0.6);"></div>
+        <!-- 준비 버튼 -->
+        <button id="seq-ready-btn" onclick="seqReady()" style="padding:16px 48px;background:var(--em);border:none;border-radius:14px;color:#fff;font-size:17px;font-weight:700;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(80,200,120,0.4);">📸 촬영 시작</button>
+        <button id="seq-skip-btn" onclick="seqSkip()" style="display:none;padding:10px 28px;background:none;border:1px solid rgba(255,255,255,0.2);border-radius:10px;color:rgba(153,153,204,0.8);font-size:13px;cursor:pointer;font-family:inherit;">이 단계 건너뛰기</button>
+        <!-- 진행 표시 -->
+        <div id="seq-progress" style="display:flex;gap:10px;align-items:center;">
+          <div class="seq-dot" id="sdot-0" style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.2);transition:all .3s;"></div>
+          <div class="seq-dot" id="sdot-1" style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.2);transition:all .3s;"></div>
+          <div class="seq-dot" id="sdot-2" style="width:10px;height:10px;border-radius:50%;background:rgba(255,255,255,0.2);transition:all .3s;"></div>
+        </div>
       </div>
       <div class="pgtop">
         <div class="back-btn" onclick="showPg('main')"><svg width="14" height="14" viewBox="0 0 24 24" fill="none"
@@ -4612,10 +4620,16 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
     ];
 
     function startAutoScan() {
-      showPg('scan');
       _seqStep = 0;
       _seqAuto = true;
-      setTimeout(function(){ _showSeqOverlay(0); }, 300);
+      sMode = 'face';
+      showPg('scan');
+      // 카메라 즉시 켜기
+      setTimeout(function(){
+        startCamera('user');
+        // 카메라 준비되면 바로 오버레이 표시
+        setTimeout(function(){ _showSeqOverlay(0); }, 800);
+      }, 200);
     }
 
     function _showSeqOverlay(step) {
@@ -4630,8 +4644,19 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
       var readyBtn = document.getElementById('seq-ready-btn');
       var skipBtn = document.getElementById('seq-skip-btn');
       readyBtn.style.display = 'inline-block';
-      readyBtn.textContent = '준비됐어요!';
+      readyBtn.style.background = 'var(--em)';
+      readyBtn.style.color = '#fff';
+      readyBtn.textContent = '📸 촬영 시작';
+      readyBtn.onclick = seqReady;
       skipBtn.style.display = step > 0 ? 'inline-block' : 'none';
+      // 진행 도트 업데이트
+      [0,1,2].forEach(function(i) {
+        var dot = document.getElementById('sdot-'+i);
+        if (!dot) return;
+        if (i < step) { dot.style.background='var(--em)'; dot.style.width='12px'; dot.style.height='12px'; }
+        else if (i === step) { dot.style.background='#fff'; dot.style.width='14px'; dot.style.height='14px'; dot.style.boxShadow='0 0 10px rgba(255,255,255,0.5)'; }
+        else { dot.style.background='rgba(255,255,255,0.2)'; dot.style.width='10px'; dot.style.height='10px'; dot.style.boxShadow='none'; }
+      });
       overlay.style.display = 'flex';
     }
 
@@ -4695,21 +4720,32 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
     function _showSeqComplete() {
       var overlay = document.getElementById('seq-overlay');
       if (!overlay) return;
-      document.getElementById('seq-icon').textContent = '🎉';
-      document.getElementById('seq-title').textContent = '모든 스캔 완료!';
-      document.getElementById('seq-desc').textContent = '관상 · 왼손 · 오른손\n3단계 촬영이 모두 완료됐습니다!\n이제 인생 지침서를 생성할 수 있어요.';
-      document.getElementById('seq-countdown').style.display = 'none';
+      document.getElementById('seq-icon').textContent = '✨';
+      document.getElementById('seq-title').textContent = '3단계 촬영 완료!';
+      document.getElementById('seq-desc').textContent = '관상 · 왼손 · 오른손\n모두 촬영됐어요.\n지금 바로 AI가 분석을 시작합니다...';
+      document.getElementById('seq-countdown').style.display = 'block';
+      document.getElementById('seq-countdown').style.fontSize = '40px';
+      document.getElementById('seq-countdown').textContent = '🔮 분석 중...';
+      // 진행 도트 모두 완료
+      [0,1,2].forEach(function(i) {
+        var dot = document.getElementById('sdot-'+i);
+        if (dot) { dot.style.background='var(--em)'; dot.style.width='12px'; dot.style.height='12px'; }
+      });
       var readyBtn = document.getElementById('seq-ready-btn');
       var skipBtn = document.getElementById('seq-skip-btn');
-      readyBtn.style.display = 'inline-block';
-      readyBtn.textContent = '✦ 인생 지침서 생성하기';
-      readyBtn.style.background = 'var(--gold)';
-      readyBtn.style.color = '#0f0f3a';
-      readyBtn.onclick = function(){ overlay.style.display='none'; checkScanBeforeReport(); };
-      skipBtn.style.display = 'inline-block';
-      skipBtn.textContent = '메인으로';
-      skipBtn.onclick = function(){ overlay.style.display='none'; showPg('main'); };
+      readyBtn.style.display = 'none';
+      skipBtn.style.display = 'none';
       overlay.style.display = 'flex';
+      // 2초 후 자동으로 결과 페이지로
+      setTimeout(function(){
+        overlay.style.display = 'none';
+        showPg('scan');
+        // 결과 표시
+        setTimeout(function(){
+          document.getElementById('rs').classList.add('show');
+          showScanResult();
+        }, 300);
+      }, 2000);
     }
 
     function showResult() {

@@ -4339,7 +4339,6 @@ function showResult() {
   if (camAnimFr) { cancelAnimationFrame(camAnimFr); camAnimFr = null; }
   sState = 'done'; setFB('done');
   // ✅ 스캔 CTA 버튼 상태 업데이트
-  setTimeout(updateScanCTA, 100);
   // ✅ 자동 순차 촬영 중이면 다음 단계로 (1.5초 후)
   if (seqAutoCapture) {
     // 완료 토스트 표시

@@ -1,22 +1,24 @@
+(function() {
+// 단, window에 명시적으로 노출할 것들만 window.xxx = 로
+
+
 // =====================================================
 // 천기 웨이브 — Complete Fix Script v3
 // =====================================================
 
 // ── 1. 핵심 전역 변수 (최우선 선언) ──
 window.capturedImages = window.capturedImages || { face: null, palm_left: null, palm_right: null };
-var capturedImages = window.capturedImages;
 window.scanResults = window.scanResults || { face: null, palm_left: null, palm_right: null };
-var scanResults = window.scanResults;
 window.alignScore = window.alignScore || 0;
 window.currentFacing = window.currentFacing || 'user';
 
-var PALM_LINES_LEFT = [
+window.PALM_LINES_LEFT = [
   { l: '생명선', score: 82, desc: '길고 깊게 발달. 타고난 생명력과 건강운 강함.', color: '#50C878', tBg: 'rgba(80,200,120,0.18)', tC: '#3db866' },
   { l: '감정선', score: 78, desc: '풍부한 굴곡. 애정 표현 풍부하고 감수성 예민.', color: '#FFD700', tBg: 'rgba(255,215,0,0.15)', tC: '#B8860B' },
   { l: '두뇌선', score: 85, desc: '실용적 방향. 분석력·판단력 우수.', color: '#50C878', tBg: 'rgba(80,200,120,0.18)', tC: '#3db866' },
   { l: '운명선', score: 70, desc: '중년 이후 강화. 노력형 성공 패턴.', color: '#EF9F27', tBg: 'rgba(255,165,0,0.15)', tC: '#c07020' },
 ];
-var PALM_LINES_RIGHT = [
+window.PALM_LINES_RIGHT = [
   { l: '생명선', score: 80, desc: '현재 건강·활력 상태 양호.', color: '#50C878', tBg: 'rgba(80,200,120,0.18)', tC: '#3db866' },
   { l: '감정선', score: 75, desc: '현재 감정 관계 안정적.', color: '#FFD700', tBg: 'rgba(255,215,0,0.15)', tC: '#B8860B' },
   { l: '두뇌선', score: 88, desc: '후천적 능력 발달. 커리어 상승 흐름.', color: '#50C878', tBg: 'rgba(80,200,120,0.18)', tC: '#3db866' },
@@ -379,7 +381,7 @@ window.setAdminTab = function(filter,btn) {
   document.querySelectorAll('#admin-tab-members .admin-tab').forEach(function(b){b.classList.remove('on');});
   if(btn) btn.classList.add('on');
 };
-var _adminMonth = new Date();
+window._adminMonth = window._adminMonth || new Date();
 window.changeAdminMonth = function(dir) {
   _adminMonth.setMonth(_adminMonth.getMonth()+dir);
   var el=document.getElementById('admin-month-label');
@@ -506,3 +508,5 @@ window.showPg = function(pg, btn, sub) {
 };
 
 console.log('[천기웨이브] Fix v3 로드 완료');
+
+})();

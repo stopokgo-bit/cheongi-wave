@@ -157,6 +157,199 @@
       animation: fu .4s .24s ease both;
     }
 
+
+    /* ═══════════════════════════════════════
+       새벽연 스타일 — 스캔 결과 UI
+    ═══════════════════════════════════════ */
+    .saebyeok-card {
+      background: rgba(255,255,255,0.04);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 20px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+    }
+    .saebyeok-card.emerald {
+      border-color: rgba(80,200,120,0.3);
+      background: linear-gradient(135deg, rgba(80,200,120,0.06), rgba(255,255,255,0.02));
+    }
+    .saebyeok-card.gold {
+      border-color: rgba(255,215,0,0.3);
+      background: linear-gradient(135deg, rgba(255,215,0,0.06), rgba(255,255,255,0.02));
+    }
+    /* 섹션 헤더 — 새벽연 border-left 스타일 */
+    .sec-header {
+      border-left: 2px solid rgba(80,200,120,0.6);
+      padding-left: .75rem;
+      margin-bottom: 1rem;
+    }
+    .sec-header .kicker {
+      font-size: 10px;
+      font-family: monospace;
+      letter-spacing: .3em;
+      color: #50C878;
+      text-transform: uppercase;
+      margin-bottom: 3px;
+    }
+    .sec-header h3 {
+      font-size: 18px;
+      font-weight: 700;
+      color: #fff;
+    }
+    /* 3대 역학 교차 태그 */
+    .cross-line {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 8px;
+      align-items: flex-start;
+    }
+    .cross-kicker {
+      font-size: 9px;
+      font-family: monospace;
+      letter-spacing: .2em;
+      color: #50C878;
+      flex-shrink: 0;
+      width: 58px;
+      padding-top: 2px;
+    }
+    .cross-text {
+      font-size: 12px;
+      color: rgba(204,204,238,0.9);
+      line-height: 1.7;
+    }
+    /* 손금·관상 섹션 카드 */
+    .scan-section-card {
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 1rem;
+      margin-bottom: .75rem;
+      position: relative;
+      overflow: hidden;
+    }
+    .scan-section-card .left-bar {
+      position: absolute;
+      left: 0; top: 0; bottom: 0;
+      width: 3px;
+      border-radius: 3px 0 0 3px;
+    }
+    .scan-section-card .content {
+      padding-left: .5rem;
+    }
+    .scan-section-card h4 {
+      font-size: 15px;
+      font-weight: 700;
+      color: #fff;
+      margin-bottom: .5rem;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .scan-section-card .dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .scan-section-card .obs {
+      font-size: 11px;
+      color: rgba(153,153,204,0.8);
+      font-style: italic;
+      margin-bottom: .4rem;
+    }
+    .scan-section-card .reading {
+      font-size: 13px;
+      color: rgba(220,220,245,0.9);
+      line-height: 1.8;
+      margin-bottom: .5rem;
+    }
+    .scan-section-card .cross-wrap {
+      border-top: 1px solid rgba(255,255,255,0.07);
+      padding-top: .6rem;
+      margin-top: .5rem;
+    }
+    /* 종합 리딩 카드들 */
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: .75rem;
+      margin-bottom: .75rem;
+    }
+    @media(max-width:580px){ .summary-grid { grid-template-columns: 1fr; } }
+    .summary-card {
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 14px;
+      padding: 1rem;
+    }
+    .summary-card .title {
+      font-size: 9px;
+      font-family: monospace;
+      letter-spacing: .3em;
+      color: #50C878;
+      text-transform: uppercase;
+      margin-bottom: .5rem;
+    }
+    .summary-card ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+    .summary-card ul li {
+      font-size: 12px;
+      color: rgba(220,220,245,0.9);
+      line-height: 1.8;
+      display: flex;
+      gap: 6px;
+    }
+    .summary-card ul li::before {
+      content: '·';
+      color: #50C878;
+      flex-shrink: 0;
+    }
+    .summary-card ul li.caution::before { color: #e07070; }
+    .fortune-flow-card {
+      background: linear-gradient(135deg, rgba(80,200,120,0.08), rgba(255,255,255,0.02), rgba(255,215,0,0.05));
+      border: 1px solid rgba(80,200,120,0.3);
+      border-radius: 14px;
+      padding: 1.1rem;
+      margin-bottom: 1rem;
+    }
+    /* 한 줄 인상 카드 */
+    .one-line-card {
+      background: linear-gradient(135deg, rgba(80,200,120,0.06), rgba(255,255,255,0.02), rgba(138,172,240,0.06));
+      border: 1px solid rgba(80,200,120,0.25);
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 1rem;
+      position: relative;
+    }
+    .one-line-card .quote {
+      font-size: 15px;
+      font-weight: 500;
+      line-height: 1.7;
+      color: #fff;
+      margin-bottom: .4rem;
+    }
+    .one-line-card .temperament {
+      font-size: 12px;
+      color: rgba(153,153,204,0.8);
+      font-style: italic;
+    }
+    /* 양손 비교 */
+    .hands-compare {
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 12px;
+      padding: 1rem;
+      margin-bottom: .75rem;
+    }
+    .hands-compare .compare-label {
+      font-size: 9px;
+      font-family: monospace;
+      letter-spacing: .25em;
+      color: #50C878;
+      text-transform: uppercase;
+      margin-bottom: .5rem;
+    }
+
     /* INPUT HERO */
     .hero {
       background: rgba(255, 255, 255, 0.04);
@@ -3018,34 +3211,50 @@
         <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.75rem;">분석 진행 중...</div>
         <div class="prog-steps" id="psteps"></div>
       </div>
+      <!-- 새벽연 스타일 결과 화면 -->
       <div class="result-sec" id="rs">
-        <div class="res-hero">
-          <div class="face-thumb"><canvas id="tc" width="64" height="80" style="width:64px;height:80px;"></canvas>
-            <div class="face-tag">스캔 완료</div>
-          </div>
+
+        <!-- 한 줄 인상 카드 -->
+        <div class="one-line-card">
+          <div style="font-size:10px;font-family:monospace;letter-spacing:.3em;color:#50C878;text-transform:uppercase;margin-bottom:8px;" id="rs-mode-label">觀相 × 手相 — 한 줄 인상</div>
+          <div class="quote" id="rs-one-line">"분석 결과를 불러오는 중..."</div>
+          <div class="temperament" id="rs-temperament"></div>
+          <button onclick="window._scanResult=undefined;doCapture()" style="position:absolute;top:.75rem;right:.75rem;font-size:10px;color:rgba(153,153,204,0.6);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit;">
+            <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23,4 23,11 16,11"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 11"/></svg>
+            다시 분석
+          </button>
+        </div>
+
+        <!-- 촬영 탭 -->
+        <div style="display:flex;gap:8px;margin-bottom:1rem;">
+          <div id="tab-face" onclick="if(capturedImages.face){sMode='face';showScanResult()}" style="flex:1;padding:7px 10px;border-radius:8px;background:rgba(80,200,120,0.1);border:1px solid rgba(80,200,120,0.25);font-size:11px;color:var(--em);font-weight:700;text-align:center;cursor:pointer;opacity:0.4;">👁 관상</div>
+          <div id="tab-left" onclick="if(capturedImages.palm_left){sMode='palm_left';showScanResult()}" style="flex:1;padding:7px 10px;border-radius:8px;background:rgba(255,215,0,0.1);border:1px solid rgba(255,215,0,0.25);font-size:11px;color:var(--gold);font-weight:700;text-align:center;cursor:pointer;opacity:0.4;">✋ 왼손</div>
+          <div id="tab-right" onclick="if(capturedImages.palm_right){sMode='palm_right';showScanResult()}" style="flex:1;padding:7px 10px;border-radius:8px;background:rgba(96,130,220,0.1);border:1px solid rgba(96,130,220,0.25);font-size:11px;color:#8aacf0;font-weight:700;text-align:center;cursor:pointer;opacity:0.4;">🤚 오른손</div>
+        </div>
+
+        <!-- 썸네일 + 매칭 뱃지 -->
+        <div style="display:flex;gap:12px;align-items:center;margin-bottom:1rem;">
+          <canvas id="tc" width="64" height="80" style="width:64px;height:80px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);flex-shrink:0;"></canvas>
           <div>
-            <div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:3px;">홍길동 · 인시생</div>
-            <div style="font-size:11px;color:var(--t2);margin-bottom:.5rem;">관상 분석 완료 · 자미두수 12궁 동기화</div>
-            <div class="match-badge"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                stroke-width="2.5">
-                <polyline points="20,6 9,17 4,12" />
-              </svg>명반 일치도 87%</div>
+            <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;" id="rs-name">스캔 완료</div>
+            <div style="font-size:11px;color:var(--t2);margin-bottom:6px;" id="rs-sub">3대 역학 분석 중...</div>
+            <div class="match-badge" id="rs-match">
+              <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>
+              명반 동기화 완료
+            </div>
           </div>
         </div>
-        <div class="feat-grid" id="fg"></div>
-        <div
-          style="background:var(--bg2);border:1px solid var(--bd);border-radius:10px;padding:.85rem;margin-bottom:.75rem;">
-          <div style="font-size:13px;font-weight:700;color:#fff;margin-bottom:.6rem;">12궁 관상 동기화 결과</div>
-          <div class="pm-list" id="pl"></div>
-        </div>
-        <div class="ib">
-          <div class="ib-title">관상·명반 통합 해석</div>
-          <div class="ib-body">이마(관록궁)가 <em>넓고 둥글게 발달</em>하여 명반의 천동성 화록과 완벽하게 일치합니다. 눈빛의 <em>예리함(천기성 명궁)</em>과 인중의 길이가
-            <b>이동운 91점</b>을 뒷받침합니다.</div>
-        </div>
-        <div class="cta-row">
-          <button class="btn-gold" onclick="showPg('report')">✦ 관상 포함 50P 리포트</button>
-          <button class="btn-em" onclick="setMode('palm',document.getElementById('mp'));resetScan()">손금 스캔 이어서</button>
+
+        <!-- 세부 분석 섹션 (JS로 채워짐) -->
+        <div id="rs-sections"></div>
+
+        <!-- 종합 리딩 (JS로 채워짐) -->
+        <div id="rs-summary"></div>
+
+        <!-- CTA -->
+        <div class="cta-row" style="margin-top:1rem;">
+          <button class="btn-gold" onclick="checkScanBeforeReport()">✦ 인생 지침서</button>
+          <button class="btn-em" id="scan-next-btn" onclick="goNextScan()">손금 스캔 이어서</button>
           <button class="btn-out" onclick="showPg('main')">메인으로</button>
         </div>
       </div>
@@ -4261,7 +4470,7 @@
 ${sajuCtx ? '사주 명반과 관상의 일치도를 교차 분석하고, 일치하는 부분과 차이점을 구체적으로 설명하세요.' : ''}
 
 반드시 아래 JSON 형식으로만 출력 (다른 텍스트 없이):
-{"overall":"관상 핵심 한줄 요약 (실제 관찰 기반, 30자이내)","match_pct":숫자(75~95),"features":[{"name":"이마(관록궁)","score":숫자(0-100),"desc":"실제 이마 형태와 관록궁 기색 에너지 상세 해석 2문장","tag":"관록운","color":"#FFD700","tBg":"rgba(255,215,0,0.15)","tC":"#FFD700"},{"name":"눈빛(명궁)","score":숫자,"desc":"실제 눈빛과 명궁 에너지 상세 해석 2문장","tag":"핵심기운","color":"#50C878","tBg":"rgba(80,200,120,0.15)","tC":"#50C878"},{"name":"코(재백궁)","score":숫자,"desc":"실제 코 형태와 재백궁 기색 상세 해석 2문장","tag":"재물운","color":"#8aacf0","tBg":"rgba(96,130,220,0.15)","tC":"#8aacf0"},{"name":"입술(부처궁)","score":숫자,"desc":"실제 입술과 부처궁 에너지 상세 해석 2문장","tag":"인간관계","color":"#cc88bb","tBg":"rgba(180,100,180,0.15)","tC":"#cc88bb"},{"name":"턱선(전택궁)","score":숫자,"desc":"실제 턱선과 전택궁 기색 상세 해석 2문장","tag":"기반/의지","color":"#EF9F27","tBg":"rgba(200,130,30,0.15)","tC":"#EF9F27"}],"palace_sync":[{"palace":"명궁","result":"명궁 기색과 사주 일치도 상세","score":숫자},{"palace":"재백궁","result":"재물운 교차 분석 상세","score":숫자},{"palace":"관록궁","result":"직업운 교차 분석 상세","score":숫자},{"palace":"전택궁","result":"기반운 교차 분석 상세","score":숫자}],"interpretation":"자미두수 명반 + 매화역수 오늘 괘 + 관상 기색을 3중 교차한 통합 해석. 이 사람의 타고난 기질, 현재 운세 흐름, 주의할 점, 강점을 5문장 이상 구체적으로 서술. <em>강조</em> <b>금색강조</b> 태그 적극 활용."}`;
+{"overall":"관상 핵심 한줄 요약 (실제 관찰 기반, 30자이내)","match_pct":숫자(75~95),"features":[{"name":"이마(관록궁)","score":숫자(0-100),"desc":"실제 이마 형태와 관록궁 기색 에너지 상세 해석 2문장","tag":"관록운","color":"#FFD700","tBg":"rgba(255,215,0,0.15)","tC":"#FFD700","ziwei":"자미두수 근거","meihua":"매화역수 근거","qimen":"기문둔갑 근거"},{"name":"눈빛(명궁)","score":숫자,"desc":"실제 눈빛과 명궁 에너지 상세 해석 2문장","tag":"핵심기운","color":"#50C878","tBg":"rgba(80,200,120,0.15)","tC":"#50C878"},{"name":"코(재백궁)","score":숫자,"desc":"실제 코 형태와 재백궁 기색 상세 해석 2문장","tag":"재물운","color":"#8aacf0","tBg":"rgba(96,130,220,0.15)","tC":"#8aacf0"},{"name":"입술(부처궁)","score":숫자,"desc":"실제 입술과 부처궁 에너지 상세 해석 2문장","tag":"인간관계","color":"#cc88bb","tBg":"rgba(180,100,180,0.15)","tC":"#cc88bb"},{"name":"턱선(전택궁)","score":숫자,"desc":"실제 턱선과 전택궁 기색 상세 해석 2문장","tag":"기반/의지","color":"#EF9F27","tBg":"rgba(200,130,30,0.15)","tC":"#EF9F27"}],"palace_sync":[{"palace":"명궁","result":"명궁 기색과 사주 일치도 상세","score":숫자},{"palace":"재백궁","result":"재물운 교차 분석 상세","score":숫자},{"palace":"관록궁","result":"직업운 교차 분석 상세","score":숫자},{"palace":"전택궁","result":"기반운 교차 분석 상세","score":숫자}],"interpretation":"자미두수 명반 + 매화역수 오늘 괘 + 관상 기색을 3중 교차한 통합 해석. 이 사람의 타고난 기질, 현재 운세 흐름, 주의할 점, 강점을 5문장 이상 구체적으로 서술. <em>강조</em> <b>금색강조</b> 태그 적극 활용."}`;
 
       } else {
         // 손금 분석 - ChatGPT 수준 심층 분석
@@ -4283,7 +4492,7 @@ ${sajuCtx ? '사주 명반과 관상의 일치도를 교차 분석하고, 일치
 ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로 분석하세요.' : '현재 진행 중인 운세, 실제 실현된 능력, 앞으로의 변화 흐름을 중심으로 분석하세요.'}
 
 반드시 아래 JSON 형식으로만 출력:
-{"overall":"${isLeft?'선천운':'후천운'} 핵심 한줄 요약 (실제 관찰 기반, 30자이내)","match_pct":숫자(75~95),"features":[{"name":"생명선(건강·활력궁)","score":숫자(0-100),"desc":"실제 생명선 형태 관찰 + 체력/생명력/회복력 상세 해석 2-3문장","tag":"건강/활력","color":"#50C878","tBg":"rgba(80,200,120,0.15)","tC":"#50C878"},{"name":"감정선(부처·인연궁)","score":숫자,"desc":"실제 감정선 형태 관찰 + 애정방식/인간관계 패턴 상세 해석 2-3문장","tag":"애정/인연","color":"#cc88bb","tBg":"rgba(180,100,180,0.15)","tC":"#cc88bb"},{"name":"두뇌선(사고·판단)","score":숫자,"desc":"실제 두뇌선 형태 관찰 + 사고방식/창의성/판단력 상세 해석 2-3문장","tag":"지혜/창의","color":"#8aacf0","tBg":"rgba(96,130,220,0.15)","tC":"#8aacf0"},{"name":"운명선(직업·대운궁)","score":숫자,"desc":"실제 운명선 형태 관찰 + 직업운/커리어 방향 상세 해석 2-3문장","tag":"직업/대운","color":"#FFD700","tBg":"rgba(255,215,0,0.15)","tC":"#FFD700"},{"name":"손 형태(기질·에너지)","score":숫자,"desc":"손가락 길이·손바닥 넓이·잔선 특징 관찰 + 기질과 에너지 패턴 상세 해석 2-3문장","tag":"기질/에너지","color":"#EF9F27","tBg":"rgba(200,130,30,0.15)","tC":"#EF9F27"}],"palace_sync":[{"palace":"재백궁","result":"손금과 사주 재물운 교차 상세 분석","score":숫자},{"palace":"관록궁","result":"손금과 사주 직업운 교차 상세 분석","score":숫자},{"palace":"부처궁","result":"손금과 사주 인간관계 교차 상세 분석","score":숫자},{"palace":"건강궁","result":"손금과 사주 건강운 교차 상세 분석","score":숫자}],"interpretation":"${isLeft?'선천운':'후천운'} 종합 해석: 이 손이 말해주는 이 사람의 타고난 기질(또는 현재 운세 흐름), 강점, 주의할 점, 앞으로의 방향을 자미두수·매화역수·기문둔갑 3대 역학과 교차하여 6문장 이상 구체적이고 개인화된 내용으로 서술. <em>강조</em> <b>금색강조</b> 태그 적극 활용."}`;
+{"overall":"${isLeft?'선천운':'후천운'} 핵심 한줄 요약 (실제 관찰 기반, 30자이내)","match_pct":숫자(75~95),"features":[{"name":"생명선(건강·활력궁)","score":숫자(0-100),"desc":"실제 생명선 형태 관찰 + 체력/생명력/회복력 상세 해석 2-3문장","tag":"건강/활력","color":"#50C878","tBg":"rgba(80,200,120,0.15)","tC":"#50C878"},{"name":"감정선(부처·인연궁)","score":숫자,"desc":"실제 감정선 형태 관찰 + 애정방식/인간관계 패턴 상세 해석 2-3문장","tag":"애정/인연","color":"#cc88bb","tBg":"rgba(180,100,180,0.15)","tC":"#cc88bb"},{"name":"두뇌선(사고·판단)","score":숫자,"desc":"실제 두뇌선 형태 관찰 + 사고방식/창의성/판단력 상세 해석 2-3문장","tag":"지혜/창의","color":"#8aacf0","tBg":"rgba(96,130,220,0.15)","tC":"#8aacf0"},{"name":"운명선(직업·대운궁)","score":숫자,"desc":"실제 운명선 형태 관찰 + 직업운/커리어 방향 상세 해석 2-3문장","tag":"직업/대운","color":"#FFD700","tBg":"rgba(255,215,0,0.15)","tC":"#FFD700"},{"name":"손 형태(기질·에너지)","score":숫자,"desc":"손가락 길이·손바닥 넓이·잔선 특징 관찰 + 기질과 에너지 패턴 상세 해석 2-3문장","tag":"기질/에너지","color":"#EF9F27","tBg":"rgba(200,130,30,0.15)","tC":"#EF9F27"}],"palace_sync":[{"palace":"재백궁","result":"손금과 사주 재물운 교차 상세 분석","score":숫자},{"palace":"관록궁","result":"손금과 사주 직업운 교차 상세 분석","score":숫자},{"palace":"부처궁","result":"손금과 사주 인간관계 교차 상세 분석","score":숫자},{"palace":"건강궁","result":"손금과 사주 건강운 교차 상세 분석","score":숫자}],"interpretation":"3대역학 통합해석 6문장이상","strengths":["강점1","강점2","강점3"],"cautions":["주의1","주의2"]}`;
       }
 
       try {
@@ -4458,62 +4667,189 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
     }
 
     function showResult() {
-      if (aFr) { cancelAnimationFrame(aFr); aFr = null; } sState = 'done'; setFB('ready');
-      // 자동 순차 촬영 중이면 완료 토스트 후 다음 단계
+      if (aFr) { cancelAnimationFrame(aFr); aFr = null; }
+      sState = 'done'; setFB('ready');
+
+      // 자동 순차 촬영 중이면 다음 단계
       if (_seqAuto) {
         var _modeNames = {face:'관상', palm_left:'왼손', palm_right:'오른손'};
         showShareToast('✅ ' + (_modeNames[sMode]||'') + ' 촬영 완료!');
         setTimeout(_seqNext, 1500);
       }
 
-      // 썸네일: 비디오에서 캡처
-      const tc = document.getElementById('tc');
-      if (tc) {
-        const ctx = tc.getContext('2d');
-        const vid = document.getElementById('camVideo');
-        if (vid && vid.readyState >= 2) {
-          ctx.drawImage(vid, 0, 0, 64, 80);
-        } else {
-          ctx.fillStyle = '#111'; ctx.fillRect(0, 0, 64, 80);
-        }
+      // 캔버스 스냅샷
+      var sc = document.getElementById('sc');
+      if (sc) capturedImages[sMode] = sc.toDataURL('image/jpeg', 0.85);
+
+      // 썸네일
+      var tc = document.getElementById('tc');
+      if (tc && capturedImages[sMode]) {
+        var img = new Image(); img.onload = function(){ tc.getContext('2d').drawImage(img,0,0,64,80); };
+        img.src = capturedImages[sMode];
       }
-      // 결과 이름/정보 업데이트
-      const resNameEl = document.querySelector('#rs .res-hero div div:first-child');
-      if (resNameEl && _sajuData) {
-        resNameEl.textContent = _sajuData.name + ' · ' + _sajuData.timeStr + '생';
-      }
+
+      // 탭 활성화
+      ['tab-face','tab-left','tab-right'].forEach(function(id,i){
+        var el = document.getElementById(id);
+        if (!el) return;
+        var keys = ['face','palm_left','palm_right'];
+        el.style.opacity = capturedImages[keys[i]] ? '1' : '0.4';
+      });
+
+      // 이름/서브 업데이트
+      var nameEl = document.getElementById('rs-name');
+      var subEl  = document.getElementById('rs-sub');
+      var modeLabel = document.getElementById('rs-mode-label');
+      var modeNames = {face:'관상', palm_left:'왼손 손금(선천운)', palm_right:'오른손 손금(후천운)'};
+      if (nameEl && _sajuData) nameEl.textContent = _sajuData.name + ' · ' + (modeNames[sMode]||'') + ' 스캔 완료';
+      if (subEl) subEl.textContent = sMode==='face' ? '관상 분석 완료 · 자미두수 12궁 동기화' : '손금 분석 완료 · 3대 역학 교차 분석';
+      if (modeLabel) modeLabel.textContent = sMode==='face' ? '觀相 — 관상 정밀 풀이' : (sMode==='palm_left'?'手相 — 왼손 선천운 풀이':'手相 — 오른손 후천운 풀이');
 
       document.getElementById('rs').classList.add('show');
-      const fg = document.getElementById('fg'); fg.innerHTML = '';
-
-      // AI 결과 또는 샘플 데이터
-      const r = window._scanResult;
-      const feats = r ? r.features : FEATS;
-
-      // 명반 일치도 업데이트
-      if (r) {
-        const matchEl = document.querySelector('.match-badge');
-        if (matchEl) matchEl.innerHTML = `<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>명반 일치도 ${r.match_pct}%`;
-        const ibBody = document.querySelector('#rs .ib-body');
-        if (ibBody) ibBody.innerHTML = r.interpretation;
-        const pl = document.getElementById('pl'); pl.innerHTML = '';
-        if (r.palace_sync) {
-          r.palace_sync.forEach(p => {
-            const d = document.createElement('div'); d.className = 'pm-item';
-            d.innerHTML = `<span class="pm-palace">${p.palace}</span><span class="pm-result">${p.result}</span><span class="pm-score" style="color:var(--em)">${p.score}점</span>`;
-            pl.appendChild(d);
-          });
-        }
-      }
-
-      feats.forEach(f => { const d = document.createElement('div'); d.className = 'feat-card'; d.innerHTML = `<div class="feat-head"><div class="feat-name">${f.name}</div><div class="feat-score" style="color:${f.color};">${f.score}</div></div><div class="feat-bar"><div class="feat-fill" style="width:0%;background:${f.color};" data-w="${f.score}"></div></div><div class="feat-desc">${f.desc}</div><span class="feat-tag" style="background:${f.tBg};color:${f.tC};">${f.tag}</span>`; fg.appendChild(d); });
-      setTimeout(() => document.querySelectorAll('.feat-fill').forEach(f => f.style.width = f.dataset.w + '%'), 80);
-      const pl = document.getElementById('pl'); pl.innerHTML = '';
-      PALACES.forEach(p => { const d = document.createElement('div'); d.className = 'pm-item'; d.innerHTML = `<div class="pm-palace">${p.name}</div><div class="pm-bar-wrap"><div class="pm-fill" style="width:0%;background:${p.color};" data-w="${p.pct}"></div></div><div class="pm-pct">${p.pct}%</div><div style="font-size:10px;color:${p.color};font-weight:700;width:60px;text-align:right;flex-shrink:0;">${p.c}</div>`; pl.appendChild(d); });
-      setTimeout(() => document.querySelectorAll('.pm-fill').forEach(f => f.style.width = f.dataset.w + '%'), 80);
+      showScanResult();
     }
 
-    function buildChannels() {
+    function showScanResult() {
+      var r = window._scanResult;
+      var sectionsEl = document.getElementById('rs-sections');
+      var summaryEl  = document.getElementById('rs-summary');
+      var oneLineEl  = document.getElementById('rs-one-line');
+      var tempEl     = document.getElementById('rs-temperament');
+      var matchEl    = document.getElementById('rs-match');
+      if (!sectionsEl) return;
+
+      // 한 줄 인상 업데이트
+      if (r && r.overall) {
+        if (oneLineEl) oneLineEl.textContent = '"' + r.overall + '"';
+        if (tempEl && r.interpretation) tempEl.innerHTML = r.interpretation;
+        if (matchEl) matchEl.innerHTML = '<svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg> 명반 일치도 ' + (r.match_pct||87) + '%';
+      }
+
+      sectionsEl.innerHTML = '';
+
+      if (sMode === 'face') {
+        _renderFaceResult(r, sectionsEl);
+      } else {
+        _renderPalmResult(r, sectionsEl);
+      }
+
+      // 종합 리딩
+      if (r && summaryEl) {
+        _renderSummary(r, summaryEl);
+      }
+    }
+
+    function _renderFaceResult(r, container) {
+      var feats = (r && r.features) ? r.features : FEATS;
+
+      // 헤더
+      var hdr = document.createElement('div');
+      hdr.className = 'sec-header';
+      hdr.innerHTML = '<div class="kicker">觀相 6 — 결을 하나씩</div><h3>관상 정밀 풀이</h3>';
+      container.appendChild(hdr);
+
+      feats.forEach(function(f) {
+        var card = document.createElement('div');
+        card.className = 'scan-section-card';
+        card.style.borderColor = f.color ? f.color + '44' : 'rgba(255,255,255,0.1)';
+        var bar = document.createElement('div');
+        bar.className = 'left-bar';
+        bar.style.background = f.color || '#50C878';
+        card.appendChild(bar);
+
+        var content = document.createElement('div');
+        content.className = 'content';
+        content.innerHTML = '<h4><span class="dot" style="background:' + (f.color||'#50C878') + '"></span>' + f.name + '</h4>'
+          + '<div class="reading">' + f.desc + '</div>'
+          + '<div class="cross-wrap">'
+          + '<div class="cross-line"><span class="cross-kicker">紫微斗數</span><span class="cross-text">' + (f.ziwei || f.desc) + '</span></div>'
+          + '<div class="cross-line"><span class="cross-kicker">梅花易數</span><span class="cross-text">' + (f.meihua || '오늘 기회의 결과 같은 방향 — 스며드는 흐름이에요.') + '</span></div>'
+          + '<div class="cross-line"><span class="cross-kicker">奇門遁甲</span><span class="cross-text">' + (f.qimen || '오늘 길방에서 이 결을 가장 잘 살리는 자리가 같은 방향이에요.') + '</span></div>'
+          + '</div>';
+        card.appendChild(content);
+        container.appendChild(card);
+      });
+    }
+
+    function _renderPalmResult(r, container) {
+      var feats = (r && r.features) ? r.features : (sMode==='palm_left' ? PALM_LINES_LEFT : PALM_LINES_RIGHT).map(function(l){
+        return { name:l.l, desc:l.desc, score:l.score, color:l.color };
+      });
+
+      var isLeft = sMode === 'palm_left';
+      var hdr = document.createElement('div');
+      hdr.className = 'sec-header';
+      hdr.innerHTML = '<div class="kicker">手相 6 — 결을 하나씩</div><h3>' + (isLeft?'왼손 (선천운) 정밀 풀이':'오른손 (후천운) 정밀 풀이') + '</h3>';
+      container.appendChild(hdr);
+
+      feats.forEach(function(f) {
+        var card = document.createElement('div');
+        card.className = 'scan-section-card';
+        card.style.borderColor = (f.color||'#50C878') + '44';
+        var bar = document.createElement('div');
+        bar.className = 'left-bar';
+        bar.style.background = f.color || '#50C878';
+        card.appendChild(bar);
+
+        var obs = f.observation || '';
+        var content = document.createElement('div');
+        content.className = 'content';
+        content.innerHTML = '<h4><span class="dot" style="background:' + (f.color||'#50C878') + '"></span>' + f.name + '</h4>'
+          + (obs ? '<div class="obs">"' + obs + '"</div>' : '')
+          + '<div class="reading">' + f.desc + '</div>'
+          + '<div class="cross-wrap">'
+          + '<div class="cross-line"><span class="cross-kicker">紫微斗數</span><span class="cross-text">' + (f.ziwei || f.desc) + '</span></div>'
+          + '<div class="cross-line"><span class="cross-kicker">梅花易數</span><span class="cross-text">' + (f.meihua || '오늘 본괘의 손위풍 — 스며들고 설득하는 흐름이에요.') + '</span></div>'
+          + '<div class="cross-line"><span class="cross-kicker">奇門遁甲</span><span class="cross-text">' + (f.qimen || '기문둔갑으로 보면 오늘 길방에서 이 결을 가장 잘 살리는 자리가 같은 방향이에요.') + '</span></div>'
+          + '</div>';
+        card.appendChild(content);
+        container.appendChild(card);
+      });
+    }
+
+    function _renderSummary(r, container) {
+      container.innerHTML = '';
+      var hdr = document.createElement('div');
+      hdr.className = 'sec-header';
+      hdr.innerHTML = '<div class="kicker">綜合 — 종합 리딩</div><h3>이 사진들이 모여서 말해주는 것</h3>';
+      container.appendChild(hdr);
+
+      var grid = document.createElement('div');
+      grid.className = 'summary-grid';
+
+      // 강점
+      var strengths = r.strengths || [];
+      if (!strengths.length && r.features) {
+        strengths = r.features.slice(0,3).map(function(f){ return f.desc.split('.')[0]+'.'; });
+      }
+      var sc = document.createElement('div');
+      sc.className = 'summary-card';
+      sc.innerHTML = '<div class="title">강점</div><ul>'
+        + strengths.map(function(s){ return '<li>'+s+'</li>'; }).join('')
+        + '</ul>';
+      grid.appendChild(sc);
+
+      // 주의할 결
+      var cautions = r.cautions || [];
+      var cc = document.createElement('div');
+      cc.className = 'summary-card';
+      cc.innerHTML = '<div class="title">주의할 결</div><ul>'
+        + (cautions.length ? cautions.map(function(s){ return '<li class="caution">'+s+'</li>'; }).join('') : '<li class="caution">세심하게 살펴야 할 부분이에요.</li>')
+        + '</ul>';
+      grid.appendChild(cc);
+      container.appendChild(grid);
+
+      // 운 흐름 카드
+      if (r.interpretation) {
+        var fc = document.createElement('div');
+        fc.className = 'fortune-flow-card';
+        fc.innerHTML = '<div style="font-size:9px;font-family:monospace;letter-spacing:.3em;color:#50C878;text-transform:uppercase;margin-bottom:.5rem;">運 — 운 흐름</div>'
+          + '<p style="font-size:13px;line-height:1.9;color:rgba(220,220,245,0.95);">' + r.interpretation + '</p>';
+        container.appendChild(fc);
+      }
+    }
+
+        function buildChannels() {
       const g = document.getElementById('chg'); if (!g) return; g.innerHTML = '';
       CH.forEach(c => {
         const d = document.createElement('div');

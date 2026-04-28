@@ -3016,11 +3016,57 @@
           <div class="aitp">* 카메라를 눈높이에 맞추고 고정해 주세요.</div>
         </div>
       </div>
-      <div class="exsec fu4">
-        <div class="exhdr">
-          <h2>실시간 매칭 전문가</h2><a href="#">전체 보기 &gt;</a>
+      <!-- 커뮤니티: 이용후기 + 게시판 + QnA -->
+      <div class="hero fu4" style="margin-bottom:1.25rem;">
+        <!-- 탭 3개 -->
+        <div style="display:flex;gap:6px;margin-bottom:1rem;">
+          <button id="comm-tab-review" onclick="switchCommTab('review')" style="flex:1;padding:8px 4px;border-radius:8px;border:1px solid var(--em);background:var(--em);color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">⭐ 이용후기</button>
+          <button id="comm-tab-board" onclick="switchCommTab('board')" style="flex:1;padding:8px 4px;border-radius:8px;border:1px solid var(--bd);background:none;color:var(--t2);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">📌 게시판</button>
+          <button id="comm-tab-qna" onclick="switchCommTab('qna')" style="flex:1;padding:8px 4px;border-radius:8px;border:1px solid var(--bd);background:none;color:var(--t2);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">💬 Q&amp;A</button>
         </div>
-        <div class="exgrid" id="eg"></div>
+
+        <!-- 이용후기 -->
+        <div id="comm-review">
+          <div id="review-list" style="display:flex;flex-direction:column;gap:.6rem;margin-bottom:.75rem;max-height:320px;overflow-y:auto;"></div>
+          <div style="border-top:1px solid var(--bd);padding-top:.75rem;">
+            <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:.5rem;">✍️ 후기 작성</div>
+            <div style="display:flex;gap:4px;margin-bottom:.5rem;" id="review-stars">
+              <span onclick="setReviewStar(1)" style="font-size:20px;cursor:pointer;color:var(--t2);">☆</span>
+              <span onclick="setReviewStar(2)" style="font-size:20px;cursor:pointer;color:var(--t2);">☆</span>
+              <span onclick="setReviewStar(3)" style="font-size:20px;cursor:pointer;color:var(--t2);">☆</span>
+              <span onclick="setReviewStar(4)" style="font-size:20px;cursor:pointer;color:var(--t2);">☆</span>
+              <span onclick="setReviewStar(5)" style="font-size:20px;cursor:pointer;color:var(--t2);">☆</span>
+            </div>
+            <textarea id="review-text" placeholder="분석 후기를 남겨주세요..." style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;resize:none;height:70px;box-sizing:border-box;"></textarea>
+            <button onclick="submitReview()" style="width:100%;margin-top:6px;padding:9px;background:var(--em);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">후기 등록</button>
+          </div>
+        </div>
+
+        <!-- 게시판 -->
+        <div id="comm-board" style="display:none;">
+          <div style="font-size:11px;color:var(--t2);margin-bottom:.5rem;padding:.5rem .75rem;background:rgba(255,215,0,0.06);border-radius:8px;border-left:3px solid rgba(255,215,0,0.3);">📌 게시글은 관리자에게만 전달됩니다</div>
+          <div id="board-list" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:.75rem;max-height:280px;overflow-y:auto;"></div>
+          <div style="border-top:1px solid var(--bd);padding-top:.75rem;">
+            <input id="board-title" type="text" placeholder="제목" style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;margin-bottom:6px;box-sizing:border-box;">
+            <textarea id="board-text" placeholder="내용을 입력해주세요..." style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;resize:none;height:70px;box-sizing:border-box;margin-bottom:6px;"></textarea>
+            <div style="display:flex;justify-content:flex-end;">
+              <button onclick="submitBoard()" style="padding:8px 20px;background:rgba(255,215,0,0.15);border:1px solid rgba(255,215,0,0.3);border-radius:8px;color:var(--gold);font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">등록</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Q&A -->
+        <div id="comm-qna" style="display:none;">
+          <div id="qna-fixed-list" style="display:flex;flex-direction:column;gap:.5rem;margin-bottom:.75rem;"></div>
+          <div style="border-top:1px solid var(--bd);padding-top:.75rem;">
+            <div style="font-size:12px;font-weight:700;color:#fff;margin-bottom:.5rem;">❓ 질문하기</div>
+            <input id="qna-title" type="text" placeholder="질문 제목" style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;margin-bottom:6px;box-sizing:border-box;">
+            <textarea id="qna-text" placeholder="궁금한 내용을 입력해주세요..." style="width:100%;padding:9px 12px;background:rgba(255,255,255,0.07);border:1px solid var(--bd);border-radius:8px;color:#fff;font-size:12px;font-family:inherit;outline:none;resize:none;height:65px;box-sizing:border-box;margin-bottom:6px;"></textarea>
+            <div style="display:flex;justify-content:flex-end;">
+              <button onclick="submitQnA()" style="padding:8px 20px;background:rgba(138,172,240,0.15);border:1px solid rgba(138,172,240,0.3);border-radius:8px;color:#8aacf0;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">질문 등록</button>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="bgrid fu4">
         <div class="bc" onclick="showPg('report')">
@@ -5075,7 +5121,6 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
     if (h) h.value = sg ? sido+' '+sg : sido;
   }
 
-    buildExperts();
     setTimeout(() => { drawWave(); drawCompass(); }, 80);
   </script>
 </body>

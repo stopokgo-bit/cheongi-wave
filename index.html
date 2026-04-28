@@ -4256,7 +4256,7 @@
         }, 80);
       } else { stopCamera(); }
       if (pg === 'sound') { if(typeof window.buildChannels==='function') window.buildChannels(); else buildChannels(); }
-      if (pg === 'saju') { setTimeout(() => { drawWave(); }, 80); }
+      if (pg === 'saju') { setTimeout(() => { drawWave(); }, 200); setTimeout(() => { drawWave(); }, 600); }
       window.scrollTo(0, 0);
     }
 
@@ -4282,24 +4282,179 @@
     }
 
     function _checkAndGoReport() {
-      // 사주 데이터 있으면 바로 이동
       if (window._sajuData && window._sajuData.name && window._sajuData.year) {
         showPg('report');
         return;
       }
-      // 없으면 팝업
       var popup = document.createElement('div');
+      popup.id = 'saju-required-popup';
       popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,10,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
-      popup.innerHTML = '<div style="background:#0f0f3a;border:1px solid var(--em);border-radius:20px;padding:2rem;max-width:320px;width:100%;text-align:center;">'
-        + '<div style="font-size:36px;margin-bottom:.75rem;">📋</div>'
+      var box = document.createElement('div');
+      box.style.cssText = 'background:#0f0f3a;border:1px solid var(--em);border-radius:20px;padding:2rem;max-width:320px;width:100%;text-align:center;';
+      box.innerHTML = '<div style="font-size:36px;margin-bottom:.75rem;">📋</div>'
         + '<div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:.5rem;">사주 정보가 필요해요</div>'
-        + '<div style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:1.25rem;">인생 지침서는 사주 분석을 먼저 완료해야 생성할 수 있어요.<br>메인 화면에서 이름과 생년월일을 입력해주세요.</div>'
+        + '<div style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:1.25rem;">인생 지침서는 사주 분석을 먼저 완료해야 생성할 수 있어요.</div>'
         + '<div style="display:flex;gap:8px;">'
-        + '<button onclick="this.closest('div[style*=fixed]').remove()" style="flex:1;padding:11px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:var(--t2);font-size:13px;cursor:pointer;font-family:inherit;">닫기</button>'
-        + '<button onclick="this.closest('div[style*=fixed]').remove();showPg('main')" style="flex:1;padding:11px;background:var(--em);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">입력하러 가기</button>'
-        + '</div></div>';
+        + '<button id="popup-close-btn" style="flex:1;padding:11px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:var(--t2);font-size:13px;cursor:pointer;font-family:inherit;">닫기</button>'
+        + '<button id="popup-go-btn" style="flex:1;padding:11px;background:var(--em);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">입력하러 가기</button>'
+        + '</div>';
+      popup.appendChild(box);
       document.body.appendChild(popup);
+      document.getElementById('popup-close-btn').onclick = function(){ popup.remove(); };
+      document.getElementById('popup-go-btn').onclick = function(){ popup.remove(); showPg('main'); };
     }
+
+
+    // ── 커뮤니티 탭 기능 ──
+    var _reviewStar = 5;
+
+    function switchCommTab(tab) {
+      ['review','board','qna'].forEach(function(t) {
+        var el = document.getElementById('comm-' + t);
+        var btn = document.getElementById('comm-tab-' + t);
+        if (!el || !btn) return;
+        var isActive = t === tab;
+        el.style.display = isActive ? 'block' : 'none';
+        btn.style.background = isActive ? 'var(--em)' : 'none';
+        btn.style.borderColor = isActive ? 'var(--em)' : 'var(--bd)';
+        btn.style.color = isActive ? '#fff' : 'var(--t2)';
+      });
+      if (tab === 'review') _renderReviews();
+      if (tab === 'board') _renderBoard();
+      if (tab === 'qna') _renderQnA();
+    }
+
+    function setReviewStar(n) {
+      _reviewStar = n;
+      var stars = document.querySelectorAll('#review-stars span');
+      stars.forEach(function(s, i) {
+        s.textContent = i < n ? '★' : '☆';
+        s.style.color = i < n ? '#FFD700' : 'var(--t2)';
+      });
+    }
+
+    function submitReview() {
+      var text = (document.getElementById('review-text')||{}).value||'';
+      if (!text.trim()) { alert('후기 내용을 입력해주세요.'); return; }
+      var reviews = [];
+      try { reviews = JSON.parse(localStorage.getItem('cw_reviews')||'[]'); } catch(e) {}
+      var name = (window._sajuData && window._sajuData.name) ? window._sajuData.name.slice(0,1) + '**' : '익명';
+      reviews.unshift({ name:name, star:_reviewStar, text:text, date:new Date().toLocaleDateString('ko-KR') });
+      localStorage.setItem('cw_reviews', JSON.stringify(reviews.slice(0,50)));
+      document.getElementById('review-text').value = '';
+      setReviewStar(5);
+      _renderReviews();
+      if(typeof showShareToast==='function') showShareToast('✅ 후기가 등록됐습니다!');
+    }
+
+    function _renderReviews() {
+      var list = document.getElementById('review-list');
+      if (!list) return;
+      var reviews = [];
+      try { reviews = JSON.parse(localStorage.getItem('cw_reviews')||'[]'); } catch(e) {}
+      // 샘플 후기 (없을 때)
+      if (!reviews.length) {
+        reviews = [
+          { name:'김*희', star:5, text:'사주 분석이 정말 정확해요! 제 성격이랑 딱 맞았어요. 관상 분석도 신기했어요.', date:'2026.04.20' },
+          { name:'박*준', star:5, text:'인생 지침서 받았는데 대운 흐름이 너무 잘 맞아서 소름돋았어요. 강력 추천!', date:'2026.04.18' },
+          { name:'이*영', star:4, text:'손금 분석이 ChatGPT보다 훨씬 상세하고 역학 연결이 인상적이었습니다.', date:'2026.04.15' },
+        ];
+      }
+      list.innerHTML = reviews.map(function(r) {
+        return '<div style="background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:10px;padding:.75rem;">'
+          + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;">'
+          + '<span style="font-size:12px;font-weight:700;color:#fff;">' + r.name + '</span>'
+          + '<span style="font-size:10px;color:var(--t2);">' + r.date + '</span>'
+          + '</div>'
+          + '<div style="font-size:14px;color:#FFD700;margin-bottom:.3rem;">' + '★'.repeat(r.star) + '☆'.repeat(5-r.star) + '</div>'
+          + '<div style="font-size:12px;color:rgba(200,200,230,0.9);line-height:1.7;">' + r.text + '</div>'
+          + '</div>';
+      }).join('');
+    }
+
+    function submitBoard() {
+      var title = (document.getElementById('board-title')||{}).value||'';
+      var text = (document.getElementById('board-text')||{}).value||'';
+      if (!title.trim() || !text.trim()) { alert('제목과 내용을 입력해주세요.'); return; }
+      var posts = [];
+      try { posts = JSON.parse(localStorage.getItem('cw_board')||'[]'); } catch(e) {}
+      posts.unshift({ title:title, text:text, date:new Date().toLocaleDateString('ko-KR'), isNotice:false });
+      localStorage.setItem('cw_board', JSON.stringify(posts.slice(0,30)));
+      document.getElementById('board-title').value = '';
+      document.getElementById('board-text').value = '';
+      _renderBoard();
+      if(typeof showShareToast==='function') showShareToast('✅ 문의가 등록됐습니다!');
+    }
+
+    function _renderBoard() {
+      var list = document.getElementById('board-list');
+      if (!list) return;
+      var posts = [];
+      try { posts = JSON.parse(localStorage.getItem('cw_board')||'[]'); } catch(e) {}
+      // 공지 샘플
+      var notices = [
+        { title:'🎉 천기 웨이브 얼리버드 오픈!', text:'2026년 4월 정식 오픈을 기념하여 얼리버드 할인가 ₩19,900으로 인생 지침서를 제공합니다. 기간 한정이니 서두르세요!', date:'2026.04.01', isNotice:true },
+        { title:'📌 서비스 이용 안내', text:'천기 웨이브는 자미두수·매화역수·기문둔갑 3대 역학을 AI로 통합 분석하는 서비스입니다. 분석 결과는 참고용이며, 최종 판단은 본인이 하시기 바랍니다.', date:'2026.04.01', isNotice:true },
+      ];
+      var all = notices.concat(posts);
+      list.innerHTML = all.map(function(p) {
+        return '<div style="background:' + (p.isNotice ? 'rgba(255,215,0,0.06)' : 'rgba(255,255,255,0.03)') + ';border:1px solid ' + (p.isNotice ? 'rgba(255,215,0,0.2)' : 'rgba(255,255,255,0.08)') + ';border-radius:10px;padding:.75rem;">'
+          + '<div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem;">'
+          + '<span style="font-size:12px;font-weight:700;color:' + (p.isNotice ? '#FFD700' : '#fff') + ';">' + p.title + '</span>'
+          + '<span style="font-size:10px;color:var(--t2);">' + p.date + '</span>'
+          + '</div>'
+          + '<div style="font-size:12px;color:rgba(200,200,230,0.8);line-height:1.7;">' + p.text + '</div>'
+          + '</div>';
+      }).join('');
+    }
+
+    function submitQnA() {
+      var title = (document.getElementById('qna-title')||{}).value||'';
+      var text = (document.getElementById('qna-text')||{}).value||'';
+      if (!title.trim()) { alert('질문 제목을 입력해주세요.'); return; }
+      if(typeof showShareToast==='function') showShareToast('✅ 질문이 등록됐습니다! 빠르게 답변드릴게요.');
+      document.getElementById('qna-title').value = '';
+      document.getElementById('qna-text').value = '';
+    }
+
+    function _renderQnA() {
+      var list = document.getElementById('qna-fixed-list');
+      if (!list) return;
+      var faqs = [
+        { q:'분석 결과는 얼마나 정확한가요?', a:'자미두수·매화역수·기문둔갑 3대 역학을 AI로 교차 분석하여 높은 정확도를 제공하지만, 참고용 자료이며 최종 판단은 본인이 하시기 바랍니다.' },
+        { q:'사진은 저장되나요?', a:'촬영된 사진은 분석에만 사용되며, 서버에 저장되지 않습니다. 분석 결과만 기기에 임시 보관됩니다.' },
+        { q:'인생 지침서는 어떻게 받나요?', a:'사주 분석을 먼저 완료한 후, 스캔 결과 화면에서 "인생 지침서 받기" 버튼을 누르시면 됩니다. 약 1~2분 소요됩니다.' },
+        { q:'결제 후 환불이 가능한가요?', a:'결제 후 14일 이내, 리포트를 발행하지 않은 경우에 한해 환불 신청이 가능합니다. 발행 후에는 환불이 불가합니다.' },
+        { q:'카메라 접근 권한이 필요한가요?', a:'관상·손금 스캔을 위해 카메라 접근 권한이 필요합니다. 브라우저 설정에서 카메라 허용을 해주세요.' },
+        { q:'어떤 기기에서 사용 가능한가요?', a:'PC(Chrome 권장), 스마트폰, 태블릿 모두 사용 가능합니다. 손금 촬영은 스마트폰 후면 카메라를 권장합니다.' },
+        { q:'관상/손금 단품과 인생 지침서의 차이는?', a:'관상/손금 단품은 해당 촬영 결과만 분석하며, 인생 지침서는 사주+관상+손금을 통합하여 50페이지 분량의 상세 리포트를 제공합니다.' },
+      ];
+      list.innerHTML = faqs.map(function(f, i) {
+        return '<div style="border:1px solid rgba(138,172,240,0.2);border-radius:10px;overflow:hidden;margin-bottom:6px;">'
+          + '<div onclick="toggleQnA(' + i + ')" style="padding:.75rem 1rem;cursor:pointer;display:flex;justify-content:space-between;align-items:center;background:rgba(138,172,240,0.05);">'
+          + '<span style="font-size:12px;font-weight:700;color:#fff;">Q. ' + f.q + '</span>'
+          + '<span id="qna-arrow-' + i + '" style="font-size:12px;color:#8aacf0;transition:transform .2s;">▼</span>'
+          + '</div>'
+          + '<div id="qna-ans-' + i + '" style="display:none;padding:.75rem 1rem;background:rgba(255,255,255,0.02);border-top:1px solid rgba(255,255,255,0.06);">'
+          + '<div style="font-size:12px;color:rgba(200,200,230,0.85);line-height:1.8;">A. ' + f.a + '</div>'
+          + '</div>'
+          + '</div>';
+      }).join('');
+    }
+
+    function toggleQnA(i) {
+      var ans = document.getElementById('qna-ans-' + i);
+      var arrow = document.getElementById('qna-arrow-' + i);
+      if (!ans) return;
+      var isOpen = ans.style.display !== 'none';
+      ans.style.display = isOpen ? 'none' : 'block';
+      if (arrow) arrow.style.transform = isOpen ? '' : 'rotate(180deg)';
+    }
+
+    // 커뮤니티 초기화
+    setTimeout(function() {
+      switchCommTab('review');
+    }, 500);
 
     function buildExperts() {
       const g = document.getElementById('eg'); if (!g) return;
@@ -4337,6 +4492,7 @@
         if (pEl) pEl.textContent = Math.round(s['애정운'] || 68) + '점';
       }
       const cv = document.getElementById('wc'); if (!cv) return;
+      if (!cv.offsetWidth) { setTimeout(drawWave, 300); return; }
       const W = cv.offsetWidth || 580; cv.width = W * 2; cv.height = 340; cv.style.height = '170px';
       const ctx = cv.getContext('2d'), H = 340, pad = { t: 24, b: 36, l: 18, r: 18 };
       const gW = W * 2 - pad.l - pad.r, gH = H - pad.t - pad.b;

@@ -3657,10 +3657,9 @@
         document.getElementById('loading-sub').textContent = SAJU_LOADING_MSGS[msgIdx][1];
       }, 1800);
 
-      const birthDate = new Date(birth);
-      const year = birthDate.getFullYear();
-      const month = birthDate.getMonth() + 1;
-      const day = birthDate.getDate();
+      const year = parseInt(yearVal);
+      const month = parseInt(monthVal);
+      const day = parseInt(dayVal);
       const timeStr = unknownTime ? '미상 (삼주 분석)' : time;
       const today = new Date();
       const age = today.getFullYear() - year;

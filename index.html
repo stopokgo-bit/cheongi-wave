@@ -161,6 +161,34 @@
     /* ═══════════════════════════════════════
        새벽연 스타일 — 스캔 결과 UI
     ═══════════════════════════════════════ */
+    /* 가독성 개선 */
+    #rs { font-family: 'Apple SD Gothic Neo','Malgun Gothic','Noto Sans KR',system-ui,sans-serif; }
+    #rs-sections .reading {
+      font-size:14px !important;
+      line-height:2 !important;
+      letter-spacing:0.02em;
+      color:rgba(225,225,245,0.95) !important;
+      word-break:keep-all;
+    }
+    #rs-sections .obs {
+      font-size:12px !important;
+      line-height:1.8 !important;
+      letter-spacing:0.01em;
+    }
+    #rs-sections .cross-text {
+      font-size:13px !important;
+      line-height:1.85 !important;
+      letter-spacing:0.01em;
+    }
+    #rs-sections h4 {
+      font-size:16px !important;
+      letter-spacing:-0.3px;
+      margin-bottom:.6rem !important;
+    }
+    #rs-summary .summary-card { font-size:14px; line-height:2; letter-spacing:0.02em; }
+    #rs-summary .fortune-flow-card p { font-size:14px !important; line-height:2.1 !important; letter-spacing:0.02em; }
+    .one-line-card .quote { font-size:16px !important; line-height:1.85 !important; letter-spacing:-0.2px; }
+    .cross-kicker { font-size:10px !important; padding-top:3px !important; }
     .saebyeok-card {
       background: rgba(255,255,255,0.04);
       border: 1px solid rgba(255,255,255,0.1);
@@ -3296,10 +3324,16 @@
         <div id="rs-summary"></div>
 
         <!-- CTA -->
-        <div class="cta-row" style="margin-top:1rem;">
-          <button class="btn-gold" onclick="checkScanBeforeReport()">✦ 인생 지침서</button>
-          <button class="btn-em" id="scan-next-btn" onclick="goNextScan()">손금 스캔 이어서</button>
-          <button class="btn-out" onclick="showPg('main')">메인으로</button>
+        <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:10px;">
+          <!-- 인생지침서 가운데 크게 -->
+          <button onclick="checkScanBeforeReport()" style="width:100%;padding:16px;background:linear-gradient(135deg,#FFD700,#FFA500);border:none;border-radius:14px;color:#0f0f3a;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-0.3px;box-shadow:0 4px 20px rgba(255,215,0,0.3);">
+            ✦ 인생 지침서 받기
+          </button>
+          <!-- 보조 버튼들 작게 -->
+          <div style="display:flex;gap:8px;">
+            <button onclick="sMode='face';resetScan();startAutoScan();" style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--t2);font-size:12px;cursor:pointer;font-family:inherit;">🔄 다시 분석</button>
+            <button onclick="showPg('main')" style="flex:1;padding:10px;background:rgba(255,255,255,0.05);border:1px solid rgba(255,255,255,0.12);border-radius:10px;color:var(--t2);font-size:12px;cursor:pointer;font-family:inherit;">← 메인으로</button>
+          </div>
         </div>
       </div>
     </div>
@@ -4153,7 +4187,7 @@
           // 스캔 페이지 제목 업데이트
           const h1 = document.querySelector('#pg-scan h1');
           if (h1) h1.textContent = sMode === 'face' ? 'AI 기색(氣色) 관상 스캔' : (sMode === 'palm_left' ? 'AI 왼손 선천운 스캔' : 'AI 오른손 후천운 스캔');
-          startCamera(); drawScan();
+          if(typeof window.startCamera==='function') window.startCamera(); else startCamera(); drawScan();
           setTimeout(() => { setFB('aligning'); setTimeout(() => setFB('ready'), 1500); }, 800);
           // 사주 배지 업데이트
           const badge = document.getElementById('scan-saju-badge');
@@ -4170,7 +4204,7 @@
           }
         }, 80);
       } else { stopCamera(); }
-      if (pg === 'sound' && !chBuilt) { buildChannels(); chBuilt = true; }
+      if (pg === 'sound') { if(typeof window.buildChannels==='function') window.buildChannels(); else buildChannels(); }
       if (pg === 'saju') { setTimeout(() => { drawWave(); }, 80); }
       window.scrollTo(0, 0);
     }
@@ -4668,12 +4702,16 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
       readyBtn.style.display = 'none';
       cd.style.display = 'block';
 
-      // 카메라 전환 (관상=전면, 손금=후면)
+      // 카메라 전환
       var modeBtn = document.getElementById(s.mode==='face'?'mf':s.mode==='palm_left'?'mp':'mp2');
       setMode(s.mode, modeBtn);
-      // 폰에서 카메라 방향 전환
       currentFacing = s.facing;
-      setTimeout(function(){ startCamera(s.facing); }, 200);
+      setTimeout(function(){
+        startCamera(s.facing);
+        // 관상=미러(전면), 손금=정방향(후면/PC전면)
+        var vid = document.getElementById('camVideo');
+        if (vid) vid.style.transform = s.mode==='face' ? 'scaleX(-1)' : 'scaleX(1)';
+      }, 200);
 
       // 3,2,1 카운트다운
       var cnt = 3;
@@ -4736,16 +4774,29 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
       readyBtn.style.display = 'none';
       skipBtn.style.display = 'none';
       overlay.style.display = 'flex';
-      // 2초 후 자동으로 결과 페이지로
+      // 1초 후 자동으로 결과 화면으로
       setTimeout(function(){
         overlay.style.display = 'none';
-        showPg('scan');
-        // 결과 표시
+        // 결과 섹션 표시
+        var rsEl = document.getElementById('rs');
+        if (rsEl) rsEl.classList.add('show');
+        showScanResult();
+        // 안내 토스트
         setTimeout(function(){
-          document.getElementById('rs').classList.add('show');
-          showScanResult();
+          var toast = document.createElement('div');
+          toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,40,0.97);border:1px solid var(--em);border-radius:16px;padding:1.5rem 2rem;text-align:center;z-index:9999;max-width:320px;box-shadow:0 8px 40px rgba(0,0,0,0.5);';
+          toast.innerHTML = '<div style="font-size:32px;margin-bottom:.5rem;">🔮</div>'
+            + '<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:.4rem;">분석 중입니다</div>'
+            + '<div style="font-size:13px;color:var(--t2);line-height:1.7;">아래에서 결과를 확인해주세요.<br>잠시 스크롤 내려주세요 ↓</div>';
+          document.body.appendChild(toast);
+          setTimeout(function(){ toast.style.transition='opacity .5s'; toast.style.opacity='0'; setTimeout(function(){ toast.remove(); }, 500); }, 2500);
+          // 결과 위치로 부드럽게 스크롤
+          setTimeout(function(){
+            var rsEl2 = document.getElementById('rs');
+            if (rsEl2) rsEl2.scrollIntoView({ behavior:'smooth', block:'start' });
+          }, 400);
         }, 300);
-      }, 2000);
+      }, 800);
     }
 
     function showResult() {

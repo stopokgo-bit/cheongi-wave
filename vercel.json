@@ -1,5 +1,12 @@
 {
-  "rewrites": [
-    { "source": "/api/saju", "destination": "/api/saju.js" }
+  "version": 2,
+  "functions": {
+    "api/saju.js": {
+      "maxDuration": 120
+    }
+  },
+  "routes": [
+    { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/(.*)", "dest": "/index.html" }
   ]
 }

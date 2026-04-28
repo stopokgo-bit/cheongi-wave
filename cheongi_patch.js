@@ -151,34 +151,9 @@ window.PALM_LINES_RIGHT = [
   { l:'운명선', score:83, desc:'뚜렷한 상향선. 직업운 강화 중.', color:'#8aacf0', tBg:'rgba(96,130,220,0.15)', tC:'#6082dc' }
 ];
 
-// ── 카메라: video 태그 동적 삽입 ──
+// ── 카메라: 기존 video 태그 반환 (동적 생성 안 함) ──
 function _ensureVideo() {
-  if (document.getElementById('camVideo')) return document.getElementById('camVideo');
-  var stage = document.querySelector('.cam-stage');
-  if (!stage) return null;
-  var v = document.createElement('video');
-  v.id = 'camVideo'; v.autoplay = true; v.muted = true;
-  v.setAttribute('playsinline','');
-  v.style.cssText = 'position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;border-radius:16px;z-index:1;display:none;';
-  var sc = document.getElementById('sc');
-  if (sc) {
-    sc.style.position = 'relative'; sc.style.zIndex = '2';
-    sc.style.background = 'transparent';
-    stage.style.position = 'relative';
-    stage.insertBefore(v, sc);
-  } else { stage.insertBefore(v, stage.firstChild); }
-
-  // 에러 박스
-  if (!document.getElementById('cam-error')) {
-    var err = document.createElement('div');
-    err.id = 'cam-error';
-    err.style.cssText = 'display:none;position:absolute;inset:0;background:#0a0a20;z-index:3;border-radius:16px;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:2rem;';
-    err.innerHTML = '<div style="font-size:40px;">📷</div>'
-      + '<div style="font-size:13px;color:#9999cc;line-height:1.8;">카메라 권한을 허용해주세요<br><span style="font-size:11px;opacity:.6;">설정 → 카메라 허용 후 새로고침</span></div>'
-      + '<button onclick="setInputMode(\'photo\')" style="padding:8px 20px;background:var(--em);border:none;border-radius:8px;color:#fff;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;margin-top:4px;">사진 업로드로 전환</button>';
-    stage.appendChild(err);
-  }
-  return v;
+  return document.getElementById('camVideo');
 }
 
 window.startCamera = async function(facing) {
@@ -928,6 +903,189 @@ window.switchCommTab=function(tab){
   if(tab==='board'&&typeof renderBoardList==='function')renderBoardList();
   if(tab==='review'&&typeof renderReviews==='function')renderReviews();
 };
+
+
+// ── 시/도 데이터 & 출생지/거주지 ──
+var SIDO_DATA = {
+  '서울특별시':['강남구','강동구','강북구','강서구','관악구','광진구','구로구','금천구','노원구','도봉구','동대문구','동작구','마포구','서대문구','서초구','성동구','성북구','송파구','양천구','영등포구','용산구','은평구','종로구','중구','중랑구'],
+  '부산광역시':['강서구','금정구','기장군','남구','동구','동래구','부산진구','북구','사상구','사하구','서구','수영구','연제구','영도구','중구','해운대구'],
+  '대구광역시':['남구','달서구','달성군','동구','북구','서구','수성구','중구'],
+  '인천광역시':['강화군','계양구','남동구','동구','미추홀구','부평구','서구','연수구','옹진군','중구'],
+  '광주광역시':['광산구','남구','동구','북구','서구'],
+  '대전광역시':['대덕구','동구','서구','유성구','중구'],
+  '울산광역시':['남구','동구','북구','울주군','중구'],
+  '세종특별자치시':['세종시'],
+  '경기도':['가평군','고양시','과천시','광명시','광주시','구리시','군포시','김포시','남양주시','동두천시','부천시','성남시','수원시','시흥시','안산시','안성시','안양시','양주시','양평군','여주시','연천군','오산시','용인시','의왕시','의정부시','이천시','파주시','평택시','포천시','하남시','화성시'],
+  '강원특별자치도':['강릉시','고성군','동해시','삼척시','속초시','양구군','양양군','영월군','원주시','인제군','정선군','철원군','춘천시','태백시','평창군','홍천군','화천군','횡성군'],
+  '충청북도':['괴산군','단양군','보은군','영동군','옥천군','음성군','제천시','진천군','청주시','충주시'],
+  '충청남도':['계룡시','공주시','금산군','논산시','당진시','보령시','부여군','서산시','서천군','아산시','예산군','천안시','청양군','태안군','홍성군'],
+  '전라북도':['고창군','군산시','김제시','남원시','무주군','부안군','순창군','완주군','익산시','임실군','장수군','전주시','정읍시','진안군'],
+  '전라남도':['강진군','고흥군','곡성군','광양시','구례군','나주시','담양군','목포시','무안군','보성군','순천시','신안군','여수시','영광군','영암군','완도군','장성군','장흥군','진도군','함평군','해남군','화순군'],
+  '경상북도':['경산시','경주시','고령군','구미시','김천시','문경시','봉화군','상주시','성주군','안동시','영덕군','영양군','영주시','영천시','예천군','울릉군','울진군','의성군','청도군','청송군','칠곡군','포항시'],
+  '경상남도':['거제시','거창군','고성군','김해시','남해군','밀양시','사천시','산청군','양산시','의령군','진주시','창녕군','창원시','통영시','하동군','함안군','함양군','합천군'],
+  '제주특별자치도':['서귀포시','제주시'],
+  '해외':['미국 동부','미국 서부','캐나다','일본','중국','영국','독일','프랑스','호주','싱가포르','기타 해외']
+};
+
+function initSidoSelects() {
+  var sidos = Object.keys(SIDO_DATA);
+  ['inp-birthplace-sido','inp-location-sido'].forEach(function(id) {
+    var sel = document.getElementById(id);
+    if (!sel) return;
+    sel.innerHTML = '<option value="">시/도 선택</option>';
+    sidos.forEach(function(sido) {
+      var opt = document.createElement('option');
+      opt.value = sido; opt.textContent = sido;
+      sel.appendChild(opt);
+    });
+  });
+}
+
+window.updateSigungu = function(type) {
+  var sidoId = type==='birth' ? 'inp-birthplace-sido' : 'inp-location-sido';
+  var sgId   = type==='birth' ? 'inp-birthplace-sigungu' : 'inp-location-sigungu';
+  var sido = (document.getElementById(sidoId)||{}).value||'';
+  var sgSel = document.getElementById(sgId);
+  if (!sgSel) return;
+  sgSel.innerHTML = '<option value="">시/군/구 선택</option>';
+  if (sido && SIDO_DATA[sido]) {
+    SIDO_DATA[sido].forEach(function(sg) {
+      var opt = document.createElement('option');
+      opt.value = sg; opt.textContent = sg;
+      sgSel.appendChild(opt);
+    });
+  }
+};
+
+window.updateBirthplace = function() {
+  var sido = (document.getElementById('inp-birthplace-sido')||{}).value||'';
+  var sg   = (document.getElementById('inp-birthplace-sigungu')||{}).value||'';
+  var h = document.getElementById('inp-birthplace');
+  if (h) h.value = sg ? sido+' '+sg : sido;
+};
+
+window.updateLocation = function() {
+  var sido = (document.getElementById('inp-location-sido')||{}).value||'';
+  var sg   = (document.getElementById('inp-location-sigungu')||{}).value||'';
+  var h = document.getElementById('inp-location');
+  if (h) h.value = sg ? sido+' '+sg : sido;
+};
+
+function _restorePlace(type, val) {
+  if (!val) return;
+  var sidoId = type==='birth' ? 'inp-birthplace-sido' : 'inp-location-sido';
+  var sgId   = type==='birth' ? 'inp-birthplace-sigungu' : 'inp-location-sigungu';
+  var parts = val.split(' ');
+  var sido = parts[0]||'', sg = parts.slice(1).join(' ')||'';
+  var sidoEl = document.getElementById(sidoId);
+  if (sidoEl) {
+    sidoEl.value = sido;
+    window.updateSigungu(type);
+    setTimeout(function(){
+      var sgEl = document.getElementById(sgId);
+      if (sgEl) sgEl.value = sg;
+      var h = document.getElementById(type==='birth'?'inp-birthplace':'inp-location');
+      if (h) h.value = val;
+    }, 80);
+  }
+}
+
+// ── 프로필 저장/불러오기 ──
+window.saveProfile = function() {
+  var name  = (document.getElementById('inp-name')||{}).value||'';
+  var year  = (document.getElementById('inp-year')||{}).value||'';
+  var month = (document.getElementById('inp-month')||{}).value||'';
+  var day   = (document.getElementById('inp-day')||{}).value||'';
+  if (!name||!year||!month||!day) { if(typeof showShareToast==='function') showShareToast('⚠️ 이름과 생년월일을 입력해주세요'); return; }
+  var profiles = [];
+  try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
+  if (profiles.find(function(p){ return p.name===name&&p.year===year&&p.month===month&&p.day===day; })) {
+    if(typeof showShareToast==='function') showShareToast('이미 저장된 프로필입니다'); return;
+  }
+  profiles.unshift({
+    name:name, year:year, month:month, day:day,
+    time:(document.getElementById('inp-time')||{}).value||'',
+    unk:(document.getElementById('unk')||{}).checked||false,
+    gender:window.selectedGender||'남',
+    cal:window.selectedCal||'양력',
+    birthplace:(document.getElementById('inp-birthplace')||{}).value||'',
+    location:(document.getElementById('inp-location')||{}).value||'',
+    savedAt:new Date().toLocaleDateString('ko-KR')
+  });
+  localStorage.setItem('cw_profiles', JSON.stringify(profiles.slice(0,10)));
+  if(typeof showShareToast==='function') showShareToast('✅ 프로필 저장됐습니다!');
+  renderProfileBar();
+};
+
+window.loadProfile = function(i) {
+  var profiles = [];
+  try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
+  var p = profiles[i]; if (!p) return;
+  var el;
+  el=document.getElementById('inp-name');  if(el) el.value=p.name||'';
+  el=document.getElementById('inp-year');  if(el) el.value=p.year||'';
+  el=document.getElementById('inp-month'); if(el) el.value=p.month||'';
+  el=document.getElementById('inp-day');   if(el) el.value=p.day||'';
+  el=document.getElementById('inp-time');  if(el) el.value=p.time||'';
+  el=document.getElementById('unk');       if(el) el.checked=p.unk||false;
+  if(p.gender && typeof setGender==='function') setGender(p.gender);
+  if(p.cal    && typeof setCal==='function')    setCal(p.cal);
+  _restorePlace('birth', p.birthplace||'');
+  _restorePlace('location', p.location||'');
+  if(typeof showShareToast==='function') showShareToast('✅ '+p.name+'님 프로필 불러왔습니다');
+};
+
+window.deleteProfile = function(i) {
+  var profiles = [];
+  try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
+  profiles.splice(i,1);
+  localStorage.setItem('cw_profiles', JSON.stringify(profiles));
+  renderProfileBar();
+};
+
+function renderProfileBar() {
+  var bar = document.getElementById('profile-chips'); if (!bar) return;
+  var profiles = [];
+  try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
+  if (!profiles.length) {
+    bar.innerHTML = '<div style="font-size:11px;color:rgba(153,153,204,0.5);padding:4px 0;">저장된 프로필이 없습니다</div>';
+    return;
+  }
+  bar.innerHTML = profiles.map(function(p,i){
+    return '<div style="position:relative;display:inline-flex;align-items:center;gap:6px;padding:6px 12px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:20px;cursor:pointer;font-size:12px;color:#fff;" onclick="loadProfile('+i+')">'
+      +'<span>'+p.name+'</span>'
+      +'<span style="font-size:10px;color:var(--t2);">·'+p.year.slice(2)+'.'+p.month+'.'+p.day+'</span>'
+      +'<button onclick="event.stopPropagation();deleteProfile('+i+')" style="background:rgba(231,76,60,0.2);border:none;border-radius:50%;width:16px;height:16px;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0;color:#e74c3c;font-size:10px;line-height:1;">×</button>'
+      +'</div>';
+  }).join('');
+}
+
+// DOM 로드 후 초기화
+document.addEventListener('DOMContentLoaded', function() {
+  initSidoSelects();
+  renderProfileBar();
+
+  // 분석 완료 시 자동 프로필 저장
+  var _origRender = window.renderSajuResult;
+  if (_origRender) {
+    window.renderSajuResult = function(name, year, month, day, timeStr, age, r) {
+      _origRender.apply(this, arguments);
+      var profiles = [];
+      try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
+      if (!profiles.find(function(p){ return p.name===name&&p.year===year&&p.month===month&&p.day===day; })) {
+        profiles.unshift({
+          name:name, year:year, month:month, day:day, time:timeStr,
+          gender:window.selectedGender||'남', cal:window.selectedCal||'양력',
+          birthplace:(document.getElementById('inp-birthplace')||{}).value||'',
+          location:(document.getElementById('inp-location')||{}).value||'',
+          savedAt:new Date().toLocaleDateString('ko-KR')
+        });
+        localStorage.setItem('cw_profiles', JSON.stringify(profiles.slice(0,10)));
+        renderProfileBar();
+      }
+    };
+  }
+});
 
 // ── DOM 로드 후 초기화 ──
 document.addEventListener('DOMContentLoaded',function(){

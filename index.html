@@ -3335,7 +3335,7 @@
         <!-- 한 줄 인상 카드 -->
         <div class="one-line-card">
           <div style="font-size:10px;font-family:monospace;letter-spacing:.3em;color:#50C878;text-transform:uppercase;margin-bottom:8px;" id="rs-mode-label">觀相 × 手相 — 한 줄 인상</div>
-          <div class="quote" id="rs-one-line">"분석 결과를 불러오는 중..."</div>
+          <div class="quote" id="rs-one-line">"AI가 관상과 손금을 읽고 있어요..."</div>
           <div class="temperament" id="rs-temperament"></div>
           <button onclick="window._scanResult=undefined;doCapture()" style="position:absolute;top:.75rem;right:.75rem;font-size:10px;color:rgba(153,153,204,0.6);background:none;border:none;cursor:pointer;display:flex;align-items:center;gap:4px;font-family:inherit;">
             <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23,4 23,11 16,11"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 11"/></svg>
@@ -3355,7 +3355,7 @@
           <canvas id="tc" width="64" height="80" style="width:64px;height:80px;border-radius:10px;border:1px solid rgba(255,255,255,0.1);flex-shrink:0;"></canvas>
           <div>
             <div style="font-size:14px;font-weight:700;color:#fff;margin-bottom:4px;" id="rs-name">스캔 완료</div>
-            <div style="font-size:11px;color:var(--t2);margin-bottom:6px;" id="rs-sub">3대 역학 분석 중...</div>
+            <div style="font-size:11px;color:var(--t2);margin-bottom:6px;" id="rs-sub">자미두수 · 매화역수 · 기문둔갑 교차 분석 중...</div>
             <div class="match-badge" id="rs-match">
               <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20,6 9,17 4,12"/></svg>
               명반 동기화 완료
@@ -4819,29 +4819,39 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
       readyBtn.style.display = 'none';
       skipBtn.style.display = 'none';
       overlay.style.display = 'flex';
-      // 1초 후 자동으로 결과 화면으로
-      setTimeout(function(){
-        overlay.style.display = 'none';
-        // 결과 섹션 표시
-        var rsEl = document.getElementById('rs');
-        if (rsEl) rsEl.classList.add('show');
-        showScanResult();
-        // 안내 토스트
-        setTimeout(function(){
-          var toast = document.createElement('div');
-          toast.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);background:rgba(10,10,40,0.97);border:1px solid var(--em);border-radius:16px;padding:1.5rem 2rem;text-align:center;z-index:9999;max-width:320px;box-shadow:0 8px 40px rgba(0,0,0,0.5);';
-          toast.innerHTML = '<div style="font-size:32px;margin-bottom:.5rem;">🔮</div>'
-            + '<div style="font-size:16px;font-weight:700;color:#fff;margin-bottom:.4rem;">분석 중입니다</div>'
-            + '<div style="font-size:13px;color:var(--t2);line-height:1.7;">아래에서 결과를 확인해주세요.<br>잠시 스크롤 내려주세요 ↓</div>';
-          document.body.appendChild(toast);
-          setTimeout(function(){ toast.style.transition='opacity .5s'; toast.style.opacity='0'; setTimeout(function(){ toast.remove(); }, 500); }, 2500);
-          // 결과 위치로 부드럽게 스크롤
-          setTimeout(function(){
-            var rsEl2 = document.getElementById('rs');
-            if (rsEl2) rsEl2.scrollIntoView({ behavior:'smooth', block:'start' });
-          }, 400);
-        }, 300);
-      }, 800);
+      // AI 분석 완료 대기 후 결과 표시
+      var _waitCount2 = 0;
+      var _waitTimer2 = setInterval(function() {
+        _waitCount2++;
+        var cdEl = document.getElementById('seq-countdown');
+        // 대기 중 점 애니메이션
+        var dots = '.'.repeat((_waitCount2 % 3) + 1);
+        if (cdEl) cdEl.textContent = '🔮 AI 분석 중' + dots;
+
+        if (window._scanResult !== undefined || _waitCount2 > 60) {
+          clearInterval(_waitTimer2);
+          overlay.style.display = 'none';
+
+          // 결과 섹션 표시
+          var rsEl = document.getElementById('rs');
+          if (rsEl) {
+            rsEl.classList.add('show');
+            setTimeout(function(){
+              rsEl.scrollIntoView({ behavior:'smooth', block:'start' });
+            }, 200);
+          }
+          showScanResult();
+
+          // 완료 안내 (화면 상단 고정)
+          var banner = document.createElement('div');
+          banner.id = 'scan-done-banner';
+          banner.style.cssText = 'position:sticky;top:0;left:0;right:0;z-index:100;background:linear-gradient(135deg,rgba(80,200,120,0.95),rgba(40,160,90,0.95));padding:12px 16px;text-align:center;font-size:14px;font-weight:700;color:#fff;box-shadow:0 2px 20px rgba(80,200,120,0.4);';
+          banner.innerHTML = '✅ 3단계 스캔 완료! 아래에서 분석 결과를 확인해주세요 ↓ <span style="opacity:.7;font-size:11px;margin-left:8px;">(탭하면 닫힘)</span>';
+          banner.onclick = function(){ banner.remove(); };
+          var scanPg = document.getElementById('pg-scan');
+          if (scanPg) scanPg.insertBefore(banner, scanPg.firstChild);
+        }
+      }, 300);
     }
 
     function showResult() {

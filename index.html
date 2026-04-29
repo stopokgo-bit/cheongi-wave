@@ -2779,22 +2779,31 @@
     }
 
     function _checkSession() {
-      if (!_supabase) return;
-      _supabase.auth.getSession().then(function(res){
+      if (!window._supabase) return;
+      window._supabase.auth.getSession().then(function(res){
         var session = res.data && res.data.session;
         if (session && session.user) {
           var user = session.user;
-          var nameEl = document.querySelector('.nav-login-btn');
-          if (nameEl) {
-            var avatarUrl = user.user_metadata.avatar_url || '';
-              var displayName = (user.user_metadata.full_name||user.email||'').split(' ')[0];
-              nameEl.innerHTML = (avatarUrl ? '<img src="'+avatarUrl+'" style="width:22px;height:22px;border-radius:50%;margin-right:6px;">' : '') + displayName;
+          var displayName = (user.user_metadata.full_name || user.email || '').split(' ')[0];
+          var avatarUrl = user.user_metadata.avatar_url || '';
+
+          // 로그인 버튼을 이름+로그아웃으로 교체
+          var navBtn = document.getElementById('nav-auth-btn');
+          if (navBtn) {
+            navBtn.onclick = null;
+            navBtn.style.cssText += ';background:rgba(80,200,120,0.15);border-color:rgba(80,200,120,0.4);color:#50C878;';
+            navBtn.innerHTML = (avatarUrl ? '<img src="'+avatarUrl+'" style="width:20px;height:20px;border-radius:50%;margin-right:6px;vertical-align:middle;">' : '')
+              + displayName + ' <span style="font-size:11px;opacity:0.7;margin-left:4px;">로그아웃</span>';
+            navBtn.onclick = function(){ doLogout(); };
           }
-          // 사용자 이름 자동 입력
+
+          // auth-menu 숨기기 (이미 로그인됨)
+          var menu = document.getElementById('auth-menu');
+          if (menu) menu.style.display = 'none';
+
+          // 이름 자동 입력
           var nameInput = document.getElementById('inp-name');
-          if (nameInput && !nameInput.value) {
-            nameInput.value = (user.user_metadata.full_name||'').split(' ')[0] || '';
-          }
+          if (nameInput && !nameInput.value) nameInput.value = displayName;
         }
       });
     }

@@ -3,6 +3,9 @@
   "functions": {
     "api/saju.js": {
       "maxDuration": 120
+    },
+    "api/config.js": {
+      "maxDuration": 10
     }
   },
   "routes": [

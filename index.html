@@ -3911,18 +3911,30 @@
       // 자동 프로필 저장
       try {
         var profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]');
-        var exists = profiles.find(function(p){ return p.name===name && p.year===year && p.month===month && p.day===day; });
-        if (!exists) {
-          profiles.unshift({
-            name:name, year:year, month:month, day:day, timeStr:timeStr,
-            gender:selectedGender||'남', cal:selectedCal||'양력',
-            birthplace:(document.getElementById('inp-birthplace')||{}).value||'',
-            location:(document.getElementById('inp-location')||{}).value||'',
-            savedAt:new Date().toLocaleDateString('ko-KR')
-          });
-          localStorage.setItem('cw_profiles', JSON.stringify(profiles.slice(0,10)));
-          if (typeof renderProfileBar === 'function') renderProfileBar();
+        var bpVal = (document.getElementById('inp-birthplace')||{}).value||'';
+        var lcVal = (document.getElementById('inp-location')||{}).value||'';
+        if (!bpVal) {
+          var bs2=(document.getElementById('inp-birthplace-sido')||{}).value||'';
+          var bg2=(document.getElementById('inp-birthplace-sigungu')||{}).value||'';
+          bpVal = bg2 ? bs2+' '+bg2 : bs2;
         }
+        if (!lcVal) {
+          var ls2=(document.getElementById('inp-location-sido')||{}).value||'';
+          var lg2=(document.getElementById('inp-location-sigungu')||{}).value||'';
+          lcVal = lg2 ? ls2+' '+lg2 : ls2;
+        }
+        var newP = {
+          name:name, year:year, month:month, day:day, timeStr:timeStr,
+          time:(document.getElementById('inp-time')||{}).value||'',
+          unk:(document.getElementById('unk')||{}).checked||false,
+          gender:selectedGender||'남', cal:selectedCal||'양력',
+          birthplace:bpVal, location:lcVal,
+          savedAt:new Date().toLocaleDateString('ko-KR')
+        };
+        var ei = profiles.findIndex(function(p){ return p.name===name && p.year===year && p.month===month && p.day===day; });
+        if (ei >= 0) profiles[ei] = newP; else profiles.unshift(newP);
+        localStorage.setItem('cw_profiles', JSON.stringify(profiles.slice(0,10)));
+        _renderProfileChips();
       } catch(e) {}
       document.getElementById('saju-page-title').textContent = (name||'') + '님의 천기 분석';
       document.getElementById('saju-date-tag').textContent = formatAnalysisTime();
@@ -4343,25 +4355,46 @@
         alert('이름과 생년월일을 먼저 입력해주세요.');
         return;
       }
+      var time = (document.getElementById('inp-time')||{}).value||'';
+      var unk  = (document.getElementById('unk')||{}).checked||false;
+      var birthplace = (document.getElementById('inp-birthplace')||{}).value||'';
+      var location   = (document.getElementById('inp-location')||{}).value||'';
+      // 드롭다운에서 직접 읽기 (hidden input이 비어있을 경우 대비)
+      if (!birthplace) {
+        var bs = (document.getElementById('inp-birthplace-sido')||{}).value||'';
+        var bg = (document.getElementById('inp-birthplace-sigungu')||{}).value||'';
+        birthplace = bg ? bs+' '+bg : bs;
+      }
+      if (!location) {
+        var ls = (document.getElementById('inp-location-sido')||{}).value||'';
+        var lg = (document.getElementById('inp-location-sigungu')||{}).value||'';
+        location = lg ? ls+' '+lg : ls;
+      }
+
       var profiles = [];
       try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
-      if (profiles.find(function(p){ return p.name===name&&p.year===year&&p.month===month&&p.day===day; })) {
-        alert('이미 저장된 프로필이에요!');
-        return;
-      }
-      profiles.unshift({
+
+      var newProfile = {
         name:name, year:year, month:month, day:day,
-        time:(document.getElementById('inp-time')||{}).value||'',
-        unk:(document.getElementById('unk')||{}).checked||false,
+        time:time, unk:unk,
         gender:selectedGender||'남',
         cal:selectedCal||'양력',
-        birthplace:(document.getElementById('inp-birthplace')||{}).value||'',
-        location:(document.getElementById('inp-location')||{}).value||'',
+        birthplace:birthplace,
+        location:location,
         savedAt:new Date().toLocaleDateString('ko-KR')
-      });
+      };
+
+      // 같은 이름+생년월일이면 덮어쓰기
+      var idx = profiles.findIndex(function(p){ return p.name===name&&p.year===year&&p.month===month&&p.day===day; });
+      if (idx >= 0) {
+        profiles[idx] = newProfile;
+        alert('✅ 프로필이 업데이트됐어요!');
+      } else {
+        profiles.unshift(newProfile);
+        alert('✅ 프로필이 저장됐어요!');
+      }
       localStorage.setItem('cw_profiles', JSON.stringify(profiles.slice(0,10)));
       _renderProfileChips();
-      alert('✅ 프로필이 저장됐어요!');
     }
 
     function _loadProfileLocal(i) {

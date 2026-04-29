@@ -4842,8 +4842,7 @@
 
       // 미러 반전: 전면(셀피)만 적용
       video.style.transform = facing === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
-      const canvas = document.getElementById('sc');
-      if (canvas) canvas.style.transform = facing === 'user' ? 'scaleX(-1)' : 'scaleX(1)';
+      // canvas transform 없음 - drawScan에서 처리
 
       // 가이드 메시지 업데이트
       const guideMsg = document.getElementById('cam-guide-msg');
@@ -4920,7 +4919,9 @@
       if (sMode === 'face') {
         const cx = w / 2, cy = h / 2, rx = w * 0.22, ry = h * 0.38;
         ctx.beginPath(); ctx.ellipse(cx, cy, rx, ry, 0, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(80,200,120,0.55)'; ctx.lineWidth = 2; ctx.setLineDash([8, 6]); ctx.stroke(); ctx.setLineDash([]);
-        [{ x: cx, y: cy - ry * 0.55, l: '이마' }, { x: cx - rx * 0.55, y: cy - ry * 0.15, l: '눈(좌)' }, { x: cx + rx * 0.55, y: cy - ry * 0.15, l: '눈(우)' }, { x: cx, y: cy + ry * 0.05, l: '코' }, { x: cx, y: cy + ry * 0.35, l: '입' }, { x: cx, y: cy + ry * 0.62, l: '턱' }].forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = 'rgba(80,200,120,0.7)'; ctx.fill(); ctx.fillStyle = 'rgba(80,200,120,0.9)'; ctx.font = '20px system-ui'; ctx.textAlign = 'center'; ctx.fillText(p.l, p.x, p.y + (p.y < cy ? -14 : 18)); });
+        [{ x: cx, y: cy - ry * 0.55, l: '이마' }, { x: cx - rx * 0.55, y: cy - ry * 0.15, l: '눈(좌)' }, { x: cx + rx * 0.55, y: cy - ry * 0.15, l: '눈(우)' }, { x: cx, y: cy + ry * 0.05, l: '코' }, { x: cx, y: cy + ry * 0.35, l: '입' }, { x: cx, y: cy + ry * 0.62, l: '턱' }].forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 5, 0, Math.PI * 2); ctx.fillStyle = 'rgba(80,200,120,0.7)'; ctx.fill(); ctx.fillStyle = 'rgba(80,200,120,0.9)'; ctx.font = 'bold 20px system-ui'; ctx.textAlign = 'center';
+          // 텍스트 정방향으로 (canvas 미러 반전 해제)
+          ctx.save(); ctx.scale(-1, 1); ctx.fillText(p.l, -p.x, p.y + (p.y < cy ? -14 : 18)); ctx.restore(); });
       } else if (sMode === 'palm_left' || sMode === 'palm_right') {
         const px = w * 0.2, py = h * 0.12, pw = w * 0.6, ph = h * 0.76;
         ctx.beginPath(); ctx.moveTo(px + pw * 0.5, py); ctx.lineTo(px + pw, py + ph * 0.15); ctx.lineTo(px + pw, py + ph * 0.8); ctx.lineTo(px + pw * 0.5, py + ph); ctx.lineTo(px, py + ph * 0.8); ctx.lineTo(px, py + ph * 0.15); ctx.closePath(); ctx.strokeStyle = 'rgba(80,200,120,0.55)'; ctx.lineWidth = 2; ctx.setLineDash([8, 6]); ctx.stroke(); ctx.setLineDash([]);
@@ -5112,7 +5113,7 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
-            max_tokens: 3000,
+            max_tokens: 1200,
             system: systemMsg,
             messages: [{ role: 'user', content: [
               { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageData } },

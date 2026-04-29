@@ -5073,17 +5073,15 @@
       const sd = _sajuData;
       const sajuCtx = sd ? `${sd.name}/${sd.gender}/${sd.year}년생/${sd.star||''}` : '';
       const isLeft = sMode === 'palm_left';
-
-      let prompt, systemMsg;
-      systemMsg = 'JSON만 출력. 코드블록 금지. 한국어.';
+      let prompt;
 
       if (sMode === 'face') {
-        prompt = `관상분석${sajuCtx?'.사주:'+sajuCtx:''}.이마눈코입턱 5부위.자미두수교차.
-JSON: {"overall":"한줄요약","match_pct":85,"features":[{"name":"이마","score":80,"desc":"해석","color":"#FFD700"},{"name":"눈","score":85,"desc":"해석","color":"#50C878"},{"name":"코","score":78,"desc":"해석","color":"#8aacf0"},{"name":"입","score":75,"desc":"해석","color":"#cc88bb"},{"name":"턱","score":80,"desc":"해석","color":"#EF9F27"}],"palace_sync":[{"palace":"명궁","result":"해석","score":85}],"interpretation":"종합해석","strengths":["강점1","강점2"],"cautions":["주의1"]}`;
+        prompt = `관상분석${sajuCtx?'. 사주:'+sajuCtx:''}. 이마/눈/코/입/턱 각 부위별로 자미두수·매화역수·기문둔갑 교차해석을 각각 다르게 작성. JSON만:
+{"overall":"한줄요약","match_pct":85,"features":[{"name":"이마","score":80,"desc":"이마 관찰 해석","ziwei":"이마-자미두수 관록궁 해석","meihua":"이마-매화역수 오늘 연관 해석","qimen":"이마-기문둔갑 방위 해석","color":"#FFD700"},{"name":"눈","score":85,"desc":"눈 관찰 해석","ziwei":"눈-자미두수 명궁 해석","meihua":"눈-매화역수 오늘 연관 해석","qimen":"눈-기문둔갑 해석","color":"#50C878"},{"name":"코","score":78,"desc":"코 관찰 해석","ziwei":"코-자미두수 재백궁 해석","meihua":"코-매화역수 오늘 연관 해석","qimen":"코-기문둔갑 해석","color":"#8aacf0"},{"name":"입","score":75,"desc":"입 관찰 해석","ziwei":"입-자미두수 부처궁 해석","meihua":"입-매화역수 연관 해석","qimen":"입-기문둔갑 해석","color":"#cc88bb"},{"name":"턱","score":80,"desc":"턱 관찰 해석","ziwei":"턱-자미두수 전택궁 해석","meihua":"턱-매화역수 연관 해석","qimen":"턱-기문둔갑 해석","color":"#EF9F27"}],"interpretation":"종합해석 3문장","strengths":["강점1","강점2"],"cautions":["주의1"]}`;
       } else {
         const hand = isLeft ? '왼손(선천운)' : '오른손(후천운)';
-        prompt = `${hand}손금분석${sajuCtx?'.사주:'+sajuCtx:''}.
-JSON: {"overall":"한줄요약","match_pct":83,"features":[{"name":"생명선","score":80,"desc":"해석","color":"#50C878"},{"name":"감정선","score":78,"desc":"해석","color":"#cc88bb"},{"name":"두뇌선","score":82,"desc":"해석","color":"#8aacf0"},{"name":"운명선","score":75,"desc":"해석","color":"#FFD700"},{"name":"손형태","score":80,"desc":"해석","color":"#EF9F27"}],"palace_sync":[{"palace":"재백궁","result":"해석","score":80}],"interpretation":"종합해석","strengths":["강점1","강점2"],"cautions":["주의1"]}`;
+        prompt = `${hand} 손금분석${sajuCtx?'. 사주:'+sajuCtx:''}. 각 선별로 자미두수·매화역수·기문둔갑 교차해석을 각각 다르게 작성. JSON만:
+{"overall":"한줄요약","match_pct":83,"features":[{"name":"생명선","score":80,"desc":"생명선 관찰 해석","ziwei":"생명선-자미두수 건강궁 해석","meihua":"생명선-매화역수 오늘 연관 해석","qimen":"생명선-기문둔갑 해석","color":"#50C878"},{"name":"감정선","score":78,"desc":"감정선 관찰 해석","ziwei":"감정선-자미두수 부처궁 해석","meihua":"감정선-매화역수 오늘 연관 해석","qimen":"감정선-기문둔갑 해석","color":"#cc88bb"},{"name":"두뇌선","score":82,"desc":"두뇌선 관찰 해석","ziwei":"두뇌선-자미두수 명궁 해석","meihua":"두뇌선-매화역수 오늘 연관 해석","qimen":"두뇌선-기문둔갑 해석","color":"#8aacf0"},{"name":"운명선","score":75,"desc":"운명선 관찰 해석","ziwei":"운명선-자미두수 관록궁 해석","meihua":"운명선-매화역수 연관 해석","qimen":"운명선-기문둔갑 해석","color":"#FFD700"},{"name":"손형태","score":80,"desc":"손형태 관찰 해석","ziwei":"손형태-자미두수 해석","meihua":"손형태-매화역수 연관 해석","qimen":"손형태-기문둔갑 해석","color":"#EF9F27"}],"interpretation":"종합해석 3문장","strengths":["강점1","강점2"],"cautions":["주의1"]}`;
       }
 
       try {
@@ -5092,8 +5090,8 @@ JSON: {"overall":"한줄요약","match_pct":83,"features":[{"name":"생명선","
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
-            max_tokens: 1500,
-            system: systemMsg,
+            max_tokens: 2500,
+            system: 'JSON만 출력. 코드블록 금지. 각 부위 해석은 반드시 다르게.',
             messages: [{ role: 'user', content: [
               { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageData } },
               { type: 'text', text: prompt }
@@ -5125,6 +5123,7 @@ JSON: {"overall":"한줄요약","match_pct":83,"features":[{"name":"생명선","
         window._scanResult = null;
       }
     }
+
 
 
             function runStep(i) {
@@ -5163,14 +5162,65 @@ JSON: {"overall":"한줄요약","match_pct":83,"features":[{"name":"생명선","
       _seqAuto = true;
       sMode = 'face';
       showPg('scan');
-      // 페이지 전환 완료 후 카메라 켜기
+
+      // 500ms 후 카메라 켜기
       setTimeout(function(){
         startCamera('user');
         var vid = document.getElementById('camVideo');
         if (vid) { vid.style.display='block'; vid.style.transform='scaleX(-1)'; vid.play().catch(function(){}); }
-        // 카메라 스트림 연결 후 카운트다운
-        setTimeout(function(){ _startCountdownOnly(0); }, 1200);
+
+        // 1.5초 후 카운트다운 시작 (카메라 스트림 연결 대기)
+        setTimeout(function(){
+          _runCountdown('face', '얼굴을 정면으로 봐주세요', function(){ doCapture(); });
+        }, 1500);
       }, 500);
+    }
+
+    // 단순 카운트다운 함수
+    function _runCountdown(mode, guideText, onComplete) {
+      // 기존 요소 제거
+      var old1 = document.getElementById('cw-countdown');
+      var old2 = document.getElementById('cw-guide');
+      if (old1) old1.remove();
+      if (old2) old2.remove();
+
+      var stage = document.querySelector('.cam-stage');
+      if (!stage) { onComplete(); return; }
+
+      // stage의 절대 위치 기준으로 fixed 위치 계산
+      var rect = stage.getBoundingClientRect();
+      var cx = rect.left + rect.width/2;
+      var cy = rect.top + rect.height/2;
+
+      // 안내문구 - fixed로 화면에 고정
+      var guide = document.createElement('div');
+      guide.id = 'cw-guide';
+      guide.style.cssText = 'position:fixed;top:' + (rect.top+14) + 'px;left:'+cx+'px;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#fff;font-size:15px;font-weight:700;padding:10px 24px;border-radius:24px;z-index:9999;white-space:nowrap;pointer-events:none;';
+      guide.textContent = guideText;
+      document.body.appendChild(guide);
+
+      // 카운트다운 숫자 - fixed로 화면에 고정
+      var counter = document.createElement('div');
+      counter.id = 'cw-countdown';
+      counter.style.cssText = 'position:fixed;top:'+cy+'px;left:'+cx+'px;transform:translate(-50%,-50%);font-size:120px;font-weight:900;color:#50C878;text-shadow:0 0 60px rgba(80,200,120,1);z-index:9999;pointer-events:none;line-height:1;';
+      counter.textContent = '3';
+      document.body.appendChild(counter);
+
+      var n = 3;
+      var t = setInterval(function(){
+        n--;
+        if (n > 0) {
+          counter.textContent = n;
+        } else {
+          clearInterval(t);
+          counter.textContent = '📸';
+          setTimeout(function(){
+            counter.remove();
+            guide.remove();
+            onComplete();
+          }, 500);
+        }
+      }, 1000);
     }
 
     // 오버레이 없이 카메라 화면 위에 카운트다운만 표시
@@ -5324,7 +5374,14 @@ JSON: {"overall":"한줄요약","match_pct":83,"features":[{"name":"생명선","
       if (!_seqAuto) return;
       _seqStep++;
       if (_seqStep < SEQ.length) {
-        setTimeout(function(){ _startCountdownOnly(_seqStep); }, 800);
+        var s = SEQ[_seqStep];
+        sMode = s.mode;
+        startCamera(s.facing);
+        var vid = document.getElementById('camVideo');
+        if (vid) { vid.style.display='block'; vid.style.transform='scaleX(-1)'; vid.play().catch(function(){}); }
+        setTimeout(function(){
+          _runCountdown(s.mode, s.title, function(){ doCapture(); });
+        }, 1200);
       } else {
         _seqAuto = false;
         setTimeout(_showSeqComplete, 500);

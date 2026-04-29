@@ -1448,13 +1448,27 @@
       overflow: hidden;
       margin-bottom: 1rem;
       width: 100%;
-      min-height: 300px;
+      aspect-ratio: 4/3;
+    }
+
+    .cam-stage video,
+    .cam-stage canvas {
+      position: absolute !important;
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      border-radius: 0 !important;
+    }
+
+    .cam-stage video {
+      object-fit: cover;
+      z-index: 1;
     }
 
     .cam-stage canvas {
-      display: block;
-      width: 100%;
-      border-radius: 16px;
+      z-index: 2;
+      background: transparent !important;
     }
 
     .fb-bar {
@@ -3249,10 +3263,8 @@
       <div class="cam-stage" style="position:relative;background:#000;border-radius:12px;overflow:hidden;">
         <div class="shutter-flash" id="shutterFlash"></div>
         <div class="cam-guide-msg" id="camGuideMsg">얼굴을 타원 안에 가득 채워주세요</div>
-        <video id="camVideo" autoplay playsinline muted
-          style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;transform:scaleX(-1);border-radius:12px;z-index:1;"></video>
-        <canvas id="sc" width="640" height="400"
-          style="position:absolute;top:0;left:0;width:100%;height:100%;display:block;border-radius:12px;z-index:2;background:transparent;"></canvas>
+        <video id="camVideo" autoplay playsinline muted style="transform:scaleX(-1);"></video>
+        <canvas id="sc"></canvas>
         <div id="cam-error"
           style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:#0a0a20;border-radius:12px;">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,80,80,0.7)" stroke-width="1.5">
@@ -4526,21 +4538,34 @@
     }
 
     function _checkAndGoReport() {
+      // 스캔 결과 있으면 무조건 리포트로
+      if (window._scanResult) {
+        // _sajuData 없으면 스캔 결과로 임시 생성
+        if (!window._sajuData || !window._sajuData.name) {
+          window._sajuData = window._sajuData || {};
+          window._sajuData.name = window._sajuData.name || '회원';
+          window._sajuData.year = window._sajuData.year || '';
+        }
+        showPg('report');
+        return;
+      }
+      // 사주 데이터만 있어도 리포트로
       if (window._sajuData && window._sajuData.name && window._sajuData.year) {
         showPg('report');
         return;
       }
+      // 둘 다 없으면 메인에서 사주 입력 안내
       var popup = document.createElement('div');
       popup.id = 'saju-required-popup';
       popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,10,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
       var box = document.createElement('div');
       box.style.cssText = 'background:#0f0f3a;border:1px solid var(--em);border-radius:20px;padding:2rem;max-width:320px;width:100%;text-align:center;';
       box.innerHTML = '<div style="font-size:36px;margin-bottom:.75rem;">📋</div>'
-        + '<div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:.5rem;">사주 정보가 필요해요</div>'
-        + '<div style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:1.25rem;">인생 지침서는 사주 분석을 먼저 완료해야 생성할 수 있어요.</div>'
+        + '<div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:.5rem;">사주 분석을 먼저 해주세요</div>'
+        + '<div style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:1.25rem;">메인 화면에서 이름·생년월일 입력 후<br>분석 시작 버튼을 눌러주세요.</div>'
         + '<div style="display:flex;gap:8px;">'
         + '<button id="popup-close-btn" style="flex:1;padding:11px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:var(--t2);font-size:13px;cursor:pointer;font-family:inherit;">닫기</button>'
-        + '<button id="popup-go-btn" style="flex:1;padding:11px;background:var(--em);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">입력하러 가기</button>'
+        + '<button id="popup-go-btn" style="flex:1;padding:11px;background:var(--em);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">메인으로</button>'
         + '</div>';
       popup.appendChild(box);
       document.body.appendChild(popup);
@@ -4842,8 +4867,12 @@
         camStream = await navigator.mediaDevices.getUserMedia(constraints);
         video.srcObject = camStream;
         video.style.display = 'block';
+        video.style.opacity = '1';
         await video.play().catch(function(){});
         if (errBox) errBox.style.display = 'none';
+        // canvas 다시 그리기
+        setTimeout(drawScan, 100);
+        setTimeout(drawScan, 500);
       } catch (e) {
         console.error('카메라 오류:', e);
         // 후면 카메라 없는 경우(PC) 전면으로 대체
@@ -4878,7 +4907,11 @@
 
     function drawScan() {
       const cv = document.getElementById('sc'); if (!cv) return;
-      const W = cv.offsetWidth || 640; cv.width = W * 2; cv.height = Math.round(W * 0.625) * 2; cv.style.height = Math.round(W * 0.625) + 'px';
+      const stage = cv.closest('.cam-stage') || cv.parentElement;
+      const W = (stage ? stage.offsetWidth : cv.offsetWidth) || 640;
+      const H = (stage ? stage.offsetHeight : cv.offsetHeight) || Math.round(W * 0.75);
+      if (W === 0) { setTimeout(drawScan, 200); return; }
+      cv.width = W; cv.height = H;
       const ctx = cv.getContext('2d'), w = cv.width, h = cv.height;
       // Canvas is overlay on top of video - transparent background
       ctx.clearRect(0, 0, w, h);

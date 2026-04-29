@@ -3245,12 +3245,8 @@
             stroke="var(--t)" stroke-width="2.5">
             <polyline points="15,18 9,12 15,6" />
           </svg></div>
-        <h1>AI 관상 스캔</h1>
-        <div class="mode-toggle"><button class="mtbtn on" id="mf" onclick="setMode('face',this)">관상</button><button
-            class="mtbtn" id="mp" onclick="setMode('palm_left',this)">왼손<span
-              style="font-size:9px;display:block;color:rgba(255,255,255,0.5);">선천운</span></button><button class="mtbtn"
-            id="mp2" onclick="setMode('palm_right',this)">오른손<span
-              style="font-size:9px;display:block;color:rgba(255,255,255,0.5);">후천운</span></button></div>
+        <h1 id="pg-scan-title">AI 기색(氣色) 관상 스캔</h1>
+        <div style="width:40px;"></div>
       </div>
       <div id="scan-saju-badge"
         style="display:none;background:rgba(255,215,0,0.08);border:1px solid rgba(255,215,0,0.2);border-radius:10px;padding:.6rem 1rem;margin-bottom:.75rem;font-size:12px;color:var(--t2);display:flex;align-items:center;gap:8px;">
@@ -3298,6 +3294,12 @@
           <div class="fb-sub" id="fs">얼굴을 가이드 안에 맞춰주세요</div>
         </div>
       </div>
+      <!-- 관상/왼손/오른손 탭 - 카메라 바로 아래 -->
+      <div style="display:flex;gap:6px;margin-bottom:10px;">
+        <button class="mtbtn on" id="mf" onclick="setMode('face',this);document.getElementById('pg-scan-title').textContent='AI 기색(氣色) 관상 스캔';" style="flex:1;padding:10px 4px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">👁 관상</button>
+        <button class="mtbtn" id="mp" onclick="setMode('palm_left',this);document.getElementById('pg-scan-title').textContent='AI 왼손 선천운 스캔';" style="flex:1;padding:10px 4px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">✋ 왼손<span style="font-size:9px;display:block;opacity:.6;">선천운</span></button>
+        <button class="mtbtn" id="mp2" onclick="setMode('palm_right',this);document.getElementById('pg-scan-title').textContent='AI 오른손 후천운 스캔';" style="flex:1;padding:10px 4px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">🤚 오른손<span style="font-size:9px;display:block;opacity:.6;">후천운</span></button>
+      </div>
       <div class="ctrl-row">
         <div class="side-ctrl">
           <div class="ctrl-btn" id="bg" onclick="tGrid()">격자 가이드</div>
@@ -3308,7 +3310,7 @@
         </button>
         <div class="side-ctrl">
           <div class="ctrl-btn" onclick="resetScan()">다시 찍기</div>
-          <div class="ctrl-btn" onclick="setMode('palm_left',document.getElementById('mp'))">왼손 전환</div>
+          <div class="ctrl-btn" onclick="flipCamera()">카메라 전환</div>
         </div>
       </div>
       <div class="tips-row">
@@ -5166,15 +5168,16 @@
       _seqAuto = true;
       sMode = 'face';
       showPg('scan');
+      // 페이지 전환 + 카메라 켜기
       setTimeout(function(){
         startCamera('user');
         var vid = document.getElementById('camVideo');
         if (vid) { vid.style.display='block'; vid.style.transform='scaleX(-1)'; vid.play().catch(function(){}); }
-        // 카메라 켜지고 2초 후 카운트다운
-        setTimeout(function(){
-          _runCountdown('face', '👁 얼굴을 정면으로 봐주세요', function(){ doCapture(); });
-        }, 2000);
-      }, 500);
+      }, 300);
+      // 카메라 준비 후 카운트다운 (2초 대기)
+      setTimeout(function(){
+        _runCountdown('face', '👁 얼굴을 정면으로 봐주세요', function(){ doCapture(); });
+      }, 2500);
     }
 
     // 단순 카운트다운 함수

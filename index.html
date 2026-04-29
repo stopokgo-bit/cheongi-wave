@@ -4242,6 +4242,23 @@
       { id: 'deep', name: 'Deep Rest Mode', handle: '@cloud9modeon', url: 'https://youtube.com/@cloud9modeon?si=E1VgoSb-A9gVUJxh', mood: '앰비언트 - 블랙스크린 - 저자극 - 느린 호흡 음장', tag: '취침 전', tBg: 'rgba(96,130,220,0.15)', tC: '#8aacf0', iBg: 'rgba(96,130,220,0.15)', iC: '#8aacf0', btn: '#253070', sb: '#6082dc', icon: '<path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>', coming: false, why: { bg: 'rgba(96,130,220,0.05)', bd: 'rgba(96,130,220,0.2)', tc: '#8aacf0', title: 'Deep Rest Mode - 수면/뇌 완전 휴식', body: '블랙 스크린 기반 앰비언트로 <em>완전히 내려놓는</em> 밤의 공간. <b>뇌를 알파-세타-델타</b>로 자연 전환합니다.' } },
     ];
 
+
+    // 손금 기본 데이터
+    var PALM_LINES_LEFT = [
+      { l:'생명선(건강·활력)', desc:'선천적 생명력과 체력의 흐름을 나타냅니다.', score:80, color:'#50C878' },
+      { l:'감정선(부처·인연)', desc:'선천적 감정 패턴과 인연의 결을 나타냅니다.', score:78, color:'#cc88bb' },
+      { l:'두뇌선(사고·판단)', desc:'타고난 사고방식과 직관력을 나타냅니다.', score:82, color:'#8aacf0' },
+      { l:'운명선(직업·대운)', desc:'선천적 직업운과 인생 방향을 나타냅니다.', score:75, color:'#FFD700' },
+      { l:'손 형태(기질·에너지)', desc:'타고난 기질과 에너지 패턴을 나타냅니다.', score:80, color:'#EF9F27' },
+    ];
+    var PALM_LINES_RIGHT = [
+      { l:'생명선(건강·활력)', desc:'현재와 미래의 건강·활력 흐름을 나타냅니다.', score:82, color:'#50C878' },
+      { l:'감정선(부처·인연)', desc:'현재 감정 패턴과 인간관계 흐름을 나타냅니다.', score:80, color:'#cc88bb' },
+      { l:'두뇌선(사고·판단)', desc:'현재 사고방식과 실행력을 나타냅니다.', score:85, color:'#8aacf0' },
+      { l:'운명선(직업·대운)', desc:'현재 커리어 방향과 대운 흐름을 나타냅니다.', score:78, color:'#FFD700' },
+      { l:'손 형태(기질·에너지)', desc:'현재 에너지 상태와 기질을 나타냅니다.', score:80, color:'#EF9F27' },
+    ];
+
     const FEATS = [
       { name: '이마 (관록궁)', score: 88, color: '#50C878', desc: '넓고 둥근 형태. 직업운 강함.', tag: '명반 일치', tBg: 'rgba(80,200,120,0.18)', tC: '#3db866' },
       { name: '눈빛 (명궁)', score: 92, color: '#50C878', desc: '예리하고 깊은 눈빛. 천기성 직관력.', tag: '강력 일치', tBg: 'rgba(80,200,120,0.18)', tC: '#3db866' },
@@ -4299,12 +4316,13 @@
           const h1 = document.querySelector('#pg-scan h1');
           if (h1) h1.textContent = sMode === 'face' ? 'AI 기색(氣色) 관상 스캔' : (sMode === 'palm_left' ? 'AI 왼손 선천운 스캔' : 'AI 오른손 후천운 스캔');
           if(typeof window.startCamera==='function') window.startCamera(); else startCamera();
-          // video.play() 강제 호출
           setTimeout(function(){
             var vid = document.getElementById('camVideo');
             if (vid && vid.srcObject) { vid.style.display='block'; vid.play().catch(function(){}); }
           }, 500);
           drawScan();
+          setTimeout(drawScan, 300);
+          setTimeout(drawScan, 800);
           setTimeout(() => { setFB('aligning'); setTimeout(() => setFB('ready'), 1500); }, 800);
           // 사주 배지 업데이트
           const badge = document.getElementById('scan-saju-badge');
@@ -5045,7 +5063,7 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
-            max_tokens: 2000,
+            max_tokens: 3000,
             system: systemMsg,
             messages: [{ role: 'user', content: [
               { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageData } },

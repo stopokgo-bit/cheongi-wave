@@ -4282,7 +4282,13 @@
           // 스캔 페이지 제목 업데이트
           const h1 = document.querySelector('#pg-scan h1');
           if (h1) h1.textContent = sMode === 'face' ? 'AI 기색(氣色) 관상 스캔' : (sMode === 'palm_left' ? 'AI 왼손 선천운 스캔' : 'AI 오른손 후천운 스캔');
-          if(typeof window.startCamera==='function') window.startCamera(); else startCamera(); drawScan();
+          if(typeof window.startCamera==='function') window.startCamera(); else startCamera();
+          // video.play() 강제 호출
+          setTimeout(function(){
+            var vid = document.getElementById('camVideo');
+            if (vid && vid.srcObject) { vid.style.display='block'; vid.play().catch(function(){}); }
+          }, 500);
+          drawScan();
           setTimeout(() => { setFB('aligning'); setTimeout(() => setFB('ready'), 1500); }, 800);
           // 사주 배지 업데이트
           const badge = document.getElementById('scan-saju-badge');
@@ -5072,14 +5078,14 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
       _seqAuto = true;
       sMode = 'face';
       showPg('scan');
+      // 페이지 전환 완료 후 카메라 켜기
       setTimeout(function(){
-        // 카메라 즉시 켜기
         startCamera('user');
         var vid = document.getElementById('camVideo');
-        if (vid) { vid.style.display='block'; vid.style.transform='scaleX(-1)'; }
-        // 카메라 준비 후 바로 카운트다운 (오버레이 없이)
-        setTimeout(function(){ _startCountdownOnly(0); }, 800);
-      }, 200);
+        if (vid) { vid.style.display='block'; vid.style.transform='scaleX(-1)'; vid.play().catch(function(){}); }
+        // 카메라 스트림 연결 후 카운트다운
+        setTimeout(function(){ _startCountdownOnly(0); }, 1200);
+      }, 500);
     }
 
     // 오버레이 없이 카메라 화면 위에 카운트다운만 표시

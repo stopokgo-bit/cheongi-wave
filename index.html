@@ -5072,12 +5072,61 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
       _seqAuto = true;
       sMode = 'face';
       showPg('scan');
-      // 카메라 즉시 켜기
       setTimeout(function(){
+        // 카메라 즉시 켜기
         startCamera('user');
-        // 카메라 준비되면 바로 오버레이 표시
-        setTimeout(function(){ _showSeqOverlay(0); }, 800);
+        var vid = document.getElementById('camVideo');
+        if (vid) { vid.style.display='block'; vid.style.transform='scaleX(-1)'; }
+        // 카메라 준비 후 바로 카운트다운 (오버레이 없이)
+        setTimeout(function(){ _startCountdownOnly(0); }, 800);
       }, 200);
+    }
+
+    // 오버레이 없이 카메라 화면 위에 카운트다운만 표시
+    function _startCountdownOnly(step) {
+      var s = SEQ[step];
+      sMode = s.mode;
+      // 카메라 방향 전환
+      currentFacing = s.facing;
+      startCamera(s.facing);
+      var vid = document.getElementById('camVideo');
+      if (vid) vid.style.transform = 'scaleX(-1)';
+
+      // 기존 카운트다운 오버레이 제거하고 캔버스 위에 직접 표시
+      var existing = document.getElementById('inline-countdown');
+      if (existing) existing.remove();
+
+      var cd = document.createElement('div');
+      cd.id = 'inline-countdown';
+      cd.style.cssText = 'position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:80px;font-weight:900;color:var(--em);text-shadow:0 0 30px rgba(80,200,120,0.8);z-index:100;pointer-events:none;transition:transform .1s;';
+      var camStage = document.querySelector('.cam-stage') || document.getElementById('pg-scan');
+      if (camStage) camStage.style.position='relative', camStage.appendChild(cd);
+
+      // 안내 메시지
+      var guide = document.createElement('div');
+      guide.id = 'inline-guide';
+      guide.style.cssText = 'position:absolute;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.7);padding:8px 16px;border-radius:10px;font-size:13px;font-weight:700;color:#fff;z-index:100;white-space:nowrap;';
+      guide.textContent = s.title;
+      if (camStage) camStage.appendChild(guide);
+
+      var cnt = 3;
+      cd.textContent = cnt;
+      var timer = setInterval(function(){
+        cnt--;
+        if (cnt > 0) {
+          cd.textContent = cnt;
+          cd.style.transform = 'translate(-50%,-50%) scale(1.3)';
+          setTimeout(function(){ cd.style.transform='translate(-50%,-50%) scale(1)'; }, 100);
+        } else {
+          clearInterval(timer);
+          cd.textContent = '📸';
+          setTimeout(function(){
+            cd.remove();
+            if (guide) guide.remove();
+            doCapture();
+          }, 400);
+        }
+      }, 1000);
     }
 
     function _showSeqOverlay(step) {
@@ -5171,10 +5220,10 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
       if (!_seqAuto) return;
       _seqStep++;
       if (_seqStep < SEQ.length) {
-        setTimeout(function(){ _showSeqOverlay(_seqStep); }, 1200);
+        setTimeout(function(){ _startCountdownOnly(_seqStep); }, 800);
       } else {
         _seqAuto = false;
-        setTimeout(_showSeqComplete, 800);
+        setTimeout(_showSeqComplete, 500);
       }
     }
 

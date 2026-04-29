@@ -5192,8 +5192,12 @@ JSON: {"overall":"한줄요약","match_pct":83,"features":[{"name":"생명선","
           if (el) el.remove();
         });
 
-        var camStage = document.querySelector('.cam-stage');
-        if (!camStage) return;
+        var camStage = document.querySelector('#pg-scan .cam-stage') || document.querySelector('.cam-stage');
+        if (!camStage) {
+          // pg-scan이 아직 안 보이면 재시도
+          setTimeout(function(){ _startCountdownOnly(step); }, 300);
+          return;
+        }
         camStage.style.position = 'relative';
 
         // 안내 메시지

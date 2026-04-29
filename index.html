@@ -3939,6 +3939,13 @@
         _renderProfileChips();
       } catch(e) {}
       document.getElementById('saju-page-title').textContent = (name||'') + '님의 천기 분석';
+      // 이미 스캔했으면 AI관상 버튼 숨기기
+      setTimeout(function(){
+        var scanBtn = document.getElementById('btn-quick-scan');
+        if (scanBtn && capturedImages && (capturedImages.face || capturedImages.palm_left)) {
+          scanBtn.style.display = 'none';
+        }
+      }, 500);
       document.getElementById('saju-date-tag').textContent = formatAnalysisTime();
 
       // 기문둔갑 나침반 방위 동기화
@@ -4320,9 +4327,16 @@
             var vid = document.getElementById('camVideo');
             if (vid && vid.srcObject) { vid.style.display='block'; vid.play().catch(function(){}); }
           }, 500);
-          drawScan();
-          setTimeout(drawScan, 300);
-          setTimeout(drawScan, 800);
+          setTimeout(function(){
+            var stage = document.querySelector('.cam-stage');
+            var sc = document.getElementById('sc');
+            if (sc && stage) {
+              sc.width = stage.offsetWidth || 640;
+              sc.height = stage.offsetHeight || 480;
+            }
+            drawScan();
+          }, 100);
+          setTimeout(drawScan, 500);
           setTimeout(() => { setFB('aligning'); setTimeout(() => setFB('ready'), 1500); }, 800);
           // 사주 배지 업데이트
           const badge = document.getElementById('scan-saju-badge');
@@ -5028,8 +5042,8 @@
 
       if (sMode === 'face') {
         systemMsg = '당신은 자미두수·매화역수·기문둔갑에 정통한 40년 경력 명리학 대가이자 관상 전문가입니다. 이미지를 보고 동양 전통 기색(氣色) 관상법으로 깊이 있게 분석합니다. 반드시 JSON만 출력하고 마크다운 코드블록은 절대 사용하지 마세요.';
-        prompt = (sajuCtx ? `[사주: ${sajuCtx}]\n` : '')
-          + `관상 분석. 이마·눈·코·입·턱 5부위. 자미두수 교차. JSON만:
+        prompt = (sajuCtx ? `사주:${sajuCtx}\n` : '')
+          + `관상분석. JSON만:
 
 반드시 아래 JSON 형식으로만 출력 (다른 텍스트 없이):
 {"overall":"관상 핵심 한줄 요약 (실제 관찰 기반, 30자이내)","match_pct":숫자(75~95),"features":[{"name":"이마(관록궁)","score":숫자(0-100),"desc":"실제 이마 형태와 관록궁 기색 에너지 상세 해석 2문장","tag":"관록운","color":"#FFD700","tBg":"rgba(255,215,0,0.15)","tC":"#FFD700","ziwei":"자미두수 근거","meihua":"매화역수 근거","qimen":"기문둔갑 근거"},{"name":"눈빛(명궁)","score":숫자,"desc":"실제 눈빛과 명궁 에너지 상세 해석 2문장","tag":"핵심기운","color":"#50C878","tBg":"rgba(80,200,120,0.15)","tC":"#50C878"},{"name":"코(재백궁)","score":숫자,"desc":"실제 코 형태와 재백궁 기색 상세 해석 2문장","tag":"재물운","color":"#8aacf0","tBg":"rgba(96,130,220,0.15)","tC":"#8aacf0"},{"name":"입술(부처궁)","score":숫자,"desc":"실제 입술과 부처궁 에너지 상세 해석 2문장","tag":"인간관계","color":"#cc88bb","tBg":"rgba(180,100,180,0.15)","tC":"#cc88bb"},{"name":"턱선(전택궁)","score":숫자,"desc":"실제 턱선과 전택궁 기색 상세 해석 2문장","tag":"기반/의지","color":"#EF9F27","tBg":"rgba(200,130,30,0.15)","tC":"#EF9F27"}],"palace_sync":[{"palace":"명궁","result":"명궁 기색과 사주 일치도 상세","score":숫자},{"palace":"재백궁","result":"재물운 교차 분석 상세","score":숫자},{"palace":"관록궁","result":"직업운 교차 분석 상세","score":숫자},{"palace":"전택궁","result":"기반운 교차 분석 상세","score":숫자}],"interpretation":"자미두수 명반 + 매화역수 오늘 괘 + 관상 기색을 3중 교차한 통합 해석. 이 사람의 타고난 기질, 현재 운세 흐름, 주의할 점, 강점을 5문장 이상 구체적으로 서술. <em>강조</em> <b>금색강조</b> 태그 적극 활용."}`;

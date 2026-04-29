@@ -5071,40 +5071,19 @@
 
     async function analyzeWithAI(imageData) {
       const sd = _sajuData;
-      const sajuCtx = sd
-        ? `이름: ${sd.name} / ${sd.gender}성 / ${sd.year}년생 / 명궁주성: ${sd.star} / 현재대운: ${sd.daewoon||'미상'} / 사주요약: ${sd.summary||''}`
-        : '';
+      const sajuCtx = sd ? `${sd.name}/${sd.gender}/${sd.year}년생/${sd.star||''}` : '';
+      const isLeft = sMode === 'palm_left';
 
       let prompt, systemMsg;
+      systemMsg = 'JSON만 출력. 코드블록 금지. 한국어.';
 
       if (sMode === 'face') {
-        systemMsg = '당신은 자미두수·매화역수·기문둔갑에 정통한 40년 경력 명리학 대가이자 관상 전문가입니다. 이미지를 보고 동양 전통 기색(氣色) 관상법으로 깊이 있게 분석합니다. 반드시 JSON만 출력하고 마크다운 코드블록은 절대 사용하지 마세요.';
-        prompt = `관상분석${sajuCtx ? '. 사주:'+sajuCtx : ''}. JSON만:
-
-반드시 아래 JSON 형식으로만 출력 (다른 텍스트 없이):
-{"overall":"관상 핵심 한줄 요약 (실제 관찰 기반, 30자이내)","match_pct":숫자(75~95),"features":[{"name":"이마(관록궁)","score":80,"desc":"1문장","color":"#FFD700"},{"name":"눈빛(명궁)","score":85,"desc":"1문장","color":"#50C878"},{"name":"코(재백궁)","score":78,"desc":"1문장","color":"#8aacf0"},{"name":"입술(부처궁)","score":75,"desc":"1문장","color":"#cc88bb"},{"name":"턱선(전택궁)","score":80,"desc":"1문장","color":"#EF9F27"}],"palace_sync":[{"palace":"명궁","result":"명궁 기색과 사주 일치도 상세","score":숫자},{"palace":"재백궁","result":"재물운 교차 분석 상세","score":숫자},{"palace":"관록궁","result":"직업운 교차 분석 상세","score":숫자},{"palace":"전택궁","result":"기반운 교차 분석 상세","score":숫자}],"interpretation":"자미두수 명반 + 매화역수 오늘 괘 + 관상 기색을 3중 교차한 통합 해석. 이 사람의 타고난 기질, 현재 운세 흐름, 주의할 점, 강점을 5문장 이상 구체적으로 서술. <em>강조</em> <b>금색강조</b> 태그 적극 활용."}`;
-
+        prompt = `관상분석${sajuCtx?'.사주:'+sajuCtx:''}.이마눈코입턱 5부위.자미두수교차.
+JSON: {"overall":"한줄요약","match_pct":85,"features":[{"name":"이마","score":80,"desc":"해석","color":"#FFD700"},{"name":"눈","score":85,"desc":"해석","color":"#50C878"},{"name":"코","score":78,"desc":"해석","color":"#8aacf0"},{"name":"입","score":75,"desc":"해석","color":"#cc88bb"},{"name":"턱","score":80,"desc":"해석","color":"#EF9F27"}],"palace_sync":[{"palace":"명궁","result":"해석","score":85}],"interpretation":"종합해석","strengths":["강점1","강점2"],"cautions":["주의1"]}`;
       } else {
-        // 손금 분석 - ChatGPT 수준 심층 분석
-        const isLeft = sMode === 'palm_left';
-        systemMsg = '당신은 동양 전통 수상학(手相學)과 자미두수·매화역수·기문둔갑을 통합하는 40년 경력 명리학 대가입니다. 손바닥 사진을 보고 실제로 보이는 손금선의 형태·깊이·방향·잔선 등을 구체적으로 관찰하여 깊이 있게 분석합니다. 반드시 JSON만 출력하고 마크다운 코드블록은 절대 사용하지 마세요.';
-
-        prompt = (sajuCtx ? `[의뢰인 사주 정보]\n${sajuCtx}\n\n` : '')
-          + `이것은 ${isLeft ? '왼손(선천운 - 타고난 기질과 잠재력)' : '오른손(후천운 - 현재와 미래의 실제 운세 흐름)'} 손바닥 사진입니다.
-
-실제로 보이는 선들을 꼼꼼히 관찰하여 아래 항목들을 분석해주세요:
-
-1. 생명선: 실제 선의 길이, 깊이, 굵기, 엄지를 감싸는 호의 크기, 잔선 유무
-2. 감정선(심장선): 시작점과 끝점의 위치, 곡선/직선 여부, 선의 굵기와 선명도
-3. 두뇌선: 길이와 기울기 방향, 생명선과의 연결/분리 여부
-4. 운명선: 선의 존재 여부, 강약, 시작점 위치
-5. 손 전체: 손가락 길이, 손바닥 넓이, 잔선 많음/적음
-6. ${sajuCtx ? `사주 명반(${sd?.star} 명주)과 손금의 교차 분석` : '전체적인 손금 에너지'}
-
-${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로 분석하세요.' : '현재 진행 중인 운세, 실제 실현된 능력, 앞으로의 변화 흐름을 중심으로 분석하세요.'}
-
-반드시 아래 JSON 형식으로만 출력:
-{"overall":"${isLeft?'선천운':'후천운'} 핵심 한줄 요약 (실제 관찰 기반, 30자이내)","match_pct":숫자(75~95),"features":[{"name":"생명선","score":80,"desc":"1문장","color":"#50C878"},{"name":"감정선","score":78,"desc":"1문장","color":"#cc88bb"},{"name":"두뇌선","score":82,"desc":"1문장","color":"#8aacf0"},{"name":"운명선","score":75,"desc":"1문장","color":"#FFD700"},{"name":"손형태","score":80,"desc":"1문장","color":"#EF9F27"}],"palace_sync":[{"palace":"재백궁","result":"손금과 사주 재물운 교차 상세 분석","score":숫자},{"palace":"관록궁","result":"손금과 사주 직업운 교차 상세 분석","score":숫자},{"palace":"부처궁","result":"손금과 사주 인간관계 교차 상세 분석","score":숫자},{"palace":"건강궁","result":"손금과 사주 건강운 교차 상세 분석","score":숫자}],"interpretation":"3대역학 통합해석 6문장이상","strengths":["강점1","강점2","강점3"],"cautions":["주의1","주의2"]}`;
+        const hand = isLeft ? '왼손(선천운)' : '오른손(후천운)';
+        prompt = `${hand}손금분석${sajuCtx?'.사주:'+sajuCtx:''}.
+JSON: {"overall":"한줄요약","match_pct":83,"features":[{"name":"생명선","score":80,"desc":"해석","color":"#50C878"},{"name":"감정선","score":78,"desc":"해석","color":"#cc88bb"},{"name":"두뇌선","score":82,"desc":"해석","color":"#8aacf0"},{"name":"운명선","score":75,"desc":"해석","color":"#FFD700"},{"name":"손형태","score":80,"desc":"해석","color":"#EF9F27"}],"palace_sync":[{"palace":"재백궁","result":"해석","score":80}],"interpretation":"종합해석","strengths":["강점1","강점2"],"cautions":["주의1"]}`;
       }
 
       try {
@@ -5113,7 +5092,7 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
-            max_tokens: 1200,
+            max_tokens: 1500,
             system: systemMsg,
             messages: [{ role: 'user', content: [
               { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageData } },
@@ -5146,6 +5125,7 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
         window._scanResult = null;
       }
     }
+
 
             function runStep(i) {
       if (i >= STEPS.length) {

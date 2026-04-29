@@ -343,9 +343,12 @@ function _ensureSajuData() {
 
 window.generate50PReport = function() {
   if (!_ensureSajuData()) {
-    alert('이름과 생년월일을 먼저 입력해주세요.');
-    if(typeof showPg==='function') showPg('main');
-    return;
+    // _sajuData가 이미 있으면 그냥 진행 (스캔 후 리포트 요청 시)
+    if (!window._sajuData || !window._sajuData.name) {
+      alert('이름과 생년월일을 먼저 입력해주세요.');
+      if(typeof showPg==='function') showPg('main');
+      return;
+    }
   }
   var sd = window._sajuData;
   var bodyEl = document.getElementById('report-full-body');

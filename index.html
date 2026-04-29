@@ -3978,6 +3978,26 @@
 
       const body = document.getElementById('saju-result-body');
       body.innerHTML = '';
+
+      // 촬영 이미지가 있으면 리포트 상단에 표시
+      if (window.capturedImages) {
+        const imgs = [];
+        if (window.capturedImages.face) imgs.push({ src: window.capturedImages.face, label: '관상' });
+        if (window.capturedImages.palm_left) imgs.push({ src: window.capturedImages.palm_left, label: '왼손' });
+        if (window.capturedImages.palm_right) imgs.push({ src: window.capturedImages.palm_right, label: '오른손' });
+        if (imgs.length > 0) {
+          const imgRow = document.createElement('div');
+          imgRow.style.cssText = 'display:flex;gap:10px;margin-bottom:1rem;padding:.75rem;background:rgba(255,255,255,0.04);border:1px solid rgba(255,255,255,0.08);border-radius:12px;';
+          imgs.forEach(function(img) {
+            const wrap = document.createElement('div');
+            wrap.style.cssText = 'text-align:center;';
+            wrap.innerHTML = '<img src="' + img.src + '" style="width:72px;height:72px;object-fit:cover;border-radius:10px;border:1px solid rgba(255,255,255,0.15);">'
+              + '<div style="font-size:10px;color:var(--t2);margin-top:4px;">' + img.label + '</div>';
+            imgRow.appendChild(wrap);
+          });
+          body.appendChild(imgRow);
+        }
+      }
       sections.forEach(s => {
         const div = document.createElement('div');
         div.className = 'saju-section';
@@ -4940,6 +4960,9 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
       document.getElementById('seq-desc').textContent = s.desc;
       document.getElementById('seq-countdown').style.display = 'none';
       document.getElementById('seq-countdown').textContent = '';
+      // 준비 화면에서는 불투명
+      var ov = document.getElementById('seq-overlay');
+      if (ov) ov.style.background = 'rgba(5,5,30,0.97)';
       var readyBtn = document.getElementById('seq-ready-btn');
       var skipBtn = document.getElementById('seq-skip-btn');
       readyBtn.style.display = 'inline-block';
@@ -4978,6 +5001,10 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
         if (vid) vid.style.transform = 'scaleX(-1)';
       }, 200);
 
+      // 카운트다운 시작 시 오버레이 반투명으로 → 카메라 보이게
+      var overlay = document.getElementById('seq-overlay');
+      if (overlay) overlay.style.background = 'rgba(5,5,30,0.45)';
+
       // 3,2,1 카운트다운
       var cnt = 3;
       cd.textContent = cnt;
@@ -4988,6 +5015,8 @@ ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로
         } else {
           clearInterval(_seqTimer);
           cd.textContent = '📸';
+          var ov2 = document.getElementById('seq-overlay');
+          if (ov2) ov2.style.background = 'rgba(5,5,30,0.97)';
           setTimeout(function(){
             document.getElementById('seq-overlay').style.display = 'none';
             // 자동 촬영 실행

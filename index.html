@@ -3245,9 +3245,9 @@
         <div class="shutter-flash" id="shutterFlash"></div>
         <div class="cam-guide-msg" id="camGuideMsg">얼굴을 타원 안에 가득 채워주세요</div>
         <video id="camVideo" autoplay playsinline muted
-          style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:none;transform:scaleX(-1);border-radius:12px;z-index:1;"></video>
+          style="position:absolute;top:0;left:0;width:100%;height:100%;object-fit:cover;display:block;transform:scaleX(-1);border-radius:12px;z-index:1;"></video>
         <canvas id="sc" width="640" height="400"
-          style="position:relative;z-index:2;width:100%;background:transparent;pointer-events:none;transform:scaleX(-1)"></canvas>
+          style="position:absolute;top:0;left:0;width:100%;height:100%;background:transparent;pointer-events:none;z-index:2;"></canvas>
         <div id="cam-error"
           style="display:none;position:absolute;inset:0;align-items:center;justify-content:center;flex-direction:column;gap:12px;background:#0a0a20;border-radius:12px;">
           <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,80,80,0.7)" stroke-width="1.5">
@@ -3814,14 +3814,14 @@
     "건강운": "자미두수 기준"
   },
   "ziwei": "인생 지도 분석 (인생 항로/격국/대운, 3-4문장)",
-  "meihua": "오늘의 기회 분석 (체괘/용괘/길흉, 3-4문장)",
+  "meihua": "오늘 매화역수 기회 분석 (필수! 3문장)",
   "qimen": "성공 치트키 분석 (오늘 길방/귀인 방위/전략, 3-4문장)",
-  "hybrid_msg": "3대 역학 통합 메시지 (5-6문장, ~입니다 어조)",
+  "hybrid_msg": "자미두수+매화역수+기문둔갑 통합 인생 메시지 (필수! 5문장)",
   "career": "직업/커리어 분석 (3-4문장)",
   "wealth": "재물/금전 분석 (3-4문장)",
   "love": "애정/인간관계 분석 (3-4문장)",
   "luck_period": "대운 흐름 향후 3년 (3-4문장)",
-  "caution": "주의사항 및 개운법 (2-3문장)",
+  "caution": "오늘 개운법과 주의사항 (필수! 2문장)",
   "lucky_direction": "기문둔갑 오늘의 길방",
   "lucky_items": ["길한 색상 또는 방위", "길한 숫자", "길한 요일"],
   "summary": "전체 요약 한 줄 (30자 이내)"
@@ -3983,9 +3983,9 @@
 
       // 무료 공개 섹션
       const freeSections = [
-        { icon: '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>', color: '#FFD700', title: '3대 역학 통합 인생 메시지', body: r.hybrid_msg || r.message || r.reading || r.ziwei || r.summary || '분석 결과를 불러오는 중...' },
-        { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#50C878', title: '오늘의 기회 - 매화역수 분석', body: r.meihua || r.today_luck || r.opportunity || '' },
-        { icon: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', color: '#EF9F27', title: '성공 치트키 - 오늘의 개운법', body: r.caution || r.tip || r.qimen || r.advice || '' },
+        { icon: '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>', color: '#FFD700', title: '3대 역학 통합 인생 메시지', body: r.hybrid_msg || r.palace_desc || r.daewoon || '' },
+        { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#50C878', title: '오늘의 기회 - 매화역수 분석', body: r.meihua || r.score_trends || '' },
+        { icon: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', color: '#EF9F27', title: '성공 치트키 - 오늘의 개운법', body: r.caution || r.score_sources || '' },
       ];
       // 유료 섹션
       const paidSections = [

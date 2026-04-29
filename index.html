@@ -2257,6 +2257,7 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       border-radius: 12px;
       padding: 1rem 1.1rem;
+      margin-bottom: 0.5rem;
     }
 
     .saju-section-title {
@@ -2275,9 +2276,11 @@
     }
 
     .saju-section-body {
-      font-size: 12px;
-      color: var(--t2);
-      line-height: 1.85;
+      font-size: 13px;
+      color: rgba(220,220,245,0.95);
+      line-height: 1.9;
+      letter-spacing: 0.01em;
+      word-break: keep-all;
     }
 
     .saju-section-body em {
@@ -5042,11 +5045,10 @@
 
       if (sMode === 'face') {
         systemMsg = '당신은 자미두수·매화역수·기문둔갑에 정통한 40년 경력 명리학 대가이자 관상 전문가입니다. 이미지를 보고 동양 전통 기색(氣色) 관상법으로 깊이 있게 분석합니다. 반드시 JSON만 출력하고 마크다운 코드블록은 절대 사용하지 마세요.';
-        prompt = (sajuCtx ? `사주:${sajuCtx}\n` : '')
-          + `관상분석. JSON만:
+        prompt = `관상분석${sajuCtx ? '. 사주:'+sajuCtx : ''}. JSON만:
 
 반드시 아래 JSON 형식으로만 출력 (다른 텍스트 없이):
-{"overall":"관상 핵심 한줄 요약 (실제 관찰 기반, 30자이내)","match_pct":숫자(75~95),"features":[{"name":"이마(관록궁)","score":숫자(0-100),"desc":"실제 이마 형태와 관록궁 기색 에너지 상세 해석 2문장","tag":"관록운","color":"#FFD700","tBg":"rgba(255,215,0,0.15)","tC":"#FFD700","ziwei":"자미두수 근거","meihua":"매화역수 근거","qimen":"기문둔갑 근거"},{"name":"눈빛(명궁)","score":숫자,"desc":"실제 눈빛과 명궁 에너지 상세 해석 2문장","tag":"핵심기운","color":"#50C878","tBg":"rgba(80,200,120,0.15)","tC":"#50C878"},{"name":"코(재백궁)","score":숫자,"desc":"실제 코 형태와 재백궁 기색 상세 해석 2문장","tag":"재물운","color":"#8aacf0","tBg":"rgba(96,130,220,0.15)","tC":"#8aacf0"},{"name":"입술(부처궁)","score":숫자,"desc":"실제 입술과 부처궁 에너지 상세 해석 2문장","tag":"인간관계","color":"#cc88bb","tBg":"rgba(180,100,180,0.15)","tC":"#cc88bb"},{"name":"턱선(전택궁)","score":숫자,"desc":"실제 턱선과 전택궁 기색 상세 해석 2문장","tag":"기반/의지","color":"#EF9F27","tBg":"rgba(200,130,30,0.15)","tC":"#EF9F27"}],"palace_sync":[{"palace":"명궁","result":"명궁 기색과 사주 일치도 상세","score":숫자},{"palace":"재백궁","result":"재물운 교차 분석 상세","score":숫자},{"palace":"관록궁","result":"직업운 교차 분석 상세","score":숫자},{"palace":"전택궁","result":"기반운 교차 분석 상세","score":숫자}],"interpretation":"자미두수 명반 + 매화역수 오늘 괘 + 관상 기색을 3중 교차한 통합 해석. 이 사람의 타고난 기질, 현재 운세 흐름, 주의할 점, 강점을 5문장 이상 구체적으로 서술. <em>강조</em> <b>금색강조</b> 태그 적극 활용."}`;
+{"overall":"관상 핵심 한줄 요약 (실제 관찰 기반, 30자이내)","match_pct":숫자(75~95),"features":[{"name":"이마(관록궁)","score":80,"desc":"1문장","color":"#FFD700"},{"name":"눈빛(명궁)","score":85,"desc":"1문장","color":"#50C878"},{"name":"코(재백궁)","score":78,"desc":"1문장","color":"#8aacf0"},{"name":"입술(부처궁)","score":75,"desc":"1문장","color":"#cc88bb"},{"name":"턱선(전택궁)","score":80,"desc":"1문장","color":"#EF9F27"}],"palace_sync":[{"palace":"명궁","result":"명궁 기색과 사주 일치도 상세","score":숫자},{"palace":"재백궁","result":"재물운 교차 분석 상세","score":숫자},{"palace":"관록궁","result":"직업운 교차 분석 상세","score":숫자},{"palace":"전택궁","result":"기반운 교차 분석 상세","score":숫자}],"interpretation":"자미두수 명반 + 매화역수 오늘 괘 + 관상 기색을 3중 교차한 통합 해석. 이 사람의 타고난 기질, 현재 운세 흐름, 주의할 점, 강점을 5문장 이상 구체적으로 서술. <em>강조</em> <b>금색강조</b> 태그 적극 활용."}`;
 
       } else {
         // 손금 분석 - ChatGPT 수준 심층 분석
@@ -5068,7 +5070,7 @@
 ${isLeft ? '선천적 기질, 타고난 재능, 잠재된 성격을 중심으로 분석하세요.' : '현재 진행 중인 운세, 실제 실현된 능력, 앞으로의 변화 흐름을 중심으로 분석하세요.'}
 
 반드시 아래 JSON 형식으로만 출력:
-{"overall":"${isLeft?'선천운':'후천운'} 핵심 한줄 요약 (실제 관찰 기반, 30자이내)","match_pct":숫자(75~95),"features":[{"name":"생명선(건강·활력궁)","score":숫자(0-100),"desc":"실제 생명선 형태 관찰 + 체력/생명력/회복력 상세 해석 2-3문장","tag":"건강/활력","color":"#50C878","tBg":"rgba(80,200,120,0.15)","tC":"#50C878"},{"name":"감정선(부처·인연궁)","score":숫자,"desc":"실제 감정선 형태 관찰 + 애정방식/인간관계 패턴 상세 해석 2-3문장","tag":"애정/인연","color":"#cc88bb","tBg":"rgba(180,100,180,0.15)","tC":"#cc88bb"},{"name":"두뇌선(사고·판단)","score":숫자,"desc":"실제 두뇌선 형태 관찰 + 사고방식/창의성/판단력 상세 해석 2-3문장","tag":"지혜/창의","color":"#8aacf0","tBg":"rgba(96,130,220,0.15)","tC":"#8aacf0"},{"name":"운명선(직업·대운궁)","score":숫자,"desc":"실제 운명선 형태 관찰 + 직업운/커리어 방향 상세 해석 2-3문장","tag":"직업/대운","color":"#FFD700","tBg":"rgba(255,215,0,0.15)","tC":"#FFD700"},{"name":"손 형태(기질·에너지)","score":숫자,"desc":"손가락 길이·손바닥 넓이·잔선 특징 관찰 + 기질과 에너지 패턴 상세 해석 2-3문장","tag":"기질/에너지","color":"#EF9F27","tBg":"rgba(200,130,30,0.15)","tC":"#EF9F27"}],"palace_sync":[{"palace":"재백궁","result":"손금과 사주 재물운 교차 상세 분석","score":숫자},{"palace":"관록궁","result":"손금과 사주 직업운 교차 상세 분석","score":숫자},{"palace":"부처궁","result":"손금과 사주 인간관계 교차 상세 분석","score":숫자},{"palace":"건강궁","result":"손금과 사주 건강운 교차 상세 분석","score":숫자}],"interpretation":"3대역학 통합해석 6문장이상","strengths":["강점1","강점2","강점3"],"cautions":["주의1","주의2"]}`;
+{"overall":"${isLeft?'선천운':'후천운'} 핵심 한줄 요약 (실제 관찰 기반, 30자이내)","match_pct":숫자(75~95),"features":[{"name":"생명선","score":80,"desc":"1문장","color":"#50C878"},{"name":"감정선","score":78,"desc":"1문장","color":"#cc88bb"},{"name":"두뇌선","score":82,"desc":"1문장","color":"#8aacf0"},{"name":"운명선","score":75,"desc":"1문장","color":"#FFD700"},{"name":"손형태","score":80,"desc":"1문장","color":"#EF9F27"}],"palace_sync":[{"palace":"재백궁","result":"손금과 사주 재물운 교차 상세 분석","score":숫자},{"palace":"관록궁","result":"손금과 사주 직업운 교차 상세 분석","score":숫자},{"palace":"부처궁","result":"손금과 사주 인간관계 교차 상세 분석","score":숫자},{"palace":"건강궁","result":"손금과 사주 건강운 교차 상세 분석","score":숫자}],"interpretation":"3대역학 통합해석 6문장이상","strengths":["강점1","강점2","강점3"],"cautions":["주의1","주의2"]}`;
       }
 
       try {

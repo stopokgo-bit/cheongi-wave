@@ -4295,9 +4295,8 @@
       { name: '전택궁', pct: 70, color: '#EF9F27', c: '일치' }, { name: '부처궁', pct: 62, color: '#cc88bb', c: '보통' },
     ];
     const STEPS = [
-      { label: '얼굴 감지 및 정렬 확인', dur: 400 }, { label: '3D 랜드마크 68점 추출', dur: 600 },
-      { label: '골격 구조 분석', dur: 500 }, { label: '12궁 명반 좌표 동기화', dur: 700 },
-      { label: '관상·사주 통합 해석 생성', dur: 800 },
+      { label: '기색 스캔 중', dur: 300 }, { label: '명반 동기화', dur: 300 },
+      { label: '역학 교차 분석', dur: 300 }, { label: '결과 생성 중', dur: 300 },
     ];
     let WD = [{ age: '20대', w: 72, c: 80, l: 65 }, { age: '30대', w: 65, c: 85, l: 70 }, { age: '45세', w: 88, c: 92, l: 75, ev: '황금기' }, { age: '50대', w: 78, c: 80, l: 68 }, { age: '60대', w: 55, c: 60, l: 74 }, { age: '70대', w: 70, c: 75, l: 80 }];
 
@@ -4965,9 +4964,10 @@
 
       // 스캐닝 라인
       if (sState === 'scanning') {
-        sLY += 3 * sLD; if (sLY > h || sLY < 0) sLD *= -1;
-        ctx.beginPath(); ctx.moveTo(0, sLY); ctx.lineTo(w, sLY); ctx.strokeStyle = 'rgba(80,200,120,0.6)'; ctx.lineWidth = 2; ctx.stroke();
-        const grd = ctx.createLinearGradient(0, sLY - 40, 0, sLY + 40); grd.addColorStop(0, 'rgba(80,200,120,0)'); grd.addColorStop(0.5, 'rgba(80,200,120,0.15)'); grd.addColorStop(1, 'rgba(80,200,120,0)'); ctx.fillStyle = grd; ctx.fillRect(0, sLY - 40, w, 80);
+        // 위→아래 한 번만 (완료 시 멈춤)
+        if (sLY < h) sLY += 1.5;
+        ctx.beginPath(); ctx.moveTo(0, sLY); ctx.lineTo(w, sLY); ctx.strokeStyle = 'rgba(80,200,120,0.5)'; ctx.lineWidth = 1.5; ctx.stroke();
+        const grd = ctx.createLinearGradient(0, sLY - 30, 0, sLY + 30); grd.addColorStop(0, 'rgba(80,200,120,0)'); grd.addColorStop(0.5, 'rgba(80,200,120,0.1)'); grd.addColorStop(1, 'rgba(80,200,120,0)'); ctx.fillStyle = grd; ctx.fillRect(0, sLY - 30, w, 60);
         // 실시간 분석 메시지
         ctx.fillStyle = 'rgba(80,200,120,0.8)'; ctx.font = 'bold 14px system-ui'; ctx.textAlign = 'center';
         const msgs = ['인생 지도 데이터 연동 중...', '기색 데이터 감지 중...', '12궁 동기화 중...', '에너지 패턴 분석 중...'];
@@ -5134,7 +5134,7 @@ JSON: {"overall":"한줄요약","match_pct":83,"features":[{"name":"생명선","
         var _waitCount = 0;
         var _waitTimer = setInterval(function() {
           _waitCount++;
-          if (window._scanResult !== undefined || _waitCount > 50) {
+          if (window._scanResult !== undefined || _waitCount > 33) {
             clearInterval(_waitTimer);
             setTimeout(showResult, 300);
           }

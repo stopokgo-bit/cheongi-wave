@@ -5076,12 +5076,16 @@
       let prompt;
 
       if (sMode === 'face') {
-        prompt = `관상분석${sajuCtx?'. 사주:'+sajuCtx:''}. 이마/눈/코/입/턱 각 부위별로 자미두수·매화역수·기문둔갑 교차해석을 각각 다르게 작성. JSON만:
-{"overall":"한줄요약","match_pct":85,"features":[{"name":"이마","score":80,"desc":"이마 관찰 해석","ziwei":"이마-자미두수 관록궁 해석","meihua":"이마-매화역수 오늘 연관 해석","qimen":"이마-기문둔갑 방위 해석","color":"#FFD700"},{"name":"눈","score":85,"desc":"눈 관찰 해석","ziwei":"눈-자미두수 명궁 해석","meihua":"눈-매화역수 오늘 연관 해석","qimen":"눈-기문둔갑 해석","color":"#50C878"},{"name":"코","score":78,"desc":"코 관찰 해석","ziwei":"코-자미두수 재백궁 해석","meihua":"코-매화역수 오늘 연관 해석","qimen":"코-기문둔갑 해석","color":"#8aacf0"},{"name":"입","score":75,"desc":"입 관찰 해석","ziwei":"입-자미두수 부처궁 해석","meihua":"입-매화역수 연관 해석","qimen":"입-기문둔갑 해석","color":"#cc88bb"},{"name":"턱","score":80,"desc":"턱 관찰 해석","ziwei":"턱-자미두수 전택궁 해석","meihua":"턱-매화역수 연관 해석","qimen":"턱-기문둔갑 해석","color":"#EF9F27"}],"interpretation":"종합해석 3문장","strengths":["강점1","강점2"],"cautions":["주의1"]}`;
+        prompt = `이 얼굴 사진을 동양 관상학으로 분석하라${sajuCtx ? '. 사주:'+sajuCtx : ''}.
+이마/눈/코/입/턱 각 부위를 실제 관찰하고, 각 부위마다 자미두수·매화역수·기문둔갑을 각각 다른 내용으로 교차 해석하라.
+반드시 JSON만 출력하라 (코드블록 금지):
+{"overall":"전체 한줄 인상","match_pct":85,"features":[{"name":"이마","score":80,"desc":"이마 실제 관찰 내용","ziwei":"이마와 자미두수 관록궁 연관 해석 (desc와 다르게)","meihua":"이마와 오늘 매화역수 괘 연관 해석","qimen":"이마와 기문둔갑 방위 연관 해석","color":"#FFD700"},{"name":"눈","score":85,"desc":"눈 실제 관찰 내용","ziwei":"눈과 자미두수 명궁 연관 해석","meihua":"눈과 오늘 매화역수 연관","qimen":"눈과 기문둔갑 연관","color":"#50C878"},{"name":"코","score":78,"desc":"코 실제 관찰 내용","ziwei":"코와 자미두수 재백궁 연관","meihua":"코와 매화역수 연관","qimen":"코와 기문둔갑 연관","color":"#8aacf0"},{"name":"입","score":75,"desc":"입 실제 관찰 내용","ziwei":"입과 자미두수 부처궁 연관","meihua":"입과 매화역수 연관","qimen":"입과 기문둔갑 연관","color":"#cc88bb"},{"name":"턱","score":80,"desc":"턱 실제 관찰 내용","ziwei":"턱과 자미두수 전택궁 연관","meihua":"턱과 매화역수 연관","qimen":"턱과 기문둔갑 연관","color":"#EF9F27"}],"interpretation":"종합 해석 2문장","strengths":["강점1","강점2"],"cautions":["주의1"]}`;
       } else {
         const hand = isLeft ? '왼손(선천운)' : '오른손(후천운)';
-        prompt = `${hand} 손금분석${sajuCtx?'. 사주:'+sajuCtx:''}. 각 선별로 자미두수·매화역수·기문둔갑 교차해석을 각각 다르게 작성. JSON만:
-{"overall":"한줄요약","match_pct":83,"features":[{"name":"생명선","score":80,"desc":"생명선 관찰 해석","ziwei":"생명선-자미두수 건강궁 해석","meihua":"생명선-매화역수 오늘 연관 해석","qimen":"생명선-기문둔갑 해석","color":"#50C878"},{"name":"감정선","score":78,"desc":"감정선 관찰 해석","ziwei":"감정선-자미두수 부처궁 해석","meihua":"감정선-매화역수 오늘 연관 해석","qimen":"감정선-기문둔갑 해석","color":"#cc88bb"},{"name":"두뇌선","score":82,"desc":"두뇌선 관찰 해석","ziwei":"두뇌선-자미두수 명궁 해석","meihua":"두뇌선-매화역수 오늘 연관 해석","qimen":"두뇌선-기문둔갑 해석","color":"#8aacf0"},{"name":"운명선","score":75,"desc":"운명선 관찰 해석","ziwei":"운명선-자미두수 관록궁 해석","meihua":"운명선-매화역수 연관 해석","qimen":"운명선-기문둔갑 해석","color":"#FFD700"},{"name":"손형태","score":80,"desc":"손형태 관찰 해석","ziwei":"손형태-자미두수 해석","meihua":"손형태-매화역수 연관 해석","qimen":"손형태-기문둔갑 해석","color":"#EF9F27"}],"interpretation":"종합해석 3문장","strengths":["강점1","강점2"],"cautions":["주의1"]}`;
+        prompt = `이 ${hand} 손금 사진을 동양 수상학으로 분석하라${sajuCtx ? '. 사주:'+sajuCtx : ''}.
+생명선/감정선/두뇌선/운명선/손형태를 실제 관찰하고, 각 선마다 자미두수·매화역수·기문둔갑을 각각 다른 내용으로 교차 해석하라.
+반드시 JSON만 출력하라 (코드블록 금지):
+{"overall":"전체 한줄 인상","match_pct":83,"features":[{"name":"생명선","score":80,"desc":"생명선 실제 관찰 내용","ziwei":"생명선과 자미두수 건강궁 연관 해석","meihua":"생명선과 오늘 매화역수 연관","qimen":"생명선과 기문둔갑 연관","color":"#50C878"},{"name":"감정선","score":78,"desc":"감정선 실제 관찰 내용","ziwei":"감정선과 자미두수 부처궁 연관","meihua":"감정선과 매화역수 연관","qimen":"감정선과 기문둔갑 연관","color":"#cc88bb"},{"name":"두뇌선","score":82,"desc":"두뇌선 실제 관찰 내용","ziwei":"두뇌선과 자미두수 명궁 연관","meihua":"두뇌선과 매화역수 연관","qimen":"두뇌선과 기문둔갑 연관","color":"#8aacf0"},{"name":"운명선","score":75,"desc":"운명선 실제 관찰 내용","ziwei":"운명선과 자미두수 관록궁 연관","meihua":"운명선과 매화역수 연관","qimen":"운명선과 기문둔갑 연관","color":"#FFD700"},{"name":"손형태","score":80,"desc":"손형태 실제 관찰 내용","ziwei":"손형태와 자미두수 연관","meihua":"손형태와 매화역수 연관","qimen":"손형태와 기문둔갑 연관","color":"#EF9F27"}],"interpretation":"종합 해석 2문장","strengths":["강점1","강점2"],"cautions":["주의1"]}`;
       }
 
       try {
@@ -5090,15 +5094,14 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
-            max_tokens: 2500,
-            system: 'JSON만 출력. 코드블록 금지. 각 부위 해석은 반드시 다르게.',
+            max_tokens: 3000,
+            system: 'JSON만 출력. 코드블록 금지. desc/ziwei/meihua/qimen 모두 서로 다른 내용으로.',
             messages: [{ role: 'user', content: [
               { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageData } },
               { type: 'text', text: prompt }
             ]}]
           })
         });
-
         const reader = response.body.getReader();
         const decoder = new TextDecoder();
         let text = '', buf = '';
@@ -5123,6 +5126,7 @@
         window._scanResult = null;
       }
     }
+
 
 
 
@@ -5162,47 +5166,36 @@
       _seqAuto = true;
       sMode = 'face';
       showPg('scan');
-
-      // 500ms 후 카메라 켜기
       setTimeout(function(){
         startCamera('user');
         var vid = document.getElementById('camVideo');
         if (vid) { vid.style.display='block'; vid.style.transform='scaleX(-1)'; vid.play().catch(function(){}); }
-
-        // 1.5초 후 카운트다운 시작 (카메라 스트림 연결 대기)
+        // 카메라 켜지고 2초 후 카운트다운
         setTimeout(function(){
-          _runCountdown('face', '얼굴을 정면으로 봐주세요', function(){ doCapture(); });
-        }, 1500);
+          _runCountdown('face', '👁 얼굴을 정면으로 봐주세요', function(){ doCapture(); });
+        }, 2000);
       }, 500);
     }
 
     // 단순 카운트다운 함수
     function _runCountdown(mode, guideText, onComplete) {
       // 기존 요소 제거
-      var old1 = document.getElementById('cw-countdown');
-      var old2 = document.getElementById('cw-guide');
-      if (old1) old1.remove();
-      if (old2) old2.remove();
+      ['cw-countdown','cw-guide'].forEach(function(id){
+        var el = document.getElementById(id);
+        if (el) el.remove();
+      });
 
-      var stage = document.querySelector('.cam-stage');
-      if (!stage) { onComplete(); return; }
-
-      // stage의 절대 위치 기준으로 fixed 위치 계산
-      var rect = stage.getBoundingClientRect();
-      var cx = rect.left + rect.width/2;
-      var cy = rect.top + rect.height/2;
-
-      // 안내문구 - fixed로 화면에 고정
+      // 안내문구 - 화면 중앙 상단 고정
       var guide = document.createElement('div');
       guide.id = 'cw-guide';
-      guide.style.cssText = 'position:fixed;top:' + (rect.top+14) + 'px;left:'+cx+'px;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#fff;font-size:15px;font-weight:700;padding:10px 24px;border-radius:24px;z-index:9999;white-space:nowrap;pointer-events:none;';
+      guide.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#fff;font-size:16px;font-weight:700;padding:12px 28px;border-radius:24px;z-index:99999;white-space:nowrap;pointer-events:none;';
       guide.textContent = guideText;
       document.body.appendChild(guide);
 
-      // 카운트다운 숫자 - fixed로 화면에 고정
+      // 카운트다운 숫자 - 화면 정중앙 고정
       var counter = document.createElement('div');
       counter.id = 'cw-countdown';
-      counter.style.cssText = 'position:fixed;top:'+cy+'px;left:'+cx+'px;transform:translate(-50%,-50%);font-size:120px;font-weight:900;color:#50C878;text-shadow:0 0 60px rgba(80,200,120,1);z-index:9999;pointer-events:none;line-height:1;';
+      counter.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:140px;font-weight:900;color:#50C878;text-shadow:0 0 60px rgba(80,200,120,1);z-index:99999;pointer-events:none;line-height:1;';
       counter.textContent = '3';
       document.body.appendChild(counter);
 
@@ -5215,8 +5208,10 @@
           clearInterval(t);
           counter.textContent = '📸';
           setTimeout(function(){
-            counter.remove();
-            guide.remove();
+            ['cw-countdown','cw-guide'].forEach(function(id){
+              var el = document.getElementById(id);
+              if (el) el.remove();
+            });
             onComplete();
           }, 500);
         }

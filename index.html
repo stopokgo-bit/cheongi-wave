@@ -5819,7 +5819,20 @@
     // Google 로그인
     function doGoogleLogin() {
       if (!window._supabase) {
-        alert('잠시 후 다시 시도해주세요.');
+        // config 재시도
+        fetch('/api/config').then(function(r){ return r.json(); }).then(function(cfg){
+          if (cfg && cfg.supabaseUrl && cfg.supabaseKey && window.supabase) {
+            window._supabase = window.supabase.createClient(cfg.supabaseUrl, cfg.supabaseKey);
+            window._supabase.auth.signInWithOAuth({
+              provider: 'google',
+              options: { redirectTo: window.location.origin }
+            });
+          } else {
+            alert('설정을 불러올 수 없어요. 잠시 후 다시 시도해주세요.');
+          }
+        }).catch(function(){
+          alert('서버 연결 오류가 발생했어요.');
+        });
         return;
       }
       window._supabase.auth.signInWithOAuth({

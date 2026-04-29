@@ -3900,8 +3900,30 @@
     }
 
     function renderSajuResult(name, year, month, day, timeStr, age, r) {
+      // AI 응답 필드 확인
+      console.log('[천기] AI 응답 필드:', Object.keys(r||{}));
+      console.log('[천기] hybrid_msg:', r.hybrid_msg);
+      console.log('[천기] meihua:', r.meihua);
+      console.log('[천기] caution:', r.caution);
       // 전역에 사주 데이터 저장 (관상/손금 스캔 연동용)
       _sajuData = { name, year, month, day, timeStr, age, gender: selectedGender, cal: selectedCal, star: r.star, daewoon: r.daewoon, summary: r.summary, scores: r.scores, lucky_direction: r.lucky_direction };
+      window._sajuData = _sajuData;
+      // 자동 프로필 저장
+      try {
+        var profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]');
+        var exists = profiles.find(function(p){ return p.name===name && p.year===year && p.month===month && p.day===day; });
+        if (!exists) {
+          profiles.unshift({
+            name:name, year:year, month:month, day:day, timeStr:timeStr,
+            gender:selectedGender||'남', cal:selectedCal||'양력',
+            birthplace:(document.getElementById('inp-birthplace')||{}).value||'',
+            location:(document.getElementById('inp-location')||{}).value||'',
+            savedAt:new Date().toLocaleDateString('ko-KR')
+          });
+          localStorage.setItem('cw_profiles', JSON.stringify(profiles.slice(0,10)));
+          if (typeof renderProfileBar === 'function') renderProfileBar();
+        }
+      } catch(e) {}
       document.getElementById('saju-page-title').textContent = (name||'') + '님의 천기 분석';
       document.getElementById('saju-date-tag').textContent = formatAnalysisTime();
 
@@ -3961,9 +3983,9 @@
 
       // 무료 공개 섹션
       const freeSections = [
-        { icon: '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>', color: '#FFD700', title: '3대 역학 통합 인생 메시지', body: r.hybrid_msg || r.ziwei || '' },
-        { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#50C878', title: '오늘의 기회 - 매화역수 분석', body: r.meihua || '' },
-        { icon: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', color: '#EF9F27', title: '성공 치트키 - 오늘의 개운법', body: r.caution || r.qimen || '' },
+        { icon: '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>', color: '#FFD700', title: '3대 역학 통합 인생 메시지', body: r.hybrid_msg || r.message || r.reading || r.ziwei || r.summary || '분석 결과를 불러오는 중...' },
+        { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#50C878', title: '오늘의 기회 - 매화역수 분석', body: r.meihua || r.today_luck || r.opportunity || '' },
+        { icon: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', color: '#EF9F27', title: '성공 치트키 - 오늘의 개운법', body: r.caution || r.tip || r.qimen || r.advice || '' },
       ];
       // 유료 섹션
       const paidSections = [
@@ -3999,6 +4021,7 @@
         }
       }
       sections.forEach(s => {
+        if (!s.body) return; // 빈 섹션 건너뜀
         const div = document.createElement('div');
         div.className = 'saju-section';
         div.innerHTML = `
@@ -4266,7 +4289,7 @@
           if (badge && info) {
             if (_sajuData) {
               badge.style.display = 'flex';
-              info.textContent = _sajuData.name + ' · ' + _sajuData.star + ' 명주 · ' + _sajuData.year + '년생 · 자미두수+매화역수+기문둔갑 연동됨';
+              info.textContent = (_sajuData.name||'') + ' · ' + (_sajuData.star||'천기성') + ' 명주 · ' + (_sajuData.year||'') + '년생 · 자미두수+매화역수+기문둔갑 연동됨';
             } else {
               badge.style.display = 'flex';
               info.textContent = '사주 입력 없이 관상/손금만 분석합니다. 메인에서 사주를 먼저 입력하면 3대 역학 통합 분석이 가능합니다.';

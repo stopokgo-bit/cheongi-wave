@@ -4603,19 +4603,15 @@
     }
 
     function _checkAndGoReport() {
-      // 스캔 결과 있으면 무조건 리포트로
-      if (window._scanResult) {
-        // _sajuData 없으면 스캔 결과로 임시 생성
-        if (!window._sajuData || !window._sajuData.name) {
-          window._sajuData = window._sajuData || {};
-          window._sajuData.name = window._sajuData.name || '회원';
-          window._sajuData.year = window._sajuData.year || '';
+      // 무조건 자동순차 종료
+      _seqAuto = false;
+      _seqStep = 0;
+
+      // 스캔 결과 또는 사주 데이터 있으면 리포트로
+      if (window._scanResult || (window._sajuData && window._sajuData.name)) {
+        if (window._sajuData && !window._sajuData.name) {
+          window._sajuData.name = '회원';
         }
-        showPg('report');
-        return;
-      }
-      // 사주 데이터만 있어도 리포트로
-      if (window._sajuData && window._sajuData.name && window._sajuData.year) {
         showPg('report');
         return;
       }
@@ -5506,6 +5502,7 @@
 
         if (window._scanResult !== undefined || _waitCount2 > 60) {
           clearInterval(_waitTimer2);
+          _seqAuto = false; // 완료 후 자동순차 종료
           overlay.style.display = 'none';
 
           // 결과 섹션 표시
@@ -5816,6 +5813,30 @@
     setTimeout(() => { drawWave(); drawCompass(); }, 80);
   </script>
   <script>
+    // 인증 메뉴 토글
+    function toggleAuthMenu() {
+      var menu = document.getElementById('auth-menu');
+      if (!menu) return;
+      menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+      // 외부 클릭 시 닫기
+      setTimeout(function(){
+        document.addEventListener('click', function closeMenu(e){
+          if (!e.target.closest('#auth-menu') && !e.target.closest('#nav-auth-btn')) {
+            menu.style.display = 'none';
+          }
+          document.removeEventListener('click', closeMenu);
+        });
+      }, 100);
+    }
+
+    // 로그아웃
+    function doLogout() {
+      if (!window._supabase) { window.location.reload(); return; }
+      window._supabase.auth.signOut().then(function(){
+        window.location.reload();
+      });
+    }
+
     // Google 로그인
     function doGoogleLogin() {
       if (!window._supabase) {
@@ -5837,7 +5858,10 @@
       }
       window._supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: window.location.origin }
+        options: {
+          redirectTo: 'https://cheongi-wave-61pz.vercel.app',
+          queryParams: { prompt: 'select_account' }
+        }
       });
     }
   </script>

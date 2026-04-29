@@ -3995,9 +3995,9 @@
 
       // 무료 공개 섹션
       const freeSections = [
-        { icon: '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>', color: '#FFD700', title: '3대 역학 통합 인생 메시지', body: r.hybrid_msg || r.palace_desc || r.daewoon || '' },
-        { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#50C878', title: '오늘의 기회 - 매화역수 분석', body: r.meihua || r.score_trends || '' },
-        { icon: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', color: '#EF9F27', title: '성공 치트키 - 오늘의 개운법', body: r.caution || r.score_sources || '' },
+        { icon: '<polygon points="12,2 15.09,8.26 22,9.27 17,14.14 18.18,21.02 12,17.77 5.82,21.02 7,14.14 2,9.27 8.91,8.26"/>', color: '#FFD700', title: '3대 역학 통합 인생 메시지', body: r.hybrid_msg || r.palace_desc || r.reading || r.summary || r.daewoon || '분석 중...' },
+        { icon: '<polyline points="22,12 18,12 15,21 9,3 6,12 2,12"/>', color: '#50C878', title: '오늘의 기회 - 매화역수 분석', body: r.meihua || r.today || r.opportunity || r.score_trends || (r.scores ? '재물운 ' + (r.scores['재물운']||'') + ' · 직업운 ' + (r.scores['직업운']||'') : '오늘의 기회를 분석하고 있어요.') },
+        { icon: '<path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>', color: '#EF9F27', title: '성공 치트키 - 오늘의 개운법', body: r.caution || r.tip || r.advice || r.qimen || (r.lucky_direction ? '오늘 길방은 ' + r.lucky_direction + ' 방향입니다. 중요한 일은 이 방향을 활용해보세요.' : '개운법을 분석하고 있어요.') },
       ];
       // 유료 섹션
       const paidSections = [
@@ -4033,7 +4033,6 @@
         }
       }
       sections.forEach(s => {
-        if (!s.body) return; // 빈 섹션 건너뜀
         const div = document.createElement('div');
         div.className = 'saju-section';
         div.innerHTML = `

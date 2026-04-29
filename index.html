@@ -2766,6 +2766,32 @@
         _supabaseUrl = cfg.supabaseUrl;
         _supabaseKey = cfg.supabaseKey;
         window._supabase = window.supabase.createClient(_supabaseUrl, _supabaseKey);
+        // onAuthStateChange로 세션 상태 실시간 감지
+        window._supabase.auth.onAuthStateChange(function(event, session){
+          if (session && session.user) {
+            var user = session.user;
+            var displayName = (user.user_metadata.full_name || user.email || '').split(' ')[0];
+            var avatarUrl = user.user_metadata.avatar_url || '';
+            var navBtn = document.getElementById('nav-auth-btn');
+            if (navBtn) {
+              navBtn.innerHTML = (avatarUrl ? '<img src="'+avatarUrl+'" style="width:20px;height:20px;border-radius:50%;margin-right:6px;vertical-align:middle;">' : '')
+                + displayName + ' <span style="font-size:11px;opacity:0.7;margin-left:4px;">로그아웃</span>';
+              navBtn.style.cssText += ';background:rgba(80,200,120,0.15);border-color:rgba(80,200,120,0.4);color:#50C878;';
+              navBtn.onclick = function(){ doLogout(); };
+            }
+            var nameInput = document.getElementById('inp-name');
+            if (nameInput && !nameInput.value) nameInput.value = displayName;
+          } else {
+            var navBtn2 = document.getElementById('nav-auth-btn');
+            if (navBtn2) {
+              navBtn2.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span id="nav-auth-label">로그인</span>';
+              navBtn2.style.background = '';
+              navBtn2.style.borderColor = '';
+              navBtn2.style.color = '';
+              navBtn2.onclick = function(){ toggleAuthMenu(); };
+            }
+          }
+        });
         _checkSession();
       }
     }).catch(function(){});
@@ -3448,7 +3474,7 @@
         <!-- CTA -->
         <div style="margin-top:1.5rem;display:flex;flex-direction:column;gap:10px;">
           <!-- 인생지침서 가운데 크게 -->
-          <button onclick="_seqAuto=false;_checkAndGoReport();" style="width:100%;padding:16px;background:linear-gradient(135deg,#FFD700,#FFA500);border:none;border-radius:14px;color:#0f0f3a;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-0.3px;box-shadow:0 4px 20px rgba(255,215,0,0.3);">
+          <button onclick="window._seqAuto=false;_seqAuto=false;_checkAndGoReport();" style="width:100%;padding:16px;background:linear-gradient(135deg,#FFD700,#FFA500);border:none;border-radius:14px;color:#0f0f3a;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;letter-spacing:-0.3px;box-shadow:0 4px 20px rgba(255,215,0,0.3);">
             ✦ 인생 지침서 받기
           </button>
           <!-- 관상/손금 단품 -->
@@ -5541,16 +5567,14 @@
       sState = 'done'; setFB('ready');
 
       // 자동 순차 촬영 중이면 다음 단계
-      if (_seqAuto) {
-        var _modeNames = {face:'관상', palm_left:'왼손', palm_right:'오른손'};
-        if(typeof showShareToast==='function') showShareToast('✅ ' + (_modeNames[sMode]||'') + ' 촬영 완료!');
-        // 마지막 단계(오른손)이면 완료, 아니면 다음으로
-        if (_seqStep >= SEQ.length - 1) {
-          _seqAuto = false;
-          setTimeout(_showSeqComplete, 800);
-        } else {
-          setTimeout(_seqNext, 1500);
-        }
+      // 촬영 완료 토스트
+      var _modeNames = {face:'관상', palm_left:'왼손', palm_right:'오른손'};
+      if(typeof showShareToast==='function') showShareToast('✅ ' + (_modeNames[sMode]||'') + ' 촬영 완료!');
+      // 자동순차 중이고 아직 단계 남아있으면 다음으로
+      if (_seqAuto && _seqStep < SEQ.length - 1) {
+        setTimeout(_seqNext, 1500);
+      } else {
+        _seqAuto = false; // 무조건 종료
       }
 
       // 캔버스 스냅샷

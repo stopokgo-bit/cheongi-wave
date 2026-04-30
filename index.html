@@ -5174,9 +5174,15 @@
       const isFace = sMode === 'face';
       const isLeft = sMode === 'palm_left';
 
-      const prompt = isFace
-        ? `관상분석${ctx?'('+ctx+')':''}: 이마/눈/코/입/턱. 각 부위 desc(관찰)/ziwei(자미두수)/meihua(매화역수)/qimen(기문둔갑) 한문장씩. JSON:{"overall":"O","match_pct":85,"features":[{"name":"이마","score":80,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#FFD700"},{"name":"눈","score":85,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#50C878"},{"name":"코","score":78,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#8aacf0"},{"name":"입","score":75,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#cc88bb"},{"name":"턱","score":80,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#EF9F27"}],"interpretation":"I","strengths":["S"],"cautions":["C"]}`
-        : `${isLeft?'왼손(선천운)':'오른손(후천운)'}손금분석${ctx?'('+ctx+')':''}: 생명선/감정선/두뇌선/운명선/손형태. 각 선 desc/ziwei/meihua/qimen 한문장씩. JSON:{"overall":"O","match_pct":83,"features":[{"name":"생명선","score":80,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#50C878"},{"name":"감정선","score":78,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#cc88bb"},{"name":"두뇌선","score":82,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#8aacf0"},{"name":"운명선","score":75,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#FFD700"},{"name":"손형태","score":80,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#EF9F27"}],"interpretation":"I","strengths":["S"],"cautions":["C"]}`;
+      const parts = isFace
+        ? ['이마(관록궁)#FFD700', '눈(명궁)#50C878', '코(재백궁)#8aacf0', '입(부처궁)#cc88bb', '턱(전택궁)#EF9F27']
+        : ['생명선#50C878', '감정선#cc88bb', '두뇌선#8aacf0', '운명선#FFD700', '손형태#EF9F27'];
+
+      const subject = isFace ? '관상' : (isLeft ? '왼손선천운' : '오른손후천운');
+
+      const prompt = `${subject}분석${ctx?'('+ctx+')':''}.
+다음 JSON 형식으로만 응답. 각 부위 desc/ziwei/meihua/qimen 반드시 서로 다른 한 문장.
+{"overall":"전체요약한줄","match_pct":숫자,"features":[${parts.map(p=>{const[n,c]=p.split('#');return`{"name":"${n}","score":숫자,"desc":"실제관찰","ziwei":"자미두수해석","meihua":"매화역수해석","qimen":"기문둔갑해석","color":"#${c}"}`}).join(',')}],"interpretation":"종합2문장","strengths":["강점"],"cautions":["주의"]}`;
 
       try {
         const response = await fetch('/api/saju', {
@@ -5184,8 +5190,8 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
-            max_tokens: 1800,
-            system: 'JSON만. 코드블록금지. D=실제관찰한문장, Z=자미두수한문장, M=매화역수한문장, Q=기문둔갑한문장. 각필드다른내용.',
+            max_tokens: 2000,
+            system: 'JSON만. 코드블록금지. 한국어. 각 필드 반드시 다른 내용.',
             messages: [{ role: 'user', content: [
               { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageData } },
               { type: 'text', text: prompt }
@@ -5216,6 +5222,7 @@
         window._scanResult = null;
       }
     }
+
 
 
 

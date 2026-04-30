@@ -2778,8 +2778,19 @@
               + (avatarUrl ? '<img src="'+avatarUrl+'" style="width:20px;height:20px;border-radius:50%;">' : '')
               + displayName
               + '<span style="color:rgba(255,100,100,0.8);font-size:11px;margin-left:2px;">로그아웃</span></button>';
+            // 저장된 프로필 이름 우선, 없으면 구글 이름
             var nameInput = document.getElementById('inp-name');
-            if (nameInput && !nameInput.value) nameInput.value = displayName;
+            if (nameInput) {
+              var profiles = [];
+              try { profiles = JSON.parse(localStorage.getItem('cw_profiles')||'[]'); } catch(e) {}
+              if (profiles.length > 0 && profiles[0].name) {
+                nameInput.value = profiles[0].name;
+                // 저장된 프로필 자동 로드
+                if (typeof _loadProfileLocal === 'function') _loadProfileLocal(0);
+              } else if (!nameInput.value) {
+                nameInput.value = displayName;
+              }
+            }
           } else {
             area.innerHTML = '<button id="nav-auth-btn" class="nav-login-btn" onclick="openAuth(&quot;login&quot;)">'
               + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>로그인</button>';

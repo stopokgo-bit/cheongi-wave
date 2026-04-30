@@ -5169,32 +5169,14 @@
     }
 
     async function analyzeWithAI(imageData) {
-      const sd = _sajuData;
-      const sajuCtx = sd ? `${sd.name}/${sd.gender}/${sd.year}년` : '';
+      const sd = window._sajuData;
+      const ctx = sd ? sd.name + '/' + sd.year + '년생' : '';
+      const isFace = sMode === 'face';
       const isLeft = sMode === 'palm_left';
 
-      const faceJSON = `{"overall":"O","match_pct":85,"features":[
-{"name":"이마","score":80,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#FFD700"},
-{"name":"눈","score":85,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#50C878"},
-{"name":"코","score":78,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#8aacf0"},
-{"name":"입","score":75,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#cc88bb"},
-{"name":"턱","score":80,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#EF9F27"}
-],"interpretation":"I","strengths":["S1","S2"],"cautions":["C1"]}`;
-
-      const palmJSON = `{"overall":"O","match_pct":83,"features":[
-{"name":"생명선","score":80,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#50C878"},
-{"name":"감정선","score":78,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#cc88bb"},
-{"name":"두뇌선","score":82,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#8aacf0"},
-{"name":"운명선","score":75,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#FFD700"},
-{"name":"손형태","score":80,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#EF9F27"}
-],"interpretation":"I","strengths":["S1","S2"],"cautions":["C1"]}`;
-
-      let prompt;
-      if (sMode === 'face') {
-        prompt = `관상 분석${sajuCtx?'. 사주:'+sajuCtx:''}. 이마/눈/코/입/턱 실제 관찰. desc/ziwei/meihua/qimen 각각 다르게. JSON만:\n${faceJSON}`;
-      } else {
-        prompt = `${isLeft?'왼손(선천운)':'오른손(후천운)'} 손금 분석${sajuCtx?'. 사주:'+sajuCtx:''}. 각 선 실제 관찰. desc/ziwei/meihua/qimen 각각 다르게. JSON만:\n${palmJSON}`;
-      }
+      const prompt = isFace
+        ? `관상분석${ctx?'('+ctx+')':''}: 이마/눈/코/입/턱. 각 부위 desc(관찰)/ziwei(자미두수)/meihua(매화역수)/qimen(기문둔갑) 한문장씩. JSON:{"overall":"O","match_pct":85,"features":[{"name":"이마","score":80,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#FFD700"},{"name":"눈","score":85,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#50C878"},{"name":"코","score":78,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#8aacf0"},{"name":"입","score":75,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#cc88bb"},{"name":"턱","score":80,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#EF9F27"}],"interpretation":"I","strengths":["S"],"cautions":["C"]}`
+        : `${isLeft?'왼손(선천운)':'오른손(후천운)'}손금분석${ctx?'('+ctx+')':''}: 생명선/감정선/두뇌선/운명선/손형태. 각 선 desc/ziwei/meihua/qimen 한문장씩. JSON:{"overall":"O","match_pct":83,"features":[{"name":"생명선","score":80,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#50C878"},{"name":"감정선","score":78,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#cc88bb"},{"name":"두뇌선","score":82,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#8aacf0"},{"name":"운명선","score":75,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#FFD700"},{"name":"손형태","score":80,"desc":"D","ziwei":"Z","meihua":"M","qimen":"Q","color":"#EF9F27"}],"interpretation":"I","strengths":["S"],"cautions":["C"]}`;
 
       try {
         const response = await fetch('/api/saju', {
@@ -5202,8 +5184,8 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
-            max_tokens: 2000,
-            system: 'JSON만. 코드블록금지. O=전체요약, D=실제관찰, Z=자미두수해석, M=매화역수해석, Q=기문둔갑해석, I=종합해석, S=강점, C=주의. 각 필드 서로 다른 내용.',
+            max_tokens: 1800,
+            system: 'JSON만. 코드블록금지. D=실제관찰한문장, Z=자미두수한문장, M=매화역수한문장, Q=기문둔갑한문장. 각필드다른내용.',
             messages: [{ role: 'user', content: [
               { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageData } },
               { type: 'text', text: prompt }
@@ -5234,6 +5216,7 @@
         window._scanResult = null;
       }
     }
+
 
 
 

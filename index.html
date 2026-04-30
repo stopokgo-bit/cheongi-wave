@@ -3371,10 +3371,10 @@
         </div>
       </div>
       <!-- 관상/왼손/오른손 탭 - 카메라 바로 아래 -->
-      <div style="display:flex;gap:6px;margin-bottom:10px;">
-        <button class="mtbtn on" id="mf" onclick="setMode('face',this);document.getElementById('pg-scan-title').textContent='AI 기색(氣色) 관상 스캔';" style="flex:1;padding:10px 4px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">👁 관상</button>
-        <button class="mtbtn" id="mp" onclick="setMode('palm_left',this);document.getElementById('pg-scan-title').textContent='AI 왼손 선천운 스캔';" style="flex:1;padding:10px 4px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">✋ 왼손<span style="font-size:9px;display:block;opacity:.6;">선천운</span></button>
-        <button class="mtbtn" id="mp2" onclick="setMode('palm_right',this);document.getElementById('pg-scan-title').textContent='AI 오른손 후천운 스캔';" style="flex:1;padding:10px 4px;border-radius:10px;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">🤚 오른손<span style="font-size:9px;display:block;opacity:.6;">후천운</span></button>
+      <div style="display:flex;gap:8px;margin-bottom:12px;">
+        <button class="mtbtn on" id="mf" onclick="setMode('face',this);document.getElementById('pg-scan-title').textContent='AI 기색(氣色) 관상 스캔';" style="flex:1;padding:14px 4px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;min-height:56px;">👁<br>관상</button>
+        <button class="mtbtn" id="mp" onclick="setMode('palm_left',this);document.getElementById('pg-scan-title').textContent='AI 왼손 선천운 스캔';" style="flex:1;padding:14px 4px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;min-height:56px;">✋<br>왼손</button>
+        <button class="mtbtn" id="mp2" onclick="setMode('palm_right',this);document.getElementById('pg-scan-title').textContent='AI 오른손 후천운 스캔';" style="flex:1;padding:14px 4px;border-radius:12px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;min-height:56px;">🤚<br>오른손</button>
       </div>
       <div class="ctrl-row">
         <div class="side-ctrl">
@@ -5283,29 +5283,49 @@
       }, 300);
       // 카메라 준비 후 카운트다운 (2초 대기)
       setTimeout(function(){
+        console.log('[천기] 카운트다운 시작');
         _runCountdown('face', '👁 얼굴을 정면으로 봐주세요', function(){ doCapture(); });
-      }, 2500);
+      }, 2000);
     }
 
     // 단순 카운트다운 함수
     function _runCountdown(mode, guideText, onComplete) {
-      // 기존 요소 제거
       ['cw-countdown','cw-guide'].forEach(function(id){
         var el = document.getElementById(id);
         if (el) el.remove();
       });
 
-      // 안내문구 - 화면 중앙 상단 고정
       var guide = document.createElement('div');
       guide.id = 'cw-guide';
-      guide.style.cssText = 'position:fixed;top:80px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.85);color:#fff;font-size:16px;font-weight:700;padding:12px 28px;border-radius:24px;z-index:99999;white-space:nowrap;pointer-events:none;';
+      guide.style.position = 'fixed';
+      guide.style.top = '80px';
+      guide.style.left = '50%';
+      guide.style.transform = 'translateX(-50%)';
+      guide.style.background = 'rgba(0,0,0,0.9)';
+      guide.style.color = '#fff';
+      guide.style.fontSize = '16px';
+      guide.style.fontWeight = '700';
+      guide.style.padding = '12px 28px';
+      guide.style.borderRadius = '24px';
+      guide.style.zIndex = '999999';
+      guide.style.whiteSpace = 'nowrap';
+      guide.style.pointerEvents = 'none';
       guide.textContent = guideText;
       document.body.appendChild(guide);
 
-      // 카운트다운 숫자 - 화면 정중앙 고정
       var counter = document.createElement('div');
       counter.id = 'cw-countdown';
-      counter.style.cssText = 'position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:140px;font-weight:900;color:#50C878;text-shadow:0 0 60px rgba(80,200,120,1);z-index:99999;pointer-events:none;line-height:1;';
+      counter.style.position = 'fixed';
+      counter.style.top = '50%';
+      counter.style.left = '50%';
+      counter.style.transform = 'translate(-50%,-50%)';
+      counter.style.fontSize = '150px';
+      counter.style.fontWeight = '900';
+      counter.style.color = '#50C878';
+      counter.style.textShadow = '0 0 60px rgba(80,200,120,1)';
+      counter.style.zIndex = '999999';
+      counter.style.pointerEvents = 'none';
+      counter.style.lineHeight = '1';
       counter.textContent = '3';
       document.body.appendChild(counter);
 

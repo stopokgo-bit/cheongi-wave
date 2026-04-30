@@ -5190,8 +5190,8 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
             model: 'claude-haiku-4-5-20251001',
-            max_tokens: 2000,
-            system: 'JSON만. 코드블록금지. 한국어. 각 필드 반드시 다른 내용.',
+            max_tokens: 2500,
+            system: 'JSON만. 코드블록금지. 한국어. desc는 실제 사진에서 관찰한 특징+해석 2문장. ziwei/meihua/qimen은 각각 다른 역학 관점 한문장.',
             messages: [{ role: 'user', content: [
               { type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: imageData } },
               { type: 'text', text: prompt }

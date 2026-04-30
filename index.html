@@ -4654,6 +4654,12 @@
           window._sajuData.name = '회원';
         }
         showPg('report');
+        // 리포트 자동 생성
+        setTimeout(function(){
+          if (typeof window.generate50PReport === 'function') {
+            window.generate50PReport();
+          }
+        }, 300);
         return;
       }
       // 둘 다 없으면 메인에서 사주 입력 안내

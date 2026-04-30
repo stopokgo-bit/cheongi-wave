@@ -4652,54 +4652,35 @@
     }
 
     function _checkAndGoReport() {
-      // 무조건 자동순차 종료
       _seqAuto = false;
       _seqStep = 0;
-      // _sajuData 복구 시도
+
+      // sajuData 복구
       if (!window._sajuData || !window._sajuData.name) {
         try {
-          var saved = localStorage.getItem('cw_saju_data');
-          if (saved) window._sajuData = JSON.parse(saved);
+          var s = localStorage.getItem('cw_saju_data');
+          if (s) window._sajuData = JSON.parse(s);
         } catch(e) {}
       }
-      console.log('[천기] _checkAndGoReport 호출', 'scanResult:', !!window._scanResult, 'sajuData:', !!(window._sajuData && window._sajuData.name));
 
-      // 스캔 결과 또는 사주 데이터 있으면 리포트로
-      if (window._scanResult || (window._sajuData && window._sajuData.name)) {
-        if (window._sajuData && !window._sajuData.name) {
-          window._sajuData.name = '회원';
-        }
-        // 리포트 페이지로 이동 후 자동 생성
-        showPg('report');
-        setTimeout(function(){
-          if (typeof window.generate50PReport === 'function') {
-            window.generate50PReport();
-          } else {
-            // patch.js 로드 전이면 재시도
-            setTimeout(function(){
-              if (typeof window.generate50PReport === 'function') window.generate50PReport();
-            }, 500);
-          }
-        }, 400);
+      if (!window._sajuData || !window._sajuData.name) {
+        alert('사주 분석을 먼저 완료해주세요.');
+        showPg('main');
         return;
       }
-      // 둘 다 없으면 메인에서 사주 입력 안내
-      var popup = document.createElement('div');
-      popup.id = 'saju-required-popup';
-      popup.style.cssText = 'position:fixed;inset:0;background:rgba(0,0,10,0.85);z-index:9999;display:flex;align-items:center;justify-content:center;padding:1.5rem;';
-      var box = document.createElement('div');
-      box.style.cssText = 'background:#0f0f3a;border:1px solid var(--em);border-radius:20px;padding:2rem;max-width:320px;width:100%;text-align:center;';
-      box.innerHTML = '<div style="font-size:36px;margin-bottom:.75rem;">📋</div>'
-        + '<div style="font-size:17px;font-weight:800;color:#fff;margin-bottom:.5rem;">사주 분석을 먼저 해주세요</div>'
-        + '<div style="font-size:13px;color:var(--t2);line-height:1.8;margin-bottom:1.25rem;">메인 화면에서 이름·생년월일 입력 후<br>분석 시작 버튼을 눌러주세요.</div>'
-        + '<div style="display:flex;gap:8px;">'
-        + '<button id="popup-close-btn" style="flex:1;padding:11px;background:rgba(255,255,255,0.07);border:1px solid rgba(255,255,255,0.15);border-radius:10px;color:var(--t2);font-size:13px;cursor:pointer;font-family:inherit;">닫기</button>'
-        + '<button id="popup-go-btn" style="flex:1;padding:11px;background:var(--em);border:none;border-radius:10px;color:#fff;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">메인으로</button>'
-        + '</div>';
-      popup.appendChild(box);
-      document.body.appendChild(popup);
-      document.getElementById('popup-close-btn').onclick = function(){ popup.remove(); };
-      document.getElementById('popup-go-btn').onclick = function(){ popup.remove(); showPg('main'); };
+
+      // 리포트 페이지로 이동 후 바로 생성
+      showPg('report');
+      var tried = 0;
+      var tryGenerate = setInterval(function(){
+        tried++;
+        if (typeof window.generate50PReport === 'function') {
+          clearInterval(tryGenerate);
+          window.generate50PReport();
+        } else if (tried > 20) {
+          clearInterval(tryGenerate);
+        }
+      }, 100);
     }
 
 

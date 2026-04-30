@@ -4663,17 +4663,21 @@
 
       // 스캔 결과 또는 사주 데이터 있으면 리포트로
       if (window._scanResult || (window._sajuData && window._sajuData.name)) {
-        console.log('[천기] 리포트 페이지로 이동');
         if (window._sajuData && !window._sajuData.name) {
           window._sajuData.name = '회원';
         }
+        // 리포트 페이지로 이동 후 자동 생성
         showPg('report');
-        // 리포트 자동 생성
         setTimeout(function(){
           if (typeof window.generate50PReport === 'function') {
             window.generate50PReport();
+          } else {
+            // patch.js 로드 전이면 재시도
+            setTimeout(function(){
+              if (typeof window.generate50PReport === 'function') window.generate50PReport();
+            }, 500);
           }
-        }, 300);
+        }, 400);
         return;
       }
       // 둘 다 없으면 메인에서 사주 입력 안내

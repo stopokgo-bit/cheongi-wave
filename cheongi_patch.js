@@ -349,6 +349,7 @@ window.generate50PReport = function() {
       if (saved) window._sajuData = JSON.parse(saved);
     } catch(e) {}
   }
+  console.log('[리포트] _sajuData:', window._sajuData ? window._sajuData.name : '없음');
   if (!_ensureSajuData()) {
     if (!window._sajuData || !window._sajuData.name) {
       alert('사주 분석을 먼저 완료해주세요.');

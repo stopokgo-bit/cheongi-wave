@@ -3615,10 +3615,13 @@
 
       <div id="saju-result-body" style="display:flex;flex-direction:column;gap:.85rem;"></div>
 
-      <div style="margin-top:1rem;" class="cta-row">
-        <button class="btn-gold" onclick="showPg('sound')">오늘의 음악 처방 받기</button>
-        <button class="btn-em" onclick="showPg('scan')">AI 관상 스캔 추가</button>
-        <button class="btn-out" onclick="showPg('main')">다시 입력</button>
+      <div style="margin-top:1rem;display:flex;flex-direction:column;gap:10px;">
+        <button onclick="window._seqAuto=false;_seqAuto=false;_checkAndGoReport();" style="width:100%;padding:16px;background:linear-gradient(135deg,#FFD700,#FFA500);border:none;border-radius:14px;color:#0f0f3a;font-size:16px;font-weight:800;cursor:pointer;font-family:inherit;box-shadow:0 4px 20px rgba(255,215,0,0.3);">✦ 인생 지침서 받기</button>
+        <div style="display:flex;gap:8px;">
+          <button class="btn-gold" onclick="showPg('sound')" style="flex:1;">오늘의 음악 처방</button>
+          <button class="btn-em" onclick="startAutoScan();" style="flex:1;">AI 관상 스캔</button>
+          <button class="btn-out" onclick="showPg('main')" style="flex:1;">다시 입력</button>
+        </div>
       </div>
     </div>
 

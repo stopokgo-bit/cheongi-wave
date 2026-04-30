@@ -4669,17 +4669,18 @@
         return;
       }
 
-      // 리포트 페이지로 이동 후 바로 생성
+      // 리포트 페이지로 이동
       showPg('report');
-      var tried = 0;
-      var tryGenerate = setInterval(function(){
-        tried++;
+      
+      // generate50PReport 반복 시도
+      var count = 0;
+      var timer = setInterval(function(){
+        count++;
         if (typeof window.generate50PReport === 'function') {
-          clearInterval(tryGenerate);
+          clearInterval(timer);
           window.generate50PReport();
-        } else if (tried > 20) {
-          clearInterval(tryGenerate);
         }
+        if (count > 30) clearInterval(timer);
       }, 100);
     }
 
@@ -5603,7 +5604,7 @@
 
       // 캔버스 스냅샷
       var sc = document.getElementById('sc');
-      if (sc) capturedImages[sMode] = sc.toDataURL('image/jpeg', 0.85);
+      if (sc) capturedImages[sMode] = sc.toDataURL('image/jpeg', 0.5);
 
       // 썸네일
       var tc = document.getElementById('tc');
@@ -5922,6 +5923,7 @@
       });
     }
   </script>
+  <script src="/cheongi_patch.js"></script>
 </body>
 
 </html>

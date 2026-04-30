@@ -7,6 +7,7 @@
   },
   "routes": [
     { "src": "/api/(.*)", "dest": "/api/$1" },
+    { "src": "/cheongi_patch.js", "dest": "/cheongi_patch.js" },
     { "src": "/(.*)", "dest": "/index.html" }
   ]
 }

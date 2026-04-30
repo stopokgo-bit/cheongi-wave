@@ -2768,28 +2768,21 @@
         window._supabase = window.supabase.createClient(_supabaseUrl, _supabaseKey);
         // onAuthStateChange로 세션 상태 실시간 감지
         window._supabase.auth.onAuthStateChange(function(event, session){
+          var area = document.getElementById('nav-auth-area');
+          if (!area) return;
           if (session && session.user) {
             var user = session.user;
             var displayName = (user.user_metadata.full_name || user.email || '').split(' ')[0];
             var avatarUrl = user.user_metadata.avatar_url || '';
-            var navBtn = document.getElementById('nav-auth-btn');
-            if (navBtn) {
-              navBtn.innerHTML = (avatarUrl ? '<img src="'+avatarUrl+'" style="width:20px;height:20px;border-radius:50%;margin-right:6px;vertical-align:middle;">' : '')
-                + displayName + ' <span style="font-size:11px;opacity:0.7;margin-left:4px;">로그아웃</span>';
-              navBtn.style.cssText += ';background:rgba(80,200,120,0.15);border-color:rgba(80,200,120,0.4);color:#50C878;';
-              navBtn.onclick = function(){ doLogout(); };
-            }
+            area.innerHTML = '<button onclick="doLogout()" style="display:flex;align-items:center;gap:6px;padding:7px 14px;background:rgba(80,200,120,0.15);border:1px solid rgba(80,200,120,0.4);border-radius:8px;color:#50C878;font-size:13px;font-weight:700;cursor:pointer;font-family:inherit;">'
+              + (avatarUrl ? '<img src="'+avatarUrl+'" style="width:20px;height:20px;border-radius:50%;">' : '')
+              + displayName
+              + '<span style="color:rgba(255,100,100,0.8);font-size:11px;margin-left:2px;">로그아웃</span></button>';
             var nameInput = document.getElementById('inp-name');
             if (nameInput && !nameInput.value) nameInput.value = displayName;
           } else {
-            var navBtn2 = document.getElementById('nav-auth-btn');
-            if (navBtn2) {
-              navBtn2.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg><span id="nav-auth-label">로그인</span>';
-              navBtn2.style.background = '';
-              navBtn2.style.borderColor = '';
-              navBtn2.style.color = '';
-              navBtn2.onclick = function(){ toggleAuthMenu(); };
-            }
+            area.innerHTML = '<button id="nav-auth-btn" class="nav-login-btn" onclick="openAuth('login')">'
+              + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>로그인</button>';
           }
         });
         _checkSession();
@@ -2865,7 +2858,7 @@
           </svg>전문가 CMS
         </button>
         <div id="nav-auth-area">
-          <button class="nav-login-btn" onclick="openAuth('login')">
+          <button id="nav-auth-btn" class="nav-login-btn" onclick="openAuth('login')">
             <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <circle cx="12" cy="7" r="4" />
               <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7" />

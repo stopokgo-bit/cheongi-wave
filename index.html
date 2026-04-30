@@ -2781,7 +2781,7 @@
             var nameInput = document.getElementById('inp-name');
             if (nameInput && !nameInput.value) nameInput.value = displayName;
           } else {
-            area.innerHTML = '<button id="nav-auth-btn" class="nav-login-btn" onclick="openAuth('login')">'
+            area.innerHTML = '<button id="nav-auth-btn" class="nav-login-btn" onclick="openAuth(&quot;login&quot;)">'
               + '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>로그인</button>';
           }
         });
